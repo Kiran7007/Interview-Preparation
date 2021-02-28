@@ -29,3 +29,8 @@
         <img src="https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png" width="400">
     </p>
     <br>
+
+#### View & ViewGroup
+   - ConstraintLayout combines a simple, expressive and flexible layout system with the powerful features built into the Android Studio Designer tool.
+   - It makes it easier to create responsive user interface layouts that adapt automatically to different screen sizes and changing device orientations.
+   - This has the benefit of avoiding many problems inherent in nesting layouts. It allows designing so-called flat or shallow layout hierarchies. This leads to less complex layouts and improved user interface rendering performance at runtime.
