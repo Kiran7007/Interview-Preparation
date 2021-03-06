@@ -1,8 +1,40 @@
 # Interview-Question
 
+
+## Contents
+
+* [Core Android](#core-android)
+* [Android Libraries](#android-libraries)
+* [Android Architecture](#android-architecture)
+* [Android Design Problem](#android-design-problem)
+* [Android Unit Testing](#android-unit-testing)
+* [Android Tools And Technologies](#android-tools-and-technologies)
+* [Java and Kotlin](#java-and-kotlin)
+* [Data Structures And Algorithms](#data-structures-and-algorithms)
+* [Other Topics](#other-topics)
+
 ### Core Android
 
 #### Base
+* **Tell all the Android application components.**
+    - App components are the essential building blocks of an Android app. Each component is an entry point through which the system or a user can enter your app. Some components depend on others.
+    - There are four different types of app components:
+        - Activities(#activity)
+        - Services(#services)
+        - Broadcast receivers(#broadcast_receiver)
+        - Content providers(#content_provider)
+
+* **What is the project structure of an Android Application?**
+* <p align="center">
+    <text>manifests
+Contains the AndroidManifest.xml file.
+java
+Contains the Java source code files, separated by package names, including JUnit test code.
+res
+Contains all non-code resources, such as XML layouts, UI strings, and bitmap images, divided into corresponding sub-directories</text>
+        <img src="https://developer.android.com/images/tools/projectview-p1.png" width="400">
+    </p>
+    
 * **What is `Application` class?**
     - The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
 
