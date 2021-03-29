@@ -85,7 +85,7 @@ style='display:inline;'>
    - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
         - How will the key exchanged
         - How will be the data encrypted
-        - How will messages marked as organic
+        - How will messages marked as authentic
 
     - The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
 
