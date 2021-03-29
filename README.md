@@ -76,25 +76,25 @@ style='display:inline;'>
     </p>
     <br>
 
-#### View & ViewGroup
+* **View & ViewGroup**
    - ConstraintLayout combines a simple, expressive and flexible layout system with the powerful features built into the Android Studio Designer tool.
    - It makes it easier to create responsive user interface layouts that adapt automatically to different screen sizes and changing device orientations.
    - This has the benefit of avoiding many problems inherent in nesting layouts. It allows designing so-called flat or shallow layout hierarchies. This leads to less complex layouts and improved user interface rendering performance at runtime.
 
-#### SSL Pinning
-   - What is SSL Pinning?
-When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
-1. How will the key exchanged
-2. How will be the data encrypted
-3. HOw will messages marked as organic
+* **SSL Pinning**
+   - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
+        - How will the key exchanged
+        - How will be the data encrypted
+        - How will messages marked as organic
 
-The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
+    - The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
 
-Developer can compile the public key into the application code this is essecially pins the key into the appliction. when client receives the public key from the server, it compare this key with the pinned key in apllciation. the key should should match. if the key dont match. the lcient terminates the session.
+    - Developer can compile the public key into the application code this is essecially pins the key into the appliction. when client receives the public key from the server, it compare this key with the pinned key in apllciation. the key should should match. if the key dont match. the client terminates the session.
 
-1. Public key pinning
-2. Certificate pinning
-   - Certificate pinning is the pinning entire certificate instead of  pinning just public key.
-3. SPKI pinning
+    - Types of SSL Pinning
+        - Public key pinning
+        - Certificate pinning
+            - Certificate pinning is the pinning entire certificate instead of  pinning just public key.
+        - SPKI pinning
 
 
