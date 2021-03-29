@@ -94,7 +94,9 @@ style='display:inline;'>
     - Types of SSL Pinning
         - Public key pinning
         - Certificate pinning
-            - Certificate pinning is the pinning entire certificate instead of  pinning just public key.
+            - https://dzone.com/articles/encryption-and-signing#:~:text=James%20can%20decrypt%20the%20digest,called%20%E2%80%9Csigning%20the%20message.%22
+            - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
+            - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
         - SPKI pinning
 
 
