@@ -54,7 +54,7 @@
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
 
 * **Java Try with Resources**
-   - http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html#:~:text=The%20Java%20try%20with%20resources,try%2Dwith%2Dresources%20block.
+   - http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
 
 * **Java 8 Interface changes**
    - https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
@@ -70,3 +70,9 @@
 
 * **Executor Service**
    - https://www.javatpoint.com/java-executorservice
+
+* **Kotlin interview Questions**
+   - https://blog.mindorks.com/kotlin-android-interview-questions
+   - https://www.ubuntupit.com/frequently-asked-kotlin-interview-questions-and-answers/
+
+
