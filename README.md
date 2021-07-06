@@ -88,6 +88,9 @@
 * **Livedata vs ObservableField**
    - https://blog.mindorks.com/livedata-vs-observable-in-android
 
+* **ViewPager vs ViewPager2**
+   - https://developer.android.com/training/animation/vp2-migration
+
 * **Understanding Suspend function**
    - https://medium.com/mobile-app-development-publication/understanding-suspend-function-of-coroutines-de26b070c5ed
 
