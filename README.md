@@ -50,4 +50,18 @@
             - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
         - SPKI pinning
 
+* **Design Pattern
+   - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
+
+* **Java Try with Resources
+   - http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html#:~:text=The%20Java%20try%20with%20resources,try%2Dwith%2Dresources%20block.
+
+* **Java Try with Resources
+   - https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
+
+* **Function Interface
+   - https://www.geeksforgeeks.org/functional-interfaces-java/
+
+* **Types of Observable in Rx-Java
+   - https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8
 
