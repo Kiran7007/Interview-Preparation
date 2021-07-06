@@ -75,4 +75,29 @@
    - https://blog.mindorks.com/kotlin-android-interview-questions
    - https://www.ubuntupit.com/frequently-asked-kotlin-interview-questions-and-answers/
 
+* **Kotlin Collection Functions**
+   - https://blog.mindorks.com/kotlin-collection-functions
+
+* **Map vs Flatmap**
+   - https://www.linkedin.com/feed/update/urn:li:activity:6770786744422998017/
+ 
+* **Stateflow vs LiveData**
+   - https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html
+
+* **Understanding Suspend function**
+   - https://medium.com/mobile-app-development-publication/understanding-suspend-function-of-coroutines-de26b070c5ed
+
+* **Coroutine runblocking**
+   - https://www.geeksforgeeks.org/runblocking-in-kotlin-coroutines-with-example
+
+* **Thread Safe mthods and blocks**
+   - https://proandroiddev.com/synchronization-and-thread-safety-techniques-in-java-and-kotlin-f63506370e6d
+
+* **App Data encryption**
+   - https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore
+
+* **Data Structure and Algorithms**
+   - https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm
+
+
 
