@@ -62,11 +62,11 @@
 * **Function Interface**
    - https://www.geeksforgeeks.org/functional-interfaces-java/
 
-* **Types of Observable in Rx-Java
+* **Types of Observable in Rx-Java**
    - https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8
 
 * **Rx-Java Scheduler what, when, how?**
-   - https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add#:~:text=Schedulers%20are%20one%20of%20the,time%2Dconsuming%20onto%20different%20threads.&text=IO%20%E2%80%94%20This%20is%20one%20of,of%20Schedulers%20that%20are%20used.
+   - https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add
 
 * **Executor Service**
    - https://www.javatpoint.com/java-executorservice
