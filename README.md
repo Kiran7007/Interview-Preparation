@@ -52,6 +52,7 @@
 
 * **Design Pattern**
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
+   - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
 
 * **Java Try with Resources**
    - http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
@@ -84,6 +85,9 @@
 * **Stateflow vs LiveData**
    - https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html
 
+* **Livedata vs ObservableField**
+   - https://blog.mindorks.com/livedata-vs-observable-in-android
+
 * **Understanding Suspend function**
    - https://medium.com/mobile-app-development-publication/understanding-suspend-function-of-coroutines-de26b070c5ed
 
@@ -98,6 +102,34 @@
 
 * **Data Structure and Algorithms**
    - https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm
+
+* **Understanding scope storage in android**
+   - https://blog.mindorks.com/understanding-the-scoped-storage-in-android
+
+* **Solve out of memory error**
+   - https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application
+
+* **Battery optimizationn for Android**
+   - https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70
+   
+* **Android Jetpack component**
+   - https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it
+
+* **Android ViewModel under the hood**
+   - https://blog.mindorks.com/android-viewmodels-under-the-hood
+
+* **Workmanager**
+   - https://blog.mindorks.com/integrating-work-manager-in-android
+
+* **Arraymap vs Sparsh Array**
+   - https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47
+
+* **Java Android Multithreading programming**
+   - https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor
+
+* **Understanding Open keyword in Kotlin**
+   - https://blog.mindorks.com/understanding-open-keyword-in-kotlin
+
 
 
 
