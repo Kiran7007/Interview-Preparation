@@ -292,7 +292,7 @@
 * <b>Difference between stacks & queues?</b></br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>   
 
-### 2. JAVA
+### 2. Core JAVA
 
 - **Explain OOP Concept.** <br/>
   Object-Oriented Programming is a methodology to design a program using classes, objects, [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)), [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)), [abstraction](https://en.wikipedia.org/wiki/Abstraction_(software_engineering)) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
@@ -1039,6 +1039,78 @@ Argument list should be different while doing method overloading. Argument list 
     list.add("hello");  
     String s = list.get(0);  
     ```
+
+    ### RxJava Related Questions:
+
+More additional info to get started with RxJava is available at:
+[Getting Started with RxJava2](https://www.coderefer.com/blog/rxandroid-tutorial-getting-started/)
+
+-   **What is an Observable in RXJava2?**<br/>
+    A) An Observable  simply emits the data to those which subscribed to it. All the emission is done asynchronously to the subscribers. A simple Observable can be created as follows:
+
+    ```java
+    // RxAndroid Tutorial - Adding Observable
+    Observable<String> stringObservable = Observable.just("Hello Reactive Programming!");
+    ```
+-   **What is an Observer in RXJava2?**<br/>
+    A) Observer consumes the data emitted by the Observable. To do this, Observer needs to subscribe to the Observable. Example shows how to create an Observable in RxJava2.
+    ```java
+    // RxAndroid Tutorial - Adding observer
+    Observer<String> stringObserver = new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+
+            @Override
+            public void onNext(String s) {
+                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        };
+    ```
+
+-   **How to Subscribe / Unsubscribe in RXJava?**<br/>
+    A) We can make an Observer to subscribe to Observable as follows:
+    ```java
+    // RxAndroid tutorial - observer subscribing to observable
+    stringObservable.subscribe(stringObserver);
+    ```
+
+-   **What are the different types of Observables in RxJava?**<br/>
+    A)1) single
+    2) Maybe
+    3) Completable
+    4) Observable
+    5) Flowable
+
+-   **What is a Single in RxJava?**<br/>
+    A) A Single in RxJava is an Observable which emits only one item if completed or returns error.
+
+-   **What is Maybe in RxJava?** <br/>
+    A) A Maybe in RxJava is used when the Observable needs to emit a value or a no value or an error.
+
+-   **What is Completable in RxJava?** <br/>
+    A) A Completable in RxJava is an Observable which just completes the task and does not emit anything if completed. It returns an error if anything fails.
+    It is similar to reactive concept of runnable.
+
+-   **What is Back Pressure in RxJava?**<br/>
+    A) Back Pressure is the state where your observable (publisher) is creating more events than your subscriber can handle.
+
+-   **What is Flowable in RxJava?** <br/>
+    A) A Flowable in RxJava is used when the Observable emits more data than the Observer can consume. In Other words, Flowable can handle back pressure where as an Observable cannot.
+
+-   **What is a Cold Observable?**<br/>
+    A) A Cold Observable is an Observable that does not emit items until a Subscriber subscribes. If we have more than one Subscriber, then the Cold Observable will emit each sequence of items to all Subscribers one by one.
+
+-   **What is a Hot Observable?**<br/>
+    A) A Hot observable is an Observer that will emit items
 
 ### 3. Kotlin
 
@@ -2439,80 +2511,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 -   **What is the use-case of @Inject Annotation in Dagger?**<br/>
     A) @Inject annotation is used to request dagger to provide the respective Object. We use @Inject on Constructor, Fields (mostly where constructor is not accessible like Activities, Fragments, etc.) and Methods.
 
-### RxJava Related Questions:
-
-More additional info to get started with RxJava is available at:
-[Getting Started with RxJava2](https://www.coderefer.com/blog/rxandroid-tutorial-getting-started/)
-
--   **What is an Observable in RXJava2?**<br/>
-    A) An Observable  simply emits the data to those which subscribed to it. All the emission is done asynchronously to the subscribers. A simple Observable can be created as follows:
-
-    ```java
-    // RxAndroid Tutorial - Adding Observable
-    Observable<String> stringObservable = Observable.just("Hello Reactive Programming!");
-    ```
--   **What is an Observer in RXJava2?**<br/>
-    A) Observer consumes the data emitted by the Observable. To do this, Observer needs to subscribe to the Observable. Example shows how to create an Observable in RxJava2.
-    ```java
-    // RxAndroid Tutorial - Adding observer
-    Observer<String> stringObserver = new Observer<String>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
-
-            @Override
-            public void onNext(String s) {
-                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        };
-    ```
-
--   **How to Subscribe / Unsubscribe in RXJava?**<br/>
-    A) We can make an Observer to subscribe to Observable as follows:
-    ```java
-    // RxAndroid tutorial - observer subscribing to observable
-    stringObservable.subscribe(stringObserver);
-    ```
-
--   **What are the different types of Observables in RxJava?**<br/>
-    A)1) single
-    2) Maybe
-    3) Completable
-    4) Observable
-    5) Flowable
-
--   **What is a Single in RxJava?**<br/>
-    A) A Single in RxJava is an Observable which emits only one item if completed or returns error.
-
--   **What is Maybe in RxJava?** <br/>
-    A) A Maybe in RxJava is used when the Observable needs to emit a value or a no value or an error.
-
--   **What is Completable in RxJava?** <br/>
-    A) A Completable in RxJava is an Observable which just completes the task and does not emit anything if completed. It returns an error if anything fails.
-    It is similar to reactive concept of runnable.
-
--   **What is Back Pressure in RxJava?**<br/>
-    A) Back Pressure is the state where your observable (publisher) is creating more events than your subscriber can handle.
-
--   **What is Flowable in RxJava?** <br/>
-    A) A Flowable in RxJava is used when the Observable emits more data than the Observer can consume. In Other words, Flowable can handle back pressure where as an Observable cannot.
-
--   **What is a Cold Observable?**<br/>
-    A) A Cold Observable is an Observable that does not emit items until a Subscriber subscribes. If we have more than one Subscriber, then the Cold Observable will emit each sequence of items to all Subscribers one by one.
-
--   **What is a Hot Observable?**<br/>
-    A) A Hot observable is an Observer that will emit items
-
--   **Hot Observables vs Cold Observables**<br/>
-
 ### Common Coding Programs
 * <b>Arrays</b></br>
   * [Find Maximum Sell Profit](/src/arrays/FindMaximumSellProfit.java)
@@ -2572,8 +2570,6 @@ More additional info to get started with RxJava is available at:
    * [ReverseAStack](/src/stacks/ReverseStack.java)
    </br>
    
-   
-
 * <b>Back Tracking</b></br>
    * [Solve Boggle](/src/backtracks/Boggle.java)
    * [Print paranthesis combination for a given value](/src/backtracks/Parenthesis.java)
@@ -2637,7 +2633,6 @@ More additional info to get started with RxJava is available at:
    * [Minimum Number of Platforms Required for a Railway/Bus Station](/src/math/MinimumPlatforms.java)   
    </br>   
    
-   
 * <b>Miscellaneous</b></br>
    * [Find three integers in the array with sum equal to the given value](/src/misc/SumOfThreeValues.java)
    * [Find position of a given key in 2D matrix](/src/misc/SearchMatrix.java)
@@ -2667,7 +2662,7 @@ More additional info to get started with RxJava is available at:
          * When dividing an array by k ( 2(binary) or 3(ternary)), it reduces the array size to 1/k. But it increases the no of comparisons by k.
    </br>
    
-* <b>Runtime Complexity Table:</b></br>
+* <b>Runtime Complexity Table:</b> </br></br>
    <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png"></a></br>
 
 
