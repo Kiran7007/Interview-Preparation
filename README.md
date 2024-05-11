@@ -9,37 +9,6 @@
  * [Tools And Technologies](#tools-and-technologies)
  * [Android Test Driven Development](#android-test-driven-development)
  * [Others](#others)
-    
-* **What is `Application` class?**<br/>
-  The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
-
-* **What is onSavedInstanceState() and onRestoreInstanceState() in activity?**<br/>
-    - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
-    - **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
-
-* **When should you use a Fragment rather than an Activity?**
-    - When there are ui components that are going to be used across multiple activities.
-    - When there are multiple views that can be displayed side by side (viewPager tabs)
-    - When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
-
-* **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
-    - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
-    - **FragmentStatePagerAdapter:** the fragment instance is destroyed when it is not visible to the User, except the saved state of the fragment. This results in using only a small amount of Memory and can be useful for handling larger data sets. Should be used when we have to use dynamic fragments, like fragments with widgets, as their data could be stored in the savedInstanceState.Also it won't affect the performance even if there are large number of fragments.</br>  
-
-* **What is the difference between adding/replacing fragment in backstack?**
-    ![image](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
-    ![image](https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png)
-    ![image](https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png)
-    <br>
-    <p align="center">
-        <img src="https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png" width="400">
-        <img src="https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png" width="400">
-    </p>
-    <br>
-
-* **View & ViewGroup**
-   - <b>View</b>: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
-   - <b>ViewGroup</b>: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br> 
 
 * **SSL Pinning**
    - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
@@ -242,50 +211,108 @@
 * Depth First Search
 * Greedy Algorithm
 
+* <b>Explain Big O Notation?</b></br>
+   * The notation Ο(n) is the formal way to express the upper bound of an algorithm's running time. It measures the worst case time complexity or the longest amount of time an algorithm can possibly take to complete. 
+   * Note: <b>O(1)</b> means that it takes a constant time, like three minutes no matter the amount of data in the set.
+<b>O(n)</b> means it takes an amount of time linear with the size of the set.</br>
+
+* <b>Explain Big Omega Notation</b></br>
+   * The Big Omega Notation is used to describe the best case running time for a given algorithm.</br>
+
+* <b>Arrays in Java?</b></br>
+   * Arrays is an ordered collection. It will have a fixed length which needs to be defined at the initialization time whereas lists have a variable length. Arrays are easier to store elements of the same data type. Used internally in stack and queue.    It is a convenient way of representing a 2D array.
+   * Arrays cannot hold generic data types whereas lists can.
+   * Arrays can store all data types whereas lists cannot store primitive data types, only objects.
+   * Arrays: Complexity:
+   
+   	| Algorithm	|  Average	 | Worst Case  |
+    | ---------- |:--------:| -----------:| 
+    | Space	    |	  Θ(n)		  |  O(n)       |
+    | Search	   |   Θ(n)	   |  O(n)       |
+    | Insert	   |   Θ(n)	   |  O(n)       |
+    | Delete	   |   Θ(n)		  |  O(n)       |
+    
+* <b>Linked Lists in Java?</b></br>
+   * A LinkedList contains both a head and a tail. The "Head" is the first item in the LinkedList, while the "Tail" is the last item. It is not a circular data structure, therefore the tail does not have its' pointer pointing at the Head - the pointer is just null.
+   * No indices but each node has a pointer pointing to the next element.
+   * They are dynamic in nature which means they allocate memory only when needed.
+   * Insertion, deletion, updation easy
+   * A linked list is a group of nodes which represent a sequence. Each node consists of a data and a link or reference to the next node in the sequence.
+   * <b>Singly Linked List</b>: has a node and a pointer to the next node in the sequence. 
+   * <b>Doubly Linked List</b>: has a node and 2 pointers - one to the next node and one to the previous node in the sequence. This is very convenient if you need to be able to traverse stored elements in both directions.
+   * Linked List: Runtime Complexity:
+   
+   	| Algorithm	|  Average	 | Worst Case  |
+    | ---------- |:--------:| -----------:| 
+    | Space	    |	  Θ(n)		  |  O(n)       |
+    | Search	   |   Θ(n)	   |  O(n)       |
+    | Insert	   |   Θ(1)	   |  O(1)       |
+    | Delete	   |   Θ(1)		  |  O(1)       |
+    
+    </br>
+
+
+* <b>Binary Tree</b></br>
+   * A tree whose elements have at most 2 children is called a binary tree. Since each element in a binary tree can have only 2 children, we typically name them the left and right child. 
+   * The left subtree of a node contains only values less than the parent node's value. 
+   * The right subtree of a node contains only values greater than or equal to the node's value.
+   * Only if the above 2 criteria are matched, then the tree is said to be balanced.
+   * <b>Advantages of Binary tree over Linked List</b>: In a linked list, the items are linked together through a single next pointer. In a binary tree, as long as the tree is balanced, the searchpath to each item is a lot shorter than that in a linked list.
+   * Their disadvantage is that in the worst case they can degenerate into a linked list in terms of efficiency.</br>
+
+* <b>Stacks:</b></br>
+   * Stacks are an abstract collection that follow LIFO mechanism. 
+   * Main functionalities include 
+       * <b>Push</b>: a new entity added to the top of the stack. 
+       * <b>Pop</b>: an entity is removed from the top of the stack. 
+   * The process of accessing data stored in a serial access memory is similar to manipulating data on a stack.
+   * A stack may be defined to have a bounded capacity i.e. if the stack is full and a new entity cannot be added, then it is considered to be in an <b>overflow state</b>. 
+   * If the stack is empty and an entity cannot be popped, it is considered to be in an <b>underflow state</b>.
+   * <b>Efficiency of stacks</b>: The time is not dependent of the no of items in the stack so it is very efficient. ```O(1)```.</br>
+   
+* <b>Queues:</b></br>
+   * Queues are an abstract collection that follow FIFO mechanism. The entities in the queue are kept in an order. 
+   * Main functionalities include 
+       * <b>enqueue</b>: Add an item to the end of the queue. Dequeue: remove an item from the start of the queue. 
+       * <b>Front</b>: retrieves the first item from the queue. 
+   * A queue may be defined to have a bounded capacity i.e. if the queue is full and a new entity cannot be added, then it is considered to be in an <b>overflow state</b>. 
+   * If the queue is empty and an entity cannot be popped, it is considered to be in an <b>underflow state</b>.
+   * <b>Efficiency of queues</b>: The time is not dependent of the no of items in the queue so it is very efficient. O(1).
+   * <b>A double ended queue (deque)</b>: is an abstract collection which differs from queue in a way that an item can be added/removed from either side of the queue. 
+      * An <b>input-restricted deque</b>: is when deletion takes place at either end but insertion takes place at only one end. 
+      * An <b>output-restricted deque</b>: is when insertion takes place at either end but deletion takes place only at one end. A common occurrence of deque is doubly linked list.
+   * <b>Priority queue</b>: same as queue but has a priority associated with it. Items are retrieved based on their priority</br>
+   
+   
+* <b>Blocking Queues:</b></br>
+   * A blocking queue is a queue that blocks when you try to dequeue from it and the queue is empty, or if you try to enqueue items to it and the queue is already full. A thread trying to dequeue from an empty queue is blocked until some other thread inserts an item into the queue. A thread trying to enqueue an item in a full queue is blocked until some other thread makes space in the queue. 
+   * [Example on implementing a blocking queue](/src/queue/BlockingQueue.java)</br>
+   
+   
+* <b>Difference between stacks & queues?</b></br>
+  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>   
 
 ### Core Java
 
-* **Explain OOP Concept.**
-    - Object-Oriented Programming is a methodology to design a program using classes, objects, 
-    [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)),
-    [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)),
-    [abstraction](https://en.wikipedia.org/wiki/Abstraction_(software_engineering)), and
-    [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
+- **Explain OOP Concept.** <br/>
+  Object-Oriented Programming is a methodology to design a program using classes, objects, [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)), [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)), [abstraction](https://en.wikipedia.org/wiki/Abstraction_(software_engineering)) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
 
 - **What is an Object?** <br/>
   An object is an instance of a class that has states and behaviors. A Class
   can be defined as a template that describes the behavior/state that the object
   of its type support.=
 
-- **What is encapsulation?** <br/>
-  Encapsulation is one of the four fundamental OOP concepts. It is a mechanism of wrapping the data (variables) and code acting on the data (methods) together as a single unit. In encapsulation, the variables of a class will be hidden from other classes, and can be accessed only through the methods of their current class. Therefore, it is also known as *data hiding*. To achieve encapsulation in Java:
-    - Declare the variables of a class as private.
-    - Provide public setter and getter methods to modify and view the variables values.
-
-  Benefits of Encapsulation:
-    - The fields of a class can be made read-only or write-only.
-    - A class can have total control over what is stored in its fields.
-
-- **Difference between abstract and interface?**
-
-  | Interface     | Abstract class     |
-  | :------------- | :------------- |
-  | Support multiple inheritances | Does not support multiple inheritances |
-  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
-  | Does not contain data member | Contains data member |
-  | Does not contains constructors | contains constructors  |
-  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
-  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
-
-* <b>Does Java support multiple inheritance?</b></br>
-   - Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
+* <b>Does Java support multiple inheritance?</b> </br>
+  Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
    
-* <b>What is Encapsulation?</b></br>
+* <b>What is Encapsulation?</b>
    - Encapsulation involves binding code and data together as a single unit. 
    - Encapsulation is a technique used for hiding the properties and behaviors of an object and allowing outside access only as appropriate. It prevents other objects from directly altering or accessing the properties or methods of the encapsulated object. 
    - For instance, a class can be an encapsulated class if all the variables in it are defined as Private and by providing getter and setter methods.
+   - The fields of a class can be made read-only or write-only.
+   - A class can have total control over what is stored in its fields.
 
-* <b>What is Abstract class?</b> </br>
+* <b>What is Abstract class?</b>
    * Abstract classes are classes that contain one or more abstract methods. An abstract method is a method that is declared, but contains no implementation. 
    * If even a single method is abstract, the whole class must be declared abstract.
    * Abstract classes may not be instantiated, and require subclasses to provide implementations for the abstract methods.
@@ -360,14 +387,13 @@
   subclass2
   ```
 
-- **Can Interfaces to be extended?**
-
+- **Can Interfaces to be extended?** </br>
   Yes, an interface can extend other interfaces. it supports multiple
   inheritances, which means it can extend more than one interface. But every
   class which wants to use an interface must add it by keyword `implements`
   and using the keyword `extends` for interfaces in classes is illegal and
   cause compile error.
-
+  
 - **What is the difference between overriding and overloading?**
 
   | Method Overloading      | Method Overriding     |
@@ -381,18 +407,22 @@
 
 * <b>What is Inheritance?</b>
    - Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
+   
 * <b>What are Interfaces?</b></br>
    * Interfaces are only declared methods that an implementing class would need. 
    * Interfaces cannot be marked as final. Interface variables must be static or final. 
    * Interfaces cannot be instantiated directly.
    * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
    
-   
-* <b>Difference between Abstract and Interfaces?</b></br>
-   * Abstract classes can have non abstract methods. It can have instance variables. We have provide default implementation to abstract class method. A class can extend only one abstract class.A class can implement multiple interfaces.</br>
-  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/1.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/1.png"></a>
-</br>   
-
+- **Difference between abstract and interface?**
+  | Interface     | Abstract class     |
+  | :------------- | :------------- |
+  | Support multiple inheritances | Does not support multiple inheritances |
+  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
+  | Does not contain data member | Contains data member |
+  | Does not contains constructors | contains constructors  |
+  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
+  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
 
 * <b>What is Polymorphism?</b></br>
    * Polymorphism is when an object takes on multiple forms. For instance, String is a subclass of Object class. 
@@ -404,7 +434,6 @@
        * Compile time polymorphism: The flow of control is decided during the compile time itself. By overloading.
        * Run time polymorphism: is done using inheritance and interface. The flow of control is decided during the runtime. Overriding: Overriding will have the same method name with the same parameters. One will be the parent class method and the other will be the child class method. Overloading occurs when the same method name is declared but with different parameters.</br>
        
-       
 * <b>What is Method overloading?</b></br>
    * Method Overloading means to have two or more methods with same name in the same class with different arguments. 
    * Note:
@@ -414,7 +443,6 @@
      * Overloaded methods CAN declare new or broader checked exceptions
      * A method can be overloaded in the same class or in a subclass </br>
      
-     
 * <b>What is Method overriding?</b></br>
    * Method overriding occurs when sub class declares a method that has the same type arguments as a method declared by one of its superclass
    * You can’t override a method marked public and make it protected
@@ -422,10 +450,8 @@
    * You cannot override a method marked static
    * Note: Static methods cannot be overridden. Overloaded methods can still be overridden. </br>
    
-   
 * <b>Why would you not call abstract method in constructor?</b></br>
    * The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
-   
 
 * <b>Composition over inheritance?</b></br>
    * Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
@@ -440,7 +466,6 @@ class Person {
       this.Name = name;
       this.Age = age;
    }
-
 }
 
 class Employee {
@@ -455,12 +480,10 @@ class Employee {
 ```
 </br>
       
-      
 * <b>Difference between Encapsulation & Abstraction?</b></br>
    * <b>Abstraction</b> focuses on the outside view of an object (i.e. the interface) 
    * <b>Encapsulation</b> (information hiding) prevents clients from seeing it’s inside view. 
    * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
-   
 
 * Differences between abstract classes and interfaces? [link](https://arjun-sna.github.io/java/2017/02/02/abstractvsinterface/)
     - An abstract class, is a class that contains both concrete and abstract methods 
@@ -477,6 +500,7 @@ class Employee {
     in Android. Parcelable was created to be more efficient then Serializable, and performs about 
     10x faster then Serializable because Serializable uses reflection which is a slow process and 
     tends to create a lot of temporary objects which may cause garbage collection to occur more often.
+
 * What is Singleton class?
     - A singleton is a class that can only be instantiated once.[This singleton pattern restricts 
     the instantiation of a class to one object. This is useful when exactly one object is needed 
@@ -496,10 +520,6 @@ class Employee {
 * `Arrays` vs `ArrayLists`.
 * `HashSet` vs `TreeSet`.
 * Typecast in Java.
-* Difference between method overloading and overriding.
-<p align="center">
-<img alt="Overloading and Overriding" src="https://github.com/codeshef/android-interview-questions/blob/master/assets/overloading-vs-overriding.png">
-</p>
 
 Overloading happens at compile-time while Overriding happens at runtime: The binding of overloaded method call to its definition has happens at compile-time however binding of overridden method call to its definition happens at runtime.
 
@@ -516,190 +536,179 @@ Return type of method does not matter in case of method overloading, it can be s
 
 Argument list should be different while doing method overloading. Argument list should be same in method Overriding.
 
-* What are the access modifiers you know? What does each one do?
-* Can an Interface extend another Interface?
-* What does the `static` word mean in Java?
-* Can a `static` method be overridden in Java?
-* What is Polymorphism? What about Inheritance?
-* What is the difference between an Integer and int?
-* Do objects get passed by reference or value in Java? Elaborate on that.
-* What is a ThreadPoolExecutor? [Link](https://blog.mindorks.com/threadpoolexecutor-in-android-8e9d22330ee3)
-* What the difference between local, instance and class variables?
-* What is reflection? [Link](http://tutorials.jenkov.com/java-reflection/index.html)
-* What are strong, soft and weak references in Java?
-* What is dependency injection? Can you name few libraries? Have you used any?
-* What does the keyword `synchronized` mean?
-* What does it means to say that a `String` is immutable?
-* What are `transient` and `volatile` modifiers?
-* What is the `finalize()` method?
-* How does the `try{}finally{}` works?
-* What is the difference between instantiation and initialization of an object?
-* When is a `static` block run?
-* Explain Generics in Java?
-* Difference between `StringBuffer` and `StringBuilder`?
-* How is a `StringBuilder` implemented to avoid the immutable string allocation problem?
-* What is Autoboxing and Unboxing?
-* What’s the difference between an Enumeration and an Iterator?
-* What is the difference between fail-fast and fail safe in Java?
-* What is Java priority queue?
-
-### Core Android
-
-* Explain activity lifecycle.
-* Tell all the Android application components.
-* Service vs IntentService. [Link](https://stackoverflow.com/a/15772151/5153275)
-* What is the structure of an Android Application?
-* How to persist data in an Android app?
-* How would you perform a long-running operation in an application?
-* How would you communicate between two Fragments?
-* Explain Android notification system?
-* How can two distinct Android apps interact?
-* What is Fragment?
-* Why is it recommended to use only the default constructor to create a fragment? [Link](https://stackoverflow.com/a/16042750/2809326)
-* Why Bundle class is used for data passing and why cannot we use simple Map data structure
-* Explain the lifecycle of a Fragment. [Link](https://www.techsfo.com/blog/wp-content/uploads/2014/08/complete_android_fragment_lifecycle.png)
-* What is Dialog in Android?
-* What is View in Android?
-* Can you create custom views? How?
-* What is the difference between a fragment and an activity? Explain the relationship between the two.
-* What is the difference between Serializable and Parcelable? Which is the best approach in Android?
-* What are "launch modes"? [Link](https://blog.mindorks.com/android-activity-launchmode-explained-cbc6cf996802)
-* What are Intents? [Link](https://stackoverflow.com/questions/6578051/what-is-an-intent-in-android)
-* What is an Implicit Intent?
-* What is an Explicit Intent?
-* What is an AsyncTask?
-* What is a BroadcastReceiver? [Link](https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it)
-* What is a LocalBroadcastManager? [Link](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
-* What is a JobScheduler? [Link](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html)
-* What is DDMS and what can you do with it?
-* What is the support library? Why was it introduced?[Link](http://martiancraft.com/blog/2015/06/android-support-library/)
-* What is a ContentProvider and what is it typically used for?
-* What is Android Data Binding? [Link](https://developer.android.com/topic/libraries/data-binding/index.html)
-* What are Android Architecture Components? [Link](https://developer.android.com/topic/libraries/architecture/index.html)
-* What is ADB?
-* What is ANR? How can the ANR be prevented?
-* What is `AndroidManifest.xml`?
-* Describe how broadcasts and intents work to be able to pass messages around your app?
-* How do you handle `Bitmaps` in Android as it takes too much memory?
-* What are different ways to store data in your Android app?
-* What is the Dalvik Virtual Machine?
-* What is the relationship between the life cycle of an AsyncTask and an Activity? What problems can this result in? How can these problems be avoided?
-* What is the function of an intent filter?
-* What is a Sticky Intent? [Link](http://www.androidinterview.com/what-is-a-sticky-intent/)
-* What is AIDL? Enumerate the steps in creating a bounded service through AIDL.
-* What are the different protection levels in permission?
-* How would you preserve Activity state during a screen rotation? [Link](https://stackoverflow.com/questions/3915952/how-to-save-state-during-orientation-change-in-android-if-the-state-is-made-of-m)
-* Relative Layout vs Linear Layout.
-* How to implement XML namespaces?
-* Difference between `View.GONE` and `View.INVISIBLE`?
-* What is the difference between a regular bitmap and a nine-patch image?
-* Tell about the bitmap pool. [Link](https://blog.mindorks.com/how-to-use-bitmap-pool-in-android-56c71a55533c)
-* How to avoid memory leaks in Android?
-* What are widgets on Home-Screen in Android?
-* What is AAPT?
-* How do you find memory leaks in Android applications?
-* How do you troubleshoot a crashing application?
-* Why should you avoid to run non-ui code on the main thread?
-* How did you support different types of resolutions?
-* What is Doze? What about App Standby?
-* What can you use for background processing in Android?
-* What is ORM? How does it work?
-* What is a Loader?
-* What is the NDK and why is it useful?
-* What is the StrictMode? [Link](https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997)
-* What is Lint? What is it used for?
-* What is a `SurfaceView`?
-* What is the difference between `ListView` and `RecyclerView`?
-* What is the ViewHolder pattern? Why should we use it?
-* What is a PendingIntent?
-* Can you manually call the Garbage collector?
-* What is the best way to update the screen periodically?
-* What are the different types of Broadcasts?
-* Have you developed widgets? Describe. [Link](https://blog.mindorks.com/android-widgets-ad3d166458d3)
-* What is Context? How is it used? [Link](https://medium.com/p/understanding-context-in-android-application-330913e32514)
-* Do you know what is the view tree? How can you optimize its depth?
-* What is the `onTrimMemory` method?
-* Is it possible to run an Android app in multiple processes? How?
-* How does the OutOfMemory happens?
-* What is a `spannable`?
-* What is renderscript? [Link](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
-* What are the differences between Dalvik and ART?
-* FlatBuffers vs JSON. [Link](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
-* What are Annotations? [Link](https://blog.mindorks.com/creating-custom-annotations-in-android-a855c5b43ed9), [Link](https://blog.mindorks.com/improve-your-android-coding-through-annotations-26b3273c137a)
-* Tell about Constraint Layout [Link](https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd)
-* `HashMap`, `ArrayMap` and `SparseArray` [Link](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
-* Explain Looper, Handler and HandlerThread. [Link](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
-* How to reduce battery usage in an android application? [Link](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)
-* What is `SnapHelper`? [Link](https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8)
-* How to handle multi-touch in android [link](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
-
-
-### Architecture
-
-* Describe the architecture of your last app.
-* Describe MVP. [Link](https://blog.mindorks.com/essential-guide-for-designing-your-android-app-architecture-mvp-part-1-74efaf1cda40)
-* What is presenter?
-* What is model?
-* Describe MVC.
-* What is controller?
-* Describe MVVM. [Link](https://github.com/MindorksOpenSource/android-mvvm-architecture)
-* Tell something about clean code [Link](https://blog.mindorks.com/every-programmer-should-read-this-book-6755dedec78d)
-
-
-### Design Problem
-
-* Design Uber App.
-* Design Facebook App.
-* Design Facebook Near-By Friends App.
-* Design WhatsApp.
-* Design SnapChat.
-* Design problems based on location based app.
-
-
-### Tools And Technologies
-
-* Git. [Link](https://github.com/git-tips/tips)
-* RxJava. [Link](https://blog.mindorks.com/a-complete-guide-to-learn-rxjava-b55c0cea3631)
-* Dagger 2. [Link](https://medium.com/p/a-complete-guide-to-learn-dagger-2-b4c7a570d99c)
-* Android Development Useful Tools. [Link](https://blog.mindorks.com/android-development-useful-tools-fd73283e82e3)
-* Firebase. [Link](https://firebase.google.com/)
-
-
-### Android Test Driven Development
-
-* What is Espresso? [Link](https://developer.android.com/training/testing/ui-testing/espresso-testing.html)
-* What is Robolectric? [Link](http://robolectric.org/)
-* What is UI-Automator? [Link](https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html)
-* Explain unit test.
-* Explain instrumented test.
-* Have you done unit testing or automatic testing?
-* Why Mockito is used? [Link](http://site.mockito.org/)
-* Describe JUnit test.
-
-
-### Others
-
-* Describe how REST APIs work.
-* Describe SQLite.
-* Describe database.
-* Project Management tool - trello, basecamp, kanban, jira, asana.
-* About build System - gradle, ant, buck. 
-* Reverse Engineering an APK.
-* What is proguard used for?
-* What is obfuscation? What is it used for? What about minification?
-* How do you build your apps for release?
-* How do you control the application version update to specific number of users?
-* Can we identify users who have uninstalled our application?
-* APK Size Reduction. [Link](https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662)
-* Android Development Best Practices. [Link](https://blog.mindorks.com/android-development-best-practices-83c94b027fd3)
-* Android Code Style And Guidelines. [Link](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
-* Have you tried Kotlin? [Link](https://medium.com/p/why-you-must-try-kotlin-for-android-development-e14d00c8084b)
-* What are the metrics that you should measure continuously while android application development? [Link](https://blog.mindorks.com/android-app-performance-metrics-a1176334186e)
-
 ### 2. JAVA
 
-- **How to prevent a class to be extended?**
+* <b>Why is Java said to be platform independent?</b></br>
+   * The execution of the code does not depend upon the OS</br>
+   
+   
+* <b>Difference between ‘throw’ and ‘throws’ in Java Exception Handling?</b></br>
+   * ```throw``` keyword is used to throw Exception from any method or static block whereas ```throws``` is used to indicate that which Exception can possibly be thrown by this method.</br>
+   
+   
+* <b>Is there ever a scenario where we can skip the finally block in a try catch?</b></br>
+   * By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
+   
+   
+* <b>What are anonymous classes?</b></br>
+   * An anonymous class is just what its name implies -- it has no name. It combines the class declaration and the creation of an instance of the class in one step. Since anonymous classes have no name, objects can not be instantiated from outside the class in which the anonymous class is defined. In fact, an anonymous object can only be instantiated from within the same scope in which it is defined.
+   * Rules:
+      * An anonymous class must always extend a super class or implement an interface but it cannot have an explicit extends or implements clause.
+      * An anonymous class must implement all the abstract methods in the super class or the interface.
+      * An anonymous class always uses the default constructor from the super class to create an instance.
+      * Example: 
+      ``` 
+      MyButton.setOnClickListener(new Button.OnClickListener {
+             @override
+                public void onClick(View view){
+                    //some code
+                }
+         });
+ </br>
+      
+      
+* <b>Why is the main method static in java?</b></br>
+   * The method is static because otherwise there would be ambiguity on which method to be called. If static is removed from the main method, Program compiles successfully . But at runtime throws an error “NoSuchMethodError”.
+   * We can overload the main method in Java. But the program doesn’t execute the overloaded main method when we run your program, we need to call the overloaded main method from the actual main method only. To run a method without calling this main method, we would need to execute a static block.
+   * In order to avoid NoSuchMethodError, we can call System.exit(0) after the static method.
+   * Note: Any method declared static will be executed even before the main class is executed.
+   * Example:
+   ```
+   public class Hello { 
+       static { 
+        System.out.println("Hello, World!"); 
+       } 
+     }
+     ```
+   </br>
+   
+      
+* <b>What is garbage collector? How does it work?</b></br>
+   * All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
+   
+   
+* <b>Difference between stack memory & heap memory?</b></br>
+   * Stack is used for static memory allocation and Heap for dynamic memory allocation, both stored in the computer's RAM .
+   * Variables allocated on the stack are stored directly to the memory and access to this memory is very fast, and it's allocation is dealt with when the program is compiled. When a function or a method calls another function which in turns calls another function etc., the execution of all those functions remains suspended until the very last function returns its value. The stack is always reserved in a LIFO order, the most recently reserved block is always the next block to be freed. This makes it really simple to keep track of the stack, freeing a block from the stack is nothing more than adjusting one pointer.
+   * Variables allocated on the heap have their memory allocated at run time and accessing this memory is a bit slower, but the heap size is only limited by the size of virtual memory . Element of the heap have no dependencies with each other and can always be accessed randomly at any time. You can allocate a block at any time and free it at any time. This makes it much more complex to keep track of which parts of the heap are allocated or free at any given time.
+   * You can use the stack if you know exactly how much data you need to allocate before compile time and it is not too big. You can use heap if you don't know exactly how much data you will need at runtime or if you need to allocate a lot of data.
+   * In a multi-threaded situation each thread will have its own completely independent stack but they will share the heap. Stack is thread specific and Heap is application specific. The stack is important to consider in exception handling and thread executions.
+       * Heap memory is used by all the parts of the application whereas stack memory is used only by one thread of execution.
+       * Whenever an object is created, it’s always stored in the Heap space and stack memory contains the reference to it. Stack memory only contains local primitive variables and reference variables to objects in heap space.
+       * Objects stored in the heap are globally accessible whereas stack memory can’t be accessed by other threads.
+       * Memory management in stack is done in LIFO manner whereas it’s more complex in Heap memory because it’s used globally. Heap memory is divided into Young-Generation, Old-Generation etc, more details at Java Garbage Collection.
+       * Stack memory is short-lived whereas heap memory lives from the start till the end of application execution.
+       * When stack memory is full, Java runtime throws java.lang.StackOverFlowError whereas if heap memory is full, it throws java.lang.OutOfMemoryError: Java Heap Space error.
+       * Stack memory size is very less when compared to Heap memory. Because of simplicity in memory allocation (LIFO), stack memory is very fast when compared to heap memory.</br>   
+   
+* <b>Constructors vs Methods?</b></br>
+   * <b>Constructors</b> must have the name as the class name and does not have a return type. It can be used to instantiate any objects in the class whereas methods have no such rule and is another member of the class. Constructors cannot be inherited but a derived class can call the super constructor of parent class.
+   * ```this()```: Constructors use this to refer to another constructor in the same class with a different parameter list.
+   * ```super()```: Constructors use super to invoke the superclass's constructor.
+   * <b>Methods</b>: Instance methods on the other hand require an instance of the class to exist before they can be called, so an instance of a class needs to be created by using the new keyword. Class methods are methods which are declared as static. The method can be called without creating an instance of the class</br>
+   
+   
+   
+* <b>What is the difference between instantiation and initialization of an object?</b></br>
+   * <b>Initialization</b> is the process of the memory allocation, when a new variable is created. Variables should be explicitly given a value, otherwise they may contain a random value that remained from the previous variable that was using the same memory space. To avoid this problem, Java language assigns default values to data types.
+   * <b>Instantiation</b> is the process of explicitly assigning definitive value to a declared variable.</br>
+   
+   
+* <b>Do objects get passed by reference or value in Java? Elaborate on that.</b></br>
+   * Java is always pass-by-value. When we pass the value of an object, we are passing the reference to it. 
+   * Java creates a copy of the variable being passed in the method and then does the manipulations. Hence the change is not reflected in the main method.
+   * But when you pass an object reference into a method, a copy of this reference is made, so it still points to the same object. This means, that any changes that you make to the insides of this object are retained, when the method exits.
+   * Java copies and passes the reference by value, not the object. Thus, method manipulation will alter the objects, since the references point to the original objects. But since the references are copies, swaps will fail.</br>
+   
+   
+* <b>Primitives in Java?</b></br>
+  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
+  
+  
+* <b>Difference between == and .equals() method in Java?</b></br>
+   * We can use == operators for reference comparison (address comparison) and ```.equals()``` method for content comparison.    * In simple words, == checks if both objects point to the same memory location whereas .equals() evaluates to the comparison of values in the objects.</br>
+   
+   
+* <b>Why strings are Immutable?</b></br>
+   * Once a value is assigned to a string it cannot be changed. And if changed, it creates a new object of the String. This is not the case with StringBuffer.</br>
+   
+   
+* <b>What is String.intern()? When and why should it be used?</b></br>
+   * String.intern() method can be used to to deal with String duplication problem in Java. By carefully using the intern() method you can save a lot of memories consumed by duplicate String instances. A string is duplicate if it contains the same content as another string but occupied different memory location.
+   * By calling  the intern() method on a string object, for instance “abc”, you can instruct JVM to put this String in the pool and whenever someone else creates "abc", this object will be returned instead of creating a new object. This way, you can save a lot of memory in Java, depending upon how many Strings are duplicated in your program.
+   * When the intern method is invoked, if the String pool already contains that String object such that equals() return true, it will return the String object from the pool, otherwise it will add that object to the pool of unique String.</br>
+   
+   
+   
+* <b>String pool in Java:</b></br>
+   * String Pool in java is a pool of Strings stored in Java Heap Memory. 
+   * When we use double quotes to create a String, it first looks for String with same value in the String pool, if found it just returns the reference else it creates a new String in the pool and then returns the reference.
+   * However using new operator, we force String class to create a new String object in heap space. We can use intern() method to put it into the pool or refer to other String object from string pool having same value.
+   * For example, how many strings are getting created in below statement;
+  ``` String str = new String("Cat");```
+   * In above statement, either 1 or 2 string will be created. If there is already a string literal “Cat” in the pool, then only one string “str” will be created in the pool. If there is no string literal “Cat” in the pool, then it will be first created in the pool and then in the heap space, so total 2 string objects will be created.</br>
+   
 
+* <b><i>Final</i> modifier?</b></br>
+   * Final modifiers - once declared cannot be modified. A blank final variable in Java is a final variable that is not initialized during declaration. 
+      * final Classes- A final class cannot have subclasses.
+      * final Variables- A final variable cannot be changed once it is initialized.
+      * final Methods- A final method cannot be overridden by subclasses.</br>
+      
+      
+* <b><i>Finalize</i> keyword?</b></br>
+   * Finalize is a method used to perform clean up processing just before object is garbage collected.</br>
+   
+   
+* <b><i>Finally</i> keyword?</b></br>
+   * finally is a code block and is used to place important code, it will be executed whether exception is handled or not.</br>
+   
+   
+* <b><i>Static</i> variables?</b></br>
+   * Variables that have only one copy per class are known as static variables. They are not attached to a particular instance of a class but rather belong to a class as a whole.
+   * A static variable is associated with the class as a whole rather than with specific instances of a class. Non-static variables take on unique values with each object instance.</br> 
+   
+   
+* <b>What is reflection?</b></br>
+   * Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</br> 
+   
+   
+* <b>Multi threading?</b></br>
+   * Multiple tasks are running concurrently in a program.</br>
+   
+   
+* <b>Fail-fast & Fail-Safe?</b></br>
+   * Fail-fast Iterators throws ConcurrentModificationException when one Thread is iterating over collection object and other thread structurally modify Collection either by adding, removing or modifying objects on underlying collection. They are called fail-fast because they try to immediately throw Exception when they encounter failure. 
+   * On the other hand [fail-safe](http://javarevisited.blogspot.com/2011/10/java-iterator-tutorial-example-list.html) Iterators works on copy of collection instead of original collection.</br>
+   
+   
+* <b>What does the keyword synchronized mean?</b></br>
+   * When you have two threads that are reading and writing to the same 'resource', say a variable named 'test', you need to ensure that these threads access the variable in an atomic way. Without the synchronized keyword, your thread 1 may not see the change thread 2 made to test.
+   * <b>synchronized</b> blocks the next thread's call to method as long as the previous thread's execution is not finished. Threads can access this method one at a time.</br>
+   
+   
+* <b>What does the keyword volatile mean?</b></br>
+   * Suppose two threads are working on a method. If two threads run on different processors each thread may have its own local copy of variable. If one thread modifies its value the change might not reflect in the original one in the main memory instantly. 
+   * Now the other thread is not aware of the modified value which leads to data inconsistency.Essentially, volatile is used to indicate that a variable's value will be modified by different threads. “volatile” tells the compiler that the value of a variable must never be cached as its value may change outside of the scope of the program itself.
+   * The value of this variable will never be cached thread-locally: all reads and writes will go straight to "main memory"
+   * An access to a volatile variable never has the potential to block: we're only ever doing a simple read or write, so unlike a synchronized block we will never hold on to any lock.</br>
+   
+   
+* <b>What is Autoboxing and Unboxing?</b></br>
+   * Autoboxing is the automatic conversion that the Java compiler makes between the primitive types and their corresponding object wrapper classes. For example, converting an int to an Integer, a double to a Double, and so on. If the conversion goes the other way, this is called unboxing.</br>
+   
+   
+* <b>Optionals in Java?</b></br>
+   * Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
+   
+   
+* <b>What is externalization?</b></br>
+   * In serialization, the JVM is responsible for the process of writing and reading objects. This is useful in most cases, as the programmers do not have to care about the underlying details of the serialization process.
+   * However, the default serialization does not protect sensitive information such as passwords and credentials.
+   * Thus externalization comes to give the programmers full control in reading and writing objects during serialization.
+   * Implement the java.io.Externalizable interface - then you implement your own code to write object’s states in the ```writeExternal()``` method and read object’s states in the ```readExternal()``` method.</br>
+
+- **How to prevent a class to be extended?**
   simply use keyword `final` in definition of class or methods. for example:
   ```java
   final public class CantOverrideClass {
@@ -987,7 +996,51 @@ Argument list should be different while doing method overloading. Argument list 
 
   Keyword `throw` is used to explicitly throw as an exception in the body of function, while `throws` is utilized to handle checked exceptions for re-intimating the compiler that exceptions are being handled. The throws need to be used in the function’s signature and also while invoking the method that raises checked exceptions.
 
-<br>
+* <b>What is a deadlock in Java</b> </br>
+   * A deadlock occurs when a thread enters a waiting state because a requested system resource is held by another waiting process, which in turn is waiting for another resource held by another waiting process.
+   * [Example on how deadlock occurs](/src/deadlock/ThreadLockDemo.java)
+   * [Example on how to prevent deadlock](/src/deadlock/ThreadLockFixedDemo.java)</br>
+   
+* <b>What is the List interface & Set interface?</b></br>
+   * List interface supports for ordered collection of objects and it may contain duplicates. The Set interface provides methods for accessing the elements of a finite mathematical set. Sets do not allow duplicate elements</br>
+
+* <b>Difference between ArrayList & Vectors?</b></br>
+   * Vectors are thread safe (synchronized) whereas arraylists are not. So performance of arraylists are better than vectors.    * In ArrayList, you have to start searching for a particular element from the beginning of an Arraylist. But in the Vector, you can start searching for a particular element from a particular position in a vector. This makes the search operation in Vector faster than in ArrayList. Vectors have a default size of 10 whereas arraylists size can be dynamic. 
+   * <b>Insertion and deletion in ArrayList is slow compared to LinkedList?</b>
+       * ArrayList internally uses an array to store the elements, when that array gets filled by inserting elements a new array of roughly 1.5 times the size of the original array is created and all the data of old array is copied to new array.
+       * During deletion, all elements present in the array after the deleted elements have to be moved one step back to fill the space created by deletion. In linked list data is stored in nodes that have reference to the previous node and the next node so adding element is simple as creating the node and updating the next pointer on the last node and the previous pointer on the new node. Deletion in linked list is fast because it involves only updating the next pointer in the node before the deleted node and updating the previous pointer in the node after the deleted node.</br>      
+      
+* <b>Implementations of Map?</b></br>
+   * <b>TreeMap</b>: sorted based on ascending order of keys. For inserting, deleting, and locating elements in a Map, the HashMap offers the best alternative. If, however, you need to traverse the keys in a sorted order, then TreeMap is your better alternative.
+   *	<b>HashTable</b>: Does not allow null values. It is not fail-safe and it is synchronized whereas 
+   * <b>HashMap</b> allows null values and it is fail-safe and it is not synchronized. 
+   * <b>LinkedHashMap</b>: This is a subclass of Hashmap. The order of insertion is preserved since it has a linkedList.</br>
+   
+* <b>Difference between Enumeration and Iterators?</b></br>
+   * <b>Enumeration</b> does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
+   * <b>ListIterator</b>: is just like an iterator except it allows access to the collection in either the forward or backward direction</br>
+   
+* <b>How Hashmap works in Java?</b></br>
+   * HashMap in Java works on hashing principle. It is a data structure which allows us to store object and retrieve it in constant time O(1) provided we know the key. When we call put method, ```hashcode()``` method of the key object is called so that hash function of the map can find a bucket location to store Entry object.
+   * If two different objects have the same hashcode: in this case, a linked list is formed at that bucket location and a new entry is stored as next node. After finding bucket location, we will call ```keys.equals()``` method to identify a correct node in LinkedList and return associated value object for that key in Java HashMap</br>
+   
+* <b>Generics in Java</b></br>
+   * Before generics, we can store any type of objects in collection i.e. non-generic. Now generics, forces the java programmer to store specific type of objects.
+   * Type-safety : We can hold only a single type of objects in generics. It doesn’t allow to store other objects.
+   * Type casting is not required: There is no need to typecast the object.
+   * Compile-Time Checking: It is checked at compile time so problem will not occur at runtime. The good programming strategy says it is far better to handle the problem at compile time than runtime.
+   * Before Generics, we need to type cast.
+   ```
+   List list = new ArrayList();  
+   list.add("hello");  
+   String s = (String) list.get(0); //typecasting  
+   ```
+    * After Generics, we don't need to typecast the object.
+    ```
+    List<String> list = new ArrayList<String>();  
+    list.add("hello");  
+    String s = list.get(0);  
+    ```
 
 ### 3. Kotlin
 
@@ -1025,38 +1078,60 @@ Argument list should be different while doing method overloading. Argument list 
 
 ### 4. Android
 
+- **What is `Application` class?** <br/>
+  The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
+
+- **What is onSavedInstanceState() and onRestoreInstanceState() in activity?** <br/>
+    - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
+    - **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
+
+- **When should you use a Fragment rather than an Activity?**
+    - When there are ui components that are going to be used across multiple activities.
+    - When there are multiple views that can be displayed side by side (viewPager tabs)
+    - When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
+
+- **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
+    - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
+    - **FragmentStatePagerAdapter:** the fragment instance is destroyed when it is not visible to the User, except the saved state of the fragment. This results in using only a small amount of Memory and can be useful for handling larger data sets. Should be used when we have to use dynamic fragments, like fragments with widgets, as their data could be stored in the savedInstanceState.Also it won't affect the performance even if there are large number of fragments.</br>  
+
+- **What is the difference between adding/replacing fragment in backstack?** </br>
+    ![image](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
+    ![image](https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png)
+    ![image](https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png)
+    <br>
+    <p align="center">
+        <img src="https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png" width="400">
+        <img src="https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png" width="400">
+    </p>
+    <br>
+
+- **View & ViewGroup**
+   - <b>View</b>: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
+   - <b>ViewGroup</b>: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br> 
+
 - **Difference between `Activity` and `Service`?**
-
   - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
-
   - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
 
-- **Why do android apps need to ask permission like `INTERNET` or `LOCATION`?**
-
+- **Why do android apps need to ask permission like `INTERNET` or `LOCATION`?** </br>
   The Android platform takes advantage of the Linux user-based protection to identify and isolate app resources called sandbox. This isolates apps from each other and protects apps and the system from malicious apps. If an app needs to use some system resources (like internet, or location sensor,..) or needs to connect other apps (like IAB library), it should request this access. Then android OS give this request and get permission to access the resource. If you want to use system resources, request the permission under the `<uses-permission>` tag in the `android-manifest.xml` file.
 
-- **Differences between `serializable` and `Parcelable`?**
-
+- **Differences between `serializable` and `Parcelable`?** </br>
   Serializable is a standard java interface but not a part of the Android SDK. Just by implementating this interface your POJO will be ready to jump from one activity to another. So what's the problem with Serializable? Serializable use reflection during the process and lots of additional temp objects created along the way and it may cause garbage collection to occue more often. That is why the serializable is more than 10x slower than Parcelable.
 
-- **Why `serializable` body is empty? How is it doing?**
-
+- **Why `serializable` body is empty? How is it doing?** </br>
   Yes, It's empty because the Java reflection API is performed for marshaling operations (by JVM). This helps identify the Java object's member and behavior but also ends up creating a lot of garbage objects.
 
-- **Which method in `fragment` runs only once?**
-
+- **Which method in `fragment` runs only once?** </br>
   According to the [documentation](https://developer.android.com/guide/components/fragments#Creating), the `onCreate()` method is called once a fragment is created. Within your implementation, you should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
 
-- **How does the activity respond when orientation is changed?**
-
+- **How does the activity respond when orientation is changed?**  </br>
   According to the [documentation](https://developer.android.com/guide/topics/resources/runtime-changes), Some device configurations can change during runtime (such as screen orientation, keyboard availability, and when the user enables multi-window mode). When such a change occurs, Android restarts the running `Activity` ( `onDestroy()` is called, followed by `onCreate()`). The restart behavior is designed to help your application adapt to new configurations by automatically reloading your application with alternative resources that match the new device configuration.
 
-- **How to know `configChange` happens in `onDestroy()` function?**
-
+- **How to know `configChange` happens in `onDestroy()` function?**  </br>
   Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
 
-- **How to prevent the data from reloading when orientation is changed?**
-
+- **How to prevent the data from reloading when orientation is changed?**  </br>
   The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`. A `ViewModel` is LifeCycle-Aware. In other words,
   a `ViewModel` will not be destroyed if its owner is destroyed for a
   configuration change (e.g. rotation). The new instance of the owner will
@@ -1066,8 +1141,7 @@ Argument list should be different while doing method overloading. Argument list 
   `ViewModel` class (since it persists data during configuration changes) and
   use `OnSaveInstanceState()` to store small amounts of UI data.
 
-- **How to handle multiple screen sizes?**
-
+- **How to handle multiple screen sizes?**  </br>
   It's a long debate but in a very nutshell, you can do it in these ways:
     - Use flexible layout like `ConstraintLayout` unless create alternative layout in different layout folders. (e.g. layout-sw480, layout-sw600, layout-sw720 ...)    
     - Provide different bitmap drawables for different screen densities or use vector assets.
@@ -1077,14 +1151,11 @@ Argument list should be different while doing method overloading. Argument list 
  for complete reading, see the [official documentation](https://developer.android.com/training/multiscreen/screensizes).
 
 - **What is the difference between margin and padding?**
-
-   - **Padding** will be space added inside the container, for instance,
+  - **Padding** will be space added inside the container, for instance,
     if it is a button, padding will be added inside the button.       
-
   - **Margin** will be space added outside the container.
 
-- **What is `sw` keyword in `layout-sw600` folder meaning?**
-
+- **What is `sw` keyword in `layout-sw600` folder meaning?** </br>
   The `sw` keywrod which stands on "smallest width" is an screen size qualifier that allow you to provide alternative layouts for screens that have a minimum width measured in dp.
   The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation, so it's a simple way to specify the overall screen size available for your layout. Here is some useful values:
 
@@ -1855,8 +1926,6 @@ _NOTICE: For D.S. questions, the responses will not be added_ \^\_\^
     2. By changing Frequency of fetching location -> we can use setInterval() to specify the time interval
     3. By increasing latency -> After our call, we can wait for longer time - we can use setMaxWaitTime() to set large timeout.
    
-
-
 ### Dagger 2 Related Questions:
 
 -   **What is Dependency Injection Pattern?**<br/>
@@ -2001,14 +2070,10 @@ More additional info to get started with RxJava is available at:
    * [Given coin denominations and the total amount, find out the number​ of ways to make the change](/src/dynamicprogramming/CoinChangingProblem.java)   
    </br>
    
-   
-   
 * <b>Queues</b></br>
    * [Find the Maximum in a Sliding Window](/src/queue/Dequeue.java)
    * [Implement a queue using stack](/src/queue/QueuesUsingStack.java)
    </br>
-
-
    
 * <b>LinkedList</b></br>
    * [Reverse a Linked List](/src/linkedlist/ReverseLinkedList.java)
@@ -2029,8 +2094,6 @@ More additional info to get started with RxJava is available at:
    * [Add the head pointers of two linked lists](/src/linkedlist/AddTwoIntegers.java)   
    </br>   
    
-   
-   
 * <b>Stacks</b></br>
    * [Evaluate an expression](/src/stacks/EvaluationExpression.java)
    * [Implement a stack using queues](/src/stacks/StacksUsingQueues.java)
@@ -2048,13 +2111,11 @@ More additional info to get started with RxJava is available at:
    * [find all the subsets of the given array that sum up to the number K](/src/backtracks/KSumSubsets.java)
    </br>
    
-   
 * <b>Graphs</b></br>
    * [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
    * [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java)
    * [Form circular chain by given list of words](/src/graphs/WordChaining.java)   
    </br> 
-   
    
 * <b>Trees</b></br>
    * [Implements an InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java)
@@ -2073,7 +2134,6 @@ More additional info to get started with RxJava is available at:
    * [Serialize binary tree to a file and then deserialize back to tree](/src/trees/SerializeBinaryTree.java)   
    </br>
 
-
 * <b>Strings</b></br>
    * [Reverse String](/src/strings/ReverseString.java)
    * [Palindrone String](/src/strings/PalindroneStrings.java)
@@ -2085,7 +2145,6 @@ More additional info to get started with RxJava is available at:
    * [Find next highest permutation of a given string](/src/strings/NextHighestPermutation.java)
    * [Check if two strings are anagrams](/src/strings/CheckIfAnagram.java)   
    </br>
-   
    
 * <b>Integers</b></br>
    * [Reverse Integer](/src/math/ReverseInteger.java)
@@ -2117,7 +2176,6 @@ More additional info to get started with RxJava is available at:
    * [Given a two dimensional array, if any element in it is zero make its whole row and column zero](/src/misc/SumOfThreeValues.java)
    </br>   
   
-  
 ### Data Structure Coding Programs
 * <b>Sorting</b></br>
    * [BubbleSort](/src/sort/BubbleSort.java)
@@ -2131,7 +2189,6 @@ More additional info to get started with RxJava is available at:
          * There is a difference in linked lists due to memory allocation. In linked lists we can insert items in the middle in O(n) space and time. There is no extra memory allocation required.     
    </br>
    
-   
 * <b>Searching</b></br>
    * [Binary Search](/src/search/BinarySearch.java)
    * [Rotated Binary Search](/src/search/RotatedBinarySearch.java)
@@ -2140,15 +2197,8 @@ More additional info to get started with RxJava is available at:
          * When dividing an array by k ( 2(binary) or 3(ternary)), it reduces the array size to 1/k. But it increases the no of comparisons by k.
    </br>
    
-   
 * <b>Runtime Complexity Table:</b></br>
    <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png"></a></br>
-   
-   
-   
-### Android Interview Questions 
-* <b>What is Application?</b></br>
-  * The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.</br>
 
 * <b>What is Context?</b></br>
   * A Context is a handle to the system; it provides services like resolving resources, obtaining access to databases and preferences, and so on. An Android app has activities. Context is like a handle to the environment your application is currently running in.</br>
@@ -2634,327 +2684,181 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   
   </br></br>
   
-  
-  
-### Java Interview Questions  
-* <b>Why is Java said to be platform independent?</b></br>
-   * The execution of the code does not depend upon the OS</br>
-   
-   
-* <b>Difference between ‘throw’ and ‘throws’ in Java Exception Handling?</b></br>
-   * ```throw``` keyword is used to throw Exception from any method or static block whereas ```throws``` is used to indicate that which Exception can possibly be thrown by this method.</br>
-   
-   
-* <b>Is there ever a scenario where we can skip the finally block in a try catch?</b></br>
-   * By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
-   
-   
-* <b>What are anonymous classes?</b></br>
-   * An anonymous class is just what its name implies -- it has no name. It combines the class declaration and the creation of an instance of the class in one step. Since anonymous classes have no name, objects can not be instantiated from outside the class in which the anonymous class is defined. In fact, an anonymous object can only be instantiated from within the same scope in which it is defined.
-   * Rules:
-      * An anonymous class must always extend a super class or implement an interface but it cannot have an explicit extends or implements clause.
-      * An anonymous class must implement all the abstract methods in the super class or the interface.
-      * An anonymous class always uses the default constructor from the super class to create an instance.
-      * Example: 
-      ``` 
-      MyButton.setOnClickListener(new Button.OnClickListener {
-             @override
-                public void onClick(View view){
-                    //some code
-                }
-         });
- </br>
-      
-      
-* <b>Why is the main method static in java?</b></br>
-   * The method is static because otherwise there would be ambiguity on which method to be called. If static is removed from the main method, Program compiles successfully . But at runtime throws an error “NoSuchMethodError”.
-   * We can overload the main method in Java. But the program doesn’t execute the overloaded main method when we run your program, we need to call the overloaded main method from the actual main method only. To run a method without calling this main method, we would need to execute a static block.
-   * In order to avoid NoSuchMethodError, we can call System.exit(0) after the static method.
-   * Note: Any method declared static will be executed even before the main class is executed.
-   * Example:
-   ```
-   public class Hello { 
-       static { 
-        System.out.println("Hello, World!"); 
-       } 
-     }
-     ```
-   </br>
-   
-      
-* <b>What is garbage collector? How does it work?</b></br>
-   * All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
-   
-   
-* <b>Difference between stack memory & heap memory?</b></br>
-   * Stack is used for static memory allocation and Heap for dynamic memory allocation, both stored in the computer's RAM .
-   * Variables allocated on the stack are stored directly to the memory and access to this memory is very fast, and it's allocation is dealt with when the program is compiled. When a function or a method calls another function which in turns calls another function etc., the execution of all those functions remains suspended until the very last function returns its value. The stack is always reserved in a LIFO order, the most recently reserved block is always the next block to be freed. This makes it really simple to keep track of the stack, freeing a block from the stack is nothing more than adjusting one pointer.
-   * Variables allocated on the heap have their memory allocated at run time and accessing this memory is a bit slower, but the heap size is only limited by the size of virtual memory . Element of the heap have no dependencies with each other and can always be accessed randomly at any time. You can allocate a block at any time and free it at any time. This makes it much more complex to keep track of which parts of the heap are allocated or free at any given time.
-   * You can use the stack if you know exactly how much data you need to allocate before compile time and it is not too big. You can use heap if you don't know exactly how much data you will need at runtime or if you need to allocate a lot of data.
-   * In a multi-threaded situation each thread will have its own completely independent stack but they will share the heap. Stack is thread specific and Heap is application specific. The stack is important to consider in exception handling and thread executions.
-       * Heap memory is used by all the parts of the application whereas stack memory is used only by one thread of execution.
-       * Whenever an object is created, it’s always stored in the Heap space and stack memory contains the reference to it. Stack memory only contains local primitive variables and reference variables to objects in heap space.
-       * Objects stored in the heap are globally accessible whereas stack memory can’t be accessed by other threads.
-       * Memory management in stack is done in LIFO manner whereas it’s more complex in Heap memory because it’s used globally. Heap memory is divided into Young-Generation, Old-Generation etc, more details at Java Garbage Collection.
-       * Stack memory is short-lived whereas heap memory lives from the start till the end of application execution.
-       * When stack memory is full, Java runtime throws java.lang.StackOverFlowError whereas if heap memory is full, it throws java.lang.OutOfMemoryError: Java Heap Space error.
-       * Stack memory size is very less when compared to Heap memory. Because of simplicity in memory allocation (LIFO), stack memory is very fast when compared to heap memory.</br>   
-   
-* <b>Constructors vs Methods?</b></br>
-   * <b>Constructors</b> must have the name as the class name and does not have a return type. It can be used to instantiate any objects in the class whereas methods have no such rule and is another member of the class. Constructors cannot be inherited but a derived class can call the super constructor of parent class.
-   * ```this()```: Constructors use this to refer to another constructor in the same class with a different parameter list.
-   * ```super()```: Constructors use super to invoke the superclass's constructor.
-   * <b>Methods</b>: Instance methods on the other hand require an instance of the class to exist before they can be called, so an instance of a class needs to be created by using the new keyword. Class methods are methods which are declared as static. The method can be called without creating an instance of the class</br>
-   
-   
-   
-* <b>What is the difference between instantiation and initialization of an object?</b></br>
-   * <b>Initialization</b> is the process of the memory allocation, when a new variable is created. Variables should be explicitly given a value, otherwise they may contain a random value that remained from the previous variable that was using the same memory space. To avoid this problem, Java language assigns default values to data types.
-   * <b>Instantiation</b> is the process of explicitly assigning definitive value to a declared variable.</br>
-   
-   
-* <b>Do objects get passed by reference or value in Java? Elaborate on that.</b></br>
-   * Java is always pass-by-value. When we pass the value of an object, we are passing the reference to it. 
-   * Java creates a copy of the variable being passed in the method and then does the manipulations. Hence the change is not reflected in the main method.
-   * But when you pass an object reference into a method, a copy of this reference is made, so it still points to the same object. This means, that any changes that you make to the insides of this object are retained, when the method exits.
-   * Java copies and passes the reference by value, not the object. Thus, method manipulation will alter the objects, since the references point to the original objects. But since the references are copies, swaps will fail.</br>
-   
-   
-* <b>Primitives in Java?</b></br>
-  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
-  
-  
-* <b>Difference between == and .equals() method in Java?</b></br>
-   * We can use == operators for reference comparison (address comparison) and ```.equals()``` method for content comparison.    * In simple words, == checks if both objects point to the same memory location whereas .equals() evaluates to the comparison of values in the objects.</br>
-   
-   
-* <b>Why strings are Immutable?</b></br>
-   * Once a value is assigned to a string it cannot be changed. And if changed, it creates a new object of the String. This is not the case with StringBuffer.</br>
-   
-   
-* <b>What is String.intern()? When and why should it be used?</b></br>
-   * String.intern() method can be used to to deal with String duplication problem in Java. By carefully using the intern() method you can save a lot of memories consumed by duplicate String instances. A string is duplicate if it contains the same content as another string but occupied different memory location.
-   * By calling  the intern() method on a string object, for instance “abc”, you can instruct JVM to put this String in the pool and whenever someone else creates "abc", this object will be returned instead of creating a new object. This way, you can save a lot of memory in Java, depending upon how many Strings are duplicated in your program.
-   * When the intern method is invoked, if the String pool already contains that String object such that equals() return true, it will return the String object from the pool, otherwise it will add that object to the pool of unique String.</br>
-   
-   
-   
-* <b>String pool in Java:</b></br>
-   * String Pool in java is a pool of Strings stored in Java Heap Memory. 
-   * When we use double quotes to create a String, it first looks for String with same value in the String pool, if found it just returns the reference else it creates a new String in the pool and then returns the reference.
-   * However using new operator, we force String class to create a new String object in heap space. We can use intern() method to put it into the pool or refer to other String object from string pool having same value.
-   * For example, how many strings are getting created in below statement;
-  ``` String str = new String("Cat");```
-   * In above statement, either 1 or 2 string will be created. If there is already a string literal “Cat” in the pool, then only one string “str” will be created in the pool. If there is no string literal “Cat” in the pool, then it will be first created in the pool and then in the heap space, so total 2 string objects will be created.</br>
-   
 
-* <b><i>Final</i> modifier?</b></br>
-   * Final modifiers - once declared cannot be modified. A blank final variable in Java is a final variable that is not initialized during declaration. 
-      * final Classes- A final class cannot have subclasses.
-      * final Variables- A final variable cannot be changed once it is initialized.
-      * final Methods- A final method cannot be overridden by subclasses.</br>
-      
-      
-* <b><i>Finalize</i> keyword?</b></br>
-   * Finalize is a method used to perform clean up processing just before object is garbage collected.</br>
-   
-   
-* <b><i>Finally</i> keyword?</b></br>
-   * finally is a code block and is used to place important code, it will be executed whether exception is handled or not.</br>
-   
-   
-* <b><i>Static</i> variables?</b></br>
-   * Variables that have only one copy per class are known as static variables. They are not attached to a particular instance of a class but rather belong to a class as a whole.
-   * A static variable is associated with the class as a whole rather than with specific instances of a class. Non-static variables take on unique values with each object instance.</br> 
-   
-   
-* <b>What is reflection?</b></br>
-   * Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</br> 
-   
-   
-* <b>Multi threading?</b></br>
-   * Multiple tasks are running concurrently in a program.</br>
-   
-   
-* <b>Fail-fast & Fail-Safe?</b></br>
-   * Fail-fast Iterators throws ConcurrentModificationException when one Thread is iterating over collection object and other thread structurally modify Collection either by adding, removing or modifying objects on underlying collection. They are called fail-fast because they try to immediately throw Exception when they encounter failure. 
-   * On the other hand [fail-safe](http://javarevisited.blogspot.com/2011/10/java-iterator-tutorial-example-list.html) Iterators works on copy of collection instead of original collection.</br>
-   
-   
-* <b>What does the keyword synchronized mean?</b></br>
-   * When you have two threads that are reading and writing to the same 'resource', say a variable named 'test', you need to ensure that these threads access the variable in an atomic way. Without the synchronized keyword, your thread 1 may not see the change thread 2 made to test.
-   * <b>synchronized</b> blocks the next thread's call to method as long as the previous thread's execution is not finished. Threads can access this method one at a time.</br>
-   
-   
-* <b>What does the keyword volatile mean?</b></br>
-   * Suppose two threads are working on a method. If two threads run on different processors each thread may have its own local copy of variable. If one thread modifies its value the change might not reflect in the original one in the main memory instantly. 
-   * Now the other thread is not aware of the modified value which leads to data inconsistency.Essentially, volatile is used to indicate that a variable's value will be modified by different threads. “volatile” tells the compiler that the value of a variable must never be cached as its value may change outside of the scope of the program itself.
-   * The value of this variable will never be cached thread-locally: all reads and writes will go straight to "main memory"
-   * An access to a volatile variable never has the potential to block: we're only ever doing a simple read or write, so unlike a synchronized block we will never hold on to any lock.</br>
-   
-   
-* <b>What is Autoboxing and Unboxing?</b></br>
-   * Autoboxing is the automatic conversion that the Java compiler makes between the primitive types and their corresponding object wrapper classes. For example, converting an int to an Integer, a double to a Double, and so on. If the conversion goes the other way, this is called unboxing.</br>
-   
-   
-* <b>Optionals in Java?</b></br>
-   * Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
-   
-   
-* <b>What is externalization?</b></br>
-   * In serialization, the JVM is responsible for the process of writing and reading objects. This is useful in most cases, as the programmers do not have to care about the underlying details of the serialization process.
-   * However, the default serialization does not protect sensitive information such as passwords and credentials.
-   * Thus externalization comes to give the programmers full control in reading and writing objects during serialization.
-   * Implement the java.io.Externalizable interface - then you implement your own code to write object’s states in the ```writeExternal()``` method and read object’s states in the ```readExternal()``` method.</br>
-   
-* <b>Explain Big O Notation?</b></br>
-   * The notation Ο(n) is the formal way to express the upper bound of an algorithm's running time. It measures the worst case time complexity or the longest amount of time an algorithm can possibly take to complete. 
-   * Note: <b>O(1)</b> means that it takes a constant time, like three minutes no matter the amount of data in the set.
-<b>O(n)</b> means it takes an amount of time linear with the size of the set.</br>
+### Java
+
+* What are the access modifiers you know? What does each one do?
+* What is the difference between an Integer and int?
+* Do objects get passed by reference or value in Java? Elaborate on that.
+* What is a ThreadPoolExecutor? [Link](https://blog.mindorks.com/threadpoolexecutor-in-android-8e9d22330ee3)
+* What the difference between local, instance and class variables?
+* What is reflection? [Link](http://tutorials.jenkov.com/java-reflection/index.html)
+* What are strong, soft and weak references in Java?
+* What is dependency injection? Can you name few libraries? Have you used any?
+* What does it means to say that a `String` is immutable?
+* What are `transient` and `volatile` modifiers?
+* What is the `finalize()` method?
+* How does the `try{}finally{}` works?
+* What is the difference between instantiation and initialization of an object?
+* When is a `static` block run?
+* Explain Generics in Java?
+* Difference between `StringBuffer` and `StringBuilder`?
+* How is a `StringBuilder` implemented to avoid the immutable string allocation problem?
+* What is Autoboxing and Unboxing?
+* What’s the difference between an Enumeration and an Iterator?
+* What is the difference between fail-fast and fail safe in Java?
+* What is Java priority queue?
+
+### Core Android
+
+* Explain activity lifecycle.
+* Tell all the Android application components.
+* Service vs IntentService. [Link](https://stackoverflow.com/a/15772151/5153275)
+* What is the structure of an Android Application?
+* How to persist data in an Android app?
+* How would you perform a long-running operation in an application?
+* How would you communicate between two Fragments?
+* Explain Android notification system?
+* How can two distinct Android apps interact?
+* What is Fragment?
+* Why is it recommended to use only the default constructor to create a fragment? [Link](https://stackoverflow.com/a/16042750/2809326)
+* Why Bundle class is used for data passing and why cannot we use simple Map data structure
+* Explain the lifecycle of a Fragment. [Link](https://www.techsfo.com/blog/wp-content/uploads/2014/08/complete_android_fragment_lifecycle.png)
+* What is Dialog in Android?
+* What is View in Android?
+* Can you create custom views? How?
+* What is the difference between a fragment and an activity? Explain the relationship between the two.
+* What is the difference between Serializable and Parcelable? Which is the best approach in Android?
+* What are "launch modes"? [Link](https://blog.mindorks.com/android-activity-launchmode-explained-cbc6cf996802)
+* What are Intents? [Link](https://stackoverflow.com/questions/6578051/what-is-an-intent-in-android)
+* What is an Implicit Intent?
+* What is an Explicit Intent?
+* What is an AsyncTask?
+* What is a BroadcastReceiver? [Link](https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it)
+* What is a LocalBroadcastManager? [Link](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
+* What is a JobScheduler? [Link](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html)
+* What is DDMS and what can you do with it?
+* What is the support library? Why was it introduced?[Link](http://martiancraft.com/blog/2015/06/android-support-library/)
+* What is a ContentProvider and what is it typically used for?
+* What is Android Data Binding? [Link](https://developer.android.com/topic/libraries/data-binding/index.html)
+* What are Android Architecture Components? [Link](https://developer.android.com/topic/libraries/architecture/index.html)
+* What is ADB?
+* What is ANR? How can the ANR be prevented?
+* What is `AndroidManifest.xml`?
+* Describe how broadcasts and intents work to be able to pass messages around your app?
+* How do you handle `Bitmaps` in Android as it takes too much memory?
+* What are different ways to store data in your Android app?
+* What is the Dalvik Virtual Machine?
+* What is the relationship between the life cycle of an AsyncTask and an Activity? What problems can this result in? How can these problems be avoided?
+* What is the function of an intent filter?
+* What is a Sticky Intent? [Link](http://www.androidinterview.com/what-is-a-sticky-intent/)
+* What is AIDL? Enumerate the steps in creating a bounded service through AIDL.
+* What are the different protection levels in permission?
+* How would you preserve Activity state during a screen rotation? [Link](https://stackoverflow.com/questions/3915952/how-to-save-state-during-orientation-change-in-android-if-the-state-is-made-of-m)
+* Relative Layout vs Linear Layout.
+* How to implement XML namespaces?
+* Difference between `View.GONE` and `View.INVISIBLE`?
+* What is the difference between a regular bitmap and a nine-patch image?
+* Tell about the bitmap pool. [Link](https://blog.mindorks.com/how-to-use-bitmap-pool-in-android-56c71a55533c)
+* How to avoid memory leaks in Android?
+* What are widgets on Home-Screen in Android?
+* What is AAPT?
+* How do you find memory leaks in Android applications?
+* How do you troubleshoot a crashing application?
+* Why should you avoid to run non-ui code on the main thread?
+* How did you support different types of resolutions?
+* What is Doze? What about App Standby?
+* What can you use for background processing in Android?
+* What is ORM? How does it work?
+* What is a Loader?
+* What is the NDK and why is it useful?
+* What is the StrictMode? [Link](https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997)
+* What is Lint? What is it used for?
+* What is a `SurfaceView`?
+* What is the difference between `ListView` and `RecyclerView`?
+* What is the ViewHolder pattern? Why should we use it?
+* What is a PendingIntent?
+* Can you manually call the Garbage collector?
+* What is the best way to update the screen periodically?
+* What are the different types of Broadcasts?
+* Have you developed widgets? Describe. [Link](https://blog.mindorks.com/android-widgets-ad3d166458d3)
+* Do you know what is the view tree? How can you optimize its depth?
+* What is the `onTrimMemory` method?
+* Is it possible to run an Android app in multiple processes? How?
+* How does the OutOfMemory happens?
+* What is a `spannable`?
+* What is renderscript? [Link](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
+* What are the differences between Dalvik and ART?
+* FlatBuffers vs JSON. [Link](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
+* What are Annotations? [Link](https://blog.mindorks.com/creating-custom-annotations-in-android-a855c5b43ed9), [Link](https://blog.mindorks.com/improve-your-android-coding-through-annotations-26b3273c137a)
+* Tell about Constraint Layout [Link](https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd)
+* `HashMap`, `ArrayMap` and `SparseArray` [Link](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
+* Explain Looper, Handler and HandlerThread. [Link](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
+* How to reduce battery usage in an android application? [Link](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)
+* What is `SnapHelper`? [Link](https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8)
+* How to handle multi-touch in android [link](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
+
+### Architecture
+
+* Describe the architecture of your last app.
+* Describe MVP. [Link](https://blog.mindorks.com/essential-guide-for-designing-your-android-app-architecture-mvp-part-1-74efaf1cda40)
+* What is presenter?
+* What is model?
+* Describe MVC.
+* What is controller?
+* Describe MVVM. [Link](https://github.com/MindorksOpenSource/android-mvvm-architecture)
+* Tell something about clean code [Link](https://blog.mindorks.com/every-programmer-should-read-this-book-6755dedec78d)
 
 
-* <b>Explain Big Omega Notation</b></br>
-   * The Big Omega Notation is used to describe the best case running time for a given algorithm.</br>
+### Design Problem
+
+* Design Uber App.
+* Design Facebook App.
+* Design Facebook Near-By Friends App.
+* Design WhatsApp.
+* Design SnapChat.
+* Design problems based on location based app.
 
 
-* <b>Arrays in Java?</b></br>
-   * Arrays is an ordered collection. It will have a fixed length which needs to be defined at the initialization time whereas lists have a variable length. Arrays are easier to store elements of the same data type. Used internally in stack and queue.    It is a convenient way of representing a 2D array.
-   * Arrays cannot hold generic data types whereas lists can.
-   * Arrays can store all data types whereas lists cannot store primitive data types, only objects.
-   * Arrays: Complexity:
-   
-   	| Algorithm	|  Average	 | Worst Case  |
-    | ---------- |:--------:| -----------:| 
-    | Space	    |	  Θ(n)		  |  O(n)       |
-    | Search	   |   Θ(n)	   |  O(n)       |
-    | Insert	   |   Θ(n)	   |  O(n)       |
-    | Delete	   |   Θ(n)		  |  O(n)       |
-    
-    </br>
-    
-    
-* <b>Linked Lists in Java?</b></br>
-   * A LinkedList contains both a head and a tail. The "Head" is the first item in the LinkedList, while the "Tail" is the last item. It is not a circular data structure, therefore the tail does not have its' pointer pointing at the Head - the pointer is just null.
-   * No indices but each node has a pointer pointing to the next element.
-   * They are dynamic in nature which means they allocate memory only when needed.
-   * Insertion, deletion, updation easy
-   * A linked list is a group of nodes which represent a sequence. Each node consists of a data and a link or reference to the next node in the sequence.
-   * <b>Singly Linked List</b>: has a node and a pointer to the next node in the sequence. 
-   * <b>Doubly Linked List</b>: has a node and 2 pointers - one to the next node and one to the previous node in the sequence. This is very convenient if you need to be able to traverse stored elements in both directions.
-   * Linked List: Runtime Complexity:
-   
-   	| Algorithm	|  Average	 | Worst Case  |
-    | ---------- |:--------:| -----------:| 
-    | Space	    |	  Θ(n)		  |  O(n)       |
-    | Search	   |   Θ(n)	   |  O(n)       |
-    | Insert	   |   Θ(1)	   |  O(1)       |
-    | Delete	   |   Θ(1)		  |  O(1)       |
-    
-    </br>
+### Tools And Technologies
+
+* Git. [Link](https://github.com/git-tips/tips)
+* RxJava. [Link](https://blog.mindorks.com/a-complete-guide-to-learn-rxjava-b55c0cea3631)
+* Dagger 2. [Link](https://medium.com/p/a-complete-guide-to-learn-dagger-2-b4c7a570d99c)
+* Android Development Useful Tools. [Link](https://blog.mindorks.com/android-development-useful-tools-fd73283e82e3)
+* Firebase. [Link](https://firebase.google.com/)
 
 
-* <b>Binary Tree</b></br>
-   * A tree whose elements have at most 2 children is called a binary tree. Since each element in a binary tree can have only 2 children, we typically name them the left and right child. 
-   * The left subtree of a node contains only values less than the parent node's value. 
-   * The right subtree of a node contains only values greater than or equal to the node's value.
-   * Only if the above 2 criteria are matched, then the tree is said to be balanced.
-   * <b>Advantages of Binary tree over Linked List</b>: In a linked list, the items are linked together through a single next pointer. In a binary tree, as long as the tree is balanced, the searchpath to each item is a lot shorter than that in a linked list.
-   * Their disadvantage is that in the worst case they can degenerate into a linked list in terms of efficiency.</br>
+### Android Test Driven Development
+
+* What is Espresso? [Link](https://developer.android.com/training/testing/ui-testing/espresso-testing.html)
+* What is Robolectric? [Link](http://robolectric.org/)
+* What is UI-Automator? [Link](https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html)
+* Explain unit test.
+* Explain instrumented test.
+* Have you done unit testing or automatic testing?
+* Why Mockito is used? [Link](http://site.mockito.org/)
+* Describe JUnit test.
 
 
+### Others
 
-* <b>Stacks:</b></br>
-   * Stacks are an abstract collection that follow LIFO mechanism. 
-   * Main functionalities include 
-       * <b>Push</b>: a new entity added to the top of the stack. 
-       * <b>Pop</b>: an entity is removed from the top of the stack. 
-   * The process of accessing data stored in a serial access memory is similar to manipulating data on a stack.
-   * A stack may be defined to have a bounded capacity i.e. if the stack is full and a new entity cannot be added, then it is considered to be in an <b>overflow state</b>. 
-   * If the stack is empty and an entity cannot be popped, it is considered to be in an <b>underflow state</b>.
-   * <b>Efficiency of stacks</b>: The time is not dependent of the no of items in the stack so it is very efficient. ```O(1)```.</br>
-   
-   
-   
-* <b>Queues:</b></br>
-   * Queues are an abstract collection that follow FIFO mechanism. The entities in the queue are kept in an order. 
-   * Main functionalities include 
-       * <b>enqueue</b>: Add an item to the end of the queue. Dequeue: remove an item from the start of the queue. 
-       * <b>Front</b>: retrieves the first item from the queue. 
-   * A queue may be defined to have a bounded capacity i.e. if the queue is full and a new entity cannot be added, then it is considered to be in an <b>overflow state</b>. 
-   * If the queue is empty and an entity cannot be popped, it is considered to be in an <b>underflow state</b>.
-   * <b>Efficiency of queues</b>: The time is not dependent of the no of items in the queue so it is very efficient. O(1).
-   * <b>A double ended queue (deque)</b>: is an abstract collection which differs from queue in a way that an item can be added/removed from either side of the queue. 
-      * An <b>input-restricted deque</b>: is when deletion takes place at either end but insertion takes place at only one end. 
-      * An <b>output-restricted deque</b>: is when insertion takes place at either end but deletion takes place only at one end. A common occurrence of deque is doubly linked list.
-   * <b>Priority queue</b>: same as queue but has a priority associated with it. Items are retrieved based on their priority</br>
-   
-   
-* <b>Blocking Queues:</b></br>
-   * A blocking queue is a queue that blocks when you try to dequeue from it and the queue is empty, or if you try to enqueue items to it and the queue is already full. A thread trying to dequeue from an empty queue is blocked until some other thread inserts an item into the queue. A thread trying to enqueue an item in a full queue is blocked until some other thread makes space in the queue. 
-   * [Example on implementing a blocking queue](/src/queue/BlockingQueue.java)</br>
-   
-   
-* <b>Difference between stacks & queues?</b></br>
-   * <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>   
-   
-</br>
-
-   
-* <b>What is a deadlock in Java</b></br>
-   * A deadlock occurs when a thread enters a waiting state because a requested system resource is held by another waiting process, which in turn is waiting for another resource held by another waiting process.
-   * [Example on how deadlock occurs](/src/deadlock/ThreadLockDemo.java)
-   * [Example on how to prevent deadlock](/src/deadlock/ThreadLockFixedDemo.java)</br>
-   
-   
-   
-* <b>What is the List interface & Set interface?</b></br>
-   * List interface supports for ordered collection of objects and it may contain duplicates. The Set interface provides methods for accessing the elements of a finite mathematical set. Sets do not allow duplicate elements</br>
-      
-
-* <b>Difference between ArrayList & Vectors?</b></br>
-   * Vectors are thread safe (synchronized) whereas arraylists are not. So performance of arraylists are better than vectors.    * In ArrayList, you have to start searching for a particular element from the beginning of an Arraylist. But in the Vector, you can start searching for a particular element from a particular position in a vector. This makes the search operation in Vector faster than in ArrayList. Vectors have a default size of 10 whereas arraylists size can be dynamic. 
-   * <b>Insertion and deletion in ArrayList is slow compared to LinkedList?</b>
-       * ArrayList internally uses an array to store the elements, when that array gets filled by inserting elements a new array of roughly 1.5 times the size of the original array is created and all the data of old array is copied to new array.
-       * During deletion, all elements present in the array after the deleted elements have to be moved one step back to fill the space created by deletion. In linked list data is stored in nodes that have reference to the previous node and the next node so adding element is simple as creating the node and updating the next pointer on the last node and the previous pointer on the new node. Deletion in linked list is fast because it involves only updating the next pointer in the node before the deleted node and updating the previous pointer in the node after the deleted node.</br>      
-      
-   
-* <b>Implementations of Map?</b></br>
-   * <b>TreeMap</b>: sorted based on ascending order of keys. For inserting, deleting, and locating elements in a Map, the HashMap offers the best alternative. If, however, you need to traverse the keys in a sorted order, then TreeMap is your better alternative.
-   *	<b>HashTable</b>: Does not allow null values. It is not fail-safe and it is synchronized whereas 
-   * <b>HashMap</b> allows null values and it is fail-safe and it is not synchronized. 
-   * <b>LinkedHashMap</b>: This is a subclass of Hashmap. The order of insertion is preserved since it has a linkedList.</br>
-   
-   
-* <b>Difference between Enumeration and Iterators?</b></br>
-   * <b>Enumeration</b> does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
-   * <b>ListIterator</b>: is just like an iterator except it allows access to the collection in either the forward or backward direction</br>
-   
-   
-* <b>How Hashmap works in Java?</b></br>
-   * HashMap in Java works on hashing principle. It is a data structure which allows us to store object and retrieve it in constant time O(1) provided we know the key. When we call put method, ```hashcode()``` method of the key object is called so that hash function of the map can find a bucket location to store Entry object.
-   * If two different objects have the same hashcode: in this case, a linked list is formed at that bucket location and a new entry is stored as next node. After finding bucket location, we will call ```keys.equals()``` method to identify a correct node in LinkedList and return associated value object for that key in Java HashMap</br>
-   
-   
-   
-* <b>Generics in Java</b></br>
-   * Before generics, we can store any type of objects in collection i.e. non-generic. Now generics, forces the java programmer to store specific type of objects.
-   * Type-safety : We can hold only a single type of objects in generics. It doesn’t allow to store other objects.
-   * Type casting is not required: There is no need to typecast the object.
-   * Compile-Time Checking: It is checked at compile time so problem will not occur at runtime. The good programming strategy says it is far better to handle the problem at compile time than runtime.
-   * Before Generics, we need to type cast.
-   ```
-   List list = new ArrayList();  
-   list.add("hello");  
-   String s = (String) list.get(0); //typecasting  
-   ```
-    * After Generics, we don't need to typecast the object.
-    ```
-    List<String> list = new ArrayList<String>();  
-    list.add("hello");  
-    String s = list.get(0);  
-    ```
-  
--   **Explain about reactive programming?**<br/>
+* Describe how REST APIs work.
+* Describe SQLite.
+* Describe database.
+* Project Management tool - trello, basecamp, kanban, jira, asana.
+* About build System - gradle, ant, buck. 
+* Reverse Engineering an APK.
+* What is proguard used for?
+* What is obfuscation? What is it used for? What about minification?
+* How do you build your apps for release?
+* How do you control the application version update to specific number of users?
+* Can we identify users who have uninstalled our application?
+* APK Size Reduction. [Link](https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662)
+* Android Development Best Practices. [Link](https://blog.mindorks.com/android-development-best-practices-83c94b027fd3)
+* Android Code Style And Guidelines. [Link](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
+* Have you tried Kotlin? [Link](https://medium.com/p/why-you-must-try-kotlin-for-android-development-e14d00c8084b)
+* What are the metrics that you should measure continuously while android application development? [Link](https://blog.mindorks.com/android-app-performance-metrics-a1176334186e)
 
 ### Contributing to Android Interview Questions
 Just make pull request. You are in!
