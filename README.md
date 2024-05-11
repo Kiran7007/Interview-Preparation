@@ -23,15 +23,9 @@
     - When there are multiple views that can be displayed side by side (viewPager tabs)
     - When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
 
-
-* <b>When should you use a fragment rather than an activity?</b></br>
-  * When there are ui components that are going to be used across multiple activities. 
-  * When there are multiple views that can be displayed side by side (viewPager tabs)
-  * When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
-
 * **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
-    - FragmentPagerAdapter: Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be created not the instance of the fragment.
-    - FragmentStatePagerAdapter: Here, the fragment instance will be destroyed when it is not visible to the user, except the saved state of the fragment.
+    - FragmentPagerAdapter: Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
+    - FragmentStatePagerAdapter: the fragment instance is destroyed when it is not visible to the User, except the saved state of the fragment. This results in using only a small amount of Memory and can be useful for handling larger data sets. Should be used when we have to use dynamic fragments, like fragments with widgets, as their data could be stored in the savedInstanceState.Also it won't affect the performance even if there are large number of fragments.</br>  
 
 * **What is the difference between adding/replacing fragment in backstack?**
     ![image](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
@@ -45,11 +39,12 @@
     <br>
 
 * **View & ViewGroup**
-   - ConstraintLayout combines a simple, expressive and flexible layout system with the powerful features built into the Android Studio Designer tool.
-   - It makes it easier to create responsive user interface layouts that adapt automatically to different screen sizes and changing device orientations.
-   - This has the benefit of avoiding many problems inherent in nesting layouts. It allows designing so-called flat or shallow layout hierarchies. This leads to less complex layouts and improved user interface rendering performance at runtime.
+   - <b>View</b>: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
+   - <b>ViewGroup</b>: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br> 
 
 * **SSL Pinning**
+   - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
+   -
    - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
         - How will the key exchanged
         - How will be the data encrypted
@@ -66,6 +61,24 @@
             - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
             - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
         - SPKI pinning
+
+-   **How do you implement it in Android?**
+    
+    A) SSL Pinning can be done using OkHttpClient's Builder methods as follows:
+    ```Kotlin
+        val certificatePinner = CertificatePinner.Builder()
+        .add(
+            "www.coderefer.com",
+    "sha256/ZCOF65ADBWPDK8P2V7+mqodtvbsTRR/D74FCU+CEEA="
+        )
+        .build()
+    val okHttpClient = OkHttpClient.Builder()
+        .certificatePinner(certificatePinner)
+        .build()
+    ```
+
+    Then you supply this generated okHttpClient object to Retrofit.
+    For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
 
 * **Design Pattern**
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
@@ -344,7 +357,6 @@ Argument list should be different while doing method overloading. Argument list 
 * What is Dialog in Android?
 * What is View in Android?
 * Can you create custom views? How?
-* What are ViewGroups and how they are different from the views?
 * What is the difference between a fragment and an activity? Explain the relationship between the two.
 * What is the difference between Serializable and Parcelable? Which is the best approach in Android?
 * What are "launch modes"? [Link](https://blog.mindorks.com/android-activity-launchmode-explained-cbc6cf996802)
@@ -1760,29 +1772,6 @@ _NOTICE: For D.S. questions, the responses will not be added_ \^\_\^
 
     To see Cipher in action, see the following [code commit](https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26).
 
--   **What is SSL Pinning?**
-
-    A)Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
-
--   **How do you implement it in Android?**
-    
-    A) SSL Pinning can be done using OkHttpClient's Builder methods as follows:
-    ```Kotlin
-        val certificatePinner = CertificatePinner.Builder()
-        .add(
-            "www.coderefer.com",
-    "sha256/ZCOF65ADBWPDK8P2V7+mqodtvbsTRR/D74FCU+CEEA="
-        )
-        .build()
-    val okHttpClient = OkHttpClient.Builder()
-        .certificatePinner(certificatePinner)
-        .build()
-    ```
-
-    Then you supply this generated okHttpClient object to Retrofit.
-    
-    For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
-
 ### Android Memory Related
 
 -   **How do you create a Memory Leak in Android?**<br/>
@@ -2388,14 +2377,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 * <b>What are retained fragments</b></br>
   * By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs. Calling ```setRetainInstance(true)``` allows us to bypass this destroy-and-recreate cycle, signaling the system to retain the current instance of the fragment when the activity is recreated.</br>
   
-  
-* <b>Difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?</b></br>
-  * <b>FragmentPagerAdapter</b>: the fragment of each page the user visits will be stored in memory, although the view will be destroyed. So when the page is visible again, the view will be recreated but the fragment instance is not recreated. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
-  * <b>FragmentStatePagerAdapter</b>:  the fragment instance is destroyed when it is not visible to the User, except the saved state of the fragment. This results in using only a small amount of Memory and can be useful for handling larger data sets. Should be used when we have to use dynamic fragments, like fragments with widgets, as their data could be stored in the 
-savedInstanceState.Also it won't affect the performance even if there are large number of fragments.</br>  
-  
-  
-  
 * <b>What is Toast in Android?</b></br>
    * Android Toast can be used to display information for the short period of time. A toast contains message to be displayed quickly and disappears after sometime.</br>
   
@@ -2411,12 +2392,6 @@ savedInstanceState.Also it won't affect the performance even if there are large 
    
 * <b>Difference between margin & padding?</b></br>
    * Padding will be space added inside the container, for instance, if it is a button, padding will be added inside the button. Margin will be space added outside the container.</br>
-   
-   
-* <b>What is View Group? How are they different from Views?</b></br>
-   * <b>View</b>: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
-   * <b>ViewGroup</b>: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br>   
-  
   
 * <b>What is the difference between a regular .png and a nine-patch image?</b></br>
    * It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device. The NinePatch class allows drawing a bitmap in nine sections. The four corners are unscaled; the middle of the image is scaled in both axes, the four edges are scaled into one axis.</br>
