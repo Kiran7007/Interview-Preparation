@@ -10,13 +10,12 @@
  * [Android Test Driven Development](#android-test-driven-development)
  * [Others](#others)
     
-* **What is `Application` class?**
-    - The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
+* **What is `Application` class?**<br/>
+  The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
 
-#### Activity and Fragment
-* **What is onSavedInstanceState() and onRestoreInstanceState() in activity?**
-    - onSavedInstanceState() - This method is used to store data before pausing the activity.
-    - onRestoreInstanceState() - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
+* **What is onSavedInstanceState() and onRestoreInstanceState() in activity?**<br/>
+    - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
+    - **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
 
 * **When should you use a Fragment rather than an Activity?**
     - When there are ui components that are going to be used across multiple activities.
@@ -24,8 +23,8 @@
     - When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
 
 * **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
-    - FragmentPagerAdapter: Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
-    - FragmentStatePagerAdapter: the fragment instance is destroyed when it is not visible to the User, except the saved state of the fragment. This results in using only a small amount of Memory and can be useful for handling larger data sets. Should be used when we have to use dynamic fragments, like fragments with widgets, as their data could be stored in the savedInstanceState.Also it won't affect the performance even if there are large number of fragments.</br>  
+    - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
+    - **FragmentStatePagerAdapter:** the fragment instance is destroyed when it is not visible to the User, except the saved state of the fragment. This results in using only a small amount of Memory and can be useful for handling larger data sets. Should be used when we have to use dynamic fragments, like fragments with widgets, as their data could be stored in the savedInstanceState.Also it won't affect the performance even if there are large number of fragments.</br>  
 
 * **What is the difference between adding/replacing fragment in backstack?**
     ![image](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
@@ -44,7 +43,6 @@
 
 * **SSL Pinning**
    - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
-   -
    - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
         - How will the key exchanged
         - How will be the data encrypted
@@ -62,7 +60,7 @@
             - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
         - SPKI pinning
 
--   **How do you implement it in Android?**
+    **How do you implement it in Android?**
     
     A) SSL Pinning can be done using OkHttpClient's Builder methods as follows:
     ```Kotlin
@@ -83,6 +81,7 @@
 * **Design Pattern**
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
    - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
+   - https://github.com/iluwatar/java-design-patterns
 
 * **Java Try with Resources**
    - http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
@@ -163,13 +162,9 @@
 * **Understanding Open keyword in Kotlin**
    - https://blog.mindorks.com/understanding-open-keyword-in-kotlin
 
-<p align="center">
-<img alt="AndroidInterviewQuestions" src="https://raw.githubusercontent.com/MindorksOpenSource/android-interview-questions/master/assets/android_interview_questions.png">
-</p>
-
 ### Data Structures And Algorithms
 
-> The level of questions asked on Data Structures And Algorithms totally depends on the company for which you are applying.
+> Intentional arrangement of a collection of data. There are 5 fundamental behaviours of a data structure: access, insert, delete, find & sort.
 
 * Array
 * LinkedList
@@ -250,12 +245,223 @@
 
 ### Core Java
 
-* Explain OOP Concept.
+* **Explain OOP Concept.**
     - Object-Oriented Programming is a methodology to design a program using classes, objects, 
     [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)),
     [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)),
     [abstraction](https://en.wikipedia.org/wiki/Abstraction_(software_engineering)), and
     [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
+
+- **What is an Object?** <br/>
+  An object is an instance of a class that has states and behaviors. A Class
+  can be defined as a template that describes the behavior/state that the object
+  of its type support.=
+
+- **What is encapsulation?** <br/>
+  Encapsulation is one of the four fundamental OOP concepts. It is a mechanism of wrapping the data (variables) and code acting on the data (methods) together as a single unit. In encapsulation, the variables of a class will be hidden from other classes, and can be accessed only through the methods of their current class. Therefore, it is also known as *data hiding*. To achieve encapsulation in Java:
+    - Declare the variables of a class as private.
+    - Provide public setter and getter methods to modify and view the variables values.
+
+  Benefits of Encapsulation:
+    - The fields of a class can be made read-only or write-only.
+    - A class can have total control over what is stored in its fields.
+
+- **Difference between abstract and interface?**
+
+  | Interface     | Abstract class     |
+  | :------------- | :------------- |
+  | Support multiple inheritances | Does not support multiple inheritances |
+  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
+  | Does not contain data member | Contains data member |
+  | Does not contains constructors | contains constructors  |
+  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
+  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
+
+* <b>Does Java support multiple inheritance?</b></br>
+   - Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
+   
+* <b>What is Encapsulation?</b></br>
+   - Encapsulation involves binding code and data together as a single unit. 
+   - Encapsulation is a technique used for hiding the properties and behaviors of an object and allowing outside access only as appropriate. It prevents other objects from directly altering or accessing the properties or methods of the encapsulated object. 
+   - For instance, a class can be an encapsulated class if all the variables in it are defined as Private and by providing getter and setter methods.
+
+* <b>What is Abstract class?</b> </br>
+   * Abstract classes are classes that contain one or more abstract methods. An abstract method is a method that is declared, but contains no implementation. 
+   * If even a single method is abstract, the whole class must be declared abstract.
+   * Abstract classes may not be instantiated, and require subclasses to provide implementations for the abstract methods.
+   * You can’t mark a class as both abstract and final.
+   * Non-abstract methods can access a method that you declare as abstract.</br>
+   
+- **What is Polymorphism?** </br>
+  The word polymorphism means having many forms. In simple words, we can define polymorphism as the ability of a message to be displayed in more than one form. In Java polymorphism is mainly divided into two types: compile-time and runtime polymorphism.
+
+- **What is the difference between static and dynamic Polymorphism?** </br>
+  *method overloading* represents a *static* form of polymorphism. method overloading means using two or more functions with same name but with the different parameters. Static polymorphism is resolved on compile-time and that is why it's called static. An example of this would be as follow:
+
+  ```java
+    class StaticPolymorphismTest {
+
+      public int multiply(int a, int b) {
+        return a * b;
+      }
+
+      public double multiply(double a, double b) {
+        return a * b;
+      }
+
+    }
+  ```
+
+  *method overriding* represents a *dynamic* form of polymorphism. It is a process in which a function call to the overridden method is resolved at Runtime. It is also known as *Dynamic Method Dispatch*. dynamic polymorphism is resolved at runtime. An example of this would be as follow:
+
+  ```java
+  class Parent {
+
+    void Print()
+    {
+        System.out.println("parent class");
+    }
+  }
+
+  class subclass1 extends Parent {
+
+    void Print()
+    {
+        System.out.println("subclass1");
+    }
+  }
+
+  class subclass2 extends Parent {
+
+    void Print()
+    {
+        System.out.println("subclass2");
+    }
+  }
+
+  class TestPolymorphism3 {
+
+    public static void main(String[] args){
+
+        Parent a;
+
+        a = new subclass1();
+        a.Print();
+
+        a = new subclass2();
+        a.Print();
+    }
+  }
+  ```
+
+  Output:
+  ```
+  subclass1
+  subclass2
+  ```
+
+- **Can Interfaces to be extended?**
+
+  Yes, an interface can extend other interfaces. it supports multiple
+  inheritances, which means it can extend more than one interface. But every
+  class which wants to use an interface must add it by keyword `implements`
+  and using the keyword `extends` for interfaces in classes is illegal and
+  cause compile error.
+
+- **What is the difference between overriding and overloading?**
+
+  | Method Overloading      | Method Overriding     |
+  | :-------------   | :------------- |
+  | Method overloading is a compile time polymorphism.         | Method overriding is a run time polymorphism.       |
+  | It help to rise the readability of the program. | While it is used to grant the specific implementation of the method which is already provided by its parent class or super class. |
+  | It is occur within the class.	 | 	While it is performed in two classes with inheritance relationship. |
+  | Method overloading may or may not require inheritance. | While method overriding always needs inheritance. |
+  | In this, methods must have same name and different signature. | While in this, methods must have same name and same signature. |
+  | In method overloading, return type can or can not be be same, but we must have to change the parameter. | While in this, return type must be same or co-variant. |
+
+* <b>What is Inheritance?</b>
+   - Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
+* <b>What are Interfaces?</b></br>
+   * Interfaces are only declared methods that an implementing class would need. 
+   * Interfaces cannot be marked as final. Interface variables must be static or final. 
+   * Interfaces cannot be instantiated directly.
+   * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
+   
+   
+* <b>Difference between Abstract and Interfaces?</b></br>
+   * Abstract classes can have non abstract methods. It can have instance variables. We have provide default implementation to abstract class method. A class can extend only one abstract class.A class can implement multiple interfaces.</br>
+  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/1.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/1.png"></a>
+</br>   
+
+
+* <b>What is Polymorphism?</b></br>
+   * Polymorphism is when an object takes on multiple forms. For instance, String is a subclass of Object class. 
+   * Polymorphism manifests itself in Java in the form of multiple methods having the same name.
+   * In some cases, multiple methods have the same name, but different formal argument lists (overloaded methods).
+   * In other cases, multiple methods have the same name, same return type, and same formal argument list (overridden methods).
+   * Polymorphism is a characteristic of being able to assign a different meaning or usage to something in different contexts - specifically, to allow an entity such as a variable, a function, or an object to have more than one form.
+   * 2 forms of polymorphism:  
+       * Compile time polymorphism: The flow of control is decided during the compile time itself. By overloading.
+       * Run time polymorphism: is done using inheritance and interface. The flow of control is decided during the runtime. Overriding: Overriding will have the same method name with the same parameters. One will be the parent class method and the other will be the child class method. Overloading occurs when the same method name is declared but with different parameters.</br>
+       
+       
+* <b>What is Method overloading?</b></br>
+   * Method Overloading means to have two or more methods with same name in the same class with different arguments. 
+   * Note:
+     * Overloaded methods MUST change the argument list
+     * Overloaded methods CAN change the return type
+     * Overloaded methods CAN change the access modifier
+     * Overloaded methods CAN declare new or broader checked exceptions
+     * A method can be overloaded in the same class or in a subclass </br>
+     
+     
+* <b>What is Method overriding?</b></br>
+   * Method overriding occurs when sub class declares a method that has the same type arguments as a method declared by one of its superclass
+   * You can’t override a method marked public and make it protected
+   * You cannot override a method marked final
+   * You cannot override a method marked static
+   * Note: Static methods cannot be overridden. Overloaded methods can still be overridden. </br>
+   
+   
+* <b>Why would you not call abstract method in constructor?</b></br>
+   * The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
+   
+
+* <b>Composition over inheritance?</b></br>
+   * Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
+```
+class Person {
+   String Title;
+   String Name;
+   Int Age;
+
+   public Person(String title, String name, String age) {
+      this.Title = title;
+      this.Name = name;
+      this.Age = age;
+   }
+
+}
+
+class Employee {
+   Int Salary;
+   private Person person;
+
+   public Employee(Person p, Int salary) {
+       this.person = p;
+       this.Salary = salary;
+   }
+}
+```
+</br>
+      
+      
+* <b>Difference between Encapsulation & Abstraction?</b></br>
+   * <b>Abstraction</b> focuses on the outside view of an object (i.e. the interface) 
+   * <b>Encapsulation</b> (information hiding) prevents clients from seeing it’s inside view. 
+   * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
+   
+
 * Differences between abstract classes and interfaces? [link](https://arjun-sna.github.io/java/2017/02/02/abstractvsinterface/)
     - An abstract class, is a class that contains both concrete and abstract methods 
     (methods without implementations). An abstract method must be implemented by the abstract class
@@ -336,8 +542,6 @@ Argument list should be different while doing method overloading. Argument list 
 * What’s the difference between an Enumeration and an Iterator?
 * What is the difference between fail-fast and fail safe in Java?
 * What is Java priority queue?
-* What are the design patterns? [Link](https://github.com/iluwatar/java-design-patterns)
-
 
 ### Core Android
 
@@ -491,142 +695,6 @@ Argument list should be different while doing method overloading. Argument list 
 * Android Code Style And Guidelines. [Link](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
 * Have you tried Kotlin? [Link](https://medium.com/p/why-you-must-try-kotlin-for-android-development-e14d00c8084b)
 * What are the metrics that you should measure continuously while android application development? [Link](https://blog.mindorks.com/android-app-performance-metrics-a1176334186e)
-
-### 1. Object-Oriented
-
-- **What is an Object?**
-
-  An object is an instance of a class that has states and behaviors. A Class
-  can be defined as a template that describes the behavior/state that the object
-  of its type support.
-
-<br>
-
-- **What is the main feature of OOP ?**
-
-    `Encapsulation`, `Polymorphism`, `Inheritance`, `Abstraction`
-
-<br>
-
-- **What is encapsulation?**
-
-  Encapsulation is one of the four fundamental OOP concepts. It is a mechanism of wrapping the data (variables) and code acting on the data (methods) together as a single unit. In encapsulation, the variables of a class will be hidden from other classes, and can be accessed only through the methods of their current class. Therefore, it is also known as *data hiding*. To achieve encapsulation in Java:
-    - Declare the variables of a class as private.
-    - Provide public setter and getter methods to modify and view the variables values.
-
-  Benefits of Encapsulation:
-    - The fields of a class can be made read-only or write-only.
-    - A class can have total control over what is stored in its fields.
-
-<br>
-
-
-- **Difference between abstract and interface?**
-
-  | Interface     | Abstract class     |
-  | :------------- | :------------- |
-  | Support multiple inheritances | Does not support multiple inheritances |
-  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
-  | Does not contain data member | Contains data member |
-  | Does not contains constructors | contains constructors  |
-  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
-  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
-
-
-- **What is Polymorphism?**
-
-  The word polymorphism means having many forms. In simple words, we can define polymorphism as the ability of a message to be displayed in more than one form. In Java polymorphism is mainly divided into two types: compile-time and runtime polymorphism.
-
-- **What is the difference between static and dynamic Polymorphism?**
-
-  *method overloading* represents a *static* form of polymorphism. method overloading means using two or more functions with same name but with the different parameters. Static polymorphism is resolved on compile-time and that is why it's called static. An example of this would be as follow:
-
-  ```java
-    class StaticPolymorphismTest {
-
-      public int multiply(int a, int b) {
-        return a * b;
-      }
-
-      public double multiply(double a, double b) {
-        return a * b;
-      }
-
-    }
-  ```
-
-  *method overriding* represents a *dynamic* form of polymorphism. It is a process in which a function call to the overridden method is resolved at Runtime. It is also known as *Dynamic Method Dispatch*. dynamic polymorphism is resolved at runtime. An example of this would be as follow:
-
-  ```java
-  class Parent {
-
-    void Print()
-    {
-        System.out.println("parent class");
-    }
-  }
-
-  class subclass1 extends Parent {
-
-    void Print()
-    {
-        System.out.println("subclass1");
-    }
-  }
-
-  class subclass2 extends Parent {
-
-    void Print()
-    {
-        System.out.println("subclass2");
-    }
-  }
-
-  class TestPolymorphism3 {
-
-    public static void main(String[] args){
-
-        Parent a;
-
-        a = new subclass1();
-        a.Print();
-
-        a = new subclass2();
-        a.Print();
-    }
-  }
-  ```
-
-  Output:
-  ```
-  subclass1
-  subclass2
-  ```
-
-- **Can Interfaces to be extended?**
-
-  Yes, an interface can extend other interfaces. it supports multiple
-  inheritances, which means it can extend more than one interface. But every
-  class which wants to use an interface must add it by keyword `implements`
-  and using the keyword `extends` for interfaces in classes is illegal and
-  cause compile error.
-
-- **What is the difference between overriding and overloading?**
-
-  | Method Overloading      | Method Overriding     |
-  | :-------------   | :------------- |
-  | Method overloading is a compile time polymorphism.         | Method overriding is a run time polymorphism.       |
-  | It help to rise the readability of the program. | While it is used to grant the specific implementation of the method which is already provided by its parent class or super class. |
-  | It is occur within the class.	 | 	While it is performed in two classes with inheritance relationship. |
-  | Method overloading may or may not require inheritance. | While method overriding always needs inheritance. |
-  | In this, methods must have same name and different signature. | While in this, methods must have same name and same signature. |
-  | In method overloading, return type can or can not be be same, but we must have to change the parameter. | While in this, return type must be same or co-variant. |
-
-<br>
-
-
-
-<br>
 
 ### 2. JAVA
 
@@ -1238,14 +1306,7 @@ Argument list should be different while doing method overloading. Argument list 
 - **What do you mean by Gradle wrapper?**
 
   The Gradle wrapper is the most suitable way to initiate a Gradle build. A Gradle wrapper is a Window’s batch script which has a shell script for the OS (operating system). Once you start the Gradle build via the wrapper, you will see an auto download which runs the build.
-
-<br>
-
-### 8. Design patterns
-
-According to a report by [codespaghetti]("http://www.codespaghetti.com/java-design-pattern-interview-questions/"), The most design patterns that you must to know are **Singleton**, **Factory**, and **Builder**. I didn't bring the typical questions like what is a singleton, factory, and... . I imagine you fluent on these patterns and instead, I will focus on the other side of questions that may asked in the interview meeting.
-
-![Top 5 java design pattern interview questions](/assets/images/design-patterns-report.png)
+  
 
 - **When to use Adapter pattern? (Not for RecyclerView or ListView)**
 
@@ -1429,11 +1490,6 @@ jalapeno or three-time barbeque). Each topping has its price and by adding
 each one the total cost of the pizza will be increased. If you have to suggest
 only one design pattern to solve this problem, choose which one? why? and
 How you implement it?**
-
-- **If you couldn't find a solution to the previous question, don't worry and
-follow this one. It can help you to find out how to solve it. The question is,
-Which design pattern allows you to implement the inheritance approach at the
-runtime?**
 
 - **which pattern is used when we need to decouple an abstraction from its implementation?**
 
@@ -2644,115 +2700,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
        * When stack memory is full, Java runtime throws java.lang.StackOverFlowError whereas if heap memory is full, it throws java.lang.OutOfMemoryError: Java Heap Space error.
        * Stack memory size is very less when compared to Heap memory. Because of simplicity in memory allocation (LIFO), stack memory is very fast when compared to heap memory.</br>   
    
-   
-* <b>Explain OOPs concept</b></br>
-   * Object Oriented Programming is a programming style that involves concepts such as Classes, objects,<b>Abstraction</b>, <b>Encapsulation</b>, <b>Inheritance</b>, <b>Polymorphism</b>.</br>
-   
-   
-* <b>What is Inheritance?</b></br>
-   * Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
-   
-   
-* <b>Does Java support multiple inheritance?</b></br>
-   * Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
-   
-   
-* <b>What is Encapsulation?</b></br>
-   * Encapsulation involves binding code and data together as a single unit. 
-   * Encapsulation is a technique used for hiding the properties and behaviors of an object and allowing outside access only as appropriate. It prevents other objects from directly altering or accessing the properties or methods of the encapsulated object. 
-   * For instance, a class can be an encapsulated class if all the variables in it are defined as Private and by providing getter and setter methods.
-</br>
-
-
-* <b>What is Abstract class?</b></br>
-   * Abstract classes are classes that contain one or more abstract methods. An abstract method is a method that is declared, but contains no implementation. 
-   * If even a single method is abstract, the whole class must be declared abstract.
-   * Abstract classes may not be instantiated, and require subclasses to provide implementations for the abstract methods.
-   * You can’t mark a class as both abstract and final.
-   * Non-abstract methods can access a method that you declare as abstract.</br>
-   
-   
-* <b>What are Interfaces?</b></br>
-   * Interfaces are only declared methods that an implementing class would need. 
-   * Interfaces cannot be marked as final. Interface variables must be static or final. 
-   * Interfaces cannot be instantiated directly.
-   * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
-   
-   
-* <b>Difference between Abstract and Interfaces?</b></br>
-   * Abstract classes can have non abstract methods. It can have instance variables. We have provide default implementation to abstract class method. A class can extend only one abstract class.A class can implement multiple interfaces.</br>
-  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/1.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/1.png"></a>
-</br>   
-
-
-* <b>What is Polymorphism?</b></br>
-   * Polymorphism is when an object takes on multiple forms. For instance, String is a subclass of Object class. 
-   * Polymorphism manifests itself in Java in the form of multiple methods having the same name.
-   * In some cases, multiple methods have the same name, but different formal argument lists (overloaded methods).
-   * In other cases, multiple methods have the same name, same return type, and same formal argument list (overridden methods).
-   * Polymorphism is a characteristic of being able to assign a different meaning or usage to something in different contexts - specifically, to allow an entity such as a variable, a function, or an object to have more than one form.
-   * 2 forms of polymorphism:  
-       * Compile time polymorphism: The flow of control is decided during the compile time itself. By overloading.
-       * Run time polymorphism: is done using inheritance and interface. The flow of control is decided during the runtime. Overriding: Overriding will have the same method name with the same parameters. One will be the parent class method and the other will be the child class method. Overloading occurs when the same method name is declared but with different parameters.</br>
-       
-       
-* <b>What is Method overloading?</b></br>
-   * Method Overloading means to have two or more methods with same name in the same class with different arguments. 
-   * Note:
-     * Overloaded methods MUST change the argument list
-     * Overloaded methods CAN change the return type
-     * Overloaded methods CAN change the access modifier
-     * Overloaded methods CAN declare new or broader checked exceptions
-     * A method can be overloaded in the same class or in a subclass </br>
-     
-     
-* <b>What is Method overriding?</b></br>
-   * Method overriding occurs when sub class declares a method that has the same type arguments as a method declared by one of its superclass
-   * You can’t override a method marked public and make it protected
-   * You cannot override a method marked final
-   * You cannot override a method marked static
-   * Note: Static methods cannot be overridden. Overloaded methods can still be overridden. </br>
-   
-   
-* <b>Why would you not call abstract method in constructor?</b></br>
-   * The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
-   
-
-* <b>Composition over inheritance?</b></br>
-   * Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
-```
-class Person {
-   String Title;
-   String Name;
-   Int Age;
-
-   public Person(String title, String name, String age) {
-      this.Title = title;
-      this.Name = name;
-      this.Age = age;
-   }
-
-}
-
-class Employee {
-   Int Salary;
-   private Person person;
-
-   public Employee(Person p, Int salary) {
-       this.person = p;
-       this.Salary = salary;
-   }
-}
-```
-</br>
-      
-      
-* <b>Difference between Encapsulation & Abstraction?</b></br>
-   * <b>Abstraction</b> focuses on the outside view of an object (i.e. the interface) 
-   * <b>Encapsulation</b> (information hiding) prevents clients from seeing it’s inside view. 
-   * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
-   
-   
 * <b>Constructors vs Methods?</b></br>
    * <b>Constructors</b> must have the name as the class name and does not have a return type. It can be used to instantiate any objects in the class whereas methods have no such rule and is another member of the class. Constructors cannot be inherited but a derived class can call the super constructor of parent class.
    * ```this()```: Constructors use this to refer to another constructor in the same class with a different parameter list.
@@ -2859,12 +2806,6 @@ class Employee {
    * However, the default serialization does not protect sensitive information such as passwords and credentials.
    * Thus externalization comes to give the programmers full control in reading and writing objects during serialization.
    * Implement the java.io.Externalizable interface - then you implement your own code to write object’s states in the ```writeExternal()``` method and read object’s states in the ```readExternal()``` method.</br>
-   
-   
-
-* <b>What are Data Structures?</b></br>
-   * Intentional arrangement of a collection of data. There are 5 fundamental behaviours of a data structure: access, insert, delete, find & sort.</br>
-   
    
 * <b>Explain Big O Notation?</b></br>
    * The notation Ο(n) is the formal way to express the upper bound of an algorithm's running time. It measures the worst case time complexity or the longest amount of time an algorithm can possibly take to complete. 
