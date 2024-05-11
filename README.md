@@ -16,11 +16,18 @@
 #### Activity and Fragment
 * **What is onSavedInstanceState() and onRestoreInstanceState() in activity?**
     - onSavedInstanceState() - This method is used to store data before pausing the activity.
-    - onRestoreInstanceState() - This method is used to recover the saved state of an activity when the activity is recreated after destruction. So, the onRestoreInstanceState() receive the bundle that contains the instance state information.
+    - onRestoreInstanceState() - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
 
 * **When should you use a Fragment rather than an Activity?**
-    - When you have some UI components to be used across various activities
-    - When multiple view can be displayed side by side just like viewPager
+    - When there are ui components that are going to be used across multiple activities.
+    - When there are multiple views that can be displayed side by side (viewPager tabs)
+    - When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
+
+
+* <b>When should you use a fragment rather than an activity?</b></br>
+  * When there are ui components that are going to be used across multiple activities. 
+  * When there are multiple views that can be displayed side by side (viewPager tabs)
+  * When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
 
 * **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
     - FragmentPagerAdapter: Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be created not the instance of the fragment.
@@ -937,10 +944,6 @@ Argument list should be different while doing method overloading. Argument list 
 <br>
 
 ### 4. Android
-
-- **What is `Application` class?**
-
-  The `Application` class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
 
 - **Difference between `Activity` and `Service`?**
 
@@ -2172,15 +2175,7 @@ More additional info to get started with RxJava is available at:
 
 * <b>Why would you do the setContentView() in onCreate() of Activity class?</b></br>
   * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
-  
-  
-  
-* <b>onSavedInstanceState() and onRestoreInstanceState() in activity?</b></br>
-  * ```OnRestoreInstanceState()``` - When activity is recreated after it was previously destroyed, we can recover the saved state from the Bundle that the system passes to the activity. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
-  * ```onSaveInstanceState()``` -  is a method used to store data before pausing the activity.</br>
-  
-  
-  
+   
  * <b>Launch modes in Android?</b></br>
    * <b>Standard</b>: It creates a new instance of an activity in the task from which it was started. Multiple instances of the activity can be created and multiple instances can be added to the same or different tasks. 
      * Example: Suppose there is an activity stack of A -> B -> C. Now if we launch B again with the launch mode as “standard”, the new stack will be A -> B -> C -> B.
@@ -2369,14 +2364,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   
 * <b>What is the difference between fragments & activities. Explain the relationship between the two.</b></br>
   * An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).</br>
-  
-  
-* <b>When should you use a fragment rather than an activity?</b></br>
-  * When there are ui components that are going to be used across multiple activities. 
-  * When there are multiple views that can be displayed side by side (viewPager tabs)
-  * When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
-  
-  
+    
 * <b>Difference between adding/replacing fragment in backstack?</b></br>
   * <b>replace</b> removes the existing fragment and adds a new fragment. This means when you press back button the fragment that got replaced will be created with its onCreateView being invoked.
   * <b>add</b> retains the existing fragments and adds a new fragment that means existing fragment will be active and they wont be in ‘paused’ state hence when a back button is pressed onCreateView is not called for the existing fragment(the fragment which was there before new fragment was added).
