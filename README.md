@@ -3,6 +3,7 @@
 ## Contents
  * [Data Structures And Algorithms](#data-structures-and-algorithms)
  * [Core Java](#core-java)
+ * [Kotlin](#kotlin)
  * [Core Android](#core-android)
  * [Architecture](#architecture)
  * [Design Problem](#design-problem)
@@ -292,7 +293,7 @@
 * <b>Difference between stacks & queues?</b></br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>   
 
-### 2. Core JAVA
+### Core JAVA
 
 - **Explain OOP Concept.** <br/>
   Object-Oriented Programming is a methodology to design a program using classes, objects, [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)), [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)), [abstraction](https://en.wikipedia.org/wiki/Abstraction_(software_engineering)) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
@@ -1040,11 +1041,6 @@ Argument list should be different while doing method overloading. Argument list 
     String s = list.get(0);  
     ```
 
-    ### RxJava Related Questions:
-
-More additional info to get started with RxJava is available at:
-[Getting Started with RxJava2](https://www.coderefer.com/blog/rxandroid-tutorial-getting-started/)
-
 -   **What is an Observable in RXJava2?**<br/>
     A) An Observable  simply emits the data to those which subscribed to it. All the emission is done asynchronously to the subscribers. A simple Observable can be created as follows:
 
@@ -1112,44 +1108,15 @@ More additional info to get started with RxJava is available at:
 -   **What is a Hot Observable?**<br/>
     A) A Hot observable is an Observer that will emit items
 
-### 3. Kotlin
-
-- **What are the benefits of Kotlin?**
-
-- **What does "Null safety" meaning?**
-- **Why Kotlin does not support primitive type?**
-- **What is Lazy initialization?**
-- **What is the data class?**
-- **Is it possible to inherit a class/method/property by default?**
-- **Difference between apply, also?**
-- **What `==` exactly do in Kotlin in comparison to Java?**
-- **What is the difference between parameter and argument?**
-- **What is the difference between function and method?**
-- **What is the "receiver" in the extension function?**
-- **What is operator overloading?**
-- **Is it possible to write a static method as java as has?**
-- **What is a sealed class?**
-- **How does an extension function work?**
-- **What is `reified` keyword?**
-- **What is an inline function?**
-- **What are the cons of using an inline function?**
-- **What is the best practice of using an inline function?**
-- **How does the `companion object` block work?**
-- **Is it possible to create an extension function on the `companion object` of a class?**
-- **Extension function as a member, possible? What are the benefits of declaring an extension function as a member?**
-- **What is a spread operator? What is the recommended place to use it?**
-- **What is the producer’s function? how to demonstrate it in Kotlin?**
-- **What is the consumer’s function? how to demonstrate it in Kotlin?**
-- **What is the higher-order function?**
-- **How to compare two Strings in Kotlin?**
-- **What is the difference between `==` and `===` ?**
-
-<br>
-
-### 4. Android
+### Core Android
 
 - **What is `Application` class?** <br/>
   The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
+
+* <b>What is Context?</b></br>
+  A Context is a handle to the system; it provides services like resolving resources, obtaining access to databases and preferences, and so on. An Android app has activities. Context is like a handle to the environment your application is currently running in.</br>
+<b>Application Context:</b> This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
+<b>Activity Context:</b> This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
 
 - **What is onSavedInstanceState() and onRestoreInstanceState() in activity?** <br/>
     - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
@@ -1394,50 +1361,7 @@ More additional info to get started with RxJava is available at:
   3. The final step involves the android apkbuilder which takes all the input
     and builds the apk (android packaging key) file.
 
-- **Do you know any about how `Dalvik` is working?**
-- **What are the benefits of `ART` in comparison to `Dalvik`?**
-- **What is `AAPT` ?**
-- **What is Doze mode?**
-
 <br>
-
-### 5. Architecture And Coding
-
-- **What is MVVM stands for?**
-
-- **What are the differences between MVP and MVVM?**
-- **Explain SOLID programming principle?**
-- **What is Dependency Inversion?**
-- **What is Dependency Injection?**
-- **What is repository pattern?**
-- **What is android clean architecture?**
-
-
-<br>
-
-### 6. Tools and libraries
-
-- **What is android DataBinding?**
-
-- **Explain `scope` concept in dagger2**
-- **What is marble diagram?**
-- **Explain different types of Observables**
-- **How to implement instant search with RxJava?**
-
-
-<br>
-
-### 7. Gradle
-
-- **What is buildType?**
-
-- **What do you do if you want to publish different versions of an APK with the same codabase?**
-
-    *using product flavor.* [What is flavor?]("https://android.jlelse.eu/product-flavors-for-android-library-d3b2d240fca2")
-
-- **How to add a dependency only on a certain build of the app?**
-
-  Flavor dependency. What? don't worry, [read this link]("https://developer.android.com/studio/build/dependencies#dependency-configurations")
 
 - **What is the difference between `implementation` and `api`?**
 
@@ -1636,35 +1560,7 @@ How you implement it?**
 
   When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
 
-
-
 <br>
-
-### 9. Data structure and algoritms
-
-_NOTICE: For D.S. questions, the responses will not be added_ \^\_\^
-
-- **What are the differences between Array and linkedList?**
-- **What are the differences between Array and ArrayList?**
-
-- **Find duplicate an item in a non-sorted list?**
-- **How to implement a stack using queue?**
-
-- **How do you find the largest and smallest number in an unsorted integer array?**
-- **Given an array of size n with range of numbers from 1 to n+1. The array doesn’t contain any duplicate, one number is missing, find the missing number.**
-- **A sorted array is rotated at some unknown point, how to efficiently search an element in it.**
-- **How to find if two given rectangles overlap?**
-- **How to swap two integers without swapping the temporary variable in Java?**
-- **How do you check if a string contains only digits?**
-- **How to sort a list?**
-
-### Core Android
-
-* <b>What is Context?</b></br>
-  * A Context is a handle to the system; it provides services like resolving resources, obtaining access to databases and preferences, and so on. An Android app has activities. Context is like a handle to the environment your application is currently running in.</br>
-<b>Application Context:</b> This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
-<b>Activity Context:</b> This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
-
 
 * <b>What is ABI Management?</b></br>
   * Different Android handsets use different CPUs, which in turn support different instruction sets. Each combination of CPU and instruction sets has its own Application Binary Interface, or ABI. The ABI defines, with great precision, how an  application's machine code is supposed to interact with the system at runtime. You must specify an ABI for each CPU  architecture you want your app to work with. You can checkout the full specifcations [here](https://developer.android.com/ndk/guides/abis)</br>
