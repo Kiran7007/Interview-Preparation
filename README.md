@@ -10,66 +10,6 @@
  * [Android Test Driven Development](#android-test-driven-development)
  * [Others](#others)
 
-* **SSL Pinning**
-   - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
-   - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
-        - How will the key exchanged
-        - How will be the data encrypted
-        - How will messages marked as authentic
-
-    - The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
-
-    - Developer can compile the public key into the application code this is essecially pins the key into the appliction. when client receives the public key from the server, it compare this key with the pinned key in apllciation. the key should should match. if the key dont match. the client terminates the session.
-
-    - Types of SSL Pinning
-        - Public key pinning
-        - Certificate pinning
-            - https://dzone.com/articles/encryption-and-signing
-            - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
-            - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
-        - SPKI pinning
-
-    **How do you implement it in Android?**
-    
-    A) SSL Pinning can be done using OkHttpClient's Builder methods as follows:
-    ```Kotlin
-        val certificatePinner = CertificatePinner.Builder()
-        .add(
-            "www.coderefer.com",
-    "sha256/ZCOF65ADBWPDK8P2V7+mqodtvbsTRR/D74FCU+CEEA="
-        )
-        .build()
-    val okHttpClient = OkHttpClient.Builder()
-        .certificatePinner(certificatePinner)
-        .build()
-    ```
-
-    Then you supply this generated okHttpClient object to Retrofit.
-    For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
-
-* **Design Pattern**
-   - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
-   - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
-   - https://github.com/iluwatar/java-design-patterns
-
-* **Java Try with Resources**
-   - http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
-
-* **Java 8 Interface changes**
-   - https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
-
-* **Function Interface**
-   - https://www.geeksforgeeks.org/functional-interfaces-java/
-
-* **Types of Observable in Rx-Java**
-   - https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8
-
-* **Rx-Java Scheduler what, when, how?**
-   - https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add
-
-* **Executor Service**
-   - https://www.javatpoint.com/java-executorservice
-
 * **Kotlin interview Questions**
    - https://blog.mindorks.com/kotlin-android-interview-questions
    - https://www.ubuntupit.com/frequently-asked-kotlin-interview-questions-and-answers/
@@ -485,15 +425,16 @@ class Employee {
    * <b>Encapsulation</b> (information hiding) prevents clients from seeing it’s inside view. 
    * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
 
-* Differences between abstract classes and interfaces? [link](https://arjun-sna.github.io/java/2017/02/02/abstractvsinterface/)
+* **Differences between abstract classes and interfaces?** [link](https://arjun-sna.github.io/java/2017/02/02/abstractvsinterface/)
     - An abstract class, is a class that contains both concrete and abstract methods 
     (methods without implementations). An abstract method must be implemented by the abstract class
      sub-classes. Abstract classes are extended.
     - An interface is like a blueprint/contract of a class. It contains empty methods that 
     represent what all of its subclasses should have in common. The subclasses provide the 
     implementation for each of these methods. Interfaces are implemented.
-* What is serialization? How do you implement it?
-    - Serialization is the process of converting an object into a stream of bytes in order to store 
+
+* **What is serialization? How do you implement it?** </br>
+    Serialization is the process of converting an object into a stream of bytes in order to store 
     an object into memory so that it can be recreated at a later time while still keeping the 
     objects original state and data. In Java there are two methods of doing this, one is by 
     implementing Serializable or Parcelable. In Android, however, Serializable should never be used 
@@ -507,19 +448,6 @@ class Employee {
     to coordinate actions across the system. The concept is sometimes generalized to systems 
     that operate more efficiently when only one object exists, or that restrict the instantiation 
     to a certain number of objects.](https://en.wikipedia.org/wiki/Singleton_pattern)
-* What are anonymous classes?
-* What is the difference between using `==` and `.equals` on a string?
-* What is the `hashCode()` and `equals()` used for?
-* What are these `final`, `finally` and `finalize`?
-* What is memory leak and how does Java handle it?
-* What is garbage collector? How it works?
-  -All objects are allocated on the heap area managed by the JVM. 
-  As long as an object is being referenced, the JVM considers it  alive. 
-  Once an object is no longer referenced and therefore is not reachable by the application code,
-  the garbage collector removes it and reclaims the unused memory.
-* `Arrays` vs `ArrayLists`.
-* `HashSet` vs `TreeSet`.
-* Typecast in Java.
 
 Overloading happens at compile-time while Overriding happens at runtime: The binding of overloaded method call to its definition has happens at compile-time however binding of overridden method call to its definition happens at runtime.
 
@@ -563,7 +491,15 @@ Argument list should be different while doing method overloading. Argument list 
                 }
          });
  </br>
-      
+
+- **Java Try with Resources** </br>
+   http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
+
+-  **Java 8 Interface changes** </br>
+   https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
+
+- **Function Interface** </br>
+   https://www.geeksforgeeks.org/functional-interfaces-java/
       
 * <b>Why is the main method static in java?</b></br>
    * The method is static because otherwise there would be ambiguity on which method to be called. If static is removed from the main method, Program compiles successfully . But at runtime throws an error “NoSuchMethodError”.
@@ -1040,14 +976,23 @@ Argument list should be different while doing method overloading. Argument list 
     String s = list.get(0);  
     ```
 
--   **What is an Observable in RXJava2?**<br/>
+-  **Types of Observable in Rx-Java**
+   - https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8
+
+-  **Rx-Java Scheduler what, when, how?**
+   - https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add
+
+-  **Executor Service**
+   - https://www.javatpoint.com/java-executorservice
+     
+-    **What is an Observable in RXJava2?**<br/>
     A) An Observable  simply emits the data to those which subscribed to it. All the emission is done asynchronously to the subscribers. A simple Observable can be created as follows:
 
     ```java
     // RxAndroid Tutorial - Adding Observable
     Observable<String> stringObservable = Observable.just("Hello Reactive Programming!");
     ```
--   **What is an Observer in RXJava2?**<br/>
+-  **What is an Observer in RXJava2?**<br/>
     A) Observer consumes the data emitted by the Observable. To do this, Observer needs to subscribe to the Observable. Example shows how to create an Observable in RxJava2.
     ```java
     // RxAndroid Tutorial - Adding observer
@@ -1071,7 +1016,7 @@ Argument list should be different while doing method overloading. Argument list 
         };
     ```
 
--   **How to Subscribe / Unsubscribe in RXJava?**<br/>
+-  **How to Subscribe / Unsubscribe in RXJava?**<br/>
     A) We can make an Observer to subscribe to Observable as follows:
     ```java
     // RxAndroid tutorial - observer subscribing to observable
@@ -1492,6 +1437,12 @@ Argument list should be different while doing method overloading. Argument list 
     }
     ```
 <br>
+
+* **Design Pattern**
+   - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
+   - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
+   - https://github.com/iluwatar/java-design-patterns
+     
 - **What are the drawbacks of using singleton design pattern?**
 
   - **Testability issue:** The bad thing with singletons is that the
@@ -1564,7 +1515,6 @@ How you implement it?**
 * <b>What is ABI Management?</b></br>
   * Different Android handsets use different CPUs, which in turn support different instruction sets. Each combination of CPU and instruction sets has its own Application Binary Interface, or ABI. The ABI defines, with great precision, how an  application's machine code is supposed to interact with the system at runtime. You must specify an ABI for each CPU  architecture you want your app to work with. You can checkout the full specifcations [here](https://developer.android.com/ndk/guides/abis)</br>
   
-  
 
 * <b>Why bytecode cannot be run in Android?</b></br>
   * Android uses DVM (Dalvik Virtual Machine ) rather using JVM(Java Virtual Machine).</br>
@@ -1577,12 +1527,10 @@ How you implement it?**
    * Gradle creates a build variant for every possible combination of your project’s product flavors and build types.</br> 
  
 
-
 * <b>Explain the build process in Android:</b></br>
   * First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
   * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex. 
   * The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.</br>
-
 
 
 * <b>What is the Android Application Architecture?</b></br>
@@ -1601,7 +1549,6 @@ How you implement it?**
 * <b>Describe activities</b></br>
   * Activities are basically containers or windows to the user interface.</br>
   
-  
 * <b>Lifecycle of an Activity</b></br>
   * ```OnCreate()```: This is when the view is first created. This is normally where we create views, get data from bundles etc.</br>
   * ```OnStart()```: Called when the activity is becoming visible to the user. Followed by onResume() if the activity comes to the foreground, or onStop() if it becomes hidden.</br>
@@ -1616,12 +1563,8 @@ How you implement it?**
   * The onCreate() method is called once during the Activity lifecycle, either when the application starts, or when the Activity has been destroyed and then recreated, for example during a configuration change.</br>
   * The onStart() method is called whenever the Activity becomes visible to the user, typically after onCreate() or onRestart().</br>
   
-  
-  
 * <b>Scenario in which only onDestroy is called for an activity without onPause() and onStop()?</b></br>
   * If finish() is called in the OnCreate method of an activity, the system will invoke onDestroy() method directly.</br>
-  
-  
 
 * <b>Why would you do the setContentView() in onCreate() of Activity class?</b></br>
   * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
@@ -1650,10 +1593,8 @@ How you implement it?**
    * So the common practice is to store data in the ViewModel class (since it persists data during configuration changes) and use OnSaveInstanceState to store small amounts of UI data.
    * For instance, let’s say we have a search screen and the user has entered a query in the Edittext. This results in a list of items being displayed in the RecyclerView. Now if the screen is rotated, the ideal way to prevent resetting of data would be to store the list of search items in the ViewModel and the query text user has entered in the OnSaveInstanceState method of the activity.</br>
   
-  
 * <b>Mention two ways to clear the back stack of Activities when a new Activity is called using intent</b></br>
    * The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag. The second way is by using FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_NEW_TASK in conjunction.</br>
-  
   
 * <b>What’s the difference between FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_CLEAR_TOP?</b></br>
   * <b>FLAG_ACTIVITY_CLEAR_TASK</b> is used to clear all the activities from the task including any existing instances of the class invoked. The Activity launched by intent becomes the new root of the otherwise empty task list. This flag has to be used in conjunction with FLAG_ ACTIVITY_NEW_TASK.</br>
@@ -1664,11 +1605,9 @@ How you implement it?**
   * A ContentProvider provides data from one application to another, when requested. It manages access to a structured set of data.  It provides mechanisms for defining data security. ContentProvider is the standard interface that connects data in one process with code running in another process.</br>  
   * When you want to access data in a <b>ContentProvider</b>, you must instead use the ContentResolver object in your application’s Context to communicate with the provider as a client. The provider object receives data requests from clients, performs the requested action, and returns the results.</br>
   
-  
 * <b>Access data using Content Provider:</b></br>
   * Start by making sure your Android application has the necessary read access permissions. Then, get access to the ContentResolver object by calling getContentResolver() on the Context object, and retrieving the data by constructing a query using ContentResolver.query().</br>
   * The ContentResolver.query() method returns a Cursor, so you can retrieve data from each column using Cursor methods.</br> 
-  
   
 * <b>Describe services</b></br>
   * A Service is an application component that can perform long-running operations in the background, and it doesn't provide a user interface. It can run in the background, even when the user is not interacting with your application. These are the three different types of services:
@@ -1682,19 +1621,16 @@ How you implement it?**
   * <b>IntentService</b> is a subclass of Service that handles asynchronous requests (expressed as “Intents”) on demand. Clients send requests through startService(Intent) calls. The service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.</br>
   
   
-  
 * <b>Difference between AsyncTasks & Threads?</b></br>
   * <b>Thread</b> should be used to separate long running operations from main thread so that performance is improved. But it can't be cancelled elegantly and it can't handle configuration changes of Android. You can't update UI from Thread.
   * <b>AsyncTask</b> can be used to handle work items shorter than 5ms in duration. With AsyncTask, you can update UI unlike java Thread. But many long running tasks will choke the performance.</br>
-  
-  
+   
   
 * <b>Difference between Service, Intent Service, AsyncTask & Threads</b></br>
   * <b>Android service</b> is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed.</br>
   * <b>AsyncTask</b> allows you to perform asynchronous work on your user interface. It performs the blocking operations in a worker thread and then publishes the results on the UI thread, without requiring you to handle threads and/or handlers yourself.</br>
   * <b>IntentService</b> is a base class for Services that handle asynchronous requests (expressed as Intents) on demand. Clients send requests through startService(Intent) calls; the service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.</br>
   * A <b>thread</b> is a single sequential flow of control within a program. Threads can be thought of as mini-processes running within a main process.</br>
-  
   
   
 * <b>What are Handlers?</b></br>
@@ -1712,7 +1648,6 @@ How you implement it?**
      * Task that are not critical or user facing
      * Tasks that should be running on a regular basis as batch where the timing is not critical
      * [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
-  
   
 
 * <b>What is the relationship between the life cycle of an AsyncTask and an Activity? What problems can this result in? How can these problems be avoided?</b></br>
@@ -1745,7 +1680,6 @@ A bound service is a service that can be used not only by components running in 
   * Messenger is needed if you want to bind a remote service (e.g. running in another process).</br>
 
 
-
 * <b>What is a ThreadPool? And is it more effective than using several separate Threads?</b></br>
   * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
   * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
@@ -1756,25 +1690,18 @@ A bound service is a service that can be used not only by components running in 
   * Serialization Serialization is the process of converting an object into a stream of bytes in order to store an object into memory, so that it can be recreated at a later time, while still keeping the object's original state and data. 
   * <b>How to disallow serialization?</b> We can declare the variable as transient.</br>
 
-
 * <b>Difference between Activity & Service</b></br>
   * Activities are basically containers or windows to the user interface. Services is a component that is used to perform operations on the background. It does not have an UI.</br>
-  
-  
   
 * <b>How would you update the UI of an activity from a background service</b></br>
   * We need to register a LocalBroadcastReceiver in the activity. And send a broadcast with the data using intents from the background service. As long as the activity is in the foreground, the UI will be updated from the background. Ensure to unregister the broadcast receiver in the onStop() method of the activity to avoid memory leaks. 
 We can also register a Handler and pass data using Handlers. I have detailed a sample implementation on this. You can check it out [here](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)</br>
-
-
 
 * <b>What is an intent?</b></br>
   * Intents are messages that can be used to pass information to the various components of android. For instance, launch an activity, open a webview etc.</br>
   * Two types of intents-</br> 
     * Implicit: Implicit intent is when you call system default intent like send email, send SMS, dial number.</br>
     * Explicit: Explicit intent is when you call an application activity from another activity of the same application.</br>
-
-
 
 * <b>What is a Sticky Intent?</b></br>
   * Sticky Intents allows communication between a function and a service. 
@@ -1910,7 +1837,43 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    
 * <b>How to load bitmap to memory?</b></br>
    * [Find more info here](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)</br>   
-  
+
+* **SSL Pinning**
+   - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
+   - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
+        - How will the key exchanged
+        - How will be the data encrypted
+        - How will messages marked as authentic
+
+    - The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
+
+    - Developer can compile the public key into the application code this is essecially pins the key into the appliction. when client receives the public key from the server, it compare this key with the pinned key in apllciation. the key should should match. if the key dont match. the client terminates the session.
+
+    - Types of SSL Pinning
+        - Public key pinning
+        - Certificate pinning
+            - https://dzone.com/articles/encryption-and-signing
+            - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
+            - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
+        - SPKI pinning
+
+    **How do you implement it in Android?**
+    
+    A) SSL Pinning can be done using OkHttpClient's Builder methods as follows:
+    ```Kotlin
+        val certificatePinner = CertificatePinner.Builder()
+        .add(
+            "www.coderefer.com",
+    "sha256/ZCOF65ADBWPDK8P2V7+mqodtvbsTRR/D74FCU+CEEA="
+        )
+        .build()
+    val okHttpClient = OkHttpClient.Builder()
+        .certificatePinner(certificatePinner)
+        .build()
+    ```
+
+    Then you supply this generated okHttpClient object to Retrofit.
+    For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
   
 * <b>What are the permission protection levels in Android?</b></br>
    * <b>Normal</b> - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
