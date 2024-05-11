@@ -3,7 +3,6 @@
 ## Contents
  * [Data Structures And Algorithms](#data-structures-and-algorithms)
  * [Core Java](#core-java)
- * [Kotlin](#kotlin)
  * [Core Android](#core-android)
  * [Architecture](#architecture)
  * [Design Problem](#design-problem)
