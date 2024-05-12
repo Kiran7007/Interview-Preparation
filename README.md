@@ -20,7 +20,7 @@
 - **What is an Object?** <br/>
   An object is an instance of a class that has states and behaviors. A Class
   can be defined as a template that describes the behavior/state that the object
-  of its type support.=
+  of its type support.
 
 * <b>Does Java support multiple inheritance?</b> </br>
   Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
