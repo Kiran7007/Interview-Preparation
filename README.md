@@ -3,73 +3,13 @@
 ## Contents
  * [Data Structures And Algorithms](#data-structures-and-algorithms)
  * [Core Java](#core-java)
+ * [Kotlin](#kotlin)
  * [Core Android](#core-android)
  * [Architecture](#architecture)
  * [Design Problem](#design-problem)
  * [Tools And Technologies](#tools-and-technologies)
  * [Android Test Driven Development](#android-test-driven-development)
  * [Others](#others)
-
-* **Kotlin interview Questions**
-   - https://blog.mindorks.com/kotlin-android-interview-questions
-   - https://www.ubuntupit.com/frequently-asked-kotlin-interview-questions-and-answers/
-
-* **Kotlin Collection Functions**
-   - https://blog.mindorks.com/kotlin-collection-functions
-
-* **Map vs Flatmap**
-   - https://www.linkedin.com/feed/update/urn:li:activity:6770786744422998017/
- 
-* **Stateflow vs LiveData**
-   - https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html
-
-* **Livedata vs ObservableField**
-   - https://blog.mindorks.com/livedata-vs-observable-in-android
-
-* **ViewPager vs ViewPager2**
-   - https://developer.android.com/training/animation/vp2-migration
-
-* **Understanding Suspend function**
-   - https://medium.com/mobile-app-development-publication/understanding-suspend-function-of-coroutines-de26b070c5ed
-
-* **Coroutine runblocking**
-   - https://www.geeksforgeeks.org/runblocking-in-kotlin-coroutines-with-example
-
-* **Thread Safe mthods and blocks**
-   - https://proandroiddev.com/synchronization-and-thread-safety-techniques-in-java-and-kotlin-f63506370e6d
-
-* **App Data encryption**
-   - https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore
-
-* **Data Structure and Algorithms**
-   - https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm
-
-* **Understanding scope storage in android**
-   - https://blog.mindorks.com/understanding-the-scoped-storage-in-android
-
-* **Solve out of memory error**
-   - https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application
-
-* **Battery optimizationn for Android**
-   - https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70
-   
-* **Android Jetpack component**
-   - https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it
-
-* **Android ViewModel under the hood**
-   - https://blog.mindorks.com/android-viewmodels-under-the-hood
-
-* **Workmanager**
-   - https://blog.mindorks.com/integrating-work-manager-in-android
-
-* **Arraymap vs Sparsh Array**
-   - https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47
-
-* **Java Android Multithreading programming**
-   - https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor
-
-* **Understanding Open keyword in Kotlin**
-   - https://blog.mindorks.com/understanding-open-keyword-in-kotlin
 
 ### Data Structures And Algorithms
 
@@ -230,7 +170,10 @@
    
    
 * <b>Difference between stacks & queues?</b></br>
-  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>   
+  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>
+
+* **Data Structure and Algorithms** </br>
+  https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm
 
 ### Core JAVA
 
@@ -1052,6 +995,30 @@ Argument list should be different while doing method overloading. Argument list 
 -   **What is a Hot Observable?**<br/>
     A) A Hot observable is an Observer that will emit items
 
+### Kotlin
+
+* **Kotlin interview Questions**
+   - https://blog.mindorks.com/kotlin-android-interview-questions
+   - https://www.ubuntupit.com/frequently-asked-kotlin-interview-questions-and-answers/
+
+* **Kotlin Collection Functions**
+   - https://blog.mindorks.com/kotlin-collection-functions
+ 
+* **Map vs Flatmap**
+   - https://www.linkedin.com/feed/update/urn:li:activity:6770786744422998017/
+ 
+* **Understanding Suspend function**
+   - https://medium.com/mobile-app-development-publication/understanding-suspend-function-of-coroutines-de26b070c5ed
+
+* **Coroutine runblocking**
+   - https://www.geeksforgeeks.org/runblocking-in-kotlin-coroutines-with-example
+
+* **Thread Safe mthods and blocks**
+   - https://proandroiddev.com/synchronization-and-thread-safety-techniques-in-java-and-kotlin-f63506370e6d
+
+* **Understanding Open keyword in Kotlin**
+   - https://blog.mindorks.com/understanding-open-keyword-in-kotlin
+
 ### Core Android
 
 - **What is `Application` class?** <br/>
@@ -1070,6 +1037,9 @@ Argument list should be different while doing method overloading. Argument list 
     - When there are ui components that are going to be used across multiple activities.
     - When there are multiple views that can be displayed side by side (viewPager tabs)
     - When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
+
+* **ViewPager vs ViewPager2**
+   - https://developer.android.com/training/animation/vp2-migration
 
 - **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
     - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
@@ -1293,6 +1263,12 @@ Argument list should be different while doing method overloading. Argument list 
 - **How you load your `Bitmaps`? What do you do for loading large bitmaps?**
 [Loading Large Bitmaps Efficiently in Android](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53 "Loading Large Bitmaps Efficiently in Android")
 
+* **Stateflow vs LiveData** </br>
+  https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html
+
+* **Livedata vs ObservableField** </br>
+  https://blog.mindorks.com/livedata-vs-observable-in-android
+     
 - **How Android apps compiled and run?**
   1. First step involves compiling the resources folder (/res) using the aapt
     (android asset packaging tool) tool. These are compiled to a single class
@@ -1437,6 +1413,33 @@ Argument list should be different while doing method overloading. Argument list 
     }
     ```
 <br>
+
+* **Understanding scope storage in android**
+   - https://blog.mindorks.com/understanding-the-scoped-storage-in-android
+
+* **App Data encryption**  </br>
+  https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore
+     
+* **Solve out of memory error** </br>
+  https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application
+
+* **Battery optimizationn for Android** </br>
+  https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70
+   
+* **Android Jetpack component** </br>
+  https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it
+
+* **Android ViewModel under the hood** </br>
+  https://blog.mindorks.com/android-viewmodels-under-the-hood
+
+* **Workmanager** </br>
+  https://blog.mindorks.com/integrating-work-manager-in-android
+
+* **Arraymap vs Sparsh Array** </br>
+  https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47
+
+* **Java Android Multithreading programming** </br>
+  https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor
 
 * **Design Pattern**
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
