@@ -106,13 +106,6 @@
   subclass1
   subclass2
   ```
-
-- **Can Interfaces to be extended?** </br>
-  Yes, an interface can extend other interfaces. it supports multiple
-  inheritances, which means it can extend more than one interface. But every
-  class which wants to use an interface must add it by keyword `implements`
-  and using the keyword `extends` for interfaces in classes is illegal and
-  cause compile error.
   
 - **What is the difference between overriding and overloading?** </br>
 
@@ -125,35 +118,9 @@
   | In this, methods must have same name and different signature. | While in this, methods must have same name and same signature. |
   | In method overloading, return type can or can not be be same, but we must have to change the parameter. | While in this, return type must be same or co-variant. |
 
-* <b>What is Inheritance?</b>
-   - Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
-   
-* <b>What are Interfaces?</b></br>
-   * Interfaces are only declared methods that an implementing class would need. 
-   * Interfaces cannot be marked as final. Interface variables must be static or final. 
-   * Interfaces cannot be instantiated directly.
-   * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
-   
-- **Difference between abstract and interface?** </br>
-  | Interface     | Abstract class     |
-  | :------------- | :------------- |
-  | Support multiple inheritances | Does not support multiple inheritances |
-  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
-  | Does not contain data member | Contains data member |
-  | Does not contains constructors | contains constructors  |
-  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
-  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
+* <b>What is Inheritance?</b> </br>
+  Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
 
-* <b>What is Polymorphism?</b></br>
-   * Polymorphism is when an object takes on multiple forms. For instance, String is a subclass of Object class. 
-   * Polymorphism manifests itself in Java in the form of multiple methods having the same name.
-   * In some cases, multiple methods have the same name, but different formal argument lists (overloaded methods).
-   * In other cases, multiple methods have the same name, same return type, and same formal argument list (overridden methods).
-   * Polymorphism is a characteristic of being able to assign a different meaning or usage to something in different contexts - specifically, to allow an entity such as a variable, a function, or an object to have more than one form.
-   * 2 forms of polymorphism:  
-       * Compile time polymorphism: The flow of control is decided during the compile time itself. By overloading.
-       * Run time polymorphism: is done using inheritance and interface. The flow of control is decided during the runtime. Overriding: Overriding will have the same method name with the same parameters. One will be the parent class method and the other will be the child class method. Overloading occurs when the same method name is declared but with different parameters.</br>
-       
 * <b>What is Method overloading?</b> </br>
    * Method Overloading means to have two or more methods with same name in the same class with different arguments. 
    * Note:
@@ -198,20 +165,40 @@ class Employee {
    }
 }
 ```
-</br>
-      
+   
+* <b>What are Interfaces?</b> </br>
+   * Interfaces are only declared methods that an implementing class would need. 
+   * Interfaces cannot be marked as final. Interface variables must be static or final. 
+   * Interfaces cannot be instantiated directly.
+   * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
+
+- **Can Interfaces to be extended?** </br>
+  Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface. But every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
+  
+- **Difference between abstract and interface?** </br>
+  | Interface     | Abstract class     |
+  | :------------- | :------------- |
+  | Support multiple inheritances | Does not support multiple inheritances |
+  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
+  | Does not contain data member | Contains data member |
+  | Does not contains constructors | contains constructors  |
+  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
+  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
+
+* <b>What is Polymorphism?</b></br>
+   * Polymorphism is when an object takes on multiple forms. For instance, String is a subclass of Object class. 
+   * Polymorphism manifests itself in Java in the form of multiple methods having the same name.
+   * In some cases, multiple methods have the same name, but different formal argument lists (overloaded methods).
+   * In other cases, multiple methods have the same name, same return type, and same formal argument list (overridden methods).
+   * Polymorphism is a characteristic of being able to assign a different meaning or usage to something in different contexts - specifically, to allow an entity such as a variable, a function, or an object to have more than one form.
+   * 2 forms of polymorphism:  
+       * Compile time polymorphism: The flow of control is decided during the compile time itself. By overloading.
+       * Run time polymorphism: is done using inheritance and interface. The flow of control is decided during the runtime. Overriding: Overriding will have the same method name with the same parameters. One will be the parent class method and the other will be the child class method. Overloading occurs when the same method name is declared but with different parameters.</br>
+       
 * <b>Difference between Encapsulation & Abstraction?</b></br>
    * <b>Abstraction</b> focuses on the outside view of an object (i.e. the interface) 
    * <b>Encapsulation</b> (information hiding) prevents clients from seeing it’s inside view. 
    * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
-
-* **Differences between abstract classes and interfaces?** [link](https://arjun-sna.github.io/java/2017/02/02/abstractvsinterface/)
-    - An abstract class, is a class that contains both concrete and abstract methods 
-    (methods without implementations). An abstract method must be implemented by the abstract class
-     sub-classes. Abstract classes are extended.
-    - An interface is like a blueprint/contract of a class. It contains empty methods that 
-    represent what all of its subclasses should have in common. The subclasses provide the 
-    implementation for each of these methods. Interfaces are implemented.
 
 * **What is serialization? How do you implement it?** </br>
     Serialization is the process of converting an object into a stream of bytes in order to store 
