@@ -32,7 +32,7 @@
    - The fields of a class can be made read-only or write-only.
    - A class can have total control over what is stored in its fields.
 
-* <b>What is Abstract class?</b>
+* <b>What is Abstract class? </b>
    * Abstract classes are classes that contain one or more abstract methods. An abstract method is a method that is declared, but contains no implementation. 
    * If even a single method is abstract, the whole class must be declared abstract.
    * Abstract classes may not be instantiated, and require subclasses to provide implementations for the abstract methods.
@@ -114,7 +114,7 @@
   and using the keyword `extends` for interfaces in classes is illegal and
   cause compile error.
   
-- **What is the difference between overriding and overloading?**
+- **What is the difference between overriding and overloading?** </br>
 
   | Method Overloading      | Method Overriding     |
   | :-------------   | :------------- |
@@ -134,7 +134,7 @@
    * Interfaces cannot be instantiated directly.
    * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
    
-- **Difference between abstract and interface?**
+- **Difference between abstract and interface?** </br>
   | Interface     | Abstract class     |
   | :------------- | :------------- |
   | Support multiple inheritances | Does not support multiple inheritances |
@@ -154,7 +154,7 @@
        * Compile time polymorphism: The flow of control is decided during the compile time itself. By overloading.
        * Run time polymorphism: is done using inheritance and interface. The flow of control is decided during the runtime. Overriding: Overriding will have the same method name with the same parameters. One will be the parent class method and the other will be the child class method. Overloading occurs when the same method name is declared but with different parameters.</br>
        
-* <b>What is Method overloading?</b></br>
+* <b>What is Method overloading?</b> </br>
    * Method Overloading means to have two or more methods with same name in the same class with different arguments. 
    * Note:
      * Overloaded methods MUST change the argument list
@@ -163,17 +163,17 @@
      * Overloaded methods CAN declare new or broader checked exceptions
      * A method can be overloaded in the same class or in a subclass </br>
      
-* <b>What is Method overriding?</b></br>
+* <b>What is Method overriding?</b> </br>
    * Method overriding occurs when sub class declares a method that has the same type arguments as a method declared by one of its superclass
    * You can’t override a method marked public and make it protected
    * You cannot override a method marked final
    * You cannot override a method marked static
    * Note: Static methods cannot be overridden. Overloaded methods can still be overridden. </br>
    
-* <b>Why would you not call abstract method in constructor?</b></br>
+* <b>Why would you not call abstract method in constructor?</b> </br>
    * The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
 
-* <b>Composition over inheritance?</b></br>
+* <b>Composition over inheritance?</b> </br>
    * Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
 ```
 class Person {
@@ -297,7 +297,7 @@ Argument list should be different while doing method overloading. Argument list 
    </br>
    
       
-* <b>What is garbage collector? How does it work?</b></br>
+* <b>What is garbage collector? How does it work?</b> </br>
    * All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
    
    
@@ -416,13 +416,13 @@ Argument list should be different while doing method overloading. Argument list 
    * Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
    
    
-* <b>What is externalization?</b></br>
+* <b>What is externalization?</b> </br>
    * In serialization, the JVM is responsible for the process of writing and reading objects. This is useful in most cases, as the programmers do not have to care about the underlying details of the serialization process.
    * However, the default serialization does not protect sensitive information such as passwords and credentials.
    * Thus externalization comes to give the programmers full control in reading and writing objects during serialization.
    * Implement the java.io.Externalizable interface - then you implement your own code to write object’s states in the ```writeExternal()``` method and read object’s states in the ```readExternal()``` method.</br>
 
-- **How to prevent a class to be extended?**
+- **How to prevent a class to be extended?** </br>
   simply use keyword `final` in definition of class or methods. for example:
   ```java
   final public class CantOverrideClass {
@@ -434,8 +434,7 @@ Argument list should be different while doing method overloading. Argument list 
   }
   ```  
 
-- **What is the use of the finalize method?**
-
+- **What is the use of the finalize method?** </br>
   `finalize()` method is a protected and non-static method of java.lang.Object
   class. This method will be available in all objects you create in java. This
   method is used to perform some final operations or clean up operations on an
@@ -449,7 +448,7 @@ Argument list should be different while doing method overloading. Argument list 
   }
   ```
 
-- **What is a static variables in Java?**
+- **What is a static variables in Java?** </br>
 
   static is a non-access modifier in Java which is applicable for the following:
     - blocks
@@ -463,7 +462,7 @@ Argument list should be different while doing method overloading. Argument list 
     - We can create static variables at class-level only. See [here](https://www.geeksforgeeks.org/g-fact-47/)
     - static block and static variables are executed in order they are present in a program.
 
-- **Overriding for static method, possible?**
+- **Overriding for static method, possible?** </br>
 
   quick response: no!
 
@@ -479,8 +478,7 @@ Argument list should be different while doing method overloading. Argument list 
   static methods are resolved in compile-time. Hence the answer is 'NO'.
 
 
-- **What is an abstract class? Benefits?**
-
+- **What is an abstract class? Benefits?** </br>
   According to the official document, An abstract class is a class that is declared `abstract`. It may or may not include abstract methods. Abstract classes cannot be instantiated, but they can be subclassed. Also, An abstract method is a method that is declared without an implementation (without braces, and followed by a semicolon), If a class includes abstract methods, then the class itself must be declared `abstract`.
   ```java
   public abstract class GraphicObject {
@@ -494,15 +492,13 @@ Argument list should be different while doing method overloading. Argument list 
   functionality of such classes may overlap or it needs some objects which
   are shared in whole class scope, then we use abstraction.
 
-- **What is an object cloning? can you use clone() method of every object ?**
-
+- **What is an object cloning? can you use clone() method of every object?** </br>
   Object cloning refers to creation of exact copy of an object. It creates a new instance of the class of current object and initializes all its fields with exactly the contents of the corresponding fields of this object. Every class that implements `clone()` methods should call super.clone() to obtain the cloned object reference. Also it must implement java.lang.Cloneable interface otherwise it will throw CloneNotSupportedException when clone method is called on that class’s object.
   ```java
   protected Object clone() throws CloneNotSupportedException
   ```
 
-- **What is the difference between Shallow copy and deep copy?**
-
+- **What is the difference between Shallow copy and deep copy?** </br>
   - **Shallow copy**: is method of copying an object and is followed by default in cloning. In this method the fields of an old object X are copied to the new object Y. While copying the object type field the reference is copied to Y i.e object Y will point to same location as pointed out by X. If the field value is a primitive type it copies the value of the primitive type.
   Therefore, any changes made in referenced objects in object X or Y will be reflected in other object.
   ```java
@@ -614,12 +610,10 @@ Argument list should be different while doing method overloading. Argument list 
     100 20 300 0
     ```
 
-- **Multiple inheritances? Possible? How can we do that?**
-
+- **Multiple inheritances? Possible? How can we do that?** </br>
   Multiple inheritance in Java programming is achieved or implemented using interfaces. Java does not support multiple inheritance using classes. In simple term, a class can inherit only one class and multiple interfaces in a java programs.
 
-- **Object scopes?**
-
+- **Object scopes?** </br>
   `public` , `protected` , default (no modifier) , `private`
 
   | Modifier     | Package     | Subclass     | World     |
@@ -630,60 +624,54 @@ Argument list should be different while doing method overloading. Argument list 
   | private       | No       | No       | No       |
 
 
-- **Override private methods, possible?**
+- **Override private methods, possible?** </br>
 
   No, a private method cannot be overridden since it is not visible from any other class.
 
-- **why access to the non-static variable is not allowed from static method in Java?**
+- **why access to the non-static variable is not allowed from static method in Java?** </br>
 
   because non-static variable are associated with a specific instance of an object while static is not associated with any instance.
 
-- **Java reference types?** [*geeksforgeeks*]("https://www.geeksforgeeks.org/types-references-java/")
+- **Java reference types?** </br>
+  [*geeksforgeeks*]("https://www.geeksforgeeks.org/types-references-java/")
 
-- **What is Generic in Java?**
-
+- **What is Generic in Java?** </br>
   Generics enable types (classes and interfaces) to be parameters when defining classes, interfaces and methods. Type parameters provide a way for you to re-use the same code with different inputs. The difference is that the inputs to formal parameters are values, while the inputs to type parameters are types. [more details](https://www.geeksforgeeks.org/generics-in-java/)
 
-- **What is the difference between int and Integer?**
-
+- **What is the difference between int and Integer?** </br>
   `int` is a primitive type, while `Integer` is class with a single field of type `int`. Variables of type `int` store the avtual binary value for the integer. Variables of type `Integer` store references to `Integer` objects, just as with any other reference (object) type. The `Integer` class is used where you need an `int` to be treated like any other object, such as in generic types or situations where you need nullability.
 
-- **What are Autoboxing and unboxing?**
-
+- **What are Autoboxing and unboxing?** </br>
   - **Autoboxing:** Converting a primitive value into an object of the corresponding wrapper class is called autoboxing. For example, converting `int` to `Integer` class.
   - **Unboxing:**  Converting an object of a wrapper type to its corresponding primitive value is called unboxing. For example conversion of `Integer` to `int`.
 
-- **What is the difference between initialization and instantiation?**
-
+- **What is the difference between initialization and instantiation?** </br>
   - **Instantiation** is when memory is allocated for an object. This is what the `new` keyword is doing. A reference to the object that was created is returned from the `new` keyword.
 
   - **Initialization** is when values are put into the memory that was allocated. This is what the Constructor of a class does when using the `new` keyword. A variable must also be initialized by having the reference to some object in memory passed to it.
 
 
-- **How does a static block work?**
-
+- **How does a static block work?** </br>
   Run once when class is loaded, used for initializing static members. [read more](https://www.geeksforgeeks.org/g-fact-79/)
 
-- **What does the keyword `synchronized` mean?**
-
+- **What does the keyword `synchronized` mean?** </br>
   A `synchronized` block in Java is synchronized on some object. All synchronized blocks synchronized on the same object can only have one thread executing inside them at a time. All other threads attempting to enter the synchronized block are blocked until the thread inside the synchronized block exits the block.
 
 - **What is the memory leak? How to handle it?**
-- **What is `transient` modifier? What does it come for?** [complete explanation](https://www.geeksforgeeks.org/transient-keyword-java/)
+- **What is `transient` modifier? What does it come for?** </br>
+  [complete explanation](https://www.geeksforgeeks.org/transient-keyword-java/)
 
 - **What is the difference between `==` and `.equal`?**
   - The `equals()` method compares two strings, character by character, to determine equality.
   - The `==` operator checks to see whether two object references refer to the same instance of an object
 
 - **What is `reflection`?** [geeksforgeeks](https://www.geeksforgeeks.org/reflection-in-java/)
-- **What is the `volatile` modifier?**
-
+- **What is the `volatile` modifier?** </br>
   In multi-threading apps where the threads operate on non-volatile variables, each thread may copy variables from main memory into a CPU cache, for performance reason. If your app run on more than one thread, each thread may copy the variable and cache it. So This keyword is used to mark a variable as "being stored in main memory". Note that reading from and writing to main memory is more expensive than accessing the CPU cache. Thus, you should only use volatile variables when you really need to enforce visibility of variables.
 
   ![](/assets/images/volatile-preview.png)
 
-- **What is the `hashCode()` used for?**
-
+- **What is the `hashCode()` used for?** </br>
   `hashcode()` returns the hashcode value as an Integer. Hashcode value is mostly used in hashing based collections like HashMap, HashSet, HashTable….etc. According to the official documentation, The general contract of `hashCode()` is:
     - Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer, provided no information used in equals comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.
     - If two objects are equal according to the equals(Object) method, then calling the hashCode method on each of the two objects must produce the same integer result.
@@ -691,12 +679,10 @@ Argument list should be different while doing method overloading. Argument list 
     - It is not required that if two objects are unequal according to the equals(java.lang.Object) method, then calling the hashCode method on each of the two objects must produce distinct integer results. However, the programmer should be aware that producing distinct integer results for unequal objects may improve the performance of hashtables.
 
 
-- **What are "annotations"?**
-
+- **What are "annotations"?** </br>
   Java annotations are used to provide meta data for your Java code. Being meta data, Java annotations do not directly affect the execution of your code, although some types of annotations can actually be used for that purpose. [read more](http://tutorials.jenkov.com/java/annotations.html)
 
-- **What is thread-safe mean? How we can make our code thread-safe?**
-
+- **What is thread-safe mean? How we can make our code thread-safe?** </br>
   Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
     - Synchronization
     - Use of Atomic Wrapper, For example AtomicInteger.
@@ -706,8 +692,7 @@ Argument list should be different while doing method overloading. Argument list 
 
   Note that if two threads are both reading and writing to a shared variable, then using the volatile keyword for that is not enough. You need to use a synchronized in that case to guarantee that the reading and writing of the variable is atomic. Reading or writing a volatile variable does not block threads reading or writing. For this to happen you must use the synchronized keyword around critical sections.
 
-- **what is the difference between `throw` and `throws`?**
-
+- **what is the difference between `throw` and `throws`?** </br>
   Keyword `throw` is used to explicitly throw as an exception in the body of function, while `throws` is utilized to handle checked exceptions for re-intimating the compiler that exceptions are being handled. The throws need to be used in the function’s signature and also while invoking the method that raises checked exceptions.
 
 * <b>What is a deadlock in Java</b> </br>
@@ -715,30 +700,30 @@ Argument list should be different while doing method overloading. Argument list 
    * [Example on how deadlock occurs](/src/deadlock/ThreadLockDemo.java)
    * [Example on how to prevent deadlock](/src/deadlock/ThreadLockFixedDemo.java)</br>
    
-* <b>What is the List interface & Set interface?</b></br>
+* <b>What is the List interface & Set interface?</b> </br>
    * List interface supports for ordered collection of objects and it may contain duplicates. The Set interface provides methods for accessing the elements of a finite mathematical set. Sets do not allow duplicate elements</br>
 
-* <b>Difference between ArrayList & Vectors?</b></br>
+* <b>Difference between ArrayList & Vectors?</b> </br>
    * Vectors are thread safe (synchronized) whereas arraylists are not. So performance of arraylists are better than vectors.    * In ArrayList, you have to start searching for a particular element from the beginning of an Arraylist. But in the Vector, you can start searching for a particular element from a particular position in a vector. This makes the search operation in Vector faster than in ArrayList. Vectors have a default size of 10 whereas arraylists size can be dynamic. 
    * <b>Insertion and deletion in ArrayList is slow compared to LinkedList?</b>
        * ArrayList internally uses an array to store the elements, when that array gets filled by inserting elements a new array of roughly 1.5 times the size of the original array is created and all the data of old array is copied to new array.
        * During deletion, all elements present in the array after the deleted elements have to be moved one step back to fill the space created by deletion. In linked list data is stored in nodes that have reference to the previous node and the next node so adding element is simple as creating the node and updating the next pointer on the last node and the previous pointer on the new node. Deletion in linked list is fast because it involves only updating the next pointer in the node before the deleted node and updating the previous pointer in the node after the deleted node.</br>      
       
-* <b>Implementations of Map?</b></br>
+* <b>Implementations of Map?</b> </br>
    * <b>TreeMap</b>: sorted based on ascending order of keys. For inserting, deleting, and locating elements in a Map, the HashMap offers the best alternative. If, however, you need to traverse the keys in a sorted order, then TreeMap is your better alternative.
    *	<b>HashTable</b>: Does not allow null values. It is not fail-safe and it is synchronized whereas 
    * <b>HashMap</b> allows null values and it is fail-safe and it is not synchronized. 
    * <b>LinkedHashMap</b>: This is a subclass of Hashmap. The order of insertion is preserved since it has a linkedList.</br>
    
-* <b>Difference between Enumeration and Iterators?</b></br>
+* <b>Difference between Enumeration and Iterators?</b> </br>
    * <b>Enumeration</b> does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
    * <b>ListIterator</b>: is just like an iterator except it allows access to the collection in either the forward or backward direction</br>
    
-* <b>How Hashmap works in Java?</b></br>
+* <b>How Hashmap works in Java?</b> </br>
    * HashMap in Java works on hashing principle. It is a data structure which allows us to store object and retrieve it in constant time O(1) provided we know the key. When we call put method, ```hashcode()``` method of the key object is called so that hash function of the map can find a bucket location to store Entry object.
    * If two different objects have the same hashcode: in this case, a linked list is formed at that bucket location and a new entry is stored as next node. After finding bucket location, we will call ```keys.equals()``` method to identify a correct node in LinkedList and return associated value object for that key in Java HashMap</br>
    
-* <b>Generics in Java</b></br>
+* <b>Generics in Java</b> </br>
    * Before generics, we can store any type of objects in collection i.e. non-generic. Now generics, forces the java programmer to store specific type of objects.
    * Type-safety : We can hold only a single type of objects in generics. It doesn’t allow to store other objects.
    * Type casting is not required: There is no need to typecast the object.
