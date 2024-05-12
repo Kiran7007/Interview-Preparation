@@ -167,7 +167,7 @@ class Employee {
   | In method overloading, return type can or can not be be same, but we must have to change the parameter. | While in this, return type must be same or co-variant. |
    
 * <b>Why would you not call abstract method in constructor?</b> </br>
-   * The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
+  The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
        
 * <b>Difference between Encapsulation & Abstraction?</b> </br>
    * <b>Abstraction</b> focuses on the outside view of an object (i.e. the interface) 
@@ -175,24 +175,18 @@ class Employee {
    * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
 
 * **What is serialization? How do you implement it?** </br>
-    Serialization is the process of converting an object into a stream of bytes in order to store 
-    an object into memory so that it can be recreated at a later time while still keeping the 
-    objects original state and data. In Java there are two methods of doing this, one is by 
-    implementing Serializable or Parcelable. In Android, however, Serializable should never be used 
-    in Android. Parcelable was created to be more efficient then Serializable, and performs about 
-    10x faster then Serializable because Serializable uses reflection which is a slow process and 
-    tends to create a lot of temporary objects which may cause garbage collection to occur more often.
+    Serialization is the process of converting an object into a stream of bytes in order to store an object into memory so that it can be recreated at a later time while still keeping the objects original state and data. In Java there are two methods of doing this, one is by implementing Serializable or Parcelable. In Android, however, Serializable should never be used in Android. Parcelable was created to be more efficient then Serializable, and performs about 10x faster then Serializable because Serializable uses reflection which is a slow process and tends to create a lot of temporary objects which may cause garbage collection to occur more often.
 
-* <b>Why is Java said to be platform independent?</b></br>
-   * The execution of the code does not depend upon the OS</br>
+* <b>Why is Java said to be platform independent?</b> </br>
+  The execution of the code does not depend upon the OS</br>
    
    
-* <b>Difference between ‘throw’ and ‘throws’ in Java Exception Handling?</b></br>
-   * ```throw``` keyword is used to throw Exception from any method or static block whereas ```throws``` is used to indicate that which Exception can possibly be thrown by this method.</br>
+* <b>Difference between ‘throw’ and ‘throws’ in Java Exception Handling?</b> </br>
+  ```throw``` keyword is used to throw Exception from any method or static block whereas ```throws``` is used to indicate that which Exception can possibly be thrown by this method.</br>
    
    
-* <b>Is there ever a scenario where we can skip the finally block in a try catch?</b></br>
-   * By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
+* <b>Is there ever a scenario where we can skip the finally block in a try catch?</b> </br>
+  By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
    
    
 * <b>What are anonymous classes?</b></br>
@@ -237,7 +231,7 @@ class Employee {
    
       
 * <b>What is garbage collector? How does it work?</b> </br>
-   * All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
+  All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
    
    
 * <b>Difference between stack memory & heap memory?</b></br>
@@ -260,19 +254,15 @@ class Employee {
    * ```super()```: Constructors use super to invoke the superclass's constructor.
    * <b>Methods</b>: Instance methods on the other hand require an instance of the class to exist before they can be called, so an instance of a class needs to be created by using the new keyword. Class methods are methods which are declared as static. The method can be called without creating an instance of the class</br>
    
-   
-   
 * <b>What is the difference between instantiation and initialization of an object?</b></br>
    * <b>Initialization</b> is the process of the memory allocation, when a new variable is created. Variables should be explicitly given a value, otherwise they may contain a random value that remained from the previous variable that was using the same memory space. To avoid this problem, Java language assigns default values to data types.
    * <b>Instantiation</b> is the process of explicitly assigning definitive value to a declared variable.</br>
-   
-   
+  
 * <b>Do objects get passed by reference or value in Java? Elaborate on that.</b></br>
    * Java is always pass-by-value. When we pass the value of an object, we are passing the reference to it. 
    * Java creates a copy of the variable being passed in the method and then does the manipulations. Hence the change is not reflected in the main method.
    * But when you pass an object reference into a method, a copy of this reference is made, so it still points to the same object. This means, that any changes that you make to the insides of this object are retained, when the method exits.
    * Java copies and passes the reference by value, not the object. Thus, method manipulation will alter the objects, since the references point to the original objects. But since the references are copies, swaps will fail.</br>
-   
    
 * <b>Primitives in Java?</b></br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
