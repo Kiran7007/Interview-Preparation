@@ -22,6 +22,54 @@
   can be defined as a template that describes the behavior/state that the object
   of its type support.
 
+* <b>What is Inheritance?</b> </br>
+  Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
+
+* <b>Composition over inheritance?</b> </br>
+   * Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
+```
+class Person {
+   String Title;
+   String Name;
+   Int Age;
+
+   public Person(String title, String name, String age) {
+      this.Title = title;
+      this.Name = name;
+      this.Age = age;
+   }
+}
+
+class Employee {
+   Int Salary;
+   private Person person;
+
+   public Employee(Person p, Int salary) {
+       this.person = p;
+       this.Salary = salary;
+   }
+}
+```
+   
+* <b>What are Interfaces?</b> </br>
+   * Interfaces are only declared methods that an implementing class would need. 
+   * Interfaces cannot be marked as final. Interface variables must be static or final. 
+   * Interfaces cannot be instantiated directly.
+   * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
+
+- **Can Interfaces to be extended?** </br>
+  Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface. But every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
+  
+- **Difference between abstract and interface?** </br>
+  | Interface     | Abstract class     |
+  | :------------- | :------------- |
+  | Support multiple inheritances | Does not support multiple inheritances |
+  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
+  | Does not contain data member | Contains data member |
+  | Does not contains constructors | contains constructors  |
+  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
+  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
+
 * <b>Does Java support multiple inheritance?</b> </br>
   Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
    
@@ -117,73 +165,9 @@
   | Method overloading may or may not require inheritance. | While method overriding always needs inheritance. |
   | In this, methods must have same name and different signature. | While in this, methods must have same name and same signature. |
   | In method overloading, return type can or can not be be same, but we must have to change the parameter. | While in this, return type must be same or co-variant. |
-
-* <b>What is Inheritance?</b> </br>
-  Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
-
-* <b>What is Method overloading?</b> </br>
-   * Method Overloading means to have two or more methods with same name in the same class with different arguments. 
-   * Note:
-     * Overloaded methods MUST change the argument list
-     * Overloaded methods CAN change the return type
-     * Overloaded methods CAN change the access modifier
-     * Overloaded methods CAN declare new or broader checked exceptions
-     * A method can be overloaded in the same class or in a subclass </br>
-     
-* <b>What is Method overriding?</b> </br>
-   * Method overriding occurs when sub class declares a method that has the same type arguments as a method declared by one of its superclass
-   * You can’t override a method marked public and make it protected
-   * You cannot override a method marked final
-   * You cannot override a method marked static
-   * Note: Static methods cannot be overridden. Overloaded methods can still be overridden. </br>
    
 * <b>Why would you not call abstract method in constructor?</b> </br>
    * The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
-
-* <b>Composition over inheritance?</b> </br>
-   * Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
-```
-class Person {
-   String Title;
-   String Name;
-   Int Age;
-
-   public Person(String title, String name, String age) {
-      this.Title = title;
-      this.Name = name;
-      this.Age = age;
-   }
-}
-
-class Employee {
-   Int Salary;
-   private Person person;
-
-   public Employee(Person p, Int salary) {
-       this.person = p;
-       this.Salary = salary;
-   }
-}
-```
-   
-* <b>What are Interfaces?</b> </br>
-   * Interfaces are only declared methods that an implementing class would need. 
-   * Interfaces cannot be marked as final. Interface variables must be static or final. 
-   * Interfaces cannot be instantiated directly.
-   * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
-
-- **Can Interfaces to be extended?** </br>
-  Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface. But every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
-  
-- **Difference between abstract and interface?** </br>
-  | Interface     | Abstract class     |
-  | :------------- | :------------- |
-  | Support multiple inheritances | Does not support multiple inheritances |
-  | Can extends another interfaces only | Can extends another class and implement multiple interfaces |
-  | Does not contain data member | Contains data member |
-  | Does not contains constructors | contains constructors  |
-  | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
-  | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
 
 * <b>What is Polymorphism?</b></br>
    * Polymorphism is when an object takes on multiple forms. For instance, String is a subclass of Object class. 
