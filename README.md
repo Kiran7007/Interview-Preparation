@@ -1868,16 +1868,14 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     A)<br/>
     ![Activity Lifecycle Image](/assets/activity_lifecycle.png)
 
--   **Fragment Lifecycle**<br/>
-    A)<br/>
+-   **Fragment Lifecycle** <br/>
     ![Fragment Lifecycle Image](/assets/fragment_lifecycle.png)
 
 -   **Service Lifecycle**<br/>
     A)<br/>
     ![Fragment Lifecycle Image](/assets/service_lifecycle.png)
 
--   **What is the correlation between activity and fragment life cycle?**<br/>
--   A) <br/>
+-   **What is the correlation between activity and fragment life cycle?** <br/>
     Here is how Activity's and Fragment's lifecyle are called together:
     ![Activity Fragment Lifecycle](/assets/activity-fragment-lifecycles.png)
 
