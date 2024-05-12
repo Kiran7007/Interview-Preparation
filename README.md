@@ -168,18 +168,8 @@ class Employee {
    
 * <b>Why would you not call abstract method in constructor?</b> </br>
    * The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
-
-* <b>What is Polymorphism?</b></br>
-   * Polymorphism is when an object takes on multiple forms. For instance, String is a subclass of Object class. 
-   * Polymorphism manifests itself in Java in the form of multiple methods having the same name.
-   * In some cases, multiple methods have the same name, but different formal argument lists (overloaded methods).
-   * In other cases, multiple methods have the same name, same return type, and same formal argument list (overridden methods).
-   * Polymorphism is a characteristic of being able to assign a different meaning or usage to something in different contexts - specifically, to allow an entity such as a variable, a function, or an object to have more than one form.
-   * 2 forms of polymorphism:  
-       * Compile time polymorphism: The flow of control is decided during the compile time itself. By overloading.
-       * Run time polymorphism: is done using inheritance and interface. The flow of control is decided during the runtime. Overriding: Overriding will have the same method name with the same parameters. One will be the parent class method and the other will be the child class method. Overloading occurs when the same method name is declared but with different parameters.</br>
        
-* <b>Difference between Encapsulation & Abstraction?</b></br>
+* <b>Difference between Encapsulation & Abstraction?</b> </br>
    * <b>Abstraction</b> focuses on the outside view of an object (i.e. the interface) 
    * <b>Encapsulation</b> (information hiding) prevents clients from seeing it’s inside view. 
    * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
@@ -193,8 +183,8 @@ class Employee {
     10x faster then Serializable because Serializable uses reflection which is a slow process and 
     tends to create a lot of temporary objects which may cause garbage collection to occur more often.
 
-* What is Singleton class?
-    - A singleton is a class that can only be instantiated once.[This singleton pattern restricts 
+* What is Singleton class? </br>
+    A singleton is a class that can only be instantiated once.[This singleton pattern restricts 
     the instantiation of a class to one object. This is useful when exactly one object is needed 
     to coordinate actions across the system. The concept is sometimes generalized to systems 
     that operate more efficiently when only one object exists, or that restrict the instantiation 
