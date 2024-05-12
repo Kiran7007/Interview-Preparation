@@ -178,18 +178,15 @@ class Employee {
     Serialization is the process of converting an object into a stream of bytes in order to store an object into memory so that it can be recreated at a later time while still keeping the objects original state and data. In Java there are two methods of doing this, one is by implementing Serializable or Parcelable. In Android, however, Serializable should never be used in Android. Parcelable was created to be more efficient then Serializable, and performs about 10x faster then Serializable because Serializable uses reflection which is a slow process and tends to create a lot of temporary objects which may cause garbage collection to occur more often.
 
 * <b>Why is Java said to be platform independent?</b> </br>
-  The execution of the code does not depend upon the OS</br>
-   
+  The execution of the code does not depend upon the OS
    
 * <b>Difference between ‘throw’ and ‘throws’ in Java Exception Handling?</b> </br>
-  ```throw``` keyword is used to throw Exception from any method or static block whereas ```throws``` is used to indicate that which Exception can possibly be thrown by this method.</br>
-   
+  ```throw``` keyword is used to throw Exception from any method or static block whereas ```throws``` is used to indicate that which Exception can possibly be thrown by this method.
    
 * <b>Is there ever a scenario where we can skip the finally block in a try catch?</b> </br>
   By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
-   
-   
-* <b>What are anonymous classes?</b></br>
+  
+* <b>What are anonymous classes?</b> </br>
    * An anonymous class is just what its name implies -- it has no name. It combines the class declaration and the creation of an instance of the class in one step. Since anonymous classes have no name, objects can not be instantiated from outside the class in which the anonymous class is defined. In fact, an anonymous object can only be instantiated from within the same scope in which it is defined.
    * Rules:
       * An anonymous class must always extend a super class or implement an interface but it cannot have an explicit extends or implements clause.
@@ -233,7 +230,6 @@ class Employee {
 * <b>What is garbage collector? How does it work?</b> </br>
   All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
    
-   
 * <b>Difference between stack memory & heap memory?</b></br>
    * Stack is used for static memory allocation and Heap for dynamic memory allocation, both stored in the computer's RAM .
    * Variables allocated on the stack are stored directly to the memory and access to this memory is very fast, and it's allocation is dealt with when the program is compiled. When a function or a method calls another function which in turns calls another function etc., the execution of all those functions remains suspended until the very last function returns its value. The stack is always reserved in a LIFO order, the most recently reserved block is always the next block to be freed. This makes it really simple to keep track of the stack, freeing a block from the stack is nothing more than adjusting one pointer.
@@ -254,34 +250,30 @@ class Employee {
    * ```super()```: Constructors use super to invoke the superclass's constructor.
    * <b>Methods</b>: Instance methods on the other hand require an instance of the class to exist before they can be called, so an instance of a class needs to be created by using the new keyword. Class methods are methods which are declared as static. The method can be called without creating an instance of the class</br>
    
-* <b>What is the difference between instantiation and initialization of an object?</b></br>
+* <b>What is the difference between instantiation and initialization of an object?</b> </br>
    * <b>Initialization</b> is the process of the memory allocation, when a new variable is created. Variables should be explicitly given a value, otherwise they may contain a random value that remained from the previous variable that was using the same memory space. To avoid this problem, Java language assigns default values to data types.
    * <b>Instantiation</b> is the process of explicitly assigning definitive value to a declared variable.</br>
   
-* <b>Do objects get passed by reference or value in Java? Elaborate on that.</b></br>
+* <b>Do objects get passed by reference or value in Java? Elaborate on that.</b> </br>
    * Java is always pass-by-value. When we pass the value of an object, we are passing the reference to it. 
    * Java creates a copy of the variable being passed in the method and then does the manipulations. Hence the change is not reflected in the main method.
    * But when you pass an object reference into a method, a copy of this reference is made, so it still points to the same object. This means, that any changes that you make to the insides of this object are retained, when the method exits.
    * Java copies and passes the reference by value, not the object. Thus, method manipulation will alter the objects, since the references point to the original objects. But since the references are copies, swaps will fail.</br>
    
-* <b>Primitives in Java?</b></br>
+* <b>Primitives in Java?</b> </br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
   
   
-* <b>Difference between == and .equals() method in Java?</b></br>
-   * We can use == operators for reference comparison (address comparison) and ```.equals()``` method for content comparison.    * In simple words, == checks if both objects point to the same memory location whereas .equals() evaluates to the comparison of values in the objects.</br>
+* <b>Difference between == and .equals() method in Java?</b> </br>
+   We can use == operators for reference comparison (address comparison) and ```.equals()``` method for content comparison.    * In simple words, == checks if both objects point to the same memory location whereas .equals() evaluates to the comparison of values in the objects.</br>
    
+* <b>Why strings are Immutable?</b> </br>
+  Once a value is assigned to a string it cannot be changed. And if changed, it creates a new object of the String. This is not the case with StringBuffer.</br>
    
-* <b>Why strings are Immutable?</b></br>
-   * Once a value is assigned to a string it cannot be changed. And if changed, it creates a new object of the String. This is not the case with StringBuffer.</br>
-   
-   
-* <b>What is String.intern()? When and why should it be used?</b></br>
+* <b>What is String.intern()? When and why should it be used?</b> </br>
    * String.intern() method can be used to to deal with String duplication problem in Java. By carefully using the intern() method you can save a lot of memories consumed by duplicate String instances. A string is duplicate if it contains the same content as another string but occupied different memory location.
    * By calling  the intern() method on a string object, for instance “abc”, you can instruct JVM to put this String in the pool and whenever someone else creates "abc", this object will be returned instead of creating a new object. This way, you can save a lot of memory in Java, depending upon how many Strings are duplicated in your program.
    * When the intern method is invoked, if the String pool already contains that String object such that equals() return true, it will return the String object from the pool, otherwise it will add that object to the pool of unique String.</br>
-   
-   
    
 * <b>String pool in Java:</b></br>
    * String Pool in java is a pool of Strings stored in Java Heap Memory. 
@@ -298,52 +290,42 @@ class Employee {
       * final Variables- A final variable cannot be changed once it is initialized.
       * final Methods- A final method cannot be overridden by subclasses.</br>
       
-      
-* <b><i>Finalize</i> keyword?</b></br>
-   * Finalize is a method used to perform clean up processing just before object is garbage collected.</br>
+* <b><i>Finalize</i> keyword?</b> </br>
+  Finalize is a method used to perform clean up processing just before object is garbage collected.</br>
    
+* <b><i>Finally</i> keyword?</b> </br>
+  finally is a code block and is used to place important code, it will be executed whether exception is handled or not.</br>
    
-* <b><i>Finally</i> keyword?</b></br>
-   * finally is a code block and is used to place important code, it will be executed whether exception is handled or not.</br>
-   
-   
-* <b><i>Static</i> variables?</b></br>
+* <b><i>Static</i> variables?</b> </br>
    * Variables that have only one copy per class are known as static variables. They are not attached to a particular instance of a class but rather belong to a class as a whole.
    * A static variable is associated with the class as a whole rather than with specific instances of a class. Non-static variables take on unique values with each object instance.</br> 
    
+* <b>What is reflection?</b> </br>
+  Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</br> 
    
-* <b>What is reflection?</b></br>
-   * Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</br> 
    
-   
-* <b>Multi threading?</b></br>
-   * Multiple tasks are running concurrently in a program.</br>
-   
+* <b>Multi threading?</b> </br>
+  Multiple tasks are running concurrently in a program.</br>
    
 * <b>Fail-fast & Fail-Safe?</b></br>
    * Fail-fast Iterators throws ConcurrentModificationException when one Thread is iterating over collection object and other thread structurally modify Collection either by adding, removing or modifying objects on underlying collection. They are called fail-fast because they try to immediately throw Exception when they encounter failure. 
    * On the other hand [fail-safe](http://javarevisited.blogspot.com/2011/10/java-iterator-tutorial-example-list.html) Iterators works on copy of collection instead of original collection.</br>
    
-   
-* <b>What does the keyword synchronized mean?</b></br>
+* <b>What does the keyword synchronized mean?</b> </br>
    * When you have two threads that are reading and writing to the same 'resource', say a variable named 'test', you need to ensure that these threads access the variable in an atomic way. Without the synchronized keyword, your thread 1 may not see the change thread 2 made to test.
    * <b>synchronized</b> blocks the next thread's call to method as long as the previous thread's execution is not finished. Threads can access this method one at a time.</br>
    
-   
-* <b>What does the keyword volatile mean?</b></br>
+* <b>What does the keyword volatile mean?</b> </br>
    * Suppose two threads are working on a method. If two threads run on different processors each thread may have its own local copy of variable. If one thread modifies its value the change might not reflect in the original one in the main memory instantly. 
    * Now the other thread is not aware of the modified value which leads to data inconsistency.Essentially, volatile is used to indicate that a variable's value will be modified by different threads. “volatile” tells the compiler that the value of a variable must never be cached as its value may change outside of the scope of the program itself.
    * The value of this variable will never be cached thread-locally: all reads and writes will go straight to "main memory"
    * An access to a volatile variable never has the potential to block: we're only ever doing a simple read or write, so unlike a synchronized block we will never hold on to any lock.</br>
    
-   
-* <b>What is Autoboxing and Unboxing?</b></br>
+* <b>What is Autoboxing and Unboxing?</b> </br>
    * Autoboxing is the automatic conversion that the Java compiler makes between the primitive types and their corresponding object wrapper classes. For example, converting an int to an Integer, a double to a Double, and so on. If the conversion goes the other way, this is called unboxing.</br>
-   
    
 * <b>Optionals in Java?</b></br>
    * Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
-   
    
 * <b>What is externalization?</b> </br>
    * In serialization, the JVM is responsible for the process of writing and reading objects. This is useful in most cases, as the programmers do not have to care about the underlying details of the serialization process.
@@ -378,7 +360,6 @@ class Employee {
   ```
 
 - **What is a static variables in Java?** </br>
-
   static is a non-access modifier in Java which is applicable for the following:
     - blocks
     - variables
@@ -392,15 +373,9 @@ class Employee {
     - static block and static variables are executed in order they are present in a program.
 
 - **Overriding for static method, possible?** </br>
+  quick response: no! </br>
 
-  quick response: no!
-
-  Inheritance comes from object-oriented principles, all of OOP principles needs
-  objects to apply on. when we talk about inheritance, it means we deal with some
-  objects which have relationships with each other. Besides, "overriding" is a
-  feature of OOP principle which is related to run-time polymorphism. The
-  implementation to be executed is decided at run-time and the decision is made
-  according to the object used for the call.
+  Inheritance comes from object-oriented principles, all of OOP principles needs objects to apply on. when we talk about inheritance, it means we deal with some objects which have relationships with each other. Besides, "overriding" is a feature of OOP principle which is related to run-time polymorphism. The implementation to be executed is decided at run-time and the decision is made according to the object used for the call.
 
   On the other hand, static methods belong to the class not object. So we use
   static methods without the need for creating an instance of a class. Besides,
@@ -554,15 +529,13 @@ class Employee {
 
 
 - **Override private methods, possible?** </br>
-
   No, a private method cannot be overridden since it is not visible from any other class.
 
 - **why access to the non-static variable is not allowed from static method in Java?** </br>
-
   because non-static variable are associated with a specific instance of an object while static is not associated with any instance.
 
 - **Java reference types?** </br>
-  [*geeksforgeeks*]("https://www.geeksforgeeks.org/types-references-java/")
+  [geeksforgeeks]("https://www.geeksforgeeks.org/types-references-java/")
 
 - **What is Generic in Java?** </br>
   Generics enable types (classes and interfaces) to be parameters when defining classes, interfaces and methods. Type parameters provide a way for you to re-use the same code with different inputs. The difference is that the inputs to formal parameters are values, while the inputs to type parameters are types. [more details](https://www.geeksforgeeks.org/generics-in-java/)
