@@ -322,10 +322,10 @@ class Employee {
    * An access to a volatile variable never has the potential to block: we're only ever doing a simple read or write, so unlike a synchronized block we will never hold on to any lock.</br>
    
 * <b>What is Autoboxing and Unboxing?</b> </br>
-   * Autoboxing is the automatic conversion that the Java compiler makes between the primitive types and their corresponding object wrapper classes. For example, converting an int to an Integer, a double to a Double, and so on. If the conversion goes the other way, this is called unboxing.</br>
+  Autoboxing is the automatic conversion that the Java compiler makes between the primitive types and their corresponding object wrapper classes. For example, converting an int to an Integer, a double to a Double, and so on. If the conversion goes the other way, this is called unboxing.</br>
    
 * <b>Optionals in Java?</b></br>
-   * Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
+  Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
    
 * <b>What is externalization?</b> </br>
    * In serialization, the JVM is responsible for the process of writing and reading objects. This is useful in most cases, as the programmers do not have to care about the underlying details of the serialization process.
@@ -377,24 +377,7 @@ class Employee {
 
   Inheritance comes from object-oriented principles, all of OOP principles needs objects to apply on. when we talk about inheritance, it means we deal with some objects which have relationships with each other. Besides, "overriding" is a feature of OOP principle which is related to run-time polymorphism. The implementation to be executed is decided at run-time and the decision is made according to the object used for the call.
 
-  On the other hand, static methods belong to the class not object. So we use
-  static methods without the need for creating an instance of a class. Besides,
-  static methods are resolved in compile-time. Hence the answer is 'NO'.
-
-
-- **What is an abstract class? Benefits?** </br>
-  According to the official document, An abstract class is a class that is declared `abstract`. It may or may not include abstract methods. Abstract classes cannot be instantiated, but they can be subclassed. Also, An abstract method is a method that is declared without an implementation (without braces, and followed by a semicolon), If a class includes abstract methods, then the class itself must be declared `abstract`.
-  ```java
-  public abstract class GraphicObject {
-    // declare fields
-    // declare nonabstract methods
-    abstract void draw();
-  }
-  ```
-  We use abstraction when we want to enforce base functions a have base
-  properties. Although we could use an interface for this, sometimes the
-  functionality of such classes may overlap or it needs some objects which
-  are shared in whole class scope, then we use abstraction.
+  On the other hand, static methods belong to the class not object. So we use static methods without the need for creating an instance of a class. Besides, static methods are resolved in compile-time. Hence the answer is 'NO'.
 
 - **What is an object cloning? can you use clone() method of every object?** </br>
   Object cloning refers to creation of exact copy of an object. It creates a new instance of the class of current object and initializes all its fields with exactly the contents of the corresponding fields of this object. Every class that implements `clone()` methods should call super.clone() to obtain the cloned object reference. Also it must implement java.lang.Cloneable interface otherwise it will throw CloneNotSupportedException when clone method is called on that class’s object.
