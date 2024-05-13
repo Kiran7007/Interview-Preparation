@@ -262,10 +262,10 @@ class Employee {
    
 * <b>Primitives in Java?</b> </br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
-  
-  
+
 * <b>Difference between == and .equals() method in Java?</b> </br>
-   We can use == operators for reference comparison (address comparison) and ```.equals()``` method for content comparison.    * In simple words, == checks if both objects point to the same memory location whereas .equals() evaluates to the comparison of values in the objects.</br>
+  - The `equals()` method compares two strings, character by character, to determine equality.
+  - The `==` operator checks to see whether two object references refer to the same instance of an object
    
 * <b>Why strings are Immutable?</b> </br>
   Once a value is assigned to a string it cannot be changed. And if changed, it creates a new object of the String. This is not the case with StringBuffer.</br>
@@ -282,27 +282,53 @@ class Employee {
    * For example, how many strings are getting created in below statement;
   ``` String str = new String("Cat");```
    * In above statement, either 1 or 2 string will be created. If there is already a string literal “Cat” in the pool, then only one string “str” will be created in the pool. If there is no string literal “Cat” in the pool, then it will be first created in the pool and then in the heap space, so total 2 string objects will be created.</br>
-   
 
 * <b><i>Final</i> modifier?</b></br>
    * Final modifiers - once declared cannot be modified. A blank final variable in Java is a final variable that is not initialized during declaration. 
       * final Classes- A final class cannot have subclasses.
       * final Variables- A final variable cannot be changed once it is initialized.
       * final Methods- A final method cannot be overridden by subclasses.</br>
+
+   ```java
+   final public class CantOverrideClass {
+     public final void cantOverrideMethod(){}
+   }
+   ```
       
 * <b><i>Finalize</i> keyword?</b> </br>
-  Finalize is a method used to perform clean up processing just before object is garbage collected.</br>
+  `finalize()` method is a protected and non-static method of java.lang.Object class. This method will be available in all objects you create in java. This method is used to perform clean up processing just before object is garbage collected. you can override the `finalize()` method to keep those operations you want to perform before an object is destroyed. Here is the general form of `finalize()` method.
+
+  ```java
+  protected void finalize() throws Throwable {
+    //Keep some resource closing operations here
+  }
+  ```
    
 * <b><i>Finally</i> keyword?</b> </br>
   finally is a code block and is used to place important code, it will be executed whether exception is handled or not.</br>
-   
-* <b><i>Static</i> variables?</b> </br>
-   * Variables that have only one copy per class are known as static variables. They are not attached to a particular instance of a class but rather belong to a class as a whole.
-   * A static variable is associated with the class as a whole rather than with specific instances of a class. Non-static variables take on unique values with each object instance.</br> 
-   
+
+- **What is a static variables in Java?** </br>
+  static is a non-access modifier in Java which is applicable for the following:
+    - blocks
+    - variables
+    - methods
+    - nested classes
+
+  Variables that have only one copy per class are known as static variables. When a variable is declared as static, then a single copy of variable is created and shared among all objects at class level. Static variables are, essentially, global variables. </br>
+
+  Important points for static variables:
+    - We can create static variables at class-level only. See [here](https://www.geeksforgeeks.org/g-fact-47/)
+    - static block and static variables are executed in order they are present in a program.
+
+- **Overriding for static method, possible?** </br>
+  quick response: no! </br>
+
+  Inheritance comes from object-oriented principles, all of OOP principles needs objects to apply on. when we talk about inheritance, it means we deal with some objects which have relationships with each other. Besides, "overriding" is a feature of OOP principle which is related to run-time polymorphism. The implementation to be executed is decided at run-time and the decision is made according to the object used for the call.
+
+  On the other hand, static methods belong to the class not object. So we use static methods without the need for creating an instance of a class. Besides, static methods are resolved in compile-time. Hence the answer is 'NO'.
+  
 * <b>What is reflection?</b> </br>
   Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</br> 
-   
    
 * <b>Multi threading?</b> </br>
   Multiple tasks are running concurrently in a program.</br>
@@ -321,9 +347,6 @@ class Employee {
    * The value of this variable will never be cached thread-locally: all reads and writes will go straight to "main memory"
    * An access to a volatile variable never has the potential to block: we're only ever doing a simple read or write, so unlike a synchronized block we will never hold on to any lock.</br>
    
-* <b>What is Autoboxing and Unboxing?</b> </br>
-  Autoboxing is the automatic conversion that the Java compiler makes between the primitive types and their corresponding object wrapper classes. For example, converting an int to an Integer, a double to a Double, and so on. If the conversion goes the other way, this is called unboxing.</br>
-   
 * <b>Optionals in Java?</b></br>
   Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
    
@@ -332,52 +355,6 @@ class Employee {
    * However, the default serialization does not protect sensitive information such as passwords and credentials.
    * Thus externalization comes to give the programmers full control in reading and writing objects during serialization.
    * Implement the java.io.Externalizable interface - then you implement your own code to write object’s states in the ```writeExternal()``` method and read object’s states in the ```readExternal()``` method.</br>
-
-- **How to prevent a class to be extended?** </br>
-  simply use keyword `final` in definition of class or methods. for example:
-  ```java
-  final public class CantOverrideClass {
-
-    public final void cantOverrideMethod(){
-
-    }
-
-  }
-  ```  
-
-- **What is the use of the finalize method?** </br>
-  `finalize()` method is a protected and non-static method of java.lang.Object
-  class. This method will be available in all objects you create in java. This
-  method is used to perform some final operations or clean up operations on an
-  object before it is removed from the memory. you can override the `finalize()`
-  method to keep those operations you want to perform before an object is
-  destroyed. Here is the general form of `finalize()` method.
-
-  ```java
-  protected void finalize() throws Throwable {
-    //Keep some resource closing operations here
-  }
-  ```
-
-- **What is a static variables in Java?** </br>
-  static is a non-access modifier in Java which is applicable for the following:
-    - blocks
-    - variables
-    - methods
-    - nested classes
-
-  When a variable is declared as static, then a single copy of variable is created and shared among all objects at class level. Static variables are, essentially, global variables. All instances of the class share the same static variable.
-
-  Important points for static variables:
-    - We can create static variables at class-level only. See [here](https://www.geeksforgeeks.org/g-fact-47/)
-    - static block and static variables are executed in order they are present in a program.
-
-- **Overriding for static method, possible?** </br>
-  quick response: no! </br>
-
-  Inheritance comes from object-oriented principles, all of OOP principles needs objects to apply on. when we talk about inheritance, it means we deal with some objects which have relationships with each other. Besides, "overriding" is a feature of OOP principle which is related to run-time polymorphism. The implementation to be executed is decided at run-time and the decision is made according to the object used for the call.
-
-  On the other hand, static methods belong to the class not object. So we use static methods without the need for creating an instance of a class. Besides, static methods are resolved in compile-time. Hence the answer is 'NO'.
 
 - **What is an object cloning? can you use clone() method of every object?** </br>
   Object cloning refers to creation of exact copy of an object. It creates a new instance of the class of current object and initializes all its fields with exactly the contents of the corresponding fields of this object. Every class that implements `clone()` methods should call super.clone() to obtain the cloned object reference. Also it must implement java.lang.Cloneable interface otherwise it will throw CloneNotSupportedException when clone method is called on that class’s object.
@@ -520,9 +497,6 @@ class Employee {
 - **Java reference types?** </br>
   [geeksforgeeks]("https://www.geeksforgeeks.org/types-references-java/")
 
-- **What is Generic in Java?** </br>
-  Generics enable types (classes and interfaces) to be parameters when defining classes, interfaces and methods. Type parameters provide a way for you to re-use the same code with different inputs. The difference is that the inputs to formal parameters are values, while the inputs to type parameters are types. [more details](https://www.geeksforgeeks.org/generics-in-java/)
-
 - **What is the difference between int and Integer?** </br>
   `int` is a primitive type, while `Integer` is class with a single field of type `int`. Variables of type `int` store the avtual binary value for the integer. Variables of type `Integer` store references to `Integer` objects, just as with any other reference (object) type. The `Integer` class is used where you need an `int` to be treated like any other object, such as in generic types or situations where you need nullability.
 
@@ -530,39 +504,14 @@ class Employee {
   - **Autoboxing:** Converting a primitive value into an object of the corresponding wrapper class is called autoboxing. For example, converting `int` to `Integer` class.
   - **Unboxing:**  Converting an object of a wrapper type to its corresponding primitive value is called unboxing. For example conversion of `Integer` to `int`.
 
-- **What is the difference between initialization and instantiation?** </br>
-  - **Instantiation** is when memory is allocated for an object. This is what the `new` keyword is doing. A reference to the object that was created is returned from the `new` keyword.
-
-  - **Initialization** is when values are put into the memory that was allocated. This is what the Constructor of a class does when using the `new` keyword. A variable must also be initialized by having the reference to some object in memory passed to it.
-
-
-- **How does a static block work?** </br>
-  Run once when class is loaded, used for initializing static members. [read more](https://www.geeksforgeeks.org/g-fact-79/)
-
-- **What does the keyword `synchronized` mean?** </br>
-  A `synchronized` block in Java is synchronized on some object. All synchronized blocks synchronized on the same object can only have one thread executing inside them at a time. All other threads attempting to enter the synchronized block are blocked until the thread inside the synchronized block exits the block.
-
-- **What is the memory leak? How to handle it?**
 - **What is `transient` modifier? What does it come for?** </br>
   [complete explanation](https://www.geeksforgeeks.org/transient-keyword-java/)
-
-- **What is the difference between `==` and `.equal`?**
-  - The `equals()` method compares two strings, character by character, to determine equality.
-  - The `==` operator checks to see whether two object references refer to the same instance of an object
-
-- **What is `reflection`?** [geeksforgeeks](https://www.geeksforgeeks.org/reflection-in-java/)
-- **What is the `volatile` modifier?** </br>
-  In multi-threading apps where the threads operate on non-volatile variables, each thread may copy variables from main memory into a CPU cache, for performance reason. If your app run on more than one thread, each thread may copy the variable and cache it. So This keyword is used to mark a variable as "being stored in main memory". Note that reading from and writing to main memory is more expensive than accessing the CPU cache. Thus, you should only use volatile variables when you really need to enforce visibility of variables.
-
-  ![](/assets/images/volatile-preview.png)
 
 - **What is the `hashCode()` used for?** </br>
   `hashcode()` returns the hashcode value as an Integer. Hashcode value is mostly used in hashing based collections like HashMap, HashSet, HashTable….etc. According to the official documentation, The general contract of `hashCode()` is:
     - Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer, provided no information used in equals comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.
     - If two objects are equal according to the equals(Object) method, then calling the hashCode method on each of the two objects must produce the same integer result.
-
     - It is not required that if two objects are unequal according to the equals(java.lang.Object) method, then calling the hashCode method on each of the two objects must produce distinct integer results. However, the programmer should be aware that producing distinct integer results for unequal objects may improve the performance of hashtables.
-
 
 - **What are "annotations"?** </br>
   Java annotations are used to provide meta data for your Java code. Being meta data, Java annotations do not directly affect the execution of your code, although some types of annotations can actually be used for that purpose. [read more](http://tutorials.jenkov.com/java/annotations.html)
@@ -672,7 +621,7 @@ class Employee {
     // RxAndroid tutorial - observer subscribing to observable
     stringObservable.subscribe(stringObserver);
     ```
-
+    
 -   **What are the different types of Observables in RxJava?** <br/>
     1) single
     2) Maybe
@@ -2235,7 +2184,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 * Explain Generics in Java?
 * Difference between `StringBuffer` and `StringBuilder`?
 * How is a `StringBuilder` implemented to avoid the immutable string allocation problem?
-* What is Autoboxing and Unboxing?
 * What’s the difference between an Enumeration and an Iterator?
 * What is the difference between fail-fast and fail safe in Java?
 * What is Java priority queue?
@@ -2321,7 +2269,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 * What is renderscript? [Link](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
 * What are the differences between Dalvik and ART?
 * FlatBuffers vs JSON. [Link](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
-* What are Annotations? [Link](https://blog.mindorks.com/creating-custom-annotations-in-android-a855c5b43ed9), [Link](https://blog.mindorks.com/improve-your-android-coding-through-annotations-26b3273c137a)
 * Tell about Constraint Layout [Link](https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd)
 * `HashMap`, `ArrayMap` and `SparseArray` [Link](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
 * Explain Looper, Handler and HandlerThread. [Link](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
