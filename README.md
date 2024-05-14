@@ -494,9 +494,6 @@ class Employee {
 - **why access to the non-static variable is not allowed from static method in Java?** </br>
   because non-static variable are associated with a specific instance of an object while static is not associated with any instance.
 
-- **Java reference types?** </br>
-  [geeksforgeeks]("https://www.geeksforgeeks.org/types-references-java/")
-
 - **What is the difference between int and Integer?** </br>
   `int` is a primitive type, while `Integer` is class with a single field of type `int`. Variables of type `int` store the avtual binary value for the integer. Variables of type `Integer` store references to `Integer` objects, just as with any other reference (object) type. The `Integer` class is used where you need an `int` to be treated like any other object, such as in generic types or situations where you need nullability.
 
@@ -716,10 +713,6 @@ class Employee {
    - <b>View</b>: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
    - <b>ViewGroup</b>: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br> 
 
-- **Difference between `Activity` and `Service`?**
-  - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
-  - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
-
 - **Why do android apps need to ask permission like `INTERNET` or `LOCATION`?** </br>
   The Android platform takes advantage of the Linux user-based protection to identify and isolate app resources called sandbox. This isolates apps from each other and protects apps and the system from malicious apps. If an app needs to use some system resources (like internet, or location sensor,..) or needs to connect other apps (like IAB library), it should request this access. Then android OS give this request and get permission to access the resource. If you want to use system resources, request the permission under the `<uses-permission>` tag in the `android-manifest.xml` file.
 
@@ -758,8 +751,7 @@ class Employee {
  for complete reading, see the [official documentation](https://developer.android.com/training/multiscreen/screensizes).
 
 - **What is the difference between margin and padding?**
-  - **Padding** will be space added inside the container, for instance,
-    if it is a button, padding will be added inside the button.       
+  - **Padding** will be space added inside the container, for instance, if it is a button, padding will be added inside the button.       
   - **Margin** will be space added outside the container.
 
 - **What is `sw` keyword in `layout-sw600` folder meaning?** </br>
@@ -776,7 +768,6 @@ class Employee {
   ![](/assets/images/layout-adaptive-breakpoints_2x.png)
 
 - **What is the difference between `sw` and `w` and `h` as postfix in order to define the resources folder?**
-
     - `sw`: The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation,
     - `w`: The width qualifier specifies the available width. For example, if you have a two-pane layout, you might want to use that whenever the screen provides at least 600dp of width, which might change depending on whether the device is in landscape or portrait orientation. Notice that this qualifier is orientation related.
     - `h`: The height qualifier specifies the available height. This is equivalent to `w` qualifier but is used when the available height is a concern.
@@ -785,62 +776,35 @@ class Employee {
 
 - **What are the major differences between `ListView` and `RecyclerView`?**
 
-  - **ViewHolder Pattern**: `Recyclerview` implements the ViewHolders pattern
-    whereas it is not mandatory in a ListView. A `ViewHolder` object stores
-    each of the component views inside the tag field of the Layout, so you can
-    immediately access them without the need to look them up repeatedly.
-    In `ListView`, the code might call `findViewById()` frequently during the
-    scrolling of `ListView`, which can slow down performance. Even when the
-    `Adapter` returns an inflated view for recycling, you still need to look up
-    the elements and update them. A way around repeated use of `findViewById()`
-     is to use the "view holder" design pattern.
+  - **ViewHolder Pattern**: `Recyclerview` implements the ViewHolders pattern whereas it is not mandatory in a ListView. A `ViewHolder` object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In `ListView`, the code might call `findViewById()` frequently during the scrolling of `ListView`, which can slow down performance. Even when the `Adapter` returns an inflated view for recycling, you still need to look up
+    the elements and update them. A way around repeated use of `findViewById()`  is to use the "view holder" design pattern.
 
-  - **LayoutManager**: In a `ListView`, the only type of view available is
-    the `vertical` ListView. A `RecyclerView` decouples list from its container
-    so we can put list items easily at run time in the different containers
-    (linearLayout, gridLayout) by setting LayoutManager.
+  - **LayoutManager**: In a `ListView`, the only type of view available is the `vertical` ListView. A `RecyclerView` decouples list from its container so we can put list items easily at run time in the different containers (linearLayout, gridLayout) by setting LayoutManager.
 
   - **Item Animator**: `ListViews` are lacking in support of good animations,
     but the `RecyclerView` brings a whole new dimension to it.
 
 - **Difference between `Intent` and `IntentService`?**
-  - `Service` is the base class for Android services that can be extended to
-    create any service. A class that directly extends `Service` runs on the main
-    thread so it will block the UI (if there is one) and should therefore either
-    be used only for short tasks or should make use of other threads for longer
-    tasks.
+  - `Service` is the base class for Android services that can be extended to create any service. A class that directly extends `Service` runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.
 
-  - `IntentService` is a subclass of `Service` that handles asynchronous requests
-   (expressed as `Intents`) on demand. Clients send requests through
-   `startService(Intent)` calls. The service is started as needed, handles each
-   `Intent` in turn using a worker thread, and stops itself when it runs out of
-   work. [Read More on Mindorks's blog]("https://blog.mindorks.com/service-vs-intentservice-in-android")
+  - `IntentService` is a subclass of `Service` that handles asynchronous requests (expressed as `Intents`) on demand. Clients send requests through `startService(Intent)` calls. The service is started as needed, handles each `Intent` in turn using a worker thread, and stops itself when it runs out of work. [Read More on Mindorks's blog]("https://blog.mindorks.com/service-vs-intentservice-in-android")
 
-- **What is `Fragment`?**
-
+- **What is `Fragment`?** </br>
   A `Fragment` is a piece of an activity which enable more modular activity design. A fragment has its layout, its behavior, and its life cycle callbacks. You can add or remove fragments in an activity while the activity is running. You can combine multiple fragments in a single activity to build a multi-pane UI. A fragment can also be used in multiple activities. The fragment life cycle is closely related to its host activity which means when the activity is paused, all the fragments available in the activity will also be stopped.
 
 - **How to pass items to `fragment`?**
 
   Using `Bundle` you can pass items to the fragment.
 
-- **How would you communicate between two `fragments`?**
-
+- **How would you communicate between two `fragments`?** </br>
   There are several ways to communicate two fragments. Using `interfaces` are a common way to do that. You can connect two fragments through interfaces that are implemented in the parent activity.
 
 - **Difference between adding/replacing `fragment` in `backstack`?**
-  - `replace` removes the existing `fragment` and adds a new `fragment`.
-    This means when you press back button the fragment that got replaced will
-    be created with its onCreateView being invoked.
+  - `replace` removes the existing `fragment` and adds a new `fragment`. This means when you press back button the fragment that got replaced will be created with its onCreateView being invoked.
 
-  - `add` retains the existing fragments and adds a new `fragment` that means
-    existing fragment  will be active and they wont be in 'paused' state hence
-    when a back button is pressed onCreateView is not called for the existing
-    fragment(the fragment which was there before new fragment was added).
+  - `add` retains the existing fragments and adds a new `fragment` that means existing fragment  will be active and they wont be in 'paused' state hence when a back button is pressed onCreateView is not called for the existing fragment(the fragment which was there before new fragment was added).
 
-    In terms of fragment’s life cycle events `onPause()`, `onResume()`,
-    `onCreateView()` and other life cycle events will be invoked in case of
-    `replace` but they wont be invoked in case of `add`.
+    In terms of fragment’s life cycle events `onPause()`, `onResume()`, `onCreateView()` and other life cycle events will be invoked in case of `replace` but they wont be invoked in case of `add`.
 
 - **What is the difference between `dialog` and `dialogFragment`?**
 
@@ -852,72 +816,36 @@ class Employee {
 
 - **What is the relationship between the life cycle of an `AsyncTask` and an `Activity`? What problems can this result in? How can these problems be avoided?**
 
-  An AsyncTask is not tied to the life cycle of the Activity that contains it.
-  So, for example, if you start an AsyncTask inside an Activity and the user
-  rotates the device, the Activity will be destroyed (and a new Activity
-  instance will be created) but the AsyncTask will not die but instead goes
-  on living until it completes.
+  An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.
 
-  Then, when the AsyncTask does complete, rather than updating the UI of the
-  new Activity, it updates the former instance of the Activity (i.e., the one
-  in which it was created but that is not displayed anymore!). This can lead to
-  an Exception (of the type java.lang.IllegalArgumentException: View not attached
-  to window manager if you use, for instance, findViewById to retrieve a view
-  inside the Activity).
+  Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).
 
-  There’s also the potential for this to result in a memory leak since the
-  AsyncTask maintains a reference to the Activity, which prevents the Activity
-  from being garbage collected as long as the AsyncTask remains alive.
+  There’s also the potential for this to result in a memory leak since the AsyncTask maintains a reference to the Activity, which prevents the Activity from being garbage collected as long as the AsyncTask remains alive.
 
-  For these reasons, using AsyncTasks for long-running background tasks is
-  generally a bad idea . Rather, for long-running background tasks, a different
-  mechanism (such as a service) should be employed.
+  For these reasons, using AsyncTasks for long-running background tasks is generally a bad idea . Rather, for long-running background tasks, a different mechanism (such as a service) should be employed.
 
-- **What is `Lopper` and how it works?**
-- **What are Handlers?**
-
-    Handlers are objects for managing threads. It receives messages and writes
-    code on how to handle the message. They run outside of the activity’s
-    lifecycle, so they need to be cleaned up properly or else you will have
-    thread leaks. Handlers allow communicating between the background thread
-    and the main thread.
+- **What are Handlers?** </br>
+  Handlers are objects for managing threads. It receives messages and writes code on how to handle the message. They run outside of the activity’s lifecycle, so they need to be cleaned up properly or else you will have thread leaks. Handlers allow communicating between the background thread and the main thread.
 
 - **What is the difference between `Foreground` and `Background` and `Bounded` service?**
-  - __Foreground Service:__ A foreground `service` performs some operation that
-  is noticeable to the user. For example, we can use a foreground service to
-  play an audio track. A `Notification` must be displayed to the user.
+  - **Foreground Service:** A foreground `service` performs some operation that is noticeable to the user. For example, we can use a foreground service to play an audio track. A `Notification` must be displayed to the user.
 
-  - __Background Service:__ A background `service` performs an operation that
-  isn’t directly noticed by the user. In Android API level 26 and above, there
-  are restrictions to using background services and it is recommended to use
-  WorkManager in these cases
+  - **Background Service:** A background `service` performs an operation that isn’t directly noticed by the user. In Android API level 26 and above, there are restrictions to using background services and it is recommended to use WorkManager in these cases
 
-  - __Bound Service:__ A `service` is bound when an application component binds
-  to it by calling `bindService()`. A bound service offers a client-server
-  interface that allows components to interact with the `service`, send requests,
-  receive results. A bound service runs only as long as another application
-  component is bound to it. [Read More](https://developer.android.com/guide/components/services)
+  - **Bound Service:** A `service` is bound when an application component binds to it by calling `bindService()`. A bound service offers a client-server interface that allows components to interact with the `service`, send requests, receive results. A bound service runs only as long as another application component is bound to it. [Read More](https://developer.android.com/guide/components/services)
 
-- **What are the limitations of using `Services` in android 8 and higher?**
-- **What is `JobScheduling`?**
-- **What is `contentProvider` and what is typically used for?**
-
-  A `ContentProvider` provides data from one application to another, when
-  requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more]("https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42" "An idiot guide to android content providers").
+- **What is `contentProvider` and what is typically used for?** </br>
+  A `ContentProvider` provides data from one application to another, when requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more]("https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42" "An idiot guide to android content providers").
   For further reading see the [official android documentation]("https://developer.android.com/guide/topics/providers/content-provider-basics" "Android official documentation")
 
   ![Conent Provider diagram](/assets/images/content-provider-diagram.png)
 
 - **What is the difference between `apply()` and `commit()` in `sharedPreferences`?**
-  - `commit()` writes the data **synchronously** and returns a boolean value of
-    success or failure depending on the result immediately.
-
-  - `apply()` is **asynchronous** and it won’t return any boolean response. Also
-    if there is an `apply()` outstanding and we perform another `commit()`,
-    The `commit()` will be blocked until the `apply()` is not completed.
+  - `commit()` writes the data **synchronously** and returns a boolean value of success or failure depending on the result immediately.
+  - `apply()` is **asynchronous** and it won’t return any boolean response. Also if there is an `apply()` outstanding and we perform another `commit()`, The `commit()` will be blocked until the `apply()` is not completed.
 
 - **How you load your `Bitmaps`? What do you do for loading large bitmaps?**
-[Loading Large Bitmaps Efficiently in Android](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53 "Loading Large Bitmaps Efficiently in Android")
+  [Loading Large Bitmaps Efficiently in Android](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53 "Loading Large Bitmaps Efficiently in Android")
 
 * **Stateflow vs LiveData** </br>
   https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html
@@ -936,29 +864,21 @@ class Employee {
 
   3. The final step involves the android apkbuilder which takes all the input
     and builds the apk (android packaging key) file.
-
 <br>
 
-- **What is the difference between `implementation` and `api`?**
-
+- **What is the difference between `implementation` and `api`?** </br>
   These two keywords work the same when you want to add a new library but the main difference occurs when using it in the internal library. Let's explain it with an example. Consider your app has a library called 'libraryA'. This library is also dependant on another library called 'libraryB'. the dependency flow will be : `app -> libraryA -> libraryB` . If the libraryB is declared in libraryA with keyword `implementation`, so your app module does not know anything about the classes of libraryB. So you can't access and use any classes of libraryB. If you want to do that, you must declare libraryB in the libraryA Gradle file with keyword `api`. For more information read [this medium link]("https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa").
 
-
-- **What do you mean by Gradle wrapper?**
-
+- **What do you mean by Gradle wrapper?** </br>
   The Gradle wrapper is the most suitable way to initiate a Gradle build. A Gradle wrapper is a Window’s batch script which has a shell script for the OS (operating system). Once you start the Gradle build via the wrapper, you will see an auto download which runs the build.
   
-
-- **When to use Adapter pattern? (Not for RecyclerView or ListView)**
-
+- **When to use Adapter pattern? (Not for RecyclerView or ListView)** </br>
   Use Adapter pattern when you need to make two class work with incompatible interfaces. Adapter pattern can also be used to encapsulate third party code so that your application only depends upon Adapter, which can adapt itself when third party code changes or you moved to a different third party library.
 
-- **In singleton pattern whether it is better to make the whole `getInstance()` method synchronized or just critical section is enough? Which one is preferable?**
-
+- **In singleton pattern whether it is better to make the whole `getInstance()` method synchronized or just critical section is enough? Which one is preferable?** </br>
   Synchronization of whole `getInstance()` method is costly and is only needed during the initialization on singleton instance, to stop creating another instance of Singleton.  Therefore it is better to only synchronize critical section and not the whole method.
 
-- **How many ways can you write singleton class in Java?**
-
+- **How many ways can you write singleton class in Java?** </br>
   One can write singleton class in Java in five ways
 
     - Classic Java Singleton pattern
@@ -1070,8 +990,8 @@ class Employee {
     ```
 <br>
 
-* **Understanding scope storage in android**
-   - https://blog.mindorks.com/understanding-the-scoped-storage-in-android
+* **Understanding scope storage in android** </br>
+  https://blog.mindorks.com/understanding-the-scoped-storage-in-android
 
 * **App Data encryption**  </br>
   https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore
@@ -1103,94 +1023,54 @@ class Employee {
    - https://github.com/iluwatar/java-design-patterns
      
 - **What are the drawbacks of using singleton design pattern?**
+  - **Testability issue:** The bad thing with singletons is that the `getInstance()` method is globally accessible. That means that you usually call it from within a class, instead of depending on an interface you can later mock. That's why it's impossible to replace it when you want to test the method or the class.
 
-  - **Testability issue:** The bad thing with singletons is that the
-  `getInstance()` method is globally accessible. That means that you usually
-  call it from within a class, instead of depending on an interface you can
-  later mock. That's why it's impossible to replace it when you want to test
-  the method or the class.
+  - **Tight Coupling:** The singleton object is exposed globally and is available to a whole application. Thus, classes using this object become tightly coupled. So any change in the global object will impact all other classes using it.
 
-  - **Tight Coupling:** The singleton object is exposed globally and is
-  available to a whole application. Thus, classes using this object become
-  tightly coupled. So any change in the global object will impact all other
-  classes using it.
+  - **Violation issues:** Singleton principle can be violated by techniques such as cloning. If an application is running on multiple JVM’s, then, in this case, Singleton might be broken.
 
-  - **Violation issues:** Singleton principle can be violated by techniques such
-  as cloning. If an application is running on multiple JVM’s, then, in this case,
-  Singleton might be broken.
-
-- **How can you prevent creating another instance of singleton using `clone()` method?**
-
+- **How can you prevent creating another instance of singleton using `clone()` method?** </br>
   The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
 
-- **When will you prefer to use a Factory Pattern?**
-
+- **When will you prefer to use a Factory Pattern?** </br>
   The factory pattern is preferred in the following cases:
     - A class does not know which class of objects it must create
-
     - Factory pattern can be used where we need to create an object of any one of sub-classes depending on the data provided
-
     - you can use factory pattern where you have to create an object of any one of sub-classes depending on the given data
 
-
-- **Why use a factory class to instantiate a class when we can use new operator?**
-
+- **Why use a factory class to instantiate a class when we can use new operator?** </br>
   Factory classes provide flexibility in terms of design. Below are some of the
   benefits of factory class:
-
     - Factory design pattern results in more decoupled code as it allows us to
       hide creational logic from dependent code
     - It allows us to introduce an [Inversion of Control]("https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO" "What is IoC?") container
     - It gives you a lot more flexibility when it comes time to change the
       application as our creational logic is hidden from dependant code
 
-- **What is the difference between factory and abstract factory design pattern?**
+- **What is the difference between factory and abstract factory design pattern?** </br>
+  Both factory and abstract factory are creational design patterns. The majordifference between these two is, a factory pattern creates an object through inheritance and produces only one Product. On the other hand, an abstract factory pattern creates the object through composition and produce families of products. In other word an abstract factory is "factory of factories". You can find an example [___here___]("https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java").
 
-  Both factory and abstract factory are creational design patterns. The major
-  difference between these two is, a factory pattern creates an object through
-  inheritance and produces only one Product. On the other hand, an abstract
-  factory pattern creates the object through composition and produce families
-  of products. In other word an abstract factory is "factory of factories". You can find an example [___here___]("https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java").
+- **(My Favorite question!) Suppose we are building an application for a pizza store and we need to model their pizza classes. Assume they offer four types of pizzas namely Peppy Paneer, Farmhouse, Margherita and Chicken Fiesta. Each pizza has a different cost. We have overridden the getCost() in the subclasses to find the appropriate cost. Now let's become it more interesting! suppose a new requirement, in addition to a pizza, customer can also ask for several toppings such as Fresh Tomato, Paneer, Jalapeno, Capsicum, Barbeque, etc. Toppings may be redundant and it's OK. (It means a customer may choose double jalapeno or three-time barbeque). Each topping has its price and by adding each one the total cost of the pizza will be increased. If you have to suggest only one design pattern to solve this problem, choose which one? why? and How you implement it?**
 
-- **(My Favorite question!) Suppose we are building an application for a pizza
-store and we need to model their pizza classes. Assume they offer four types
-of pizzas namely Peppy Paneer, Farmhouse, Margherita and Chicken Fiesta. Each
-pizza has a different cost. We have overridden the getCost() in the subclasses
-to find the appropriate cost. Now let's become it more interesting! suppose a
-new requirement, in addition to a pizza, customer can also ask for several
-toppings such as Fresh Tomato, Paneer, Jalapeno, Capsicum, Barbeque, etc.
-Toppings may be redundant and it's OK. (It means a customer may choose double
-jalapeno or three-time barbeque). Each topping has its price and by adding
-each one the total cost of the pizza will be increased. If you have to suggest
-only one design pattern to solve this problem, choose which one? why? and
-How you implement it?**
-
-- **which pattern is used when we need to decouple an abstraction from its implementation?**
-
+- **which pattern is used when we need to decouple an abstraction from its implementation?**  </br>
   When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
 
-<br>
-
 * <b>What is ABI Management?</b></br>
-  * Different Android handsets use different CPUs, which in turn support different instruction sets. Each combination of CPU and instruction sets has its own Application Binary Interface, or ABI. The ABI defines, with great precision, how an  application's machine code is supposed to interact with the system at runtime. You must specify an ABI for each CPU  architecture you want your app to work with. You can checkout the full specifcations [here](https://developer.android.com/ndk/guides/abis)</br>
+  Different Android handsets use different CPUs, which in turn support different instruction sets. Each combination of CPU and instruction sets has its own Application Binary Interface, or ABI. The ABI defines, with great precision, how an  application's machine code is supposed to interact with the system at runtime. You must specify an ABI for each CPU  architecture you want your app to work with. You can checkout the full specifcations [here](https://developer.android.com/ndk/guides/abis)</br>
   
-
-* <b>Why bytecode cannot be run in Android?</b></br>
-  * Android uses DVM (Dalvik Virtual Machine ) rather using JVM(Java Virtual Machine).</br>
+* <b>Why bytecode cannot be run in Android?</b> </br>
+  Android uses DVM (Dalvik Virtual Machine ) rather using JVM(Java Virtual Machine).</br>
   
-  
- * <b>What is a BuildType in Gradle? And what can you use it for?</b></br>
+* <b>What is a BuildType in Gradle? And what can you use it for?</b> </br>
    * Build types define properties that Gradle uses when building and packaging your Android app.
    * A build type defines how a module is built, for example whether ProGuard is run.
    * A product flavor defines what is built, such as which resources are included in the build.
    * Gradle creates a build variant for every possible combination of your project’s product flavors and build types.</br> 
  
-
-* <b>Explain the build process in Android:</b></br>
+* <b>Explain the build process in Android:</b> </br>
   * First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
   * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex. 
   * The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.</br>
-
 
 * <b>What is the Android Application Architecture?</b></br>
     * Android application architecture has the following components:</br>
@@ -1205,8 +1085,8 @@ How you implement it?**
     * <b>Manifest</b>: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
     * <b>R.Java</b>: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. </br>
   
-* <b>Describe activities</b></br>
-  * Activities are basically containers or windows to the user interface.</br>
+* <b>Describe activities</b> </br>
+  Activities are basically containers or windows to the user interface.</br>
   
 * <b>Lifecycle of an Activity</b></br>
   * ```OnCreate()```: This is when the view is first created. This is normally where we create views, get data from bundles etc.</br>
@@ -1223,7 +1103,7 @@ How you implement it?**
   * The onStart() method is called whenever the Activity becomes visible to the user, typically after onCreate() or onRestart().</br>
   
 * <b>Scenario in which only onDestroy is called for an activity without onPause() and onStop()?</b></br>
-  * If finish() is called in the OnCreate method of an activity, the system will invoke onDestroy() method directly.</br>
+  If finish() is called in the OnCreate method of an activity, the system will invoke onDestroy() method directly.</br>
 
 * <b>Why would you do the setContentView() in onCreate() of Activity class?</b></br>
   * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
@@ -1241,10 +1121,8 @@ How you implement it?**
      * Eg: Suppose there is an activity stack of A -> B -> C -> D. If we launch activity B again with the launch mode as “singleTask”, the new activity stack will be: 
      * Task1 — A -> B -> C  and Task2 — D</br>
  
-  
  * <b>How does the activity respond when the user rotates the screen?</b></br>
-    * When the screen is rotated, the current instance of activity is destroyed a new instance of the Activity is created in the new orientation. The onRestart() method is invoked first when a screen is rotated. The other lifecycle methods get invoked in the similar flow as they were when the activity was first created.</br>
-  
+   When the screen is rotated, the current instance of activity is destroyed a new instance of the Activity is created in the new orientation. The onRestart() method is invoked first when a screen is rotated. The other lifecycle methods get invoked in the similar flow as they were when the activity was first created.</br>
   
  * <b>How to prevent the data from reloading and resetting when the screen is rotated?</b></br>
    * The most common approach these days would be to use a combination of ViewModels and onSaveInstanceState(). So how we do we that?
@@ -1253,12 +1131,11 @@ How you implement it?**
    * For instance, let’s say we have a search screen and the user has entered a query in the Edittext. This results in a list of items being displayed in the RecyclerView. Now if the screen is rotated, the ideal way to prevent resetting of data would be to store the list of search items in the ViewModel and the query text user has entered in the OnSaveInstanceState method of the activity.</br>
   
 * <b>Mention two ways to clear the back stack of Activities when a new Activity is called using intent</b></br>
-   * The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag. The second way is by using FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_NEW_TASK in conjunction.</br>
+  The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag. The second way is by using FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_NEW_TASK in conjunction.</br>
   
 * <b>What’s the difference between FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_CLEAR_TOP?</b></br>
   * <b>FLAG_ACTIVITY_CLEAR_TASK</b> is used to clear all the activities from the task including any existing instances of the class invoked. The Activity launched by intent becomes the new root of the otherwise empty task list. This flag has to be used in conjunction with FLAG_ ACTIVITY_NEW_TASK.</br>
   * <b>FLAG_ACTIVITY_CLEAR_TOP</b> on the other hand, if set and if an old instance of this Activity exists in the task list then barring that all the other activities are removed and that old activity becomes the root of the task list. Else if there’s no instance of that activity then a new instance of it is made the root of the task list. Using FLAG_ACTIVITY_NEW_TASK in conjunction is a good practice, though not necessary.</br>  
-  
   
 * <b>Describe content providers</b></br>
   * A ContentProvider provides data from one application to another, when requested. It manages access to a structured set of data.  It provides mechanisms for defining data security. ContentProvider is the standard interface that connects data in one process with code running in another process.</br>  
@@ -1273,30 +1150,12 @@ How you implement it?**
     * Foreground Service: A foreground service performs some operation that is noticeable to the user. For example, we can use a foreground service to play an audio track. A [Notification](https://developer.android.com/guide/topics/ui/notifiers/notifications.html) must be displayed to the user.
     * Background Service: A background service performs an operation that isn’t directly noticed by the user. In Android API level 26 and above, there are restrictions to using background services and it is recommended to use [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) in these cases.
     * Bound Service: A service is bound when an application component binds to it by calling bindService(). A bound service offers a client-server interface that allows components to interact with the service, send requests, receive results. A bound service runs only as long as another application component is bound to it.</br>
-  
-  
-* <b>Difference between Service & Intent Service</b></br>
-  * <b>Service</b> is the base class for Android services that can be extended to create any service. A class that directly extends Service runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.</br>  
-  * <b>IntentService</b> is a subclass of Service that handles asynchronous requests (expressed as “Intents”) on demand. Clients send requests through startService(Intent) calls. The service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.</br>
-  
-  
-* <b>Difference between AsyncTasks & Threads?</b></br>
-  * <b>Thread</b> should be used to separate long running operations from main thread so that performance is improved. But it can't be cancelled elegantly and it can't handle configuration changes of Android. You can't update UI from Thread.
-  * <b>AsyncTask</b> can be used to handle work items shorter than 5ms in duration. With AsyncTask, you can update UI unlike java Thread. But many long running tasks will choke the performance.</br>
    
-  
 * <b>Difference between Service, Intent Service, AsyncTask & Threads</b></br>
-  * <b>Android service</b> is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed.</br>
+  * <b>Android service</b> is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.</br>
   * <b>AsyncTask</b> allows you to perform asynchronous work on your user interface. It performs the blocking operations in a worker thread and then publishes the results on the UI thread, without requiring you to handle threads and/or handlers yourself.</br>
   * <b>IntentService</b> is a base class for Services that handle asynchronous requests (expressed as Intents) on demand. Clients send requests through startService(Intent) calls; the service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.</br>
-  * A <b>thread</b> is a single sequential flow of control within a program. Threads can be thought of as mini-processes running within a main process.</br>
-  
-  
-* <b>What are Handlers?</b></br>
-  * Handlers are objects for managing threads. It receives messages and writes code on how to handle the message. They run outside of the activity’s lifecycle, so they need to be cleaned up properly or else you will have thread leaks.
-  * Handlers allow communicating between the background thread and the main thread.
-  * A Handler class is preferred when we need to perform a background task repeatedly after every x seconds/minutes.</br>
-  
+  * A <b>thread</b> is a single sequential flow of control within a program. it should be used to separate long running operations from main thread so that performance is improved. But it can't be cancelled elegantly and it can't handle configuration changes of Android. You can't update UI from Thread. </br>
   
  * <b>What is a Job Scheduling?</b></br>
    * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
@@ -1316,44 +1175,25 @@ How you implement it?**
    * For these reasons, using AsyncTasks for long-running background tasks is generally a bad idea . Rather, for long-running background tasks, a different mechanism (such as a service) should be employed.
    * Note: AsyncTasks by default run on a single thread using a serial executor, meaning it has only 1 thread and each task runs one after the other.</br>
 
-
 * <b>What is the onTrimMemory() method?</b></br>
    * ```onTrimMemory()```: Called when the operating system has determined that it is a good time for a process to trim unneeded memory from its process. This will happen for example when it goes in the background and there is not enough memory to keep as many background processes running as desired.
    * Android can reclaim memory for from your app in several ways or kill your app entirely if necessary to free up memory for critical tasks. To help balance the system memory and avoid the system's need to kill your app process, you can implement the ```ComponentCallbacks2``` interface in your Activity classes. The provided onTrimMemory() callback method allows your app to listen for memory related events when your app is in either the foreground or the background, and then release objects in response to app lifecycle or system events that indicate the system needs to reclaim memory. [Reference](https://developer.android.com/topic/performance/memory)</br>
-  
-  
-* <b>Android Bound Service</b></br>
-  * A bound service is a service that allows other android components (like activity) to bind to it and send and receive data.
-A bound service is a service that can be used not only by components running in the same process as local service, but activities and services, running in different processes, can bind to it and send and receive data.</br>
-  * When implementing a bound service we have to extend Service class but we have to override onBind method too. This method returns an object that implements IBinder, that can be used to interact with the service.</br>
-  * Implementing Android bound service with Android Messenger</br>
-  * Service based on Messenger can communicate with other components in different processes, known as Inter Process Communication (IPC), without using AIDL.</br>
-  * <b>A service handler</b>: this component handles incoming requests from clients that interact with the service itself.</br>
-  * <b>A Messenger</b>: this class is used to create an object implementing IBinder interface so that a client can interact with the service.</br>
-  * Example Implementation: [Link](https://www.survivingwithandroid.com/2014/01/android-bound-service-ipc-with-messenger-2.html)
-  
 
 * <b>AIDL vs Messenger Queue</b></br>
   * AIDL is for purpose when you've to go application level communication for data and control sharing, a scenario depicting it can be : An app requires list of all contacts from Contacts app (content part lies here) plus it also wants to show the call's duration and you can also disconnect it from that app (control part lies here).
   * In Messenger queues you're more IN the application and working on threads and processes to manage the queue having messages so no Outside services interference here.</br>
   * Messenger is needed if you want to bind a remote service (e.g. running in another process).</br>
 
-
 * <b>What is a ThreadPool? And is it more effective than using several separate Threads?</b></br>
   * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
   * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
 
-
-* <b>Difference between Serializable and Parcelable?</b></br>
-  * Serializable is a standard Java interface. Parcelable is an Android specific interface where you implement the serialization yourself. It was created to be far more efficient than Serializable (The problem with this approach is that reflection is used and it is a slow process. This mechanism also tends to create a lot of temporary objects and cause quite a bit of garbage collection.).
-  * Serialization Serialization is the process of converting an object into a stream of bytes in order to store an object into memory, so that it can be recreated at a later time, while still keeping the object's original state and data. 
-  * <b>How to disallow serialization?</b> We can declare the variable as transient.</br>
-
-* <b>Difference between Activity & Service</b></br>
-  * Activities are basically containers or windows to the user interface. Services is a component that is used to perform operations on the background. It does not have an UI.</br>
-  
+- **Difference between `Activity` and `Service`?**
+  - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
+  - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
+    
 * <b>How would you update the UI of an activity from a background service</b></br>
-  * We need to register a LocalBroadcastReceiver in the activity. And send a broadcast with the data using intents from the background service. As long as the activity is in the foreground, the UI will be updated from the background. Ensure to unregister the broadcast receiver in the onStop() method of the activity to avoid memory leaks. 
+  We need to register a LocalBroadcastReceiver in the activity. And send a broadcast with the data using intents from the background service. As long as the activity is in the foreground, the UI will be updated from the background. Ensure to unregister the broadcast receiver in the onStop() method of the activity to avoid memory leaks. 
 We can also register a Handler and pass data using Handlers. I have detailed a sample implementation on this. You can check it out [here](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)</br>
 
 * <b>What is an intent?</b></br>
@@ -1366,24 +1206,18 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   * Sticky Intents allows communication between a function and a service. 
   * ```sendStickyBroadcast()``` performs a sendBroadcast(Intent) known as sticky, i.e. the Intent you are sending stays around after the broadcast is complete, so that others can quickly retrieve that data through the return value of ```registerReceiver(BroadcastReceiver, IntentFilter)```.
   * For example, if you take an intent for ACTION_BATTERY_CHANGED to get battery change events: When you call registerReceiver() for that action — even with a null BroadcastReceiver — you <b>get the Intent that was last Broadcast for that action</b>. Hence, you can use this to find the state of the battery without necessarily registering for all future state changes in the battery.</br>
-  
-  
 
 * <b>What is a Pending Intent?</b></br>
-  * If you want someone to perform any Intent operation at future point of time on behalf of you, then we will use Pending Intent. </br>
-  
+  If you want someone to perform any Intent operation at future point of time on behalf of you, then we will use Pending Intent. </br>
   
 * <b>What is an Action?</b></br>
-  * Description of the intent. For instance, ACTION_CALL - used to perform calls</br>
+  Description of the intent. For instance, ACTION_CALL - used to perform calls</br>
   
-
 * <b>What are intent Filters?</b></br>
   * Specifies the type of intent that the activity/service can respond to.</br>
   
-  
 * <b>Describe fragments:</b></br>
-  * Fragment is a UI entity attached to Activity. Fragments can be reused by attaching in different activities. Activity can have multiple fragments attached to it. Fragment must be attached to an activity and its lifecycle will depend on its host activity.</br>
-  
+  Fragment is a UI entity attached to Activity. Fragments can be reused by attaching in different activities. Activity can have multiple fragments attached to it. Fragment must be attached to an activity and its lifecycle will depend on its host activity.</br>
   
 * <b>Describe fragment lifecycle</b></br>
   * ```onAttach()``` : The fragment instance is associated with an activity instance.The fragment and the activity is not fully initialized. Typically you get in this method a reference to the activity which uses the fragment for further initialization work.
@@ -1397,72 +1231,49 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   * ```onDestroyView()``` : Fragment view will destroy after call this method
   * ```onDestroy()``` :called to do final clean up of the fragment’s state but Not guaranteed to be called by the Android platform.</br>  
   
-  
 * <b>What is the difference between fragments & activities. Explain the relationship between the two.</b></br>
   * An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).</br>
-    
-* <b>Difference between adding/replacing fragment in backstack?</b></br>
-  * <b>replace</b> removes the existing fragment and adds a new fragment. This means when you press back button the fragment that got replaced will be created with its onCreateView being invoked.
-  * <b>add</b> retains the existing fragments and adds a new fragment that means existing fragment will be active and they wont be in ‘paused’ state hence when a back button is pressed onCreateView is not called for the existing fragment(the fragment which was there before new fragment was added).
-  * In terms of fragment’s life cycle events onPause, onResume, onCreateView and other life cycle events will be invoked in case of replace but they wont be invoked in case of add.</br>
-  
   
 * <b>Why is it recommended to use only the default constructor to create a Fragment?</b></br>
-  * The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle. This way you are guaranteed to restore the state of the fragment correctly to the same state the fragment was initialised with.</br>
-  
+  The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle. This way you are guaranteed to restore the state of the fragment correctly to the same state the fragment was initialised with.</br>
   
 * <b>You’re replacing one Fragment with another — how do you ensure that the user can return to the previous Fragment, by pressing the Back button?</b></br>
-  * We need to save each Fragment transaction to the backstack, by calling ```addToBackStack()``` before you ```commit()``` that transaction</br>
+  We need to save each Fragment transaction to the backstack, by calling ```addToBackStack()``` before you ```commit()``` that transaction</br>
  
- 
-  
 * <b>Callbacks invoked during addition of a fragment to back stack and while popping back from back stack:</b></br>
   * ```addOnBackStackChangedListener``` is called when fragment is added or removed from the backstack. Use this [link](https://why-android.com/2016/03/29/learn-how-to-use-the-onbackstackchangedlistener/) for reference</br>
-  
-  
   
 * <b>What are retained fragments</b></br>
   * By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs. Calling ```setRetainInstance(true)``` allows us to bypass this destroy-and-recreate cycle, signaling the system to retain the current instance of the fragment when the activity is recreated.</br>
   
 * <b>What is Toast in Android?</b></br>
-   * Android Toast can be used to display information for the short period of time. A toast contains message to be displayed quickly and disappears after sometime.</br>
-  
+  Android Toast can be used to display information for the short period of time. A toast contains message to be displayed quickly and disappears after sometime.</br>
   
 * <b>What are Loaders in Android?</b></br>
    * Loader API was introduced in API level 11 and is used to load data from a data source to display in an activity or fragment. Loaders persist and cache results across configuration changes to prevent duplicate queries.
    * [Sample Implementation](https://medium.com/mindorks/a-journey-to-the-world-of-mvp-and-loaders-part-2-e176200e5866) </br>
    
-   
 * <b>What is the difference between Dialog & DialogFragment?</b></br>
-   * A fragment that displays a dialog window, floating on top of its activity's window. This fragment contains a Dialog object, which it displays as appropriate based on the fragment's state. Dialogs are entirely dependent on Activities. If the screen is rotated, the dialog is dismissed. Dialog fragments take care of orientation, configuration changes as well.</br>
+  A fragment that displays a dialog window, floating on top of its activity's window. This fragment contains a Dialog object, which it displays as appropriate based on the fragment's state. Dialogs are entirely dependent on Activities. If the screen is rotated, the dialog is dismissed. Dialog fragments take care of orientation, configuration changes as well.</br>
    
-   
-* <b>Difference between margin & padding?</b></br>
-   * Padding will be space added inside the container, for instance, if it is a button, padding will be added inside the button. Margin will be space added outside the container.</br>
-  
 * <b>What is the difference between a regular .png and a nine-patch image?</b></br>
    * It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device. The NinePatch class allows drawing a bitmap in nine sections. The four corners are unscaled; the middle of the image is scaled in both axes, the four edges are scaled into one axis.</br>
-   
-   
+     
 * <b>Difference between RelativeLayout and LinearLayout?</b></br>
    * <b>Linear Layout</b> - Arranges elements either vertically or horizontally. i.e. in a row or column. 
    * <b>Relative Layout</b> - Arranges elements relative to parent or other elements.</br>
-   
    
 * <b>What is ConstraintLayout?</b></br>
    * It allows you to create large and complex layouts with a flat view hierarchy (no nested view groups). It's similar to RelativeLayout in that all views are laid out according to relationships between sibling views and the parent layout, but it's more flexible than RelativeLayout and easier to use with Android Studio's Layout Editor.
    * [Sample Implementation](https://github.com/anitaa1990/ConstraintLayout-Sample) 
    * You can read more about how to implement a simple app with ConstraintLayout [here](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a), by yours truly :)</br>
    
-   
 * <b>When might you use a FrameLayout?</b></br>
    * Frame Layouts are designed to contain a single item, making them an efficient choice when you need to display a single View.
    * If you add multiple Views to a FrameLayout then it’ll stack them one above the other, so FrameLayouts are also useful if you need overlapping Views, for example if you’re implementing an overlay or a HUD element.</br> 
    
-   
 * <b>What is Adapters?</b></br>
-   * An adapter responsible for converting each data entry into a View that can then be added to the AdapterView (ListView/RecyclerView).</br>
-   
+  An adapter responsible for converting each data entry into a View that can then be added to the AdapterView (ListView/RecyclerView).</br>
 
 * <b>How to support different screen sizes?</b></br>
    * Create a flexible layout - The best way to create a responsive layout for different screen sizes is to use ConstraintLayout as the base layout in your UI. ConstraintLayout allows you to specify the position and size for each view according to spatial relationships with other views in the layout. This way, all the views can move and stretch together as the screen size changes.
@@ -1473,8 +1284,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
       * res/layout-sw600dp/main_activity.xml   # For 7” tablets (600dp wide and bigger). 
       * The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation, so it's a simple way to specify the overall screen size available for your layout.</br>
   
-  
-  
 * <b>Outline the process of creating custom Views:</b></br>
    * Create a class that Subclass a view
    * Create a res/values/attrs.xml file and declare the attributes you want to use with your custom View.
@@ -1483,55 +1292,16 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * Draw your View by overriding onDraw().
    * [Sample Implementation](https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548) </br>
    
-   
 * <b>Briefly describe some ways that you can optimize View usage</b></br>
    * Checking for excessive overdraw: install your app on an Android device, and then enable the "Debug GPU Overview" option.
    * Flattening your view hierarchy: inspect your view hierarchy using Android Studio’s ‘Hierarchy Viewer’ tool.
    * Measuring how long it takes each View to complete the measure, layout, and draw phases. You can also use Hierarchy Viewer to identify any parts of the rendering pipeline that you need to optimize.</br>
    
-   
 * <b>Bitmap pooling in android?</b></br>
    * Bitmap pooling is a simple technique, that aims to reuse bitmaps instead of creating new ones every time. When you need a bitmap, you check a bitmap stack to see if there are any bitmaps available. If there are not bitmaps available you create a new bitmap otherwise you pop a bitmap from the stack and reuse it. Then when you are done with the bitmap, you can put it on a stack. [Find more info here](https://www.linkedin.com/pulse/performance-improvement-bitmap-pooling-android-ali-muzaffar/)</br>
    
-   
 * <b>How to load bitmap to memory?</b></br>
-   * [Find more info here](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)</br>   
-
-* **SSL Pinning**
-   - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
-   - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
-        - How will the key exchanged
-        - How will be the data encrypted
-        - How will messages marked as authentic
-
-    - The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
-
-    - Developer can compile the public key into the application code this is essecially pins the key into the appliction. when client receives the public key from the server, it compare this key with the pinned key in apllciation. the key should should match. if the key dont match. the client terminates the session.
-
-    - Types of SSL Pinning
-        - Public key pinning
-        - Certificate pinning
-            - https://dzone.com/articles/encryption-and-signing
-            - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
-            - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
-        - SPKI pinning
-
-    **How do you implement it in Android?** </br>
-    SSL Pinning can be done using OkHttpClient's Builder methods as follows:
-    ```Kotlin
-        val certificatePinner = CertificatePinner.Builder()
-        .add(
-            "www.coderefer.com",
-    "sha256/ZCOF65ADBWPDK8P2V7+mqodtvbsTRR/D74FCU+CEEA="
-        )
-        .build()
-    val okHttpClient = OkHttpClient.Builder()
-        .certificatePinner(certificatePinner)
-        .build()
-    ```
-
-    Then you supply this generated okHttpClient object to Retrofit.
-    For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
+  [Find more info here](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)</br>   
   
 * <b>What are the permission protection levels in Android?</b></br>
    * <b>Normal</b> - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
@@ -1539,14 +1309,11 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * <b>Signature</b> - A permission that the system grants only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.
    * <b>SignatureOrSystem</b> - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.</br>  
   
-  
-  
 * <b>What is an Application Not Responding (ANR) error, and how can you prevent them from occurring in an app?</b></br>
-   * An ANR dialog appears when your UI has been unresponsive for more than 5 seconds, usually because you’ve blocked the main thread. To avoid encountering ANR errors, you should move as much work off the main thread as possible.</br>
-   
+  An ANR dialog appears when your UI has been unresponsive for more than 5 seconds, usually because you’ve blocked the main thread. To avoid encountering ANR errors, you should move as much work off the main thread as possible.</br>
    
 * <b>What is a singleton class in Android?</b></br>
-   * A singleton class is a class which can create only an object that can be shared all other classes.
+  A singleton class is a class which can create only an object that can be shared all other classes.
    ```
    private static volatile RESTService instance;
     protected RESTService(Context context) {
@@ -1563,13 +1330,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     }
     ```
    </br>
-  
-  
-* <b>What’s the difference between commit() and apply() in SharedPreferences?</b></br>
-   * ```commit()``` writes the data synchronously and returns a boolean value of success or failure depending on the result immediately.
-   * ```apply()``` is asynchronous and it won’t return any boolean response. Also if there is an apply() outstanding and we perform another commit(). The commit() will be blocked until the apply() is not completed.</br>
-   
-   
+    
 * <b>How does RecyclerView work?</b></br>
    * Let's start with some background on RecyclerView which is needed to understand ```onBindViewHolder()``` method inside RecyclerView.</br>
    * RecyclerView is designed to display long lists (or grids) of items. Say you want to display 100 rows of something. A simple approach would be to just create 100 views, one for each row and lay all of them out. But that would be wasteful because at any point of time, only 10 or so items could fit on screen and the remaining items would be off screen. So RecyclerView instead creates only the 10 or so views that are on screen. This way you get 10x better speed and memory usage. 
@@ -1583,7 +1344,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * <b>What is a ViewHolder Pattern?</b> - A ViewHolder object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In ListView, the code might call ```findViewById()``` frequently during the scrolling of ListView, which can slow down performance. Even when the Adapter returns an inflated view for recycling, you still need to look up the elements and update them. A way around repeated use of ```findViewById()``` is to use the "view holder" design pattern.
    * <b>LayoutManager</b>: In a ListView, the only type of view available is the vertical ListView.  A RecyclerView decouples list from its container so we can put list items easily at run time in the different containers (linearLayout, gridLayout) by setting LayoutManager.
    * <b>Item Animator</b>: ListViews are lacking in support of good animations, but the RecyclerView brings a whole new dimension to it.</br> 
-   
    
 * <b>How would you implement swipe animation in Android</b></br> 
    ```
@@ -1601,7 +1361,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
    * [Article 2 on the subject](https://medium.com/@mohom.r/optimising-android-app-performance-with-arraymap-9296f4a1f9eb) </br>
    
-   
 * <b>How to reduce apk size?</b></br>
    * Enable proguard in your project by adding following lines to your release build type.
    * Enable shrinkResources.
@@ -1609,7 +1368,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * Convert all the images to the webp or vector drawables.
    * [Article on the subject](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
    </br>   
-   
    
 * <b>How to reduce build time of an Android app?</b></br>
    * Check out this awesome [article](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43) on it. 
@@ -1623,7 +1381,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   This command means gradle will go online and check for the latest version every time it builds the app.</br> 
   Instead use fixed versions i.e. ```'com.android.support:appcompat-v7:27.0.2'```    
    </br>   
-   
    
 * <b>Android Architecture Components?</b></br>
    * A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)
@@ -1660,9 +1417,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
        2. Abstractions should not depend on details. Details should depend on abstractions.
 
     [Learn More about SOLID principles with Android Examples Here.](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
-
--   **Android Architecture** <br/>
-    ![Android Architecture Image](/assets/android-architecture.png)
 
 -   **What are Android Components?** <br/>
     1) Activities,
@@ -1739,15 +1493,11 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     HandlerThread is a Handy class to start a thread that has a Looper.
 
 -   **What is a Looper?** <br/>
-    A Looper is a class used to loop through the Message Queue attached to the Thread. Any thread consists of only one looper.
-    
-    You can access message queue of current thread by using **Looper.myQueue()**.
+    A Looper is a class used to loop through the Message Queue attached to the Thread. Any thread consists of only one looper. You can access message queue of current thread by using **Looper.myQueue()**.
     
     By default, a thread halts when the execution completes. But, for Example, if we take Android's Main thread, it should not halt upon execution.
 
-    Normally thread cannot be reused once its job is completed. But thread with Looper is kept alive until you call quit method so you don’t need to create a new instance each time you want to run a job in background.
-
-    Rather it should loop through the runnables(Messages) that its assigned in order to work properly. For more info, refer to this [link](https://stackoverflow.com/a/34522758/3424919).
+    Normally thread cannot be reused once its job is completed. But thread with Looper is kept alive until you call quit method so you don’t need to create a new instance each time you want to run a job in background. ther it should loop through the runnables(Messages) that its assigned in order to work properly. For more info, refer to this [link](https://stackoverflow.com/a/34522758/3424919).
 
 -   **What is a Message Queue?** <br/>
     MessageQueue is a queue that has list of messages which should be processed. Android maintains a MessageQueue on the main thread.
@@ -1761,17 +1511,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
 -   **How to Stop a Service?** <br/>
     To stop a service from an activity we can call stopService(Intent intent) method. To Stop a service from itself, we can call stopSelf() method.
-
--   **What are different types of services?** <br/>
-    These are the three different types of services:
-
-    **Foreground Service:**
-    A foreground service performs some operation that is noticeable to the user. For example, an audio app would use a foreground service to play an audio track. Foreground services must display a Notification. Foreground services continue running even when the user isn't interacting with the app. <br/>
-    **Background Service:**
-    A background service performs an operation that isn't directly noticed by the user. For example, if an app used a service to compact its storage, that would usually be a background service. However there are restrictions to use background services from Android API 26 and above. We can use WorkManager to defer these background tasks.<br/>
-    **Bound Service:**
-    A service is bound when an application component binds to it by calling bindService(). A bound service offers a client-server interface that allows components to interact with the service, send requests, receive results, and even do so across processes with interprocess communication (IPC). A bound service runs only as long as another application component is bound to it. Multiple components can bind to the service at once, but when all of them unbind, the service is destroyed by the system.
-    [Read More](https://developer.android.com/guide/components/services#Types-of-services)
 
 -   **Bound Service vs UnBounded service?** <br/>
     A Bound service is started by using method bindService(). As mentioned above system destroys bound service when no application component is accessing it.
@@ -1814,8 +1553,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     ```
 
 
--   **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?**
--   
+-   **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?** </br>
     **START_NOT_STICKY:**<br>
     If the system kills the service after onStartCommand() returns, do not recreate the service unless there are pending intents to deliver. This is the safest option to avoid running your service when not necessary and when your application can simply restart any unfinished jobs.
     
@@ -1824,9 +1562,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
     **START_REDELIVER_INTENT:**<br>
     If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand() with the last intent that was delivered to the service. Any pending intents are delivered in turn. This is *suitable for services that are actively performing a job that should be immediately resumed, such as downloading a file.*
-
--   **What is Pending Intent?** </br>
-    A PendingIntent is a token that you give to a foreign application (e.g. NotificationManager, AlarmManager, Home Screen AppWidgetManager, or other 3rd party applications), which allows the foreign application to use your application's permissions to execute a predefined piece of code. It specifies a task that requires to be performed in future.
 
 -   **What is an Intent Service? What is the method that differentiates it to make Service run in background?**  </br>
     IntentService is a subclass of Service that can perform tasks using worker thread unlike service that blocks main thread. The additional method of IntentService is -
@@ -1889,12 +1624,10 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     4. converting the images to vector drawables.
 
 -   **What is the advantage of using Retrofit over AsyncTask?** <br/>
-    Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically.
-    Retrofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself.
-    More use-cases at: https://stackoverflow.com/a/16903205/3424919
+    Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself. More use-cases at: https://stackoverflow.com/a/16903205/3424919
 
 -   **How to handle multiple network calls using Retrofit?** <br/>
-      In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
+    In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
 
 -   **What is the role of Presenter in MVP?** <br/>
     The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
@@ -1922,8 +1655,43 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     We can use Fused location provider in Android set our interval in that.
     https://stackoverflow.com/a/41500910/3424919
 
-
 ### Android Security Related
+-   * **SSL Pinning**
+   - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
+   - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
+        - How will the key exchanged
+        - How will be the data encrypted
+        - How will messages marked as authentic
+
+    - The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
+
+    - Developer can compile the public key into the application code this is essecially pins the key into the appliction. when client receives the public key from the server, it compare this key with the pinned key in apllciation. the key should should match. if the key dont match. the client terminates the session.
+
+    - Types of SSL Pinning
+        - Public key pinning
+        - Certificate pinning
+            - https://dzone.com/articles/encryption-and-signing
+            - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
+            - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
+        - SPKI pinning
+
+    **How do you implement it in Android?** </br>
+    SSL Pinning can be done using OkHttpClient's Builder methods as follows:
+    ```Kotlin
+        val certificatePinner = CertificatePinner.Builder()
+        .add(
+            "www.coderefer.com",
+    "sha256/ZCOF65ADBWPDK8P2V7+mqodtvbsTRR/D74FCU+CEEA="
+        )
+        .build()
+    val okHttpClient = OkHttpClient.Builder()
+        .certificatePinner(certificatePinner)
+        .build()
+    ```
+
+    Then you supply this generated okHttpClient object to Retrofit.
+    For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
+    
 -   **How do you know if the device is rooted?** <br/>
     We can check if superUser apk is installed in the device or if it contains su file or xbin folder. Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub.
     <br/>
