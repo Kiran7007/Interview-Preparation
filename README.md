@@ -1232,7 +1232,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   * ```onDestroy()``` :called to do final clean up of the fragment’s state but Not guaranteed to be called by the Android platform.</br>  
   
 * <b>What is the difference between fragments & activities. Explain the relationship between the two.</b></br>
-  * An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).</br>
+  An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).</br>
   
 * <b>Why is it recommended to use only the default constructor to create a Fragment?</b></br>
   The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle. This way you are guaranteed to restore the state of the fragment correctly to the same state the fragment was initialised with.</br>
@@ -1338,7 +1338,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
      * Again a simple approach would be to create a new view for each new row that you need to show. But this way by the time you reach the end of the list you will have created 100 views and your memory usage would be the same as in the first approach. And creating views takes time, so your scrolling most probably wouldn't be smooth. This is why RecyclerView takes advantage of the fact that as you scroll, <b>new rows come on screen also old rows disappear off screen</b>. Instead of creating new view for each new row, an old view is recycled and reused by binding new data to it.
      * This happens inside the ```onBindViewHolder()``` method. Initially you will get new unused view holders and you have to fill them with data you want to display. But as you scroll you will start getting view holders that were used for rows that went off screen and you have to replace old data that they held with new data.</br>
 
-   
 * <b>How does RecyclerView differ from ListView?</b></br>
    * <b>ViewHolder Pattern</b>:  Recyclerview implements the ViewHolders pattern whereas it is not mandatory in a ListView. A RecyclerView recycles and reuses cells when scrolling. 
    * <b>What is a ViewHolder Pattern?</b> - A ViewHolder object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In ListView, the code might call ```findViewById()``` frequently during the scrolling of ListView, which can slow down performance. Even when the Adapter returns an inflated view for recycling, you still need to look up the elements and update them. A way around repeated use of ```findViewById()``` is to use the "view holder" design pattern.
@@ -1355,7 +1354,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     </set>
     ```
 </br>   
-  
   
 * <b>Arraymap/SparseArray vs HashMap in Android?</b></br>
    * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
@@ -1404,6 +1402,12 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * <b>MVC</b> is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
    * <b>MVP architecture</b>: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
    * <b>MVVM</b>: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)</br></br>
+
+-   **What is the role of Presenter in MVP?** <br/>
+    The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
+
+-   **What is the advantage of MVVM over MVP?** <br/>
+    In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View. It is the View's responsibility to pick the changes from ViewModel. This helps in writing more maintainable test cases since ViewModel does not depend upon View.
 
 -   **What are SOLID Principles? How they are applicable in Android?** <br/>
     SOLID unites all the best practices of software development over the years to deliver good quality apps. Understanding SOLID Principles will help us write clean and elegant code. It helps us write the code with SOC (Separation of Concerns).
@@ -1472,22 +1476,14 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     </activity>
     ```
 
--   **What is an Intent?** <br/>
-    It is a kind of message or information that is passed to the components. It is used to launch an activity, display a web page, send SMS, send email, etc. There are two types of intents in android:
-    a)Implicit Intent
-    b)Explicit Intent
-
 -   **What is AAPT?** <br/>
     AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
 
--   **What is an Intent?** <br/>
-    Intent is basically a message passing mechanism between different components of Android, except for Content Provider. You can use intent to start any component in Android.
-
--   **What are the different types of Intents?** <br/>
+-   **What is an Intent? What are the different types of Intents?** <br/>
+    It is a kind of message or information that is passed between different components of Android. It is used to launch an activity, display a web page, send SMS, send email, etc. There are two types of intents in android:
     There are two types of intents:
-
-    Explicit intents specify which application will satisfy the intent, by supplying either the target app's package name or a fully-qualified component class name. You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
-    Implicit intents do not name a specific component, but instead declare a general action to perform, which allows a component from another app to handle it. For example, if you want to show the user a location on a map, you can use an implicit intent to request that another capable app show a specified location on a map.
+    a)**Implicit Intent** - Implicit intents do not name a specific component, but instead declare a general action to perform, which allows a component from another app to handle it. For example, if you want to show the user a location on a map, you can use an implicit intent to request that another capable app show a specified location on a map.
+    b)**Explicit Intent** - Explicit intents specify which application will satisfy the intent, by supplying either the target app's package name or a fully-qualified component class name. You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
 
 -   **What is HandlerThread?** <br/>
     HandlerThread is a Handy class to start a thread that has a Looper.
@@ -1520,9 +1516,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     A Bound Service will stop automatically by the system when all the Application Components bound to it are unbinded.
     
 -   **How to start a Foreground Service?**
-
     We can start a foreground service by using startForegroundService(Intent intent) or by internally calling startForeground() on the service.
-
     For Example, [Click Here](https://github.com/vamsitallapudi/Coderefer-Android-Projects/tree/main/ServicesExample)
 
 -   **What is Sticky Intent in Android?**  </br>
@@ -1551,7 +1545,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     PendingIntent.getBroadcast();// Retrieves a PendingIntent to perform a Broadcast
     PendingIntent.getService();// Retrieves a PendingIntent to start a Service
     ```
-
 
 -   **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?** </br>
     **START_NOT_STICKY:**<br>
@@ -1629,12 +1622,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 -   **How to handle multiple network calls using Retrofit?** <br/>
     In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
 
--   **What is the role of Presenter in MVP?** <br/>
-    The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
-
--   **What is the advantage of MVVM over MVP?** <br/>
-    In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View. It is the View's responsibility to pick the changes from ViewModel. This helps in writing more maintainable test cases since ViewModel does not depend upon View.
-
 -   **When to use AsyncTask and when to use services?** <br/>
     Services are useful when you want to run code even when your application's Activity isn't open. AsyncTask is a helper class used to run some code in a separate thread and publish results in main thread. Usually AsyncTask is used for small operations and services are used for long running operations.
 
@@ -1651,7 +1638,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 -  **What is Alarm Manager?** <br/>
     AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
 
--   **How can I get continuous location updates in android like in Google Maps?** <br/>
+-  **How can I get continuous location updates in android like in Google Maps?** <br/>
     We can use Fused location provider in Android set our interval in that.
     https://stackoverflow.com/a/41500910/3424919
 
@@ -1688,14 +1675,12 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
         .certificatePinner(certificatePinner)
         .build()
     ```
-
     Then you supply this generated okHttpClient object to Retrofit.
     For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
     
 -   **How do you know if the device is rooted?** <br/>
-    We can check if superUser apk is installed in the device or if it contains su file or xbin folder. Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub.
-    <br/>
-    For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
+    We can check if superUser apk is installed in the device or if it contains su file or xbin folder. Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub. For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
+    
 -   **What is Symmetric Encryption?** </br>
     Symmetric encryption deals with creating a passphrase and encrypting the file with it. Then the server needs to send this passphrase(key) to the client so that the client can decrypt. Here the problem is sending that key to decrypt the file. If Hackers can access that key, they can misuse the data.
 
@@ -2172,9 +2157,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     | Search	   |   Θ(n)	   |  O(n)       |
     | Insert	   |   Θ(1)	   |  O(1)       |
     | Delete	   |   Θ(1)		  |  O(1)       |
-    
     </br>
-
 
 * <b>Binary Tree</b></br>
    * A tree whose elements have at most 2 children is called a binary tree. Since each element in a binary tree can have only 2 children, we typically name them the left and right child. 
@@ -2206,7 +2189,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
       * An <b>input-restricted deque</b>: is when deletion takes place at either end but insertion takes place at only one end. 
       * An <b>output-restricted deque</b>: is when insertion takes place at either end but deletion takes place only at one end. A common occurrence of deque is doubly linked list.
    * <b>Priority queue</b>: same as queue but has a priority associated with it. Items are retrieved based on their priority</br>
-   
    
 * <b>Blocking Queues:</b></br>
    * A blocking queue is a queue that blocks when you try to dequeue from it and the queue is empty, or if you try to enqueue items to it and the queue is already full. A thread trying to dequeue from an empty queue is blocked until some other thread inserts an item into the queue. A thread trying to enqueue an item in a full queue is blocked until some other thread makes space in the queue. 
