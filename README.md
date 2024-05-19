@@ -803,7 +803,6 @@ class Employee {
   A `Fragment` is a piece of an activity which enable more modular activity design. A fragment has its layout, its behavior, and its life cycle callbacks. You can add or remove fragments in an activity while the activity is running. You can combine multiple fragments in a single activity to build a multi-pane UI. A fragment can also be used in multiple activities. The fragment life cycle is closely related to its host activity which means when the activity is paused, all the fragments available in the activity will also be stopped.
 
 - **How to pass items to `fragment`?**
-
   Using `Bundle` you can pass items to the fragment.
 
 - **How would you communicate between two `fragments`?** </br>
@@ -822,6 +821,8 @@ class Employee {
 
   DialogFragment does various things to keep the fragment's lifecycle driving it, instead of the Dialog. Dialogs are generally autonomous entities -- they are their own window, receiving their own input events, and often deciding on their own when to disappear. DialogFragment needs to ensure that what is happening with the Fragment and Dialog states remains consistent. To do this, it watches for dismiss events from the dialog and takes care of removing its own state when they happen.
 
+- **Headless fragment vs Service** [Link](https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android)
+
 - **What is the difference between `apply()` and `commit()` in `sharedPreferences`?**
   - `commit()` writes the data **synchronously** and returns a boolean value of success or failure depending on the result immediately.
   - `apply()` is **asynchronous** and it won’t return any boolean response. Also if there is an `apply()` outstanding and we perform another `commit()`, The `commit()` will be blocked until the `apply()` is not completed.
@@ -839,9 +840,7 @@ class Employee {
   - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
   - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
  
-* **How would you update the UI of an activity from a background service** </br>
-  We need to register a LocalBroadcastReceiver in the activity. And send a broadcast with the data using intents from the background service. As long as the activity is in the foreground, the UI will be updated from the background. Ensure to unregister the broadcast receiver in the onStop() method of the activity to avoid memory leaks. 
-We can also register a Handler and pass data using Handlers. I have detailed a sample implementation on this. You can check it out [here](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)</br>
+* **How would you update the UI of an activity from a background service** [Link](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)
 
 - **What is the difference between `Thread` and `AsyncTask`?**
 
@@ -855,10 +854,10 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
   Note that if two threads are both reading and writing to a shared variable, then using the volatile keyword for that is not enough. You need to use a synchronized in that case to guarantee that the reading and writing of the variable is atomic. Reading or writing a volatile variable does not block threads reading or writing. For this to happen you must use the synchronized keyword around critical sections.
   
-- **What are Handlers?** </br>
+*  **What are Handlers?** </br>
   Handlers are objects for managing threads. It receives messages and writes code on how to handle the message. They run outside of the activity’s lifecycle, so they need to be cleaned up properly or else you will have thread leaks. Handlers allow communicating between the background thread and the main thread. Handler delivers messages and runnables to the message queue and execute them as they come out of the message queue. We will generally use handler class when we want to repeat task every few seconds.
 
-* *  **What is HandlerThread?** <br/>
+*  **What is HandlerThread?** <br/>
     HandlerThread is a Handy class to start a thread that has a Looper.
 
 *  **What is a Looper?** <br/>
@@ -914,6 +913,8 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 * **What is a ThreadPool? And is it more effective than using several separate Threads?** </br>
   * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
   * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
+
+* **Modern background execution** [Link](Modern background execution)
   
 * **What is a Job Scheduling?** </br>
    * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
@@ -1327,7 +1328,9 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
    * **Dangerous** - A higher-risk permission. Any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.
    * **Signature** - A permission that the system grants only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.
-   * **SignatureOrSystem** - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.</br>  
+   * **SignatureOrSystem** - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.</br>
+ 
+* **Uses permission vs Permission** [Link](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
   
 * **What is an Application Not Responding (ANR) error, and how can you prevent them from occurring in an app?** </br>
   An ANR dialog appears when your UI has been unresponsive for more than 5 seconds, usually because you’ve blocked the main thread. To avoid encountering ANR errors, you should move as much work off the main thread as possible.</br>
@@ -1438,6 +1441,10 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View. It is the View's responsibility to pick the changes from ViewModel. This helps in writing more maintainable test cases since ViewModel does not depend upon View.
 
 *  **What is Espresso** [Link](https://medium.com/mindorks/android-testing-part-1-espresso-basics)
+
+*  **What is Screenshot testing**
+   *  https://github.com/facebook/screenshot-tests-for-android
+   *  https://facebook.github.io/screenshot-tests-for-android/#getting-started
 
 *  **What are SOLID Principles? How they are applicable in Android?** <br/>
     SOLID unites all the best practices of software development over the years to deliver good quality apps. Understanding SOLID Principles will help us write clean and elegant code. It helps us write the code with SOC (Separation of Concerns).
@@ -1603,6 +1610,8 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 *  **How to handle multiple network calls using Retrofit?** <br/>
     In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
 
+*  **How to post multipart form data using Retrofit** [Link](https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image)
+
 *  **How to save password safely in Android?** <br/>
     Using Android Keystore<br/>
     <https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b>
@@ -1680,7 +1689,9 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 *  **How do you identify a Memory Leak in Android?** <br/>
     By using Profiler in Android Studio or by using LeakCanary Library in Android.
 
-* **Github Actions for Android** [Link](https://blog.mindorks.com/github-actions-for-android/)
+* **CICD for Android**
+  * [Using Workflow](https://blog.mindorks.com/github-actions-for-android/)
+  * [Using Jenkins and Docker](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/
 
 ### Android Battery Related
 *  **How do you reduce battery consumption?** <br/>
