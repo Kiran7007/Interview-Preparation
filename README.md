@@ -875,14 +875,11 @@ class Employee {
   - `commit()` writes the data **synchronously** and returns a boolean value of success or failure depending on the result immediately.
   - `apply()` is **asynchronous** and it won’t return any boolean response. Also if there is an `apply()` outstanding and we perform another `commit()`, The `commit()` will be blocked until the `apply()` is not completed.
 
-- **How you load your `Bitmaps`? What do you do for loading large bitmaps?**
-  [Loading Large Bitmaps Efficiently in Android](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53 "Loading Large Bitmaps Efficiently in Android")
+- **How you load your `Bitmaps`? What do you do for loading large bitmaps?** [Link](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53 "Loading Large Bitmaps Efficiently in Android")
 
-* **Stateflow vs LiveData** </br>
-  https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html
+* **Stateflow vs LiveData** [Link](https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html)
 
-* **Livedata vs ObservableField** </br>
-  https://blog.mindorks.com/livedata-vs-observable-in-android
+* **Livedata vs ObservableField** [Link](https://blog.mindorks.com/livedata-vs-observable-in-android)
      
 - **How Android apps compiled and run?**
   1. First step involves compiling the resources folder (/res) using the aapt
@@ -1021,32 +1018,25 @@ class Employee {
     ```
 <br>
 
-* **Understanding scope storage in android** </br>
-  https://blog.mindorks.com/understanding-the-scoped-storage-in-android
+* **Understanding scope storage in android** [Link](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
 
-* **App Data encryption**  </br>
-  https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore
+* **App Data encryption** [Link](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
      
-* **Solve out of memory error** </br>
-  https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application
+* **Solve out of memory error** [Link](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
 
-* **Battery optimizationn for Android** </br>
-  https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70
+* **Battery optimizationn for Android** [Link](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)
    
-* **Android Jetpack component** </br>
-  https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it
+* **Android Jetpack component** [Link](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)
 
-* **Android ViewModel under the hood** </br>
-  https://blog.mindorks.com/android-viewmodels-under-the-hood
+* **Android Architecture Component** [Link](https://blog.mindorks.com/what-are-android-architecture-components/)
 
-* **Workmanager** </br>
-  https://blog.mindorks.com/integrating-work-manager-in-android
+* **Android ViewModel under the hood** [Link](https://blog.mindorks.com/android-viewmodels-under-the-hood)
 
-* **Arraymap vs Sparsh Array** </br>
-  https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47
+* **Workmanager** [Link](https://blog.mindorks.com/integrating-work-manager-in-android)
 
-* **Java Android Multithreading programming** </br>
-  https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor
+* **Arraymap vs Sparsh Array** [Link](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
+
+* **Java Android Multithreading programming** [Link](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)
 
 - **How can you prevent creating another instance of singleton using `clone()` method?** </br>
   The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
@@ -1065,8 +1055,6 @@ class Employee {
     - It allows us to introduce an [Inversion of Control]("https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO" "What is IoC?") container
     - It gives you a lot more flexibility when it comes time to change the
       application as our creational logic is hidden from dependant code
-
-- **(My Favorite question!) Suppose we are building an application for a pizza store and we need to model their pizza classes. Assume they offer four types of pizzas namely Peppy Paneer, Farmhouse, Margherita and Chicken Fiesta. Each pizza has a different cost. We have overridden the getCost() in the subclasses to find the appropriate cost. Now let's become it more interesting! suppose a new requirement, in addition to a pizza, customer can also ask for several toppings such as Fresh Tomato, Paneer, Jalapeno, Capsicum, Barbeque, etc. Toppings may be redundant and it's OK. (It means a customer may choose double jalapeno or three-time barbeque). Each topping has its price and by adding each one the total cost of the pizza will be increased. If you have to suggest only one design pattern to solve this problem, choose which one? why? and How you implement it?**
 
 - **which pattern is used when we need to decouple an abstraction from its implementation?**  </br>
   When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
