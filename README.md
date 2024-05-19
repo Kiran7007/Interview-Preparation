@@ -648,6 +648,9 @@ class Employee {
 -   **What is a Hot Observable?** <br/>
     A Hot observable is an Observer that will emit items
 
+-   **What is Design Pattern** </br>
+    ![1703704711166](https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09)
+
 ### Kotlin
 
 * **Kotlin interview Questions**
