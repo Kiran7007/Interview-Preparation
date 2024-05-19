@@ -706,6 +706,8 @@ class Employee {
 **Application Context:** This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
 **Activity Context:** This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
 
+*  **Compilesdkversion vs Targetsdkversion** [Link](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
+
 - **What is onSavedInstanceState() and onRestoreInstanceState() in activity?** <br/>
     - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
     - **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
@@ -717,6 +719,7 @@ class Employee {
 
 * **ViewPager vs ViewPager2**
    - https://developer.android.com/training/animation/vp2-migration
+   - https://developer.android.com/develop/ui/views/animations/vp2-migration
 
 - **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
     - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
@@ -1011,6 +1014,8 @@ class Employee {
     ```
 <br>
 
+* **Log.v(), Log.d(), Log.i(), Log.w(), Log.e() - When to use each one?** [Link](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)
+
 * **Understanding scope storage in android** [Link](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
 
 * **App Data encryption** [Link](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
@@ -1150,6 +1155,8 @@ class Employee {
     * Foreground Service: A foreground service performs some operation that is noticeable to the user. For example, we can use a foreground service to play an audio track. A [Notification](https://developer.android.com/guide/topics/ui/notifiers/notifications.html) must be displayed to the user.
     * Background Service: A background service performs an operation that isn’t directly noticed by the user. In Android API level 26 and above, there are restrictions to using background services and it is recommended to use [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) in these cases.
     * Bound Service: A service is bound when an application component binds to it by calling bindService(). A bound service offers a client-server interface that allows components to interact with the service, send requests, receive results. A bound service runs only as long as another application component is bound to it.</br>
+
+*  **How Workmanager works?** [Link](https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager)
    
 * **Difference between Service, Intent Service, AsyncTask & Threads** </br>
   * **Android service** is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.</br>
@@ -1383,18 +1390,23 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    
 * **Android Architecture Components?** </br>
    * A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)
-      * **Room** - [Official documentation](https://developer.android.com/topic/libraries/architecture/room)   
-        [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)  
-        [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
+      * **Room**
+        * [Official documentation](https://developer.android.com/topic/libraries/architecture/room)   
+        * [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)  
+        * [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
+        * [Securing a Room Database With Passcode-Based Encryption](https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e)
         
-      * **Live Data** - [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)   
-        [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
+      * **Live Data**
+        * [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)
+        * [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
         
-      * **ViewModel** - [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)   
-        [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
+      * **ViewModel**
+        * [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)
+        * [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
         
-      * **Data Binding** - [Official documentation](https://developer.android.com/topic/libraries/data-binding/)   
-        [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)        
+      * **Data Binding**
+        * [Official documentation](https://developer.android.com/topic/libraries/data-binding/)
+        * [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)        
         
       * **Lifecycles** - [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)
   </br> 
@@ -1403,12 +1415,15 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
    * **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
    * **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)</br></br>
+   * **MVI**: [Link](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
 
 *  **What is the role of Presenter in MVP?** <br/>
     The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
 
 *  **What is the advantage of MVVM over MVP?** <br/>
     In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View. It is the View's responsibility to pick the changes from ViewModel. This helps in writing more maintainable test cases since ViewModel does not depend upon View.
+
+*  **What is Espresso** [Link](https://medium.com/mindorks/android-testing-part-1-espresso-basics)
 
 *  **What are SOLID Principles? How they are applicable in Android?** <br/>
     SOLID unites all the best practices of software development over the years to deliver good quality apps. Understanding SOLID Principles will help us write clean and elegant code. It helps us write the code with SOC (Separation of Concerns).
@@ -1637,8 +1652,9 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
 
 *  **How can I get continuous location updates in android like in Google Maps?** <br/>
-    We can use Fused location provider in Android set our interval in that.
-    https://stackoverflow.com/a/41500910/3424919
+    We can use Fused location provider in Android set our interval in that. [More](https://stackoverflow.com/a/41500910/3424919)
+
+*   **How to Work With Geofences?** [Link](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
 
 ### Android Security Related
 -   * **SSL Pinning**
@@ -2091,7 +2107,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 * Explain instrumented test.
 * Have you done unit testing or automatic testing?
 * Why Mockito is used? [Link](http://site.mockito.org/)
-* Describe JUnit test.
+* Describe JUnit test. [Link](https://devqa.io/junit-5-annotations/)
 
 
 ### Others
