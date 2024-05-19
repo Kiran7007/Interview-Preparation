@@ -661,11 +661,21 @@ class Employee {
 -   **What is a Hot Observable?** <br/>
     A Hot observable is an Observer that will emit items
 
--   **What is Design Pattern** </br>
-    https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial </br>
-    
-    <img src="https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09" alt="Lamp" width="600">
+-  **Design Pattern**
+   - https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial
+   - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
+   - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
+   - https://github.com/iluwatar/java-design-patterns
+   - https://github.com/Kiran7007/Interview-Question/edit/main/README.md
+   
+    <img src="https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09" alt="Lamp" width="600"> </br>
 
+- **What are the drawbacks of using singleton design pattern?**
+  - **Testability issue:** The bad thing with singletons is that the `getInstance()` method is globally accessible. That means that you usually call it from within a class, instead of depending on an interface you can later mock. That's why it's impossible to replace it when you want to test the method or the class.
+
+  - **Tight Coupling:** The singleton object is exposed globally and is available to a whole application. Thus, classes using this object become tightly coupled. So any change in the global object will impact all other classes using it.
+
+  - **Violation issues:** Singleton principle can be violated by techniques such as cloning. If an application is running on multiple JVM’s, then, in this case, Singleton might be broken.
 ### Kotlin
 
 * **Kotlin interview Questions**
@@ -1034,19 +1044,6 @@ class Employee {
 
 * **Java Android Multithreading programming** </br>
   https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor
-
-* **Design Pattern**
-   - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
-   - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
-   - https://github.com/iluwatar/java-design-patterns
-   - https://github.com/Kiran7007/Interview-Question/edit/main/README.md
-     
-- **What are the drawbacks of using singleton design pattern?**
-  - **Testability issue:** The bad thing with singletons is that the `getInstance()` method is globally accessible. That means that you usually call it from within a class, instead of depending on an interface you can later mock. That's why it's impossible to replace it when you want to test the method or the class.
-
-  - **Tight Coupling:** The singleton object is exposed globally and is available to a whole application. Thus, classes using this object become tightly coupled. So any change in the global object will impact all other classes using it.
-
-  - **Violation issues:** Singleton principle can be violated by techniques such as cloning. If an application is running on multiple JVM’s, then, in this case, Singleton might be broken.
 
 - **How can you prevent creating another instance of singleton using `clone()` method?** </br>
   The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
