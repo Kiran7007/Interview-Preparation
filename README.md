@@ -774,9 +774,6 @@ class Employee {
 *  **What is a Loader in Android?** <br/>
     Note: (Loader is Deprecated. We Have to use combination of ViewModels and LiveData instead of using Loaders) A Loader is used to fetch the data from a Content provider and cache the results across the configuration changes to avoid duplicate queries. Loader does it by running on separate threads and handling the lifecycle changes (so no need of asynctasks or new thread creations or manual handling of life cycle changes). Few implementations of Loaders like CursorLoader can implement an observer (called ContentObserver) to monitor any data changes and can then trigger a reload.
 
-*  **How do we save and restore an activity's state during screen screen rotation?** <br/>
-    We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
-
 *  **What is AAPT?** <br/>
     AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
    
@@ -823,18 +820,17 @@ class Employee {
     ```
 
 *  **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?** </br>
-    **START_NOT_STICKY:**<br>
+    **START_NOT_STICKY:** <br>
     If the system kills the service after onStartCommand() returns, do not recreate the service unless there are pending intents to deliver. This is the safest option to avoid running your service when not necessary and when your application can simply restart any unfinished jobs.
     
-    **START_STICKY:**<br>
+    **START_STICKY:** <br>
     If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand(), but do not redeliver the last intent. Instead, the system calls onStartCommand() with a null intent unless there are pending intents to start the service. In that case, those intents are delivered. This is suitable for media players (or similar services) that are not executing commands but are running indefinitely and waiting for a job.
 
-    **START_REDELIVER_INTENT:**<br>
+    **START_REDELIVER_INTENT:** <br>
     If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand() with the last intent that was delivered to the service. Any pending intents are delivered in turn. This is *suitable for services that are actively performing a job that should be immediately resumed, such as downloading a file.*
    
 *  **What are different launch modes available in Android?** <br/>
     There are four launch modes for an Activity in Android as follows:
-
     1) **standard** : Creates a new instance of an activity in the task from which it is started every single time. It is the default mode if not declared. 
     <br/>Eg: If we have an activity stack of A->B->C, If we launch Activity C again using standard Mode, the activity stack will now be A->B->C->C. We can see that two instances of C are present in the activity stack.
 
@@ -853,11 +849,6 @@ class Employee {
 *  **How do you declare the launch mode in your application?** <br/>
     via manifest, in activity's tag. For Eg., -> android:launchMode="singleTask"
 
-*  **How to handle crashing of AsyncTask during screen rotation?** <br/>
-    One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.
-    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
-    We can also avoid this crash by using 2 Alternatives -  1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively, 2) Using LiveData - lifecycle aware component.
-
 *  **What is a RetainFragment / Headless Fragment?** <br/>
     Generally, Fragments are destroyed and recreated along with their parent Activity’s whenever a configuration change occurs. Calling setRetainInstance(true) allows us to bypass this destroy-and-recreate cycle, notifying the system to retain the current instance of the fragment when the activity is recreated.
 
@@ -866,7 +857,7 @@ class Employee {
 
 *  **Compilesdkversion vs Targetsdkversion** [Link](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
 
-- **What is onSavedInstanceState() and onRestoreInstanceState() in activity?** <br/>
+-  **What is onSavedInstanceState() and onRestoreInstanceState() in activity?** <br/>
     - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
     - **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
 
@@ -898,22 +889,9 @@ class Employee {
 
 - **Which method in `fragment` runs only once?** </br>
   According to the [documentation](https://developer.android.com/guide/components/fragments#Creating), the `onCreate()` method is called once a fragment is created. Within your implementation, you should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
-
-- **How does the activity respond when orientation is changed?**  </br>
-  According to the [documentation](https://developer.android.com/guide/topics/resources/runtime-changes), Some device configurations can change during runtime (such as screen orientation, keyboard availability, and when the user enables multi-window mode). When such a change occurs, Android restarts the running `Activity` ( `onDestroy()` is called, followed by `onCreate()`). The restart behavior is designed to help your application adapt to new configurations by automatically reloading your application with alternative resources that match the new device configuration.
-
+   
 - **How to know `configChange` happens in `onDestroy()` function?**  </br>
   Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
-
-- **How to prevent the data from reloading when orientation is changed?**  </br>
-  The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`. A `ViewModel` is LifeCycle-Aware. In other words,
-  a `ViewModel` will not be destroyed if its owner is destroyed for a
-  configuration change (e.g. rotation). The new instance of the owner will
-  just re-connected to the existing `ViewModel`. So if you rotate an `Activity`
-  three times, you have just created three different `Activity` instances, but
-  you only have one `ViewModel`. So the common practice is to store data in the
-  `ViewModel` class (since it persists data during configuration changes) and
-  use `OnSaveInstanceState()` to store small amounts of UI data.
 
 - **How to handle multiple screen sizes?**  </br>
   It's a long debate but in a very nutshell, you can do it in these ways:
@@ -958,13 +936,24 @@ class Employee {
   - **Item Animator**: `ListViews` are lacking in support of good animations,
     but the `RecyclerView` brings a whole new dimension to it.
 
+*  **How do we save and restore an activity's state during screen screen rotation?** <br/>
+    We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
+
+*  **How to handle crashing of AsyncTask during screen rotation?** <br/>
+    One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.
+    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
+    We can also avoid this crash by using 2 Alternatives -  1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively, 2) Using LiveData - lifecycle aware component.
+  
+- **How does the activity respond when orientation is changed?**  </br>
+  According to the [documentation](https://developer.android.com/guide/topics/resources/runtime-changes), Some device configurations can change during runtime (such as screen orientation, keyboard availability, and when the user enables multi-window mode). When such a change occurs, Android restarts the running `Activity` ( `onDestroy()` is called, followed by `onCreate()`). The restart behavior is designed to help your application adapt to new configurations by automatically reloading your application with alternative resources that match the new device configuration.
+
+- **How to prevent the data from reloading when orientation is changed?**  </br>
+  The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`. A `ViewModel` is LifeCycle-Aware. In other words, a `ViewModel` will not be destroyed if its owner is destroyed for a configuration change (e.g. rotation). The new instance of the owner will just re-connected to the existing `ViewModel`. So if you rotate an `Activity` three times, you have just created three different `Activity` instances, but you only have one `ViewModel`. So the common practice is to store data in the `ViewModel` class (since it persists data during configuration changes) and use `OnSaveInstanceState()` to store small amounts of UI data.
+
 - **What is the relationship between the life cycle of an `AsyncTask` and an `Activity`? What problems can this result in? How can these problems be avoided?**
   An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.
-
   Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).
-
   There’s also the potential for this to result in a memory leak since the AsyncTask maintains a reference to the Activity, which prevents the Activity from being garbage collected as long as the AsyncTask remains alive.
-
   For these reasons, using AsyncTasks for long-running background tasks is generally a bad idea . Rather, for long-running background tasks, a different mechanism (such as a service) should be employed.
 
 * **Headless fragment vs Service** [Link](https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android)
