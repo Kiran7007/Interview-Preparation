@@ -2053,84 +2053,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
 ### Data Structures And Algorithms
 
-> Intentional arrangement of a collection of data. There are 5 fundamental behaviours of a data structure: access, insert, delete, find & sort.
-
-* Array
-* LinkedList
-    - A LinkedList, just like a tree and unlike an array, consists of a group of nodes which 
-    together represent a sequence. Each node contains data and a pointer. The data in a node can be 
-    anything, but the pointer is a reference to the next item in the LinkedList. A LinkedList 
-    contains both a head and a tail. The Head is the first item in the LinkedList, and the Tail is 
-    the last item. A LinkedList is not a circular data structure, so the tail does not have its 
-    pointer pointing at the Head, the pointer is just null. The run time complexity for each of 
-    the base methods are as follows:
-
-        | Algorithm | Average | Worst Case |
-        |:---------:|:-------:|:----------:|
-        | Space     | O(n)    | O(n)       |
-        | Search    | O(n)    | O(n)       |
-        | Insert    | O(1)    | O(1)       |
-        | Delete    | O(1)    | O(1)       |
-* DoublyLinkedList
-* Stack
-    - A Stack is a basic data structure with a "Last-in-First-out" methodology. Which means that 
-    the last item that was added to the stack, is the first item that comes out of the stack. A 
-    Stack is like a stack of books. In order to get to the first book that was added in the stack 
-    (the bottom book), all of the books that were added after need to be removed first. Adding to a 
-    Stack is called a Push, removing from a stack is called a Pop, and getting the last item 
-    inserted into the stack without removing it is called Top. [The most common way to implement a
-     stack is by using a LinkedList, but there are also StackArray (implemented with an array) 
-     which does not replace null entries, and there is also a Vector implementation that does 
-     replace null entries.](https://en.wikibooks.org/wiki/Data_Structures/Stacks_and_Queues#Performance_Analysis)
-     
-        <table>
-            <tr>
-                <th>Algorithm</th>
-                <th>Average</th>
-                <th>Worst Case</th>
-                <th>Image representation</th>
-            </tr>
-            <tr>
-                <td>Space</td>
-                <td>O(n)</td>
-                <td>O(n)</td>
-                <td rowspan="5">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Data_stack.svg/250px-Data_stack.svg.png"/>
-                </td>
-            </tr>
-            <tr>
-                <td>Search</td>
-                <td>O(n)</td>
-                <td>O(n)</td>
-            </tr>
-            <tr>
-                <td>Insert (Push)</td>
-                <td>O(1)</td>
-                <td>O(1)</td>
-            </tr>
-            <tr>
-                <td>Delete (Pop)</td>
-                <td>O(1)</td>
-                <td>O(1)</td>
-            </tr>
-            <tr>
-              <td>Top</td>
-              <td>O(1)</td>
-              <td>O(1)</td>
-            </tr>
-        </table>
-* Queue
-* PriorityQueue
-* Dynamic Programming
-* String Manipulation
-* Binary Tree
-* Binary Search Tree
-* Sorting Algorithms
-* Hash Table or Hash Map
-* Breadth First Search
-* Depth First Search
-* Greedy Algorithm
-
 * <b>Explain Big O Notation?</b></br>
    * The notation Ο(n) is the formal way to express the upper bound of an algorithm's running time. It measures the worst case time complexity or the longest amount of time an algorithm can possibly take to complete. 
    * Note: <b>O(1)</b> means that it takes a constant time, like three minutes no matter the amount of data in the set.
@@ -2139,78 +2061,19 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 * <b>Explain Big Omega Notation</b></br>
    * The Big Omega Notation is used to describe the best case running time for a given algorithm.</br>
 
-* <b>Arrays in Java?</b></br>
-   * Arrays is an ordered collection. It will have a fixed length which needs to be defined at the initialization time whereas lists have a variable length. Arrays are easier to store elements of the same data type. Used internally in stack and queue.    It is a convenient way of representing a 2D array.
-   * Arrays cannot hold generic data types whereas lists can.
-   * Arrays can store all data types whereas lists cannot store primitive data types, only objects.
-   * Arrays: Complexity:
-   
-   	| Algorithm	|  Average	 | Worst Case  |
-    | ---------- |:--------:| -----------:| 
-    | Space	    |	  Θ(n)		  |  O(n)       |
-    | Search	   |   Θ(n)	   |  O(n)       |
-    | Insert	   |   Θ(n)	   |  O(n)       |
-    | Delete	   |   Θ(n)		  |  O(n)       |
-    
-* <b>Linked Lists in Java?</b></br>
-   * A LinkedList contains both a head and a tail. The "Head" is the first item in the LinkedList, while the "Tail" is the last item. It is not a circular data structure, therefore the tail does not have its' pointer pointing at the Head - the pointer is just null.
-   * No indices but each node has a pointer pointing to the next element.
-   * They are dynamic in nature which means they allocate memory only when needed.
-   * Insertion, deletion, updation easy
-   * A linked list is a group of nodes which represent a sequence. Each node consists of a data and a link or reference to the next node in the sequence.
-   * <b>Singly Linked List</b>: has a node and a pointer to the next node in the sequence. 
-   * <b>Doubly Linked List</b>: has a node and 2 pointers - one to the next node and one to the previous node in the sequence. This is very convenient if you need to be able to traverse stored elements in both directions.
-   * Linked List: Runtime Complexity:
-   
-   	| Algorithm	|  Average	 | Worst Case  |
-    | ---------- |:--------:| -----------:| 
-    | Space	    |	  Θ(n)		  |  O(n)       |
-    | Search	   |   Θ(n)	   |  O(n)       |
-    | Insert	   |   Θ(1)	   |  O(1)       |
-    | Delete	   |   Θ(1)		  |  O(1)       |
-    </br>
-
-* <b>Binary Tree</b></br>
-   * A tree whose elements have at most 2 children is called a binary tree. Since each element in a binary tree can have only 2 children, we typically name them the left and right child. 
-   * The left subtree of a node contains only values less than the parent node's value. 
-   * The right subtree of a node contains only values greater than or equal to the node's value.
-   * Only if the above 2 criteria are matched, then the tree is said to be balanced.
-   * <b>Advantages of Binary tree over Linked List</b>: In a linked list, the items are linked together through a single next pointer. In a binary tree, as long as the tree is balanced, the searchpath to each item is a lot shorter than that in a linked list.
-   * Their disadvantage is that in the worst case they can degenerate into a linked list in terms of efficiency.</br>
-
-* <b>Stacks:</b></br>
-   * Stacks are an abstract collection that follow LIFO mechanism. 
-   * Main functionalities include 
-       * <b>Push</b>: a new entity added to the top of the stack. 
-       * <b>Pop</b>: an entity is removed from the top of the stack. 
-   * The process of accessing data stored in a serial access memory is similar to manipulating data on a stack.
-   * A stack may be defined to have a bounded capacity i.e. if the stack is full and a new entity cannot be added, then it is considered to be in an <b>overflow state</b>. 
-   * If the stack is empty and an entity cannot be popped, it is considered to be in an <b>underflow state</b>.
-   * <b>Efficiency of stacks</b>: The time is not dependent of the no of items in the stack so it is very efficient. ```O(1)```.</br>
-   
-* <b>Queues:</b></br>
-   * Queues are an abstract collection that follow FIFO mechanism. The entities in the queue are kept in an order. 
-   * Main functionalities include 
-       * <b>enqueue</b>: Add an item to the end of the queue. Dequeue: remove an item from the start of the queue. 
-       * <b>Front</b>: retrieves the first item from the queue. 
-   * A queue may be defined to have a bounded capacity i.e. if the queue is full and a new entity cannot be added, then it is considered to be in an <b>overflow state</b>. 
-   * If the queue is empty and an entity cannot be popped, it is considered to be in an <b>underflow state</b>.
-   * <b>Efficiency of queues</b>: The time is not dependent of the no of items in the queue so it is very efficient. O(1).
-   * <b>A double ended queue (deque)</b>: is an abstract collection which differs from queue in a way that an item can be added/removed from either side of the queue. 
-      * An <b>input-restricted deque</b>: is when deletion takes place at either end but insertion takes place at only one end. 
-      * An <b>output-restricted deque</b>: is when insertion takes place at either end but deletion takes place only at one end. A common occurrence of deque is doubly linked list.
-   * <b>Priority queue</b>: same as queue but has a priority associated with it. Items are retrieved based on their priority</br>
-   
-* <b>Blocking Queues:</b></br>
-   * A blocking queue is a queue that blocks when you try to dequeue from it and the queue is empty, or if you try to enqueue items to it and the queue is already full. A thread trying to dequeue from an empty queue is blocked until some other thread inserts an item into the queue. A thread trying to enqueue an item in a full queue is blocked until some other thread makes space in the queue. 
-   * [Example on implementing a blocking queue](/src/queue/BlockingQueue.java)</br>
-   
+* <b>Sorting Techniques</b> </br>
+  - Count Sort [Link](https://www.includehelp.com/kotlin/sorting-in-linear-time-and-program-for-count-sort.aspx)
+  - Shell Sort [Link](https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm)
    
 * <b>Difference between stacks & queues?</b></br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>
 
 * **Data Structure and Algorithms** </br>
-  https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm
+  * https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm
+  * https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/
+  * https://amitshekhar.me/blog/android-developer-should-know-these-data-structures-for-next-interview
+  * https://afteracademy.com/tech-interview/ds-algo-concepts/
+  * https://afteracademy.com/blogs/
   
 ### Design Problem
 
@@ -2220,7 +2083,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 * Design WhatsApp.
 * Design SnapChat.
 * Design problems based on location based app.
-
 
 ### Tools And Technologies
 
