@@ -934,6 +934,8 @@ class Employee {
 
 * **Livedata vs ObservableField** [Link](https://blog.mindorks.com/livedata-vs-observable-in-android)
 
+* **Livedata Setvalue vs Postvalue** [Link](https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80)
+
 - **What is `contentProvider` and what is typically used for?** </br>
   A `ContentProvider` provides data from one application to another, when requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more]("https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42" "An idiot guide to android content providers").
   For further reading see the [official android documentation]("https://developer.android.com/guide/topics/providers/content-provider-basics" "Android official documentation")
@@ -1082,8 +1084,6 @@ class Employee {
 * **Log.v(), Log.d(), Log.i(), Log.w(), Log.e() - When to use each one?** [Link](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)
 
 * **Understanding scope storage in android** [Link](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
-
-* **App Data encryption** [Link](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
      
 * **Solve out of memory error** [Link](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
 
@@ -1589,7 +1589,6 @@ class Employee {
 *  **How do you declare the launch mode in your application?** <br/>
     via manifest, in activity's tag. For Eg., -> android:launchMode="singleTask"
 
-
 *  **How to handle crashing of AsyncTask during screen rotation?** <br/>
     One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.
     The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
@@ -1613,11 +1612,9 @@ class Employee {
 *  **How to handle multiple network calls using Retrofit?** <br/>
     In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
 
-*  **How to post multipart form data using Retrofit** [Link](https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image)
+*  **How to post multipart form data using Retrofit?** [Link](https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image)
 
-*  **How to save password safely in Android?** <br/>
-    Using Android Keystore<br/>
-    <https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b>
+*  **How to upload an image file in Retrofit 2?** [Link](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)
 
 *  **What is Alarm Manager?** <br/>
     AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
@@ -1662,7 +1659,9 @@ class Employee {
     ```
     Then you supply this generated okHttpClient object to Retrofit.
     For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
-    
+
+*  **Why Do You Need SSL Certificate Pinning? How it works?** [Link](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)
+
 *  **How do you know if the device is rooted?** <br/>
     We can check if superUser apk is installed in the device or if it contains su file or xbin folder. Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub. For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
     
@@ -1680,6 +1679,15 @@ class Employee {
     Using javax.crypto package's Cipher class. We can call the methods such as encrypt() or decrypt() from the Cipher class to encode or decode our data.
 
     To see Cipher in action, see the following [code commit](https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26).
+
+*   **App Data encryption** [Link](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
+
+*   **How to save password safely in Android?** <br/>
+    - https://developer.android.com/privacy-and-security/keystore
+    - https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b
+    - https://source.android.com/docs/security/features/keystore
+ 
+*   **How to avoid memory leaks in Android?** [Link](https://www.geeksforgeeks.org/memory-leaks-in-android/)
 
 ### Android Memory Related
 
@@ -1981,10 +1989,8 @@ class Employee {
 * Difference between `View.GONE` and `View.INVISIBLE`?
 * What is the difference between a regular bitmap and a nine-patch image?
 * Tell about the bitmap pool. [Link](https://blog.mindorks.com/how-to-use-bitmap-pool-in-android-56c71a55533c)
-* How to avoid memory leaks in Android?
 * What are widgets on Home-Screen in Android?
 * What is AAPT?
-* How do you find memory leaks in Android applications?
 * How do you troubleshoot a crashing application?
 * Why should you avoid to run non-ui code on the main thread?
 * How did you support different types of resolutions?
