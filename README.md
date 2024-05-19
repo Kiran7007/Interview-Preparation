@@ -579,14 +579,13 @@ class Employee {
     String s = list.get(0);  
     ```
 
-*  **Types of Observable in Rx-Java** <br/>
-   - https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8
+*  **Types of Observable in Rx-Java** [Link](https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8)
 
-*  **Rx-Java Scheduler what, when, how?** <br/>
-   https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add
+*  **Rx-Java Scheduler what, when, how?** [Link](https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add)
+   
+* **RxJava Subject - Publish, Replay, Behavior, and Async** [Link](https://amitshekhar.me/blog/rxjava-subject-publish-replay-behavior-async)
 
-*  **Executor Service** <br/>
-   https://www.javatpoint.com/java-executorservice
+*  **Executor Service** [Link](https://www.javatpoint.com/java-executorservice)
      
 *  **What is an Observable in RXJava2?** <br/>
     An Observable  simply emits the data to those which subscribed to it. All the emission is done asynchronously to the subscribers. A simple Observable can be created as follows:
@@ -1353,7 +1352,9 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
              android:duration="700"/>
     </set>
     ```
-</br>   
+</br>
+
+* **Shimmer effect animation placeholder** [Link](https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/)
   
 * **Arraymap/SparseArray vs HashMap in Android?** </br>
    * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
@@ -1703,6 +1704,8 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
 *  **How do you identify a Memory Leak in Android?** <br/>
     By using Profiler in Android Studio or by using LeakCanary Library in Android.
+
+* **Github Actions for Android** [Link](https://blog.mindorks.com/github-actions-for-android/)
 
 ### Android Battery Related
 *  **How do you reduce battery consumption?** <br/>
