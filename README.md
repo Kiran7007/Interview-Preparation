@@ -686,13 +686,51 @@ class Employee {
 
 ### Core Android
 
-* **What is `Application` class?** <br/>
-  The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
+*  **What is an Application class?** <br/>
+    An Application class is a base class in your Application that starts before all other classes like Activities or services are called. You can maintain your application's global state here. While it is NOT mandatory that you need to extend Application class, you can do so by providing your own implementation by creating a subclass and specifying the fully-qualified name of this subclass as the "android:name" attribute in your AndroidManifest.xml's <application> tag.
 
 * **What is Context?** </br>
   A Context is a handle to the system; it provides services like resolving resources, obtaining access to databases and preferences, and so on. An Android app has activities. Context is like a handle to the environment your application is currently running in.</br>
 **Application Context:** This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
 **Activity Context:** This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
+
+*  **What is an Activity?** <br/>
+    An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
+
+*  **Activity Lifecycle** <br/>
+    ![Activity Lifecycle Image](/assets/activity_lifecycle.png)
+
+* **Lifecycle of an Activity** </br>
+  * ```OnCreate()```: This is when the view is first created. This is normally where we create views, get data from bundles etc.</br>
+  * ```OnStart()```: Called when the activity is becoming visible to the user. Followed by onResume() if the activity comes to the foreground, or onStop() if it becomes hidden.</br>
+  * ```OnResume()```: Called when the activity will start interacting with the user. At this point your activity is at the top of the activity stack, with user input going to it.</br>
+  * ```OnPause()```: Called as part of the activity lifecycle when an activity is going into the background, but has not (yet) been killed.</br>
+  * ```OnStop()```: Called when you are no longer visible to the user.</br>
+  * ```OnDestroy()```: Called when the activity is finishing</br>
+  * ```OnRestart()```: Called after your activity has been stopped, prior to it being started again</br>
+
+*  **Is there any scenario where onDestoy() will be called without calling onPause() and onStop()?** <br/>
+    If we call finish() method inside onCreate() of our Activity, then onDestroy() will be called directly.
+  
+* **What’s the difference between onCreate() and onStart()?** </br>
+  * The onCreate() method is called once during the Activity lifecycle, either when the application starts, or when the Activity has been destroyed and then recreated, for example during a configuration change.</br>
+  * The onStart() method is called whenever the Activity becomes visible to the user, typically after onCreate() or onRestart().</br>
+  
+* **Scenario in which only onDestroy is called for an activity without onPause() and onStop()?** </br>
+  If finish() is called in the OnCreate method of an activity, the system will invoke onDestroy() method directly.</br>
+
+* **Why would you do the setContentView() in onCreate() of Activity class?** </br>
+  * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
+
+*  **Fragment Lifecycle** <br/>
+    ![Fragment Lifecycle Image](/assets/fragment_lifecycle.png)
+
+*  **Service Lifecycle** <br/>
+    ![Fragment Lifecycle Image](/assets/service_lifecycle.png)
+
+*  **What is the correlation between activity and fragment life cycle?** <br/>
+    Here is how Activity's and Fragment's lifecyle are called together:
+    ![Activity Fragment Lifecycle](/assets/activity-fragment-lifecycles.png)
 
 *  **Compilesdkversion vs Targetsdkversion** [Link](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
 
@@ -926,7 +964,9 @@ class Employee {
      * Tasks that should be running on a regular basis as batch where the timing is not critical
      * [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
 
-* **What is Workmanager?** [Link](https://flexiple.com/android/android-workmanager-tutorial-getting-started)
+* **What is Workmanager?** 
+  *  https://flexiple.com/android/android-workmanager-tutorial-getting-started
+  *  https://blog.mindorks.com/integrating-work-manager-in-android
   
 * **How Workmanager works?** [Link](https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager)
  
@@ -1099,8 +1139,6 @@ class Employee {
 
 * **How ViewModel work internally?** [Link](https://blog.mindorks.com/android-viewmodels-under-the-hood)
 
-* **What is Work Manager?** [Link](https://blog.mindorks.com/integrating-work-manager-in-android)
-
 * **Arraymap vs Sparsh Array** [Link](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
 
 * **Java Android Multithreading programming** [Link](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)
@@ -1155,28 +1193,6 @@ class Employee {
 * **What is Manifest file and R.java file in Android?** </br>
     * **Manifest**: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
     * **R.Java**: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. </br>
-  
-* **Describe activities** </br>
-  Activities are basically containers or windows to the user interface.</br>
-  
-* **Lifecycle of an Activity** </br>
-  * ```OnCreate()```: This is when the view is first created. This is normally where we create views, get data from bundles etc.</br>
-  * ```OnStart()```: Called when the activity is becoming visible to the user. Followed by onResume() if the activity comes to the foreground, or onStop() if it becomes hidden.</br>
-  * ```OnResume()```: Called when the activity will start interacting with the user. At this point your activity is at the top of the activity stack, with user input going to it.</br>
-  * ```OnPause()```: Called as part of the activity lifecycle when an activity is going into the background, but has not (yet) been killed.</br>
-  * ```OnStop()```: Called when you are no longer visible to the user.</br>
-  * ```OnDestroy()```: Called when the activity is finishing</br>
-  * ```OnRestart()```: Called after your activity has been stopped, prior to it being started again</br>
-  
-* **What’s the difference between onCreate() and onStart()?** </br>
-  * The onCreate() method is called once during the Activity lifecycle, either when the application starts, or when the Activity has been destroyed and then recreated, for example during a configuration change.</br>
-  * The onStart() method is called whenever the Activity becomes visible to the user, typically after onCreate() or onRestart().</br>
-  
-* **Scenario in which only onDestroy is called for an activity without onPause() and onStop()?** </br>
-  If finish() is called in the OnCreate method of an activity, the system will invoke onDestroy() method directly.</br>
-
-* **Why would you do the setContentView() in onCreate() of Activity class?** </br>
-  * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
    
  * **Launch modes in Android?** </br>
    * **Standard**: It creates a new instance of an activity in the task from which it was started. Multiple instances of the activity can be created and multiple instances can be added to the same or different tasks. 
@@ -1468,32 +1484,6 @@ class Employee {
     3) Services,
     4) Content Providers,
     5) Widgets and Notifications
-
-*  **What is an Application class?** <br/>
-    An Application class is a base class in your Application that starts before all other classes like Activities or services are called. You can maintain your application's global state here. While it is NOT mandatory that you need to extend Application class, you can do so by providing your own implementation by creating a subclass and specifying the fully-qualified name of this subclass as the "android:name" attribute in your AndroidManifest.xml's <application> tag.
-
-*  **What is a Context? What are different types of Contexts?** <br/>
-    As the name says, its the context of the current application or object. Context is like a handle to the environment your application is currently running in.
-    We mainly use two types of context. Application context - whose scope is throughout the application and Activity Context - whose scope depends on the Activity Lifecycle.
-
-*  **What is an Activity?** <br/>
-    An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
-
-*  **Activity Lifecycle** <br/>
-    ![Activity Lifecycle Image](/assets/activity_lifecycle.png)
-
-*  **Fragment Lifecycle** <br/>
-    ![Fragment Lifecycle Image](/assets/fragment_lifecycle.png)
-
-*  **Service Lifecycle** <br/>
-    ![Fragment Lifecycle Image](/assets/service_lifecycle.png)
-
-*  **What is the correlation between activity and fragment life cycle?** <br/>
-    Here is how Activity's and Fragment's lifecyle are called together:
-    ![Activity Fragment Lifecycle](/assets/activity-fragment-lifecycles.png)
-
-*  **Is there any scenario where onDestoy() will be called without calling onPause() and onStop()?** <br/>
-    If we call finish() method inside onCreate() of our Activity, then onDestroy() will be called directly.
 
 *  **What are Processes in Android?** <br/>
     Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution. By default all the components of the same application runs in the same process. While most apps donot change this behavior, some apps like games, might want to run in different processes. Then we can use *android:process* attribute in our AndroidManifest.xml to specify the process name.
