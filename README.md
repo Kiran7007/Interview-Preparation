@@ -649,7 +649,7 @@ class Employee {
     A Hot observable is an Observer that will emit items
 
 -   **What is Design Pattern** </br>
-    ![1703704711166](https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09)
+    <img src="https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09" alt="Lamp" width="600">
 
 ### Kotlin
 
@@ -1024,6 +1024,7 @@ class Employee {
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
    - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
    - https://github.com/iluwatar/java-design-patterns
+   - https://github.com/Kiran7007/Interview-Question/edit/main/README.md
      
 - **What are the drawbacks of using singleton design pattern?**
   - **Testability issue:** The bad thing with singletons is that the `getInstance()` method is globally accessible. That means that you usually call it from within a class, instead of depending on an interface you can later mock. That's why it's impossible to replace it when you want to test the method or the class.
