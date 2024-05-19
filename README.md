@@ -57,6 +57,12 @@ class Employee {
    * Interfaces cannot be instantiated directly.
    * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
 
+* <b>What is functional interface</b> </br>
+  https://www.geeksforgeeks.org/functional-interfaces-java/
+
+* <b>Java 8 Changes in Interface</b> </br>
+  https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
+
 - **Can Interfaces to be extended?** </br>
   Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface. But every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
   
@@ -185,6 +191,9 @@ class Employee {
    
 * <b>Is there ever a scenario where we can skip the finally block in a try catch?</b> </br>
   By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
+
+* <b>What is Try-With-Resources</b< </br>
+  https://jenkov.com/tutorials/java-exception-handling/try-with-resources.html#:~:text=The%20Java%20try%20with%20resources,try%2Dwith%2Dresources%20block.
   
 * <b>What are anonymous classes?</b> </br>
    * An anonymous class is just what its name implies -- it has no name. It combines the class declaration and the creation of an instance of the class in one step. Since anonymous classes have no name, objects can not be instantiated from outside the class in which the anonymous class is defined. In fact, an anonymous object can only be instantiated from within the same scope in which it is defined.
