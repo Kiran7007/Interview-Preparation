@@ -57,11 +57,11 @@ class Employee {
    * Interfaces cannot be instantiated directly.
    * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
 
-* <b>What is functional interface</b> </br>
-  https://www.geeksforgeeks.org/functional-interfaces-java/
+* <b>What is Functional Interface</b> [Link](https://www.geeksforgeeks.org/functional-interfaces-java/)
 
-* <b>Java 8 Changes in Interface</b> </br>
-  https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
+* <b>What is Comparator Interface</b> [Link](https://www.geeksforgeeks.org/comparator-interface-java/)
+  
+* <b>Java 8 Changes in Interface</b> [Link](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 
 - **Can Interfaces to be extended?** </br>
   Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface. But every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
@@ -182,6 +182,8 @@ class Employee {
 
 * **What is serialization? How do you implement it?** </br>
     Serialization is the process of converting an object into a stream of bytes in order to store an object into memory so that it can be recreated at a later time while still keeping the objects original state and data. In Java there are two methods of doing this, one is by implementing Serializable or Parcelable. In Android, however, Serializable should never be used in Android. Parcelable was created to be more efficient then Serializable, and performs about 10x faster then Serializable because Serializable uses reflection which is a slow process and tends to create a lot of temporary objects which may cause garbage collection to occur more often.
+
+* **What is Transient Keyword** [Link](https://www.geeksforgeeks.org/transient-keyword-java/)
 
 * <b>Why is Java said to be platform independent?</b> </br>
   The execution of the code does not depend upon the OS
@@ -628,7 +630,7 @@ class Employee {
     stringObservable.subscribe(stringObserver);
     ```
     
--   **What are the different types of Observables in RxJava?** <br/>
+-   **What are the different types of Observables in RxJava?** [Link](https://amitshekhar.me/blog/types-of-observables-in-rxjava)<br/>
     1) single
     2) Maybe
     3) Completable
@@ -1618,9 +1620,6 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
 -  **What is a RetainFragment / Headless Fragment?** <br/>
     Generally, Fragments are destroyed and recreated along with their parent Activity’s whenever a configuration change occurs. Calling setRetainInstance(true) allows us to bypass this destroy-and-recreate cycle, notifying the system to retain the current instance of the fragment when the activity is recreated.
-
--  **Difference between serializable and parcelable? Why android introduced Parcelable?** <br/>
-    Serializable uses reflection while for parcelable, developers from android team wrote custom code that performs manual marshalling(converting data into byte stream) and unmarshalling(converting the byte stream back to their original data). Usually Parcelable is considered faster than Serializable.
 
 -  **What is Reflection?** <br/>
     Reflection is an API that is used to examine or modify the behaviour of methods, classes and interfaces at runtime. The required classes for reflection are present in java.lang.reflect package.
