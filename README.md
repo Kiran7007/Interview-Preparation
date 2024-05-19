@@ -1188,12 +1188,6 @@ class Employee {
 * **What is a Pending Intent?** </br>
   If you want someone to perform any Intent operation at future point of time on behalf of you, then we will use Pending Intent. </br>
   
-* **What is an Action?** </br>
-  Description of the intent. For instance, ACTION_CALL - used to perform calls</br>
-  
-* **What are intent Filters?** </br>
-  * Specifies the type of intent that the activity/service can respond to.</br>
-  
 * **Describe fragments:** </br>
   Fragment is a UI entity attached to Activity. Fragments can be reused by attaching in different activities. Activity can have multiple fragments attached to it. Fragment must be attached to an activity and its lifecycle will depend on its host activity.</br>
   
