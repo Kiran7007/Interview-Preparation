@@ -524,6 +524,8 @@ class Employee {
 - **What are "annotations"?** </br>
   Java annotations are used to provide meta data for your Java code. Being meta data, Java annotations do not directly affect the execution of your code, although some types of annotations can actually be used for that purpose. [read more](http://tutorials.jenkov.com/java/annotations.html)
 
+- **What is Java ExecutorService** [Link](https://www.javatpoint.com/java-executorservice)
+
 - **What is thread-safe mean? How we can make our code thread-safe?** </br>
   Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
     - Synchronization
