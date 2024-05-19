@@ -926,6 +926,8 @@ class Employee {
      * Tasks that should be running on a regular basis as batch where the timing is not critical
      * [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
 
+* **What is Workmanager?** [Link](https://flexiple.com/android/android-workmanager-tutorial-getting-started)
+  
 * **How Workmanager works?** [Link](https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager)
  
 * **Stateflow vs LiveData** [Link](https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html)
@@ -1421,10 +1423,11 @@ class Employee {
         * [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)
         * [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
         
-      * **Data Binding**
+      * **Data Binding & View Binding**
         * [Official documentation](https://developer.android.com/topic/libraries/data-binding/)
-        * [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)        
-        
+        * [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)
+        * [Data Binding vs View Binding](https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding)
+          
       * **Lifecycles** - [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)
   </br> 
   
