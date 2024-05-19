@@ -1024,15 +1024,19 @@ class Employee {
      
 * **Solve out of memory error** [Link](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
 
+*  **What is ART? Difference between ART and Dalvik** [Link](https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik)
+
 * **Battery optimizationn for Android** [Link](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)
+
+* **Reason for the exit in Android Application** [Link](https://blog.mindorks.com/reason-of-exit-in-android-application/)
    
 * **Android Jetpack component** [Link](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)
 
 * **Android Architecture Component** [Link](https://blog.mindorks.com/what-are-android-architecture-components/)
 
-* **Android ViewModel under the hood** [Link](https://blog.mindorks.com/android-viewmodels-under-the-hood)
+* **How ViewModel work internally?** [Link](https://blog.mindorks.com/android-viewmodels-under-the-hood)
 
-* **Workmanager** [Link](https://blog.mindorks.com/integrating-work-manager-in-android)
+* **What is Work Manager?** [Link](https://blog.mindorks.com/integrating-work-manager-in-android)
 
 * **Arraymap vs Sparsh Array** [Link](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
 
