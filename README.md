@@ -661,7 +661,7 @@ class Employee {
 -   **What is a Hot Observable?** <br/>
     A Hot observable is an Observer that will emit items
 
--  **Design Pattern**
+-  **What is Design Pattern?**
    - https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
    - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
@@ -670,35 +670,38 @@ class Employee {
    
     <img src="https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09" alt="Lamp" width="600"> </br>
 
+- **What is the difference between factory and abstract factory design pattern?** </br>
+  Both factory and abstract factory are creational design patterns. The majordifference between these two is, a factory pattern creates an object through inheritance and produces only one Product. On the other hand, an abstract factory pattern creates the object through composition and produce families of products. In other word an abstract factory is "factory of factories". You can find an example [___here___]("https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java").
+
+- **What is Creational Design Patterns?** [Link](https://www.baeldung.com/kotlin/builder-pattern)
+
 - **What are the drawbacks of using singleton design pattern?**
   - **Testability issue:** The bad thing with singletons is that the `getInstance()` method is globally accessible. That means that you usually call it from within a class, instead of depending on an interface you can later mock. That's why it's impossible to replace it when you want to test the method or the class.
-
   - **Tight Coupling:** The singleton object is exposed globally and is available to a whole application. Thus, classes using this object become tightly coupled. So any change in the global object will impact all other classes using it.
-
-  - **Violation issues:** Singleton principle can be violated by techniques such as cloning. If an application is running on multiple JVM’s, then, in this case, Singleton might be broken.
+  - **Violation issues:** Singleton principle can be violated by techniques such as cloning. If an application is running on multiple JVM’s, then, in this case, Singleton might be broken. </br>
+    
 ### Kotlin
 
 * **Kotlin interview Questions**
    - https://blog.mindorks.com/kotlin-android-interview-questions
    - https://www.ubuntupit.com/frequently-asked-kotlin-interview-questions-and-answers/
+   - https://www.fullstack.cafe/blog/kotlin-interview-questions
 
-* **Kotlin Collection Functions**
-   - https://blog.mindorks.com/kotlin-collection-functions
+* **Companion Object** [Link](https://blog.mindorks.com/what-is-the-equivalent-of-java-static-methods-in-kotlin/)
+
+* **Understanding Open keyword in Kotlin** [Link](https://blog.mindorks.com/understanding-open-keyword-in-kotlin)
+
+* **Bitwise and Bitshift Operations** [Link](https://www.programiz.com/kotlin-programming/bitwise)
+
+* **Kotlin Collection Functions** [Link](https://blog.mindorks.com/kotlin-collection-functions)
  
-* **Map vs Flatmap**
-   - https://www.linkedin.com/feed/update/urn:li:activity:6770786744422998017/
+* **Map vs Flatmap** [Link](https://www.linkedin.com/feed/update/urn:li:activity:6770786744422998017/)
  
-* **Understanding Suspend function**
-   - https://medium.com/mobile-app-development-publication/understanding-suspend-function-of-coroutines-de26b070c5ed
+* **Understanding Suspend function** [Link](https://medium.com/mobile-app-development-publication/understanding-suspend-function-of-coroutines-de26b070c5ed)
 
-* **Coroutine runblocking**
-   - https://www.geeksforgeeks.org/runblocking-in-kotlin-coroutines-with-example
+* **Coroutine runblocking** [Link](https://www.geeksforgeeks.org/runblocking-in-kotlin-coroutines-with-example)
 
-* **Thread Safe mthods and blocks**
-   - https://proandroiddev.com/synchronization-and-thread-safety-techniques-in-java-and-kotlin-f63506370e6d
-
-* **Understanding Open keyword in Kotlin** </br>
-  https://blog.mindorks.com/understanding-open-keyword-in-kotlin
+* **Thread Safe mthods and blocks** [Link](https://proandroiddev.com/synchronization-and-thread-safety-techniques-in-java-and-kotlin-f63506370e6d) </br>
 
 ### Core Android
 
@@ -1063,9 +1066,6 @@ class Employee {
     - It gives you a lot more flexibility when it comes time to change the
       application as our creational logic is hidden from dependant code
 
-- **What is the difference between factory and abstract factory design pattern?** </br>
-  Both factory and abstract factory are creational design patterns. The majordifference between these two is, a factory pattern creates an object through inheritance and produces only one Product. On the other hand, an abstract factory pattern creates the object through composition and produce families of products. In other word an abstract factory is "factory of factories". You can find an example [___here___]("https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java").
-
 - **(My Favorite question!) Suppose we are building an application for a pizza store and we need to model their pizza classes. Assume they offer four types of pizzas namely Peppy Paneer, Farmhouse, Margherita and Chicken Fiesta. Each pizza has a different cost. We have overridden the getCost() in the subclasses to find the appropriate cost. Now let's become it more interesting! suppose a new requirement, in addition to a pizza, customer can also ask for several toppings such as Fresh Tomato, Paneer, Jalapeno, Capsicum, Barbeque, etc. Toppings may be redundant and it's OK. (It means a customer may choose double jalapeno or three-time barbeque). Each topping has its price and by adding each one the total cost of the pizza will be increased. If you have to suggest only one design pattern to solve this problem, choose which one? why? and How you implement it?**
 
 - **which pattern is used when we need to decouple an abstraction from its implementation?**  </br>
@@ -1112,7 +1112,6 @@ class Employee {
   * ```OnStop()```: Called when you are no longer visible to the user.</br>
   * ```OnDestroy()```: Called when the activity is finishing</br>
   * ```OnRestart()```: Called after your activity has been stopped, prior to it being started again</br>
-  
   
 * <b>What’s the difference between onCreate() and onStart()?</b></br>
   * The onCreate() method is called once during the Activity lifecycle, either when the application starts, or when the Activity has been destroyed and then recreated, for example during a configuration change.</br>
@@ -1183,7 +1182,6 @@ class Employee {
      * Tasks that should be running on a regular basis as batch where the timing is not critical
      * [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
   
-
 * <b>What is the relationship between the life cycle of an AsyncTask and an Activity? What problems can this result in? How can these problems be avoided?</b></br>
    * An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.
    * Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).
