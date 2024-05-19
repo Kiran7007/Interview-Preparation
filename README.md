@@ -86,7 +86,7 @@ class Employee {
    - The fields of a class can be made read-only or write-only.
    - A class can have total control over what is stored in its fields.
 
-* **What is Abstract class? **
+* **What is Abstract class?**
    * Abstract classes are classes that contain one or more abstract methods. An abstract method is a method that is declared, but contains no implementation. 
    * If even a single method is abstract, the whole class must be declared abstract.
    * Abstract classes may not be instantiated, and require subclasses to provide implementations for the abstract methods.
@@ -579,23 +579,23 @@ class Employee {
     String s = list.get(0);  
     ```
 
--  **Types of Observable in Rx-Java** <br/>
+*  **Types of Observable in Rx-Java** <br/>
    - https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8
 
--  **Rx-Java Scheduler what, when, how?** <br/>
+*  **Rx-Java Scheduler what, when, how?** <br/>
    https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add
 
--  **Executor Service** <br/>
+*  **Executor Service** <br/>
    https://www.javatpoint.com/java-executorservice
      
--  **What is an Observable in RXJava2?** <br/>
+*  **What is an Observable in RXJava2?** <br/>
     An Observable  simply emits the data to those which subscribed to it. All the emission is done asynchronously to the subscribers. A simple Observable can be created as follows:
 
     ```java
     // RxAndroid Tutorial - Adding Observable
     Observable<String> stringObservable = Observable.just("Hello Reactive Programming!");
     ```
--  **What is an Observer in RXJava2?** <br/>
+*  **What is an Observer in RXJava2?** <br/>
     Observer consumes the data emitted by the Observable. To do this, Observer needs to subscribe to the Observable. Example shows how to create an Observable in RxJava2.
     ```java
     // RxAndroid Tutorial - Adding observer
@@ -619,43 +619,43 @@ class Employee {
         };
     ```
 
--  **How to Subscribe / Unsubscribe in RXJava?** <br/>
+*  **How to Subscribe / Unsubscribe in RXJava?** <br/>
     We can make an Observer to subscribe to Observable as follows:
     ```java
     // RxAndroid tutorial - observer subscribing to observable
     stringObservable.subscribe(stringObserver);
     ```
     
--   **What are the different types of Observables in RxJava?** [Link](https://amitshekhar.me/blog/types-of-observables-in-rxjava)<br/>
+*  **What are the different types of Observables in RxJava?** [Link](https://amitshekhar.me/blog/types-of-observables-in-rxjava)<br/>
     1) single
     2) Maybe
     3) Completable
     4) Observable
     5) Flowable
 
--   **What is a Single in RxJava?** <br/>
+*  **What is a Single in RxJava?** <br/>
     A Single in RxJava is an Observable which emits only one item if completed or returns error.
 
--   **What is Maybe in RxJava?** <br/>
+*  **What is Maybe in RxJava?** <br/>
     A Maybe in RxJava is used when the Observable needs to emit a value or a no value or an error.
 
--   **What is Completable in RxJava?** <br/>
+*  **What is Completable in RxJava?** <br/>
     A Completable in RxJava is an Observable which just completes the task and does not emit anything if completed. It returns an error if anything fails.
     It is similar to reactive concept of runnable.
 
--   **What is Back Pressure in RxJava?** <br/>
+*  **What is Back Pressure in RxJava?** <br/>
     Back Pressure is the state where your observable (publisher) is creating more events than your subscriber can handle.
 
--   **What is Flowable in RxJava?** <br/>
+*  **What is Flowable in RxJava?** <br/>
     A Flowable in RxJava is used when the Observable emits more data than the Observer can consume. In Other words, Flowable can handle back pressure where as an Observable cannot.
 
--   **What is a Cold Observable?** <br/>
+*  **What is a Cold Observable?** <br/>
     A Cold Observable is an Observable that does not emit items until a Subscriber subscribes. If we have more than one Subscriber, then the Cold Observable will emit each sequence of items to all Subscribers one by one.
 
--   **What is a Hot Observable?** <br/>
+*  **What is a Hot Observable?** <br/>
     A Hot observable is an Observer that will emit items
 
--  **What is Design Pattern?**
+*  **What is Design Pattern?**
    - https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial
    - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
    - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
@@ -1403,13 +1403,13 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
    * **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)</br></br>
 
--   **What is the role of Presenter in MVP?** <br/>
+*  **What is the role of Presenter in MVP?** <br/>
     The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
 
--   **What is the advantage of MVVM over MVP?** <br/>
+*  **What is the advantage of MVVM over MVP?** <br/>
     In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View. It is the View's responsibility to pick the changes from ViewModel. This helps in writing more maintainable test cases since ViewModel does not depend upon View.
 
--   **What are SOLID Principles? How they are applicable in Android?** <br/>
+*  **What are SOLID Principles? How they are applicable in Android?** <br/>
     SOLID unites all the best practices of software development over the years to deliver good quality apps. Understanding SOLID Principles will help us write clean and elegant code. It helps us write the code with SOC (Separation of Concerns).
     SOLID Principles is an acronym for:
     1. S stands for Single Responsibility Principle(SRP) - A class should have only one reason to change
@@ -1422,49 +1422,49 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
     [Learn More about SOLID principles with Android Examples Here.](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 
--   **What are Android Components?** <br/>
+*  **What are Android Components?** <br/>
     1) Activities,
     2) Intent and broadcast receivers,
     3) Services,
     4) Content Providers,
     5) Widgets and Notifications
 
--   **What is an Application class?** <br/>
+*  **What is an Application class?** <br/>
     An Application class is a base class in your Application that starts before all other classes like Activities or services are called. You can maintain your application's global state here. While it is NOT mandatory that you need to extend Application class, you can do so by providing your own implementation by creating a subclass and specifying the fully-qualified name of this subclass as the "android:name" attribute in your AndroidManifest.xml's <application> tag.
 
--   **What is a Context? What are different types of Contexts?** <br/>
+*  **What is a Context? What are different types of Contexts?** <br/>
     As the name says, its the context of the current application or object. Context is like a handle to the environment your application is currently running in.
     We mainly use two types of context. Application context - whose scope is throughout the application and Activity Context - whose scope depends on the Activity Lifecycle.
 
--   **What is an Activity?** <br/>
+*  **What is an Activity?** <br/>
     An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
 
--   **Activity Lifecycle** <br/>
+*  **Activity Lifecycle** <br/>
     ![Activity Lifecycle Image](/assets/activity_lifecycle.png)
 
--   **Fragment Lifecycle** <br/>
+*  **Fragment Lifecycle** <br/>
     ![Fragment Lifecycle Image](/assets/fragment_lifecycle.png)
 
--   **Service Lifecycle** <br/>
+*  **Service Lifecycle** <br/>
     ![Fragment Lifecycle Image](/assets/service_lifecycle.png)
 
--   **What is the correlation between activity and fragment life cycle?** <br/>
+*  **What is the correlation between activity and fragment life cycle?** <br/>
     Here is how Activity's and Fragment's lifecyle are called together:
     ![Activity Fragment Lifecycle](/assets/activity-fragment-lifecycles.png)
 
--   **Is there any scenario where onDestoy() will be called without calling onPause() and onStop()?** <br/>
+*  **Is there any scenario where onDestoy() will be called without calling onPause() and onStop()?** <br/>
     If we call finish() method inside onCreate() of our Activity, then onDestroy() will be called directly.
 
--   **What are Processes in Android?** <br/>
+*  **What are Processes in Android?** <br/>
     Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution. By default all the components of the same application runs in the same process. While most apps donot change this behavior, some apps like games, might want to run in different processes. Then we can use *android:process* attribute in our AndroidManifest.xml to specify the process name.
 
--   **How do we save and restore an activity's state during screen screen rotation?** <br/>
+*  **How do we save and restore an activity's state during screen screen rotation?** <br/>
     We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
 
--   **What is a Loader in Android?** <br/>
+*  **What is a Loader in Android?** <br/>
     Note: (Loader is Deprecated. We Have to use combination of ViewModels and LiveData instead of using Loaders) A Loader is used to fetch the data from a Content provider and cache the results across the configuration changes to avoid duplicate queries. Loader does it by running on separate threads and handling the lifecycle changes (so no need of asynctasks or new thread creations or manual handling of life cycle changes). Few implementations of Loaders like CursorLoader can implement an observer (called ContentObserver) to monitor any data changes and can then trigger a reload.
 
--   **What is an Intent Filter?** <br/>
+*  **What is an Intent Filter?** <br/>
     Intent filters are a very powerful feature of the Android platform. They provide the ability to launch an activity based not only on an explicit request, but also an implicit one. For example, an explicit request might tell the system to “Start the Send Email activity in the Gmail app". By contrast, an implicit request tells the system to “Start a Send Email screen in any activity that can do the job." When the system UI asks a user which app to use in performing a task, that’s an intent filter at work. Here's an example of how to declare Intent Filter in AndroidManifest:
     ```xml
     <activity android:name=".ExampleActivity" android:icon="@drawable/app_icon">
@@ -1476,53 +1476,53 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     </activity>
     ```
 
--   **What is AAPT?** <br/>
+*  **What is AAPT?** <br/>
     AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
 
--   **What is an Intent? What are the different types of Intents?** <br/>
+*  **What is an Intent? What are the different types of Intents?** <br/>
     It is a kind of message or information that is passed between different components of Android. It is used to launch an activity, display a web page, send SMS, send email, etc. There are two types of intents in android:
     There are two types of intents:
     a)**Implicit Intent** - Implicit intents do not name a specific component, but instead declare a general action to perform, which allows a component from another app to handle it. For example, if you want to show the user a location on a map, you can use an implicit intent to request that another capable app show a specified location on a map.
     b)**Explicit Intent** - Explicit intents specify which application will satisfy the intent, by supplying either the target app's package name or a fully-qualified component class name. You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
 
--   **What is HandlerThread?** <br/>
+*  **What is HandlerThread?** <br/>
     HandlerThread is a Handy class to start a thread that has a Looper.
 
--   **What is a Looper?** <br/>
+*  **What is a Looper?** <br/>
     A Looper is a class used to loop through the Message Queue attached to the Thread. Any thread consists of only one looper. You can access message queue of current thread by using **Looper.myQueue()**.
     
     By default, a thread halts when the execution completes. But, for Example, if we take Android's Main thread, it should not halt upon execution.
 
     Normally thread cannot be reused once its job is completed. But thread with Looper is kept alive until you call quit method so you don’t need to create a new instance each time you want to run a job in background. ther it should loop through the runnables(Messages) that its assigned in order to work properly. For more info, refer to this [link](https://stackoverflow.com/a/34522758/3424919).
 
--   **What is a Message Queue?** <br/>
+*  **What is a Message Queue?** <br/>
     MessageQueue is a queue that has list of messages which should be processed. Android maintains a MessageQueue on the main thread.
     [More Info](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
 
--   **What is a Message ?** <br/>
+*  **What is a Message?** <br/>
     Message contains a description and arbitrary data object that can be sent to a Handler. Basically its used to process / send some data across threads.
 
--   **What is a Service?** <br/>
+*  **What is a Service?** <br/>
     A service is a component which doesn't have UI and can perform long running operations like downloading stuff, playing music etc.. which can run even exiting the application. By default service runs on main thread. This might cause ANR errors. To avoid this, we can Start service by creating a new background thread or use an IntentService that can do work in background. [Read More.](https://developer.android.com/guide/components/services)
 
--   **How to Stop a Service?** <br/>
+*  **How to Stop a Service?** <br/>
     To stop a service from an activity we can call stopService(Intent intent) method. To Stop a service from itself, we can call stopSelf() method.
 
--   **Bound Service vs UnBounded service?** <br/>
+*  **Bound Service vs UnBounded service?** <br/>
     A Bound service is started by using method bindService(). As mentioned above system destroys bound service when no application component is accessing it.
     Unbounded service (started service) is started by using a method called startService(). Once started, it will run indefinitely even if the application component that started it is destroyed.
 
--   **When does a Bound Service stops?** <br/>
+*  **When does a Bound Service stops?** <br/>
     A Bound Service will stop automatically by the system when all the Application Components bound to it are unbinded.
     
--   **How to start a Foreground Service?**
+*  **How to start a Foreground Service?**
     We can start a foreground service by using startForegroundService(Intent intent) or by internally calling startForeground() on the service.
     For Example, [Click Here](https://github.com/vamsitallapudi/Coderefer-Android-Projects/tree/main/ServicesExample)
 
--   **What is Sticky Intent in Android?**  </br>
+*  **What is Sticky Intent in Android?**  </br>
     Sticks with Android, for future broadcast listeners. For example if BATTERY_LOW event occurs then that Intent will stick with Android so that any future requests for BATTERY_LOW, will return the Intent.
 
--   **What is Pending Intent in Android?**<br>
+*  **What is Pending Intent in Android?**<br>
     Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.
 
     ```java
@@ -1546,7 +1546,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     PendingIntent.getService();// Retrieves a PendingIntent to start a Service
     ```
 
--   **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?** </br>
+*  **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?** </br>
     **START_NOT_STICKY:**<br>
     If the system kills the service after onStartCommand() returns, do not recreate the service unless there are pending intents to deliver. This is the safest option to avoid running your service when not necessary and when your application can simply restart any unfinished jobs.
     
@@ -1556,25 +1556,25 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     **START_REDELIVER_INTENT:**<br>
     If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand() with the last intent that was delivered to the service. Any pending intents are delivered in turn. This is *suitable for services that are actively performing a job that should be immediately resumed, such as downloading a file.*
 
--   **What is an Intent Service? What is the method that differentiates it to make Service run in background?**  </br>
+*  **What is an Intent Service? What is the method that differentiates it to make Service run in background?**  </br>
     IntentService is a subclass of Service that can perform tasks using worker thread unlike service that blocks main thread. The additional method of IntentService is -
     **<i>onHandleIntent(Intent)</i>** which helps the IntentService to run a particular code block declared inside it, in worker/background thread. The speciality of Intent Service is if there are more tasks given to it, IntentService will pass those intents one by one to the Worker thread. So if there are multiple download operations to be handled, They will be performed in a sequential order. Only one request will be processed at a time.
 
     **Note:** IntentService is deprecated from API 30. This is due to background restrictions imposed from API level 26. It is now recommended to use WorkManager or JobIntentService. For more Info, [Click Here](https://developer.android.com/reference/android/app/IntentService)
 
--   **How to Stop an IntentService?** <br/>
+*  **How to Stop an IntentService?** <br/>
     An IntentService automatically stops itself after its job is done. We do not need to explicitly call any methods to stop an IntentService unlike Service which requires stopSelf() or StopService(intent:Intent).
 
--   **When Intent Service is Useful?** <br/>
+*  **When Intent Service is Useful?** <br/>
     The IntentService can be used in long tasks usually with no communication to Main Thread. If communication is required, can use Main Thread handler or broadcast intents. Another case of use is when callbacks are needed (Intent triggered tasks).
 
--   **Advantage of Retrofit over Volley?** <br/>
+*  **Advantage of Retrofit over Volley?** <br/>
     Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
 
--   **Advantage of Volley over Retrofit?** <br/>
+*  **Advantage of Volley over Retrofit?** <br/>
     Android Volley has a very elaborate and flexible cache mechanism. When a request is made through Volley, first the cache is checked for Response. If it is found, then it is fetched and parsed, else, it will hit Network to fetch the data. Retrofit does not support cache by default.
 
--   **What are different launch modes available in Android?** <br/>
+*  **What are different launch modes available in Android?** <br/>
     There are four launch modes for an Activity in Android as follows:
 
     1) **standard** : Creates a new instance of an activity in the task from which it is started every single time. It is the default mode if not declared. 
@@ -1592,50 +1592,50 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
     You can read more about them [here](https://developer.android.com/guide/components/activities/tasks-and-back-stack#ManifestForTasks).
 
--   **How do you declare the launch mode in your application?** <br/>
+*  **How do you declare the launch mode in your application?** <br/>
     via manifest, in activity's tag. For Eg., -> android:launchMode="singleTask"
 
 
--   **How to handle crashing of AsyncTask during screen rotation?** <br/>
+*  **How to handle crashing of AsyncTask during screen rotation?** <br/>
     One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.
     The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
     We can also avoid this crash by using 2 Alternatives -  1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively, 2) Using LiveData - lifecycle aware component.
 
--  **What is a RetainFragment / Headless Fragment?** <br/>
+*  **What is a RetainFragment / Headless Fragment?** <br/>
     Generally, Fragments are destroyed and recreated along with their parent Activity’s whenever a configuration change occurs. Calling setRetainInstance(true) allows us to bypass this destroy-and-recreate cycle, notifying the system to retain the current instance of the fragment when the activity is recreated.
 
--  **What is Reflection?** <br/>
+*  **What is Reflection?** <br/>
     Reflection is an API that is used to examine or modify the behaviour of methods, classes and interfaces at runtime. The required classes for reflection are present in java.lang.reflect package.
 
--  **How to reduce your app size?** <br/>
+*  **How to reduce your app size?** <br/>
     1. setting minifyEnabled to true
     2. setting shrinkResources to true
     3. using bundle instead of apk in developer console
     4. converting the images to vector drawables.
 
--   **What is the advantage of using Retrofit over AsyncTask?** <br/>
+*  **What is the advantage of using Retrofit over AsyncTask?** <br/>
     Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself. More use-cases at: https://stackoverflow.com/a/16903205/3424919
 
--   **How to handle multiple network calls using Retrofit?** <br/>
+*  **How to handle multiple network calls using Retrofit?** <br/>
     In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
 
--   **When to use AsyncTask and when to use services?** <br/>
+*  **When to use AsyncTask and when to use services?** <br/>
     Services are useful when you want to run code even when your application's Activity isn't open. AsyncTask is a helper class used to run some code in a separate thread and publish results in main thread. Usually AsyncTask is used for small operations and services are used for long running operations.
 
--   **When to use a service and when to use a thread?** <br/>
+*  **When to use a service and when to use a thread?** <br/>
     We will use a Thread when we want to perform background operations when application is running in foreground. We will use a service even when the application is not running.
 
--   **What is a Handler?** <br/>
+*  **What is a Handler?** <br/>
     A Handler allows you to send and process Message and Runnable objects associated with a thread's MessageQueue. Each Handler instance is associated with a single thread and that thread's message queue. When you create a new Handler, it is bound to the thread / message queue of the thread that is creating it -- from that point on, it will deliver messages and runnables to that message queue and execute them as they come out of the message queue. We will generally use handler class when we want to repeat task every few seconds.
 
--   **How to save password safely in Android?** <br/>
+*  **How to save password safely in Android?** <br/>
     Using Android Keystore<br/>
     <https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b>
 
--  **What is Alarm Manager?** <br/>
+*  **What is Alarm Manager?** <br/>
     AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
 
--  **How can I get continuous location updates in android like in Google Maps?** <br/>
+*  **How can I get continuous location updates in android like in Google Maps?** <br/>
     We can use Fused location provider in Android set our interval in that.
     https://stackoverflow.com/a/41500910/3424919
 
@@ -1675,61 +1675,61 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     Then you supply this generated okHttpClient object to Retrofit.
     For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
     
--   **How do you know if the device is rooted?** <br/>
+*  **How do you know if the device is rooted?** <br/>
     We can check if superUser apk is installed in the device or if it contains su file or xbin folder. Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub. For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
     
--   **What is Symmetric Encryption?** </br>
+*  **What is Symmetric Encryption?** </br>
     Symmetric encryption deals with creating a passphrase and encrypting the file with it. Then the server needs to send this passphrase(key) to the client so that the client can decrypt. Here the problem is sending that key to decrypt the file. If Hackers can access that key, they can misuse the data.
 
--   **What is Asymmetric Encryption?** </br>
+*  **What is Asymmetric Encryption?** </br>
     Using algorithms like RSA, AES256, etc., the server generates 2 keys - public key and private key. The server then gives public key to clients. Client then encrypts the sensitive data with that public key and send it back to server. Now as the server alone has the private key, only it can decrypt the data. This is the most efficient way of sending data across the client and server.
     
     Example of this Asymmetric encryption are HTTPS using SSL certificate, Blockchain technologies like Bitcoin, etc.
 
     For more info, refer to this [video](https://youtu.be/AQDCe585Lnc)
 
--   **How do you encrypt the Data in Java?** </br>
+*  **How do you encrypt the Data in Java?** </br>
     Using javax.crypto package's Cipher class. We can call the methods such as encrypt() or decrypt() from the Cipher class to encode or decode our data.
 
     To see Cipher in action, see the following [code commit](https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26).
 
 ### Android Memory Related
 
--   **How do you create a Memory Leak in Android?** <br/>
+*  **How do you create a Memory Leak in Android?** <br/>
     By passing the context to static block (class or method), we can create a Memory Leak.
 
--   **How do you avoid a Memory Leak in Android?** <br/>
+*  **How do you avoid a Memory Leak in Android?** <br/>
     By making the objects eligible for GC (Garbage Collection) after a class (Activity or Fragment) is destroyed. We can also use Weak References like WeakHashMaps to loosely hold the data and make it easily available to GC.
 
--   **How do you identify a Memory Leak in Android?** <br/>
+*  **How do you identify a Memory Leak in Android?** <br/>
     By using Profiler in Android Studio or by using LeakCanary Library in Android.
 
 ### Android Battery Related
--   **How do you reduce battery consumption?** <br/>
+*  **How do you reduce battery consumption?** <br/>
     1. Never poll the server for updates.
     2. Sync only when required. Ideally, sync when phone is on Wi-Fi and plugged in.
     3. Defer your work using WorkManager.
     4. Compress your data
     5. Defer non immediate requests until the phone is plugged in or wifi is turned on. The Wi-Fi radio uses significantly less battery than the mobile radio.
 
--   **How do you improve battery while fetching location for an app?** <br/> 
+*  **How do you improve battery while fetching location for an app?** <br/> 
     1. By changing Accuracy -> we can use setPriority() to PRIORITY_LOW_POWER
     2. By changing Frequency of fetching location -> we can use setInterval() to specify the time interval
     3. By increasing latency -> After our call, we can wait for longer time - we can use setMaxWaitTime() to set large timeout.
    
 ### Dagger 2 Related Questions:
 
--   **What is Dependency Injection Pattern?** <br/>
+*  **What is Dependency Injection Pattern?** <br/>
     Dependency Injection pattern is where if our object requires other object, it will be passed to our object instead of us having to create that object. This other object is called as dependency.
 
--   **What is Service Locator Pattern?** <br/>
+*  **What is Service Locator Pattern?** <br/>
     Service Locator Pattern uses central Registry known as Service Locator which upon request provides objects for our class. This pattern has severe criticism that its an Anti-Pattern.
 
--   **What is Anti-Pattern?** <br/>
+*  **What is Anti-Pattern?** <br/>
     An anti-pattern are certain patterns in software development that are considered bad programming practices.<br/>
     For more, click [Here](https://stackoverflow.com/a/980616/3424919).
 
--   **What is the use-case of @BindsInstance Annotation?** <br/>
+*  **What is the use-case of @BindsInstance Annotation?** <br/>
     @BindsInstance is used to bind the available data at the time of building the Component. For example, while I needed to build dagger graph and username is already available to me, then I can bind that username to that dagger dependency graph as follows:
     
     ```java
@@ -1741,23 +1741,23 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     ```
 
 
--   **What is the use-case of @Module Annotation?** <br/>
+*  **What is the use-case of @Module Annotation?** <br/>
     @Module is the Annotation used on the class for the Dagger to look inside it, to provide dependencies. We may be declaring methods inside the module class that are enclosed with @Provides annotation.
 
--   **What is the use-case of @Provides Annotation?** <br/>
+*  **What is the use-case of @Provides Annotation?** <br/>
     @Provides annotation is used on a method in Module class and can return / provide a Dependency object.
 
--   **What is the use-case of @Component Annotation?** <br/>
+*  **What is the use-case of @Component Annotation?** <br/>
     @Component is used on Interface or abstract class. Dagger uses this interface to generate an implementation class with fully formed, dependency injected implementation, using the modules declared along with it. This generated class will be preceded by Dagger. For example if i create an interface named ProgramComponent with @Component annotation, Dagger will generate a Class named 'DaggerProgramComponent' implementing the  ProgramComponent interface.
 
--   **What is the use-case of @Scope Annotation?** <br/>
+*  **What is the use-case of @Scope Annotation?** <br/>
     @Scope is an annotation used on Interface to create a new Custom Scope. A Scope declaration helps to keep single instance of a class as long as its scope exists. For example, in Android, we can use @ApplicationScope for the object to live as long as the Application is live or @ActivityScope for the object to be available till the activity is killed.
 
--   **What is the use of Qualifier in Dagger?** <br/>
+*  **What is the use of Qualifier in Dagger?** <br/>
     We are often in a situation where we will be needing multiple objects with different instance values. For example, we need declare Student("Vamsi") and Student("Krishna"). In such case we can use a Qualifier to tell Dagger that we need multiple instances of same class. The default implementation of Qualifier is using @Named annotation, for eg., @Named("student_vamsi") and @Named("student_krishna")
     If we want to create a Custom Qualifier we would be using @Qualifier to declare a custom Qualifier interface.
 
--   **What is the use-case of @Inject Annotation in Dagger?** <br/>
+*  **What is the use-case of @Inject Annotation in Dagger?** <br/>
     @Inject annotation is used to request dagger to provide the respective Object. We use @Inject on Constructor, Fields (mostly where constructor is not accessible like Activities, Fragments, etc.) and Methods.
 
 ### Common Coding Programs
