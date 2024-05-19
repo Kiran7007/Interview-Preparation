@@ -741,7 +741,7 @@ class Employee {
     Here is how Activity's and Fragment's lifecyle are called together:
     ![Activity Fragment Lifecycle](/assets/activity-fragment-lifecycles.png)
 
-- **How to pass items to `fragment`?**
+- **How to pass items to `fragment`?** </br>
   Using `Bundle` you can pass items to the fragment.
 
 - **How would you communicate between two `fragments`?** </br>
@@ -761,10 +761,8 @@ class Employee {
     </p>
     <br>
 
-- **What is the difference between `dialog` and `dialogFragment`?**
-
-  THe `dialog` is a small window that prompts the user to make a decision or enter additional information. Instead, `dialogFragment` is a fragment that displays a dialog windows and contains a dialog object.
-
+- **What is the difference between `dialog` and `dialogFragment`?** </br>
+  THe `dialog` is a small window that prompts the user to make a decision or enter additional information. Instead, `dialogFragment` is a fragment that displays a dialog windows and contains a dialog object. </br>
   DialogFragment does various things to keep the fragment's lifecycle driving it, instead of the Dialog. Dialogs are generally autonomous entities -- they are their own window, receiving their own input events, and often deciding on their own when to disappear. DialogFragment needs to ensure that what is happening with the Fragment and Dialog states remains consistent. To do this, it watches for dismiss events from the dialog and takes care of removing its own state when they happen.
 
 - **What is the difference between `apply()` and `commit()` in `sharedPreferences`?**
@@ -796,7 +794,7 @@ class Employee {
     b)**Explicit Intent** - Explicit intents specify which application will satisfy the intent, by supplying either the target app's package name or a fully-qualified component class name. You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
 
 *  **What is Pending Intent in Android?** </br>
-    Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.
+    Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.  </br>
 
     ```java
     Intent intent = new Intent(this, AnyActivity.class);
@@ -940,8 +938,8 @@ class Employee {
     We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
 
 *  **How to handle crashing of AsyncTask during screen rotation?** <br/>
-    One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.
-    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
+    One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.  </br>
+    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42  </br>
     We can also avoid this crash by using 2 Alternatives -  1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively, 2) Using LiveData - lifecycle aware component.
   
 - **How does the activity respond when orientation is changed?**  </br>
@@ -950,10 +948,10 @@ class Employee {
 - **How to prevent the data from reloading when orientation is changed?**  </br>
   The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`. A `ViewModel` is LifeCycle-Aware. In other words, a `ViewModel` will not be destroyed if its owner is destroyed for a configuration change (e.g. rotation). The new instance of the owner will just re-connected to the existing `ViewModel`. So if you rotate an `Activity` three times, you have just created three different `Activity` instances, but you only have one `ViewModel`. So the common practice is to store data in the `ViewModel` class (since it persists data during configuration changes) and use `OnSaveInstanceState()` to store small amounts of UI data.
 
-- **What is the relationship between the life cycle of an `AsyncTask` and an `Activity`? What problems can this result in? How can these problems be avoided?**
-  An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.
-  Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).
-  There’s also the potential for this to result in a memory leak since the AsyncTask maintains a reference to the Activity, which prevents the Activity from being garbage collected as long as the AsyncTask remains alive.
+- **What is the relationship between the life cycle of an `AsyncTask` and an `Activity`? What problems can this result in? How can these problems be avoided?**  </br>
+  An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.  </br>
+  Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).  </br>
+  There’s also the potential for this to result in a memory leak since the AsyncTask maintains a reference to the Activity, which prevents the Activity from being garbage collected as long as the AsyncTask remains alive. </br>
   For these reasons, using AsyncTasks for long-running background tasks is generally a bad idea . Rather, for long-running background tasks, a different mechanism (such as a service) should be employed.
 
 * **Headless fragment vs Service** [Link](https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android)
@@ -967,15 +965,13 @@ class Employee {
  
 * **How would you update the UI of an activity from a background service** [Link](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)
 
-- **What is the difference between `Thread` and `AsyncTask`?**
-
 - **What is thread-safe mean? How we can make our code thread-safe?** </br>
   Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
     - Synchronization
     - Use of Atomic Wrapper, For example AtomicInteger.
     - Use of locks from java.util.concurrent.locks package.
     - Using thread safe collection classes
-    - Using volatile keyword.
+    - Using volatile keyword.  </br>
 
   Note that if two threads are both reading and writing to a shared variable, then using the volatile keyword for that is not enough. You need to use a synchronized in that case to guarantee that the reading and writing of the variable is atomic. Reading or writing a volatile variable does not block threads reading or writing. For this to happen you must use the synchronized keyword around critical sections.
   
@@ -986,8 +982,8 @@ class Employee {
     HandlerThread is a Handy class to start a thread that has a Looper.
 
 *  **What is a Looper?** <br/>
-    A Looper is a class used to loop through the Message Queue attached to the Thread. Any thread consists of only one looper. You can access message queue of current thread by using **Looper.myQueue()**.
-    By default, a thread halts when the execution completes. But, for Example, if we take Android's Main thread, it should not halt upon execution.
+    A Looper is a class used to loop through the Message Queue attached to the Thread. Any thread consists of only one looper. You can access message queue of current thread by using **Looper.myQueue()**.  </br>
+    By default, a thread halts when the execution completes. But, for Example, if we take Android's Main thread, it should not halt upon execution.  </br>
     Normally thread cannot be reused once its job is completed. But thread with Looper is kept alive until you call quit method so you don’t need to create a new instance each time you want to run a job in background. ther it should loop through the runnables(Messages) that its assigned in order to work properly. For more info, refer to this [link](https://stackoverflow.com/a/34522758/3424919).
 
 *  **What is a Message Queue?** <br/>
@@ -1072,16 +1068,11 @@ class Employee {
 - **How you load your `Bitmaps`? What do you do for loading large bitmaps?** [Link](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53 "Loading Large Bitmaps Efficiently in Android")
      
 - **How Android apps compiled and run?**
-  1. First step involves compiling the resources folder (/res) using the aapt
-    (android asset packaging tool) tool. These are compiled to a single class
-    file called R.java. This is a class that just contains constants.
+  1. First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
 
-  2. Second step involves the java source code being compiled to .class files
-    by javac, and then the class files are converted to Dalvik bytecode by the
-    “dx” tool, which is included in the sdk ‘tools’. The output is classes.dex.
+  2. Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the “dx” tool, which is included in the sdk ‘tools’. The output is classes.dex.
 
-  3. The final step involves the android apkbuilder which takes all the input
-    and builds the apk (android packaging key) file.
+  3. The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.
 <br>
 
 - **What is the difference between `implementation` and `api`?** </br>
