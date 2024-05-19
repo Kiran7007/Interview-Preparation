@@ -694,6 +694,15 @@ class Employee {
 **Application Context:** This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
 **Activity Context:** This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
 
+* **What is the Android Application Architecture?** </br>
+    * Android application architecture has the following components:</br>
+    a. Activities - Provides the window in which the app draws its UI</br>
+    b. Services − It will perform background functionalities</br>
+    c. Intent − It will perform the inter connection between activities and the data passing mechanism</br>
+    d. Resource Externalization − strings and graphics</br>
+    e. Notification − light,sound,icon,notification,dialog box,and toast</br>
+    f. Content Providers − It will share the data between applications</br>
+
 *  **What is an Activity?** <br/>
     An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
 
@@ -721,9 +730,105 @@ class Employee {
 
 * **Why would you do the setContentView() in onCreate() of Activity class?** </br>
   * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
-
+ 
 *  **Fragment Lifecycle** <br/>
     ![Fragment Lifecycle Image](/assets/fragment_lifecycle.png)
+
+*  **What are Processes in Android?** <br/>
+    Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution. By default all the components of the same application runs in the same process. While most apps donot change this behavior, some apps like games, might want to run in different processes. Then we can use *android:process* attribute in our AndroidManifest.xml to specify the process name.
+
+*  **How do we save and restore an activity's state during screen screen rotation?** <br/>
+    We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
+
+*  **What is a Loader in Android?** <br/>
+    Note: (Loader is Deprecated. We Have to use combination of ViewModels and LiveData instead of using Loaders) A Loader is used to fetch the data from a Content provider and cache the results across the configuration changes to avoid duplicate queries. Loader does it by running on separate threads and handling the lifecycle changes (so no need of asynctasks or new thread creations or manual handling of life cycle changes). Few implementations of Loaders like CursorLoader can implement an observer (called ContentObserver) to monitor any data changes and can then trigger a reload.
+
+*  **What is an Intent Filter?** <br/>
+    Intent filters are a very powerful feature of the Android platform. They provide the ability to launch an activity based not only on an explicit request, but also an implicit one. For example, an explicit request might tell the system to “Start the Send Email activity in the Gmail app". By contrast, an implicit request tells the system to “Start a Send Email screen in any activity that can do the job." When the system UI asks a user which app to use in performing a task, that’s an intent filter at work. Here's an example of how to declare Intent Filter in AndroidManifest:
+    ```xml
+    <activity android:name=".ExampleActivity" android:icon="@drawable/app_icon">
+      <intent-filter>
+          <action android:name="android.intent.action.SEND" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <data android:mimeType="text/plain" />
+      </intent-filter>
+    </activity>
+    ```
+
+*  **What is AAPT?** <br/>
+    AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
+
+*  **What is an Intent? What are the different types of Intents?** <br/>
+    It is a kind of message or information that is passed between different components of Android. It is used to launch an activity, display a web page, send SMS, send email, etc. There are two types of intents in android:
+    There are two types of intents:
+    a)**Implicit Intent** - Implicit intents do not name a specific component, but instead declare a general action to perform, which allows a component from another app to handle it. For example, if you want to show the user a location on a map, you can use an implicit intent to request that another capable app show a specified location on a map.
+    b)**Explicit Intent** - Explicit intents specify which application will satisfy the intent, by supplying either the target app's package name or a fully-qualified component class name. You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
+
+*  **What is Sticky Intent in Android?**  </br>
+    Sticks with Android, for future broadcast listeners. For example if BATTERY_LOW event occurs then that Intent will stick with Android so that any future requests for BATTERY_LOW, will return the Intent.
+
+*  **What is Pending Intent in Android?**<br>
+    Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.
+
+    ```java
+    Intent intent = new Intent(this, AnyActivity.class);
+
+    // Creating a pending intent and wrapping our intent
+    PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    try {
+        // Perform the operation associated with our pendingIntent
+        pendingIntent.send();
+    } catch (PendingIntent.CanceledException e) {
+        e.printStackTrace();
+    }
+    ```
+
+    PendingIntent uses the following methods to handle the different types of intents:
+
+    ```java
+    PendingIntent.getActivity();//Retrieves a PendingIntent to start an Activity
+    PendingIntent.getBroadcast();// Retrieves a PendingIntent to perform a Broadcast
+    PendingIntent.getService();// Retrieves a PendingIntent to start a Service
+    ```
+
+*  **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?** </br>
+    **START_NOT_STICKY:**<br>
+    If the system kills the service after onStartCommand() returns, do not recreate the service unless there are pending intents to deliver. This is the safest option to avoid running your service when not necessary and when your application can simply restart any unfinished jobs.
+    
+    **START_STICKY:**<br>
+    If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand(), but do not redeliver the last intent. Instead, the system calls onStartCommand() with a null intent unless there are pending intents to start the service. In that case, those intents are delivered. This is suitable for media players (or similar services) that are not executing commands but are running indefinitely and waiting for a job.
+
+    **START_REDELIVER_INTENT:**<br>
+    If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand() with the last intent that was delivered to the service. Any pending intents are delivered in turn. This is *suitable for services that are actively performing a job that should be immediately resumed, such as downloading a file.*
+   
+*  **What are different launch modes available in Android?** <br/>
+    There are four launch modes for an Activity in Android as follows:
+
+    1) **standard** : Creates a new instance of an activity in the task from which it is started every single time. It is the default mode if not declared. 
+    <br/>Eg: If we have an activity stack of A->B->C, If we launch Activity C again using standard Mode, the activity stack will now be A->B->C->C. We can see that two instances of C are present in the activity stack.
+
+    1) **singleTop** : Same as standard except that if the activity is at the top of the stack, then the same instance will be used. Now the existing Activity at the top will receive the intent through a call to its onNewIntent() method.
+     <br/>Eg: If we have an activity stack of A->B->C, If we launch Activity C again using singleTop Mode, the activity stack remains to be A->B->C. However if we launch B, then B will be added as new Instance to the stack (A->B->C->B).
+
+    2) **singleTask** : A new task will be created and activity will be created at the root of this new task whenever we use launch mode as singleTask. However, if there is already a separate task with same instance, the system will call that activity's onNewIntent() method to route the intent. There can only be one instance of activity existing at a time.
+    <br/>Eg: If our activity stack is A->B->C and if we launch D using singleTask, it will be A->B->C->[D]. Here braces represents the stack in separate task. If we call E using standard mode, then it will be A->B->C->[D->E].<br/>
+    If we have A->B->C and if we call B again using singleTask launch Mode, the stack will now be A->[B] with B in a separate task. Activity C will be destroyed.
+
+    1) **singleInstance** : Same as Single Task except it creates a new activity in a task and no other activities can then launched into that task. That task will forever contains only that activity. If we use standard or singleTop to launch another activities, they are launched into another tasks.
+    <br/>Eg: if the Activity stack is A->B and now we launched C using singleInstance Launch Mode, the new stack will be A->B->[C]. Now if we call a new activity D from C, it will be launched into separate task. Now the new stack will be A->B->[C]->[D].  Now if we launch E from activity B, Then new stack will be A->B->E [C]->[D]. If we call C again, onNewIntent() of C will be called and new stack will be A->B->E->[C] [D].
+
+    You can read more about them [here](https://developer.android.com/guide/components/activities/tasks-and-back-stack#ManifestForTasks).
+
+*  **How do you declare the launch mode in your application?** <br/>
+    via manifest, in activity's tag. For Eg., -> android:launchMode="singleTask"
+
+*  **How to handle crashing of AsyncTask during screen rotation?** <br/>
+    One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.
+    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
+    We can also avoid this crash by using 2 Alternatives -  1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively, 2) Using LiveData - lifecycle aware component.
+
+*  **What is a RetainFragment / Headless Fragment?** <br/>
+    Generally, Fragments are destroyed and recreated along with their parent Activity’s whenever a configuration change occurs. Calling setRetainInstance(true) allows us to bypass this destroy-and-recreate cycle, notifying the system to retain the current instance of the fragment when the activity is recreated.
 
 *  **Service Lifecycle** <br/>
     ![Fragment Lifecycle Image](/assets/service_lifecycle.png)
@@ -1180,15 +1285,6 @@ class Employee {
   * First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
   * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex. 
   * The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.</br>
-
-* **What is the Android Application Architecture?** </br>
-    * Android application architecture has the following components:</br>
-    a. Activities - Provides the window in which the app draws its UI</br>
-    b. Services − It will perform background functionalities</br>
-    c. Intent − It will perform the inter connection between activities and the data passing mechanism</br>
-    d. Resource Externalization − strings and graphics</br>
-    e. Notification − light,sound,icon,notification,dialog box,and toast</br>
-    f. Content Providers − It will share the data between applications</br>
     
 * **What is Manifest file and R.java file in Android?** </br>
     * **Manifest**: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
@@ -1478,115 +1574,6 @@ class Employee {
 
     [Learn More about SOLID principles with Android Examples Here.](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 
-*  **What are Android Components?** <br/>
-    1) Activities,
-    2) Intent and broadcast receivers,
-    3) Services,
-    4) Content Providers,
-    5) Widgets and Notifications
-
-*  **What are Processes in Android?** <br/>
-    Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution. By default all the components of the same application runs in the same process. While most apps donot change this behavior, some apps like games, might want to run in different processes. Then we can use *android:process* attribute in our AndroidManifest.xml to specify the process name.
-
-*  **How do we save and restore an activity's state during screen screen rotation?** <br/>
-    We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
-
-*  **What is a Loader in Android?** <br/>
-    Note: (Loader is Deprecated. We Have to use combination of ViewModels and LiveData instead of using Loaders) A Loader is used to fetch the data from a Content provider and cache the results across the configuration changes to avoid duplicate queries. Loader does it by running on separate threads and handling the lifecycle changes (so no need of asynctasks or new thread creations or manual handling of life cycle changes). Few implementations of Loaders like CursorLoader can implement an observer (called ContentObserver) to monitor any data changes and can then trigger a reload.
-
-*  **What is an Intent Filter?** <br/>
-    Intent filters are a very powerful feature of the Android platform. They provide the ability to launch an activity based not only on an explicit request, but also an implicit one. For example, an explicit request might tell the system to “Start the Send Email activity in the Gmail app". By contrast, an implicit request tells the system to “Start a Send Email screen in any activity that can do the job." When the system UI asks a user which app to use in performing a task, that’s an intent filter at work. Here's an example of how to declare Intent Filter in AndroidManifest:
-    ```xml
-    <activity android:name=".ExampleActivity" android:icon="@drawable/app_icon">
-      <intent-filter>
-          <action android:name="android.intent.action.SEND" />
-          <category android:name="android.intent.category.DEFAULT" />
-          <data android:mimeType="text/plain" />
-      </intent-filter>
-    </activity>
-    ```
-
-*  **What is AAPT?** <br/>
-    AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
-
-*  **What is an Intent? What are the different types of Intents?** <br/>
-    It is a kind of message or information that is passed between different components of Android. It is used to launch an activity, display a web page, send SMS, send email, etc. There are two types of intents in android:
-    There are two types of intents:
-    a)**Implicit Intent** - Implicit intents do not name a specific component, but instead declare a general action to perform, which allows a component from another app to handle it. For example, if you want to show the user a location on a map, you can use an implicit intent to request that another capable app show a specified location on a map.
-    b)**Explicit Intent** - Explicit intents specify which application will satisfy the intent, by supplying either the target app's package name or a fully-qualified component class name. You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
-
-*  **What is Sticky Intent in Android?**  </br>
-    Sticks with Android, for future broadcast listeners. For example if BATTERY_LOW event occurs then that Intent will stick with Android so that any future requests for BATTERY_LOW, will return the Intent.
-
-*  **What is Pending Intent in Android?**<br>
-    Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.
-
-    ```java
-    Intent intent = new Intent(this, AnyActivity.class);
-
-    // Creating a pending intent and wrapping our intent
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    try {
-        // Perform the operation associated with our pendingIntent
-        pendingIntent.send();
-    } catch (PendingIntent.CanceledException e) {
-        e.printStackTrace();
-    }
-    ```
-
-    PendingIntent uses the following methods to handle the different types of intents:
-
-    ```java
-    PendingIntent.getActivity();//Retrieves a PendingIntent to start an Activity
-    PendingIntent.getBroadcast();// Retrieves a PendingIntent to perform a Broadcast
-    PendingIntent.getService();// Retrieves a PendingIntent to start a Service
-    ```
-
-*  **What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVER_INTENT?** </br>
-    **START_NOT_STICKY:**<br>
-    If the system kills the service after onStartCommand() returns, do not recreate the service unless there are pending intents to deliver. This is the safest option to avoid running your service when not necessary and when your application can simply restart any unfinished jobs.
-    
-    **START_STICKY:**<br>
-    If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand(), but do not redeliver the last intent. Instead, the system calls onStartCommand() with a null intent unless there are pending intents to start the service. In that case, those intents are delivered. This is suitable for media players (or similar services) that are not executing commands but are running indefinitely and waiting for a job.
-
-    **START_REDELIVER_INTENT:**<br>
-    If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand() with the last intent that was delivered to the service. Any pending intents are delivered in turn. This is *suitable for services that are actively performing a job that should be immediately resumed, such as downloading a file.*
-
-*  **Advantage of Retrofit over Volley?** <br/>
-    Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
-
-*  **Advantage of Volley over Retrofit?** <br/>
-    Android Volley has a very elaborate and flexible cache mechanism. When a request is made through Volley, first the cache is checked for Response. If it is found, then it is fetched and parsed, else, it will hit Network to fetch the data. Retrofit does not support cache by default.
-
-*  **What are different launch modes available in Android?** <br/>
-    There are four launch modes for an Activity in Android as follows:
-
-    1) **standard** : Creates a new instance of an activity in the task from which it is started every single time. It is the default mode if not declared. 
-    <br/>Eg: If we have an activity stack of A->B->C, If we launch Activity C again using standard Mode, the activity stack will now be A->B->C->C. We can see that two instances of C are present in the activity stack.
-
-    1) **singleTop** : Same as standard except that if the activity is at the top of the stack, then the same instance will be used. Now the existing Activity at the top will receive the intent through a call to its onNewIntent() method.
-     <br/>Eg: If we have an activity stack of A->B->C, If we launch Activity C again using singleTop Mode, the activity stack remains to be A->B->C. However if we launch B, then B will be added as new Instance to the stack (A->B->C->B).
-
-    2) **singleTask** : A new task will be created and activity will be created at the root of this new task whenever we use launch mode as singleTask. However, if there is already a separate task with same instance, the system will call that activity's onNewIntent() method to route the intent. There can only be one instance of activity existing at a time.
-    <br/>Eg: If our activity stack is A->B->C and if we launch D using singleTask, it will be A->B->C->[D]. Here braces represents the stack in separate task. If we call E using standard mode, then it will be A->B->C->[D->E].<br/>
-    If we have A->B->C and if we call B again using singleTask launch Mode, the stack will now be A->[B] with B in a separate task. Activity C will be destroyed.
-
-    1) **singleInstance** : Same as Single Task except it creates a new activity in a task and no other activities can then launched into that task. That task will forever contains only that activity. If we use standard or singleTop to launch another activities, they are launched into another tasks.
-    <br/>Eg: if the Activity stack is A->B and now we launched C using singleInstance Launch Mode, the new stack will be A->B->[C]. Now if we call a new activity D from C, it will be launched into separate task. Now the new stack will be A->B->[C]->[D].  Now if we launch E from activity B, Then new stack will be A->B->E [C]->[D]. If we call C again, onNewIntent() of C will be called and new stack will be A->B->E->[C] [D].
-
-    You can read more about them [here](https://developer.android.com/guide/components/activities/tasks-and-back-stack#ManifestForTasks).
-
-*  **How do you declare the launch mode in your application?** <br/>
-    via manifest, in activity's tag. For Eg., -> android:launchMode="singleTask"
-
-*  **How to handle crashing of AsyncTask during screen rotation?** <br/>
-    One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.
-    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
-    We can also avoid this crash by using 2 Alternatives -  1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively, 2) Using LiveData - lifecycle aware component.
-
-*  **What is a RetainFragment / Headless Fragment?** <br/>
-    Generally, Fragments are destroyed and recreated along with their parent Activity’s whenever a configuration change occurs. Calling setRetainInstance(true) allows us to bypass this destroy-and-recreate cycle, notifying the system to retain the current instance of the fragment when the activity is recreated.
-
 *  **What is Reflection?** <br/>
     Reflection is an API that is used to examine or modify the behaviour of methods, classes and interfaces at runtime. The required classes for reflection are present in java.lang.reflect package.
 
@@ -1598,7 +1585,13 @@ class Employee {
 
 *  **What is the advantage of using Retrofit over AsyncTask?** <br/>
     Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself. More use-cases at: https://stackoverflow.com/a/16903205/3424919
+   
+*  **Advantage of Retrofit over Volley?** <br/>
+    Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
 
+*  **Advantage of Volley over Retrofit?** <br/>
+    Android Volley has a very elaborate and flexible cache mechanism. When a request is made through Volley, first the cache is checked for Response. If it is found, then it is fetched and parsed, else, it will hit Network to fetch the data. Retrofit does not support cache by default.
+   
 *  **How to handle multiple network calls using Retrofit?** <br/>
     In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
 
