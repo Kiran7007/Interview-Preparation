@@ -799,11 +799,6 @@ class Employee {
   - **Item Animator**: `ListViews` are lacking in support of good animations,
     but the `RecyclerView` brings a whole new dimension to it.
 
-- **Difference between `Intent` and `IntentService`?**
-  - `Service` is the base class for Android services that can be extended to create any service. A class that directly extends `Service` runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.
-
-  - `IntentService` is a subclass of `Service` that handles asynchronous requests (expressed as `Intents`) on demand. Clients send requests through `startService(Intent)` calls. The service is started as needed, handles each `Intent` in turn using a worker thread, and stops itself when it runs out of work. [Read More on Mindorks's blog]("https://blog.mindorks.com/service-vs-intentservice-in-android")
-
 - **What is `Fragment`?** </br>
   A `Fragment` is a piece of an activity which enable more modular activity design. A fragment has its layout, its behavior, and its life cycle callbacks. You can add or remove fragments in an activity while the activity is running. You can combine multiple fragments in a single activity to build a multi-pane UI. A fragment can also be used in multiple activities. The fragment life cycle is closely related to its host activity which means when the activity is paused, all the fragments available in the activity will also be stopped.
 
@@ -831,6 +826,23 @@ class Employee {
   - `commit()` writes the data **synchronously** and returns a boolean value of success or failure depending on the result immediately.
   - `apply()` is **asynchronous** and it won’t return any boolean response. Also if there is an `apply()` outstanding and we perform another `commit()`, The `commit()` will be blocked until the `apply()` is not completed.
 
+- **What is the relationship between the life cycle of an `AsyncTask` and an `Activity`? What problems can this result in? How can these problems be avoided?**
+  An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.
+
+  Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).
+
+  There’s also the potential for this to result in a memory leak since the AsyncTask maintains a reference to the Activity, which prevents the Activity from being garbage collected as long as the AsyncTask remains alive.
+
+  For these reasons, using AsyncTasks for long-running background tasks is generally a bad idea . Rather, for long-running background tasks, a different mechanism (such as a service) should be employed.
+
+- **Difference between `Activity` and `Service`?**
+  - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
+  - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
+ 
+* **How would you update the UI of an activity from a background service** </br>
+  We need to register a LocalBroadcastReceiver in the activity. And send a broadcast with the data using intents from the background service. As long as the activity is in the foreground, the UI will be updated from the background. Ensure to unregister the broadcast receiver in the onStop() method of the activity to avoid memory leaks. 
+We can also register a Handler and pass data using Handlers. I have detailed a sample implementation on this. You can check it out [here](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)</br>
+
 - **What is the difference between `Thread` and `AsyncTask`?**
 
 - **What is thread-safe mean? How we can make our code thread-safe?** </br>
@@ -842,36 +854,68 @@ class Employee {
     - Using volatile keyword.
 
   Note that if two threads are both reading and writing to a shared variable, then using the volatile keyword for that is not enough. You need to use a synchronized in that case to guarantee that the reading and writing of the variable is atomic. Reading or writing a volatile variable does not block threads reading or writing. For this to happen you must use the synchronized keyword around critical sections.
-
-- **What is the relationship between the life cycle of an `AsyncTask` and an `Activity`? What problems can this result in? How can these problems be avoided?**
-
-  An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.
-
-  Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).
-
-  There’s also the potential for this to result in a memory leak since the AsyncTask maintains a reference to the Activity, which prevents the Activity from being garbage collected as long as the AsyncTask remains alive.
-
-  For these reasons, using AsyncTasks for long-running background tasks is generally a bad idea . Rather, for long-running background tasks, a different mechanism (such as a service) should be employed.
   
-- **What is Java ExecutorService** [Link](https://www.javatpoint.com/java-executorservice)
-
 - **What are Handlers?** </br>
-  Handlers are objects for managing threads. It receives messages and writes code on how to handle the message. They run outside of the activity’s lifecycle, so they need to be cleaned up properly or else you will have thread leaks. Handlers allow communicating between the background thread and the main thread.
+  Handlers are objects for managing threads. It receives messages and writes code on how to handle the message. They run outside of the activity’s lifecycle, so they need to be cleaned up properly or else you will have thread leaks. Handlers allow communicating between the background thread and the main thread. Handler delivers messages and runnables to the message queue and execute them as they come out of the message queue. We will generally use handler class when we want to repeat task every few seconds.
 
+* *  **What is HandlerThread?** <br/>
+    HandlerThread is a Handy class to start a thread that has a Looper.
+
+*  **What is a Looper?** <br/>
+    A Looper is a class used to loop through the Message Queue attached to the Thread. Any thread consists of only one looper. You can access message queue of current thread by using **Looper.myQueue()**.
+    By default, a thread halts when the execution completes. But, for Example, if we take Android's Main thread, it should not halt upon execution.
+    Normally thread cannot be reused once its job is completed. But thread with Looper is kept alive until you call quit method so you don’t need to create a new instance each time you want to run a job in background. ther it should loop through the runnables(Messages) that its assigned in order to work properly. For more info, refer to this [link](https://stackoverflow.com/a/34522758/3424919).
+
+*  **What is a Message Queue?** <br/>
+    MessageQueue is a queue that has list of messages which should be processed. Android maintains a MessageQueue on the main thread.
+    [More Info](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
+
+*  **What is a Message?** <br/>
+    Message contains a description and arbitrary data object that can be sent to a Handler. Basically its used to process / send some data across threads.
+
+* **AIDL vs Messenger Queue** </br>
+  * AIDL is for purpose when you've to go application level communication for data and control sharing, a scenario depicting it can be : An app requires list of all contacts from Contacts app (content part lies here) plus it also wants to show the call's duration and you can also disconnect it from that app (control part lies here).
+  * In Messenger queues you're more IN the application and working on threads and processes to manage the queue having messages so no Outside services interference here.</br>
+  * Messenger is needed if you want to bind a remote service (e.g. running in another process).</br>
+    
 - **What is the difference between `Foreground` and `Background` and `Bounded` service?**
   - **Foreground Service:** A foreground `service` performs some operation that is noticeable to the user. For example, we can use a foreground service to play an audio track. A `Notification` must be displayed to the user.
-
   - **Background Service:** A background `service` performs an operation that isn’t directly noticed by the user. In Android API level 26 and above, there are restrictions to using background services and it is recommended to use WorkManager in these cases
-
   - **Bound Service:** A `service` is bound when an application component binds to it by calling `bindService()`. A bound service offers a client-server interface that allows components to interact with the `service`, send requests, receive results. A bound service runs only as long as another application component is bound to it. [Read More](https://developer.android.com/guide/components/services)
+ 
+*  **Bound Service vs UnBounded service?** <br/>
+    **A Bound service** is started by using method bindService(). As mentioned above system destroys bound service when no application component is accessing it. A Bound Service will stop automatically by the system when all the Application Components bound to it are unbinded.</br>
+    **Unbounded service (started service)** is started by using a method called startService(). Once started, it will run indefinitely even if the application component that started it is destroyed.
+ 
+- **Difference between `Intent` and `IntentService`?**
+  - `Service` is the base class for Android services that can be extended to create any service. A class that directly extends `Service` runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.
+
+  - `IntentService` is a subclass of `Service` that handles asynchronous requests (expressed as `Intents`) on demand. Clients send requests through `startService(Intent)` calls. The service is started as needed, handles each `Intent` in turn using a worker thread, and stops itself when it runs out of work. [Read More on Mindorks's blog]("https://blog.mindorks.com/service-vs-intentservice-in-android")
    
 * **Difference between Service, Intent Service, AsyncTask & Threads** </br>
-  * **Android service** is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.</br>
+  * **Android service** is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one). This might cause ANR errors and hould therefore either be used only for short tasks or should make use of other threads for longer tasks. To stop a service from an activity we can call stopService(Intent intent) method. To Stop a service from itself, we can call stopSelf() method.</br>
   * **AsyncTask** allows you to perform asynchronous work on your user interface. It performs the blocking operations in a worker thread and then publishes the results on the UI thread, without requiring you to handle threads and/or handlers yourself.</br>
-  * **IntentService** is a base class for Services that handle asynchronous requests (expressed as Intents) on demand. Clients send requests through startService(Intent) calls; the service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.</br>
+  * **IntentService** is a base class for Services that handle asynchronous requests (expressed as Intents) on demand. Clients send requests through startService(Intent) calls; the service is started as needed, handles each Intent in turn using a worker thread, and stops itself after its job is done. The IntentService can be used in long tasks usually with no communication to Main Thread. If communication is required, can use Main Thread handler or broadcast intents. Another case of use is when callbacks are needed (Intent triggered tasks).</br>
   * A **thread** is a single sequential flow of control within a program. it should be used to separate long running operations from main thread so that performance is improved. But it can't be cancelled elegantly and it can't handle configuration changes of Android. You can't update UI from Thread. </br>
+
+*  **When to use AsyncTask and when to use services?** <br/>
+    Services are useful when you want to run code even when your application's Activity isn't open. AsyncTask is a helper class used to run some code in a separate thread and publish results in main thread. Usually AsyncTask is used for small operations and services are used for long running operations.
+
+*  **What is an Intent Service? What is the method that differentiates it to make Service run in background?**  </br>
+    IntentService is a subclass of Service that can perform tasks using worker thread unlike service that blocks main thread. The additional method of IntentService is -
+    **<i>onHandleIntent(Intent)</i>** which helps the IntentService to run a particular code block declared inside it, in worker/background thread. The speciality of Intent Service is if there are more tasks given to it, IntentService will pass those intents one by one to the Worker thread. So if there are multiple download operations to be handled, They will be performed in a sequential order. Only one request will be processed at a time.
+    **Note:** IntentService is deprecated from API 30. This is due to background restrictions imposed from API level 26. It is now recommended to use WorkManager or JobIntentService. For more Info, [Click Here](https://developer.android.com/reference/android/app/IntentService)
+
+*  **When to use a service and when to use a thread?** <br/>
+    We will use a Thread when we want to perform background operations when application is running in foreground. We will use a service even when the application is not running.
+
+* **What is Java ExecutorService** [Link](https://www.javatpoint.com/java-executorservice)
+
+* **What is a ThreadPool? And is it more effective than using several separate Threads?** </br>
+  * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
+  * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
   
- * **What is a Job Scheduling?** </br>
+* **What is a Job Scheduling?** </br>
    * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
    * The JobScheduler supports batch scheduling of jobs. The Android system can combine jobs so that battery consumption is reduced. JobManager makes handling uploads easier as it handles automatically the unreliability of the network. It also survives application restarts. 
    * Scenarios:
@@ -882,78 +926,6 @@ class Employee {
      * [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
 
 * **How Workmanager works?** [Link](https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager)
-
-* *  **What is HandlerThread?** <br/>
-    HandlerThread is a Handy class to start a thread that has a Looper.
-
-*  **What is a Looper?** <br/>
-    A Looper is a class used to loop through the Message Queue attached to the Thread. Any thread consists of only one looper. You can access message queue of current thread by using **Looper.myQueue()**.
-    
-    By default, a thread halts when the execution completes. But, for Example, if we take Android's Main thread, it should not halt upon execution.
-
-    Normally thread cannot be reused once its job is completed. But thread with Looper is kept alive until you call quit method so you don’t need to create a new instance each time you want to run a job in background. ther it should loop through the runnables(Messages) that its assigned in order to work properly. For more info, refer to this [link](https://stackoverflow.com/a/34522758/3424919).
-
-* **How would you update the UI of an activity from a background service** </br>
-  We need to register a LocalBroadcastReceiver in the activity. And send a broadcast with the data using intents from the background service. As long as the activity is in the foreground, the UI will be updated from the background. Ensure to unregister the broadcast receiver in the onStop() method of the activity to avoid memory leaks. 
-We can also register a Handler and pass data using Handlers. I have detailed a sample implementation on this. You can check it out [here](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)</br>
-
-*  **What is a Message Queue?** <br/>
-    MessageQueue is a queue that has list of messages which should be processed. Android maintains a MessageQueue on the main thread.
-    [More Info](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
-
-*  **What is a Message?** <br/>
-    Message contains a description and arbitrary data object that can be sent to a Handler. Basically its used to process / send some data across threads.
-
-*  **What is a Service?** <br/>
-    A service is a component which doesn't have UI and can perform long running operations like downloading stuff, playing music etc.. which can run even exiting the application. By default service runs on main thread. This might cause ANR errors. To avoid this, we can Start service by creating a new background thread or use an IntentService that can do work in background. [Read More.](https://developer.android.com/guide/components/services)
-
-*  **How to Stop a Service?** <br/>
-    To stop a service from an activity we can call stopService(Intent intent) method. To Stop a service from itself, we can call stopSelf() method.
-
-*  **Bound Service vs UnBounded service?** <br/>
-    A Bound service is started by using method bindService(). As mentioned above system destroys bound service when no application component is accessing it.
-    Unbounded service (started service) is started by using a method called startService(). Once started, it will run indefinitely even if the application component that started it is destroyed.
-
-*  **When does a Bound Service stops?** <br/>
-    A Bound Service will stop automatically by the system when all the Application Components bound to it are unbinded.
-    
-*  **How to start a Foreground Service?**
-    We can start a foreground service by using startForegroundService(Intent intent) or by internally calling startForeground() on the service.
-    For Example, [Click Here](https://github.com/vamsitallapudi/Coderefer-Android-Projects/tree/main/ServicesExample)
-
-*  **What is an Intent Service? What is the method that differentiates it to make Service run in background?**  </br>
-    IntentService is a subclass of Service that can perform tasks using worker thread unlike service that blocks main thread. The additional method of IntentService is -
-    **<i>onHandleIntent(Intent)</i>** which helps the IntentService to run a particular code block declared inside it, in worker/background thread. The speciality of Intent Service is if there are more tasks given to it, IntentService will pass those intents one by one to the Worker thread. So if there are multiple download operations to be handled, They will be performed in a sequential order. Only one request will be processed at a time.
-
-    **Note:** IntentService is deprecated from API 30. This is due to background restrictions imposed from API level 26. It is now recommended to use WorkManager or JobIntentService. For more Info, [Click Here](https://developer.android.com/reference/android/app/IntentService)
-
-*  **How to Stop an IntentService?** <br/>
-    An IntentService automatically stops itself after its job is done. We do not need to explicitly call any methods to stop an IntentService unlike Service which requires stopSelf() or StopService(intent:Intent).
-
-*  **When Intent Service is Useful?** <br/>
-    The IntentService can be used in long tasks usually with no communication to Main Thread. If communication is required, can use Main Thread handler or broadcast intents. Another case of use is when callbacks are needed (Intent triggered tasks).
-
-*  **When to use AsyncTask and when to use services?** <br/>
-    Services are useful when you want to run code even when your application's Activity isn't open. AsyncTask is a helper class used to run some code in a separate thread and publish results in main thread. Usually AsyncTask is used for small operations and services are used for long running operations.
-
-*  **When to use a service and when to use a thread?** <br/>
-    We will use a Thread when we want to perform background operations when application is running in foreground. We will use a service even when the application is not running.
-
-*  **What is a Handler?** <br/>
-    A Handler allows you to send and process Message and Runnable objects associated with a thread's MessageQueue. Each Handler instance is associated with a single thread and that thread's message queue. When you create a new Handler, it is bound to the thread / message queue of the thread that is creating it -- from that point on, it will deliver messages and runnables to that message queue and execute them as they come out of the message queue. We will generally use handler class when we want to repeat task every few seconds.
-
-* **AIDL vs Messenger Queue** </br>
-  * AIDL is for purpose when you've to go application level communication for data and control sharing, a scenario depicting it can be : An app requires list of all contacts from Contacts app (content part lies here) plus it also wants to show the call's duration and you can also disconnect it from that app (control part lies here).
-  * In Messenger queues you're more IN the application and working on threads and processes to manage the queue having messages so no Outside services interference here.</br>
-  * Messenger is needed if you want to bind a remote service (e.g. running in another process).</br>
-
-* **What is a ThreadPool? And is it more effective than using several separate Threads?** </br>
-  * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
-  * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
-
-- **Difference between `Activity` and `Service`?**
-  - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
-  - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
  
 * **Stateflow vs LiveData** [Link](https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html)
 
