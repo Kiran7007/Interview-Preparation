@@ -22,10 +22,10 @@
   can be defined as a template that describes the behavior/state that the object
   of its type support.
 
-* <b>What is Inheritance?</b> </br>
+* **What is Inheritance?** </br>
   Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
 
-* <b>Composition over inheritance?</b> </br>
+* **Composition over inheritance?** </br>
   Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
 ```
 class Person {
@@ -51,17 +51,17 @@ class Employee {
 }
 ```
    
-* <b>What are Interfaces?</b> </br>
+* **What are Interfaces?** </br>
    * Interfaces are only declared methods that an implementing class would need. 
    * Interfaces cannot be marked as final. Interface variables must be static or final. 
    * Interfaces cannot be instantiated directly.
-   * <b>Marker Interfaces</b>: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
+   * **Marker Interfaces**: Marker interfaces are those which do not declare any required Methods. The java.io.Serializable interface is a typical marker interfaces. These do not contain any methods, but classes must implement this interface in order to be serialized and de-serialized.</br>
 
-* <b>What is Functional Interface</b> [Link](https://www.geeksforgeeks.org/functional-interfaces-java/)
+* **What is Functional Interface** [Link](https://www.geeksforgeeks.org/functional-interfaces-java/)
 
-* <b>What is Comparator Interface</b> [Link](https://www.geeksforgeeks.org/comparator-interface-java/)
+* **What is Comparator Interface** [Link](https://www.geeksforgeeks.org/comparator-interface-java/)
   
-* <b>Java 8 Changes in Interface</b> [Link](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
+* **Java 8 Changes in Interface** [Link](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 
 - **Can Interfaces to be extended?** </br>
   Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface. But every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
@@ -76,17 +76,17 @@ class Employee {
   | In Java Contains only incomplete member (signature of member) | Contains both signature (abstract) of method and member functions |
   | Cannot have access modifiers by default and everything is assumed as public | Can has access modifiers for subs, methods and fields |
 
-* <b>Does Java support multiple inheritance?</b> </br>
+* **Does Java support multiple inheritance?** </br>
   Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
    
-* <b>What is Encapsulation?</b>
+* **What is Encapsulation?**
    - Encapsulation involves binding code and data together as a single unit. 
    - Encapsulation is a technique used for hiding the properties and behaviors of an object and allowing outside access only as appropriate. It prevents other objects from directly altering or accessing the properties or methods of the encapsulated object. 
    - For instance, a class can be an encapsulated class if all the variables in it are defined as Private and by providing getter and setter methods.
    - The fields of a class can be made read-only or write-only.
    - A class can have total control over what is stored in its fields.
 
-* <b>What is Abstract class? </b>
+* **What is Abstract class? **
    * Abstract classes are classes that contain one or more abstract methods. An abstract method is a method that is declared, but contains no implementation. 
    * If even a single method is abstract, the whole class must be declared abstract.
    * Abstract classes may not be instantiated, and require subclasses to provide implementations for the abstract methods.
@@ -172,32 +172,29 @@ class Employee {
   | In this, methods must have same name and different signature. | While in this, methods must have same name and same signature. |
   | In method overloading, return type can or can not be be same, but we must have to change the parameter. | While in this, return type must be same or co-variant. |
    
-* <b>Why would you not call abstract method in constructor?</b> </br>
+* **Why would you not call abstract method in constructor?** </br>
   The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
        
-* <b>Difference between Encapsulation & Abstraction?</b> </br>
-   * <b>Abstraction</b> focuses on the outside view of an object (i.e. the interface) 
-   * <b>Encapsulation</b> (information hiding) prevents clients from seeing it’s inside view. 
+* **Difference between Encapsulation & Abstraction?** </br>
+   * **Abstraction** focuses on the outside view of an object (i.e. the interface) 
+   * **Encapsulation** (information hiding) prevents clients from seeing it’s inside view. 
    * Abstraction solves the problem in the design side while Encapsulation is the Implementation.</br>
 
 * **What is serialization? How do you implement it?** </br>
     Serialization is the process of converting an object into a stream of bytes in order to store an object into memory so that it can be recreated at a later time while still keeping the objects original state and data. In Java there are two methods of doing this, one is by implementing Serializable or Parcelable. In Android, however, Serializable should never be used in Android. Parcelable was created to be more efficient then Serializable, and performs about 10x faster then Serializable because Serializable uses reflection which is a slow process and tends to create a lot of temporary objects which may cause garbage collection to occur more often.
 
-* **What is Transient Keyword** [Link](https://www.geeksforgeeks.org/transient-keyword-java/)
+* **What is Transient Keyword?** [Link](https://www.geeksforgeeks.org/transient-keyword-java/)
 
-* <b>Why is Java said to be platform independent?</b> </br>
+* **Why is Java said to be platform independent?** </br>
   The execution of the code does not depend upon the OS
    
-* <b>Difference between ‘throw’ and ‘throws’ in Java Exception Handling?</b> </br>
+* **Difference between ‘throw’ and ‘throws’ in Java Exception Handling?** </br>
   ```throw``` keyword is used to throw Exception from any method or static block whereas ```throws``` is used to indicate that which Exception can possibly be thrown by this method.
    
-* <b>Is there ever a scenario where we can skip the finally block in a try catch?</b> </br>
+* **Is there ever a scenario where we can skip the finally block in a try catch?** </br>
   By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
 
-* <b>What is Try-With-Resources</b< </br>
-  https://jenkov.com/tutorials/java-exception-handling/try-with-resources.html#:~:text=The%20Java%20try%20with%20resources,try%2Dwith%2Dresources%20block.
-  
-* <b>What are anonymous classes?</b> </br>
+* **What are anonymous classes?** </br>
    * An anonymous class is just what its name implies -- it has no name. It combines the class declaration and the creation of an instance of the class in one step. Since anonymous classes have no name, objects can not be instantiated from outside the class in which the anonymous class is defined. In fact, an anonymous object can only be instantiated from within the same scope in which it is defined.
    * Rules:
       * An anonymous class must always extend a super class or implement an interface but it cannot have an explicit extends or implements clause.
@@ -213,16 +210,13 @@ class Employee {
          });
  </br>
 
-- **Java Try with Resources** </br>
-   http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
+- **What is Java Try with Resources?** [Link](http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html)
 
--  **Java 8 Interface changes** </br>
-   https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
+- **What are the Java 8 Interface changes?** [Link](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 
-- **Function Interface** </br>
-   https://www.geeksforgeeks.org/functional-interfaces-java/
+- **What is Function Interface?** [Link](https://www.geeksforgeeks.org/functional-interfaces-java/)
       
-* <b>Why is the main method static in java?</b></br>
+* **Why is the main method static in java?** </br>
    * The method is static because otherwise there would be ambiguity on which method to be called. If static is removed from the main method, Program compiles successfully . But at runtime throws an error “NoSuchMethodError”.
    * We can overload the main method in Java. But the program doesn’t execute the overloaded main method when we run your program, we need to call the overloaded main method from the actual main method only. To run a method without calling this main method, we would need to execute a static block.
    * In order to avoid NoSuchMethodError, we can call System.exit(0) after the static method.
@@ -238,10 +232,10 @@ class Employee {
    </br>
    
       
-* <b>What is garbage collector? How does it work?</b> </br>
+* **What is garbage collector? How does it work?** </br>
   All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
    
-* <b>Difference between stack memory & heap memory?</b></br>
+* **Difference between stack memory & heap memory?** </br>
    * Stack is used for static memory allocation and Heap for dynamic memory allocation, both stored in the computer's RAM .
    * Variables allocated on the stack are stored directly to the memory and access to this memory is very fast, and it's allocation is dealt with when the program is compiled. When a function or a method calls another function which in turns calls another function etc., the execution of all those functions remains suspended until the very last function returns its value. The stack is always reserved in a LIFO order, the most recently reserved block is always the next block to be freed. This makes it really simple to keep track of the stack, freeing a block from the stack is nothing more than adjusting one pointer.
    * Variables allocated on the heap have their memory allocated at run time and accessing this memory is a bit slower, but the heap size is only limited by the size of virtual memory . Element of the heap have no dependencies with each other and can always be accessed randomly at any time. You can allocate a block at any time and free it at any time. This makes it much more complex to keep track of which parts of the heap are allocated or free at any given time.
@@ -255,38 +249,38 @@ class Employee {
        * When stack memory is full, Java runtime throws java.lang.StackOverFlowError whereas if heap memory is full, it throws java.lang.OutOfMemoryError: Java Heap Space error.
        * Stack memory size is very less when compared to Heap memory. Because of simplicity in memory allocation (LIFO), stack memory is very fast when compared to heap memory.</br>   
    
-* <b>Constructors vs Methods?</b></br>
-   * <b>Constructors</b> must have the name as the class name and does not have a return type. It can be used to instantiate any objects in the class whereas methods have no such rule and is another member of the class. Constructors cannot be inherited but a derived class can call the super constructor of parent class.
+* **Constructors vs Methods?** </br>
+   * **Constructors** must have the name as the class name and does not have a return type. It can be used to instantiate any objects in the class whereas methods have no such rule and is another member of the class. Constructors cannot be inherited but a derived class can call the super constructor of parent class.
    * ```this()```: Constructors use this to refer to another constructor in the same class with a different parameter list.
    * ```super()```: Constructors use super to invoke the superclass's constructor.
-   * <b>Methods</b>: Instance methods on the other hand require an instance of the class to exist before they can be called, so an instance of a class needs to be created by using the new keyword. Class methods are methods which are declared as static. The method can be called without creating an instance of the class</br>
+   * **Methods**: Instance methods on the other hand require an instance of the class to exist before they can be called, so an instance of a class needs to be created by using the new keyword. Class methods are methods which are declared as static. The method can be called without creating an instance of the class</br>
    
-* <b>What is the difference between instantiation and initialization of an object?</b> </br>
-   * <b>Initialization</b> is the process of the memory allocation, when a new variable is created. Variables should be explicitly given a value, otherwise they may contain a random value that remained from the previous variable that was using the same memory space. To avoid this problem, Java language assigns default values to data types.
-   * <b>Instantiation</b> is the process of explicitly assigning definitive value to a declared variable.</br>
+* **What is the difference between instantiation and initialization of an object?** </br>
+   * **Initialization** is the process of the memory allocation, when a new variable is created. Variables should be explicitly given a value, otherwise they may contain a random value that remained from the previous variable that was using the same memory space. To avoid this problem, Java language assigns default values to data types.
+   * **Instantiation** is the process of explicitly assigning definitive value to a declared variable.</br>
   
-* <b>Do objects get passed by reference or value in Java? Elaborate on that.</b> </br>
+* **Do objects get passed by reference or value in Java? Elaborate on that.** </br>
    * Java is always pass-by-value. When we pass the value of an object, we are passing the reference to it. 
    * Java creates a copy of the variable being passed in the method and then does the manipulations. Hence the change is not reflected in the main method.
    * But when you pass an object reference into a method, a copy of this reference is made, so it still points to the same object. This means, that any changes that you make to the insides of this object are retained, when the method exits.
    * Java copies and passes the reference by value, not the object. Thus, method manipulation will alter the objects, since the references point to the original objects. But since the references are copies, swaps will fail.</br>
    
-* <b>Primitives in Java?</b> </br>
+* **Primitives in Java?** </br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
 
-* <b>Difference between == and .equals() method in Java?</b> </br>
+* **Difference between == and .equals() method in Java?** </br>
   - The `equals()` method compares two strings, character by character, to determine equality.
   - The `==` operator checks to see whether two object references refer to the same instance of an object
    
-* <b>Why strings are Immutable?</b> </br>
+* **Why strings are Immutable?** </br>
   Once a value is assigned to a string it cannot be changed. And if changed, it creates a new object of the String. This is not the case with StringBuffer.</br>
    
-* <b>What is String.intern()? When and why should it be used?</b> </br>
+* **What is String.intern()? When and why should it be used?** </br>
    * String.intern() method can be used to to deal with String duplication problem in Java. By carefully using the intern() method you can save a lot of memories consumed by duplicate String instances. A string is duplicate if it contains the same content as another string but occupied different memory location.
    * By calling  the intern() method on a string object, for instance “abc”, you can instruct JVM to put this String in the pool and whenever someone else creates "abc", this object will be returned instead of creating a new object. This way, you can save a lot of memory in Java, depending upon how many Strings are duplicated in your program.
    * When the intern method is invoked, if the String pool already contains that String object such that equals() return true, it will return the String object from the pool, otherwise it will add that object to the pool of unique String.</br>
    
-* <b>String pool in Java:</b></br>
+* **String pool in Java:** </br>
    * String Pool in java is a pool of Strings stored in Java Heap Memory. 
    * When we use double quotes to create a String, it first looks for String with same value in the String pool, if found it just returns the reference else it creates a new String in the pool and then returns the reference.
    * However using new operator, we force String class to create a new String object in heap space. We can use intern() method to put it into the pool or refer to other String object from string pool having same value.
@@ -294,7 +288,7 @@ class Employee {
   ``` String str = new String("Cat");```
    * In above statement, either 1 or 2 string will be created. If there is already a string literal “Cat” in the pool, then only one string “str” will be created in the pool. If there is no string literal “Cat” in the pool, then it will be first created in the pool and then in the heap space, so total 2 string objects will be created.</br>
 
-* <b><i>Final</i> modifier?</b></br>
+* **<i>Final</i> modifier?** </br>
    * Final modifiers - once declared cannot be modified. A blank final variable in Java is a final variable that is not initialized during declaration. 
       * final Classes- A final class cannot have subclasses.
       * final Variables- A final variable cannot be changed once it is initialized.
@@ -306,7 +300,7 @@ class Employee {
    }
    ```
       
-* <b><i>Finalize</i> keyword?</b> </br>
+* **<i>Finalize</i> keyword?** </br>
   `finalize()` method is a protected and non-static method of java.lang.Object class. This method will be available in all objects you create in java. This method is used to perform clean up processing just before object is garbage collected. you can override the `finalize()` method to keep those operations you want to perform before an object is destroyed. Here is the general form of `finalize()` method.
 
   ```java
@@ -315,7 +309,7 @@ class Employee {
   }
   ```
    
-* <b><i>Finally</i> keyword?</b> </br>
+* **<i>Finally</i> keyword?** </br>
   finally is a code block and is used to place important code, it will be executed whether exception is handled or not.</br>
 
 - **What is a static variables in Java?** </br>
@@ -338,30 +332,30 @@ class Employee {
 
   On the other hand, static methods belong to the class not object. So we use static methods without the need for creating an instance of a class. Besides, static methods are resolved in compile-time. Hence the answer is 'NO'.
   
-* <b>What is reflection?</b> </br>
+* **What is reflection?** </br>
   Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</br> 
    
-* <b>Multi threading?</b> </br>
+* **Multi threading?** </br>
   Multiple tasks are running concurrently in a program.</br>
    
-* <b>Fail-fast & Fail-Safe?</b></br>
+* **Fail-fast & Fail-Safe?** </br>
    * Fail-fast Iterators throws ConcurrentModificationException when one Thread is iterating over collection object and other thread structurally modify Collection either by adding, removing or modifying objects on underlying collection. They are called fail-fast because they try to immediately throw Exception when they encounter failure. 
    * On the other hand [fail-safe](http://javarevisited.blogspot.com/2011/10/java-iterator-tutorial-example-list.html) Iterators works on copy of collection instead of original collection.</br>
    
-* <b>What does the keyword synchronized mean?</b> </br>
+* **What does the keyword synchronized mean?** </br>
    * When you have two threads that are reading and writing to the same 'resource', say a variable named 'test', you need to ensure that these threads access the variable in an atomic way. Without the synchronized keyword, your thread 1 may not see the change thread 2 made to test.
-   * <b>synchronized</b> blocks the next thread's call to method as long as the previous thread's execution is not finished. Threads can access this method one at a time.</br>
+   * **synchronized** blocks the next thread's call to method as long as the previous thread's execution is not finished. Threads can access this method one at a time.</br>
    
-* <b>What does the keyword volatile mean?</b> </br>
+* **What does the keyword volatile mean?** </br>
    * Suppose two threads are working on a method. If two threads run on different processors each thread may have its own local copy of variable. If one thread modifies its value the change might not reflect in the original one in the main memory instantly. 
    * Now the other thread is not aware of the modified value which leads to data inconsistency.Essentially, volatile is used to indicate that a variable's value will be modified by different threads. “volatile” tells the compiler that the value of a variable must never be cached as its value may change outside of the scope of the program itself.
    * The value of this variable will never be cached thread-locally: all reads and writes will go straight to "main memory"
    * An access to a volatile variable never has the potential to block: we're only ever doing a simple read or write, so unlike a synchronized block we will never hold on to any lock.</br>
    
-* <b>Optionals in Java?</b></br>
+* **Optionals in Java?** </br>
   Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
    
-* <b>What is externalization?</b> </br>
+* **What is externalization?** </br>
    * In serialization, the JVM is responsible for the process of writing and reading objects. This is useful in most cases, as the programmers do not have to care about the underlying details of the serialization process.
    * However, the default serialization does not protect sensitive information such as passwords and credentials.
    * Thus externalization comes to give the programmers full control in reading and writing objects during serialization.
@@ -539,35 +533,35 @@ class Employee {
 - **what is the difference between `throw` and `throws`?** </br>
   Keyword `throw` is used to explicitly throw as an exception in the body of function, while `throws` is utilized to handle checked exceptions for re-intimating the compiler that exceptions are being handled. The throws need to be used in the function’s signature and also while invoking the method that raises checked exceptions.
 
-* <b>What is a deadlock in Java</b> </br>
+* **What is a deadlock in Java** </br>
    * A deadlock occurs when a thread enters a waiting state because a requested system resource is held by another waiting process, which in turn is waiting for another resource held by another waiting process.
    * [Example on how deadlock occurs](/src/deadlock/ThreadLockDemo.java)
    * [Example on how to prevent deadlock](/src/deadlock/ThreadLockFixedDemo.java)</br>
    
-* <b>What is the List interface & Set interface?</b> </br>
+* **What is the List interface & Set interface?** </br>
    * List interface supports for ordered collection of objects and it may contain duplicates. The Set interface provides methods for accessing the elements of a finite mathematical set. Sets do not allow duplicate elements</br>
 
-* <b>Difference between ArrayList & Vectors?</b> </br>
+* **Difference between ArrayList & Vectors?** </br>
    * Vectors are thread safe (synchronized) whereas arraylists are not. So performance of arraylists are better than vectors.    * In ArrayList, you have to start searching for a particular element from the beginning of an Arraylist. But in the Vector, you can start searching for a particular element from a particular position in a vector. This makes the search operation in Vector faster than in ArrayList. Vectors have a default size of 10 whereas arraylists size can be dynamic. 
-   * <b>Insertion and deletion in ArrayList is slow compared to LinkedList?</b>
+   * **Insertion and deletion in ArrayList is slow compared to LinkedList?**
        * ArrayList internally uses an array to store the elements, when that array gets filled by inserting elements a new array of roughly 1.5 times the size of the original array is created and all the data of old array is copied to new array.
        * During deletion, all elements present in the array after the deleted elements have to be moved one step back to fill the space created by deletion. In linked list data is stored in nodes that have reference to the previous node and the next node so adding element is simple as creating the node and updating the next pointer on the last node and the previous pointer on the new node. Deletion in linked list is fast because it involves only updating the next pointer in the node before the deleted node and updating the previous pointer in the node after the deleted node.</br>      
       
-* <b>Implementations of Map?</b> </br>
-   * <b>TreeMap</b>: sorted based on ascending order of keys. For inserting, deleting, and locating elements in a Map, the HashMap offers the best alternative. If, however, you need to traverse the keys in a sorted order, then TreeMap is your better alternative.
-   *	<b>HashTable</b>: Does not allow null values. It is not fail-safe and it is synchronized whereas 
-   * <b>HashMap</b> allows null values and it is fail-safe and it is not synchronized. 
-   * <b>LinkedHashMap</b>: This is a subclass of Hashmap. The order of insertion is preserved since it has a linkedList.</br>
+* **Implementations of Map?** </br>
+   * **TreeMap**: sorted based on ascending order of keys. For inserting, deleting, and locating elements in a Map, the HashMap offers the best alternative. If, however, you need to traverse the keys in a sorted order, then TreeMap is your better alternative.
+   *	**HashTable**: Does not allow null values. It is not fail-safe and it is synchronized whereas 
+   * **HashMap** allows null values and it is fail-safe and it is not synchronized. 
+   * **LinkedHashMap**: This is a subclass of Hashmap. The order of insertion is preserved since it has a linkedList.</br>
    
-* <b>Difference between Enumeration and Iterators?</b> </br>
-   * <b>Enumeration</b> does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
-   * <b>ListIterator</b>: is just like an iterator except it allows access to the collection in either the forward or backward direction</br>
+* **Difference between Enumeration and Iterators?** </br>
+   * **Enumeration** does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
+   * **ListIterator**: is just like an iterator except it allows access to the collection in either the forward or backward direction</br>
    
-* <b>How Hashmap works in Java?</b> </br>
+* **How Hashmap works in Java?** </br>
    * HashMap in Java works on hashing principle. It is a data structure which allows us to store object and retrieve it in constant time O(1) provided we know the key. When we call put method, ```hashcode()``` method of the key object is called so that hash function of the map can find a bucket location to store Entry object.
    * If two different objects have the same hashcode: in this case, a linked list is formed at that bucket location and a new entry is stored as next node. After finding bucket location, we will call ```keys.equals()``` method to identify a correct node in LinkedList and return associated value object for that key in Java HashMap</br>
    
-* <b>Generics in Java</b> </br>
+* **Generics in Java** </br>
    * Before generics, we can store any type of objects in collection i.e. non-generic. Now generics, forces the java programmer to store specific type of objects.
    * Type-safety : We can hold only a single type of objects in generics. It doesn’t allow to store other objects.
    * Type casting is not required: There is no need to typecast the object.
@@ -710,8 +704,8 @@ class Employee {
 
 * **What is Context?** </br>
   A Context is a handle to the system; it provides services like resolving resources, obtaining access to databases and preferences, and so on. An Android app has activities. Context is like a handle to the environment your application is currently running in.</br>
-<b>Application Context:</b> This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
-<b>Activity Context:</b> This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
+**Application Context:** This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
+**Activity Context:** This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
 
 - **What is onSavedInstanceState() and onRestoreInstanceState() in activity?** <br/>
     - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
@@ -741,8 +735,8 @@ class Employee {
     <br>
 
 - **View & ViewGroup**
-   - <b>View</b>: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
-   - <b>ViewGroup</b>: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br> 
+   - **View**: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
+   - **ViewGroup**: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br> 
 
 - **Why do android apps need to ask permission like `INTERNET` or `LOCATION`?** </br>
   The Android platform takes advantage of the Linux user-based protection to identify and isolate app resources called sandbox. This isolates apps from each other and protects apps and the system from malicious apps. If an app needs to use some system resources (like internet, or location sensor,..) or needs to connect other apps (like IAB library), it should request this access. Then android OS give this request and get permission to access the resource. If you want to use system resources, request the permission under the `<uses-permission>` tag in the `android-manifest.xml` file.
@@ -1063,24 +1057,24 @@ class Employee {
 - **which pattern is used when we need to decouple an abstraction from its implementation?**  </br>
   When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
 
-* <b>What is ABI Management?</b></br>
+* **What is ABI Management?** </br>
   Different Android handsets use different CPUs, which in turn support different instruction sets. Each combination of CPU and instruction sets has its own Application Binary Interface, or ABI. The ABI defines, with great precision, how an  application's machine code is supposed to interact with the system at runtime. You must specify an ABI for each CPU  architecture you want your app to work with. You can checkout the full specifcations [here](https://developer.android.com/ndk/guides/abis)</br>
   
-* <b>Why bytecode cannot be run in Android?</b> </br>
+* **Why bytecode cannot be run in Android?** </br>
   Android uses DVM (Dalvik Virtual Machine ) rather using JVM(Java Virtual Machine).</br>
   
-* <b>What is a BuildType in Gradle? And what can you use it for?</b> </br>
+* **What is a BuildType in Gradle? And what can you use it for?** </br>
    * Build types define properties that Gradle uses when building and packaging your Android app.
    * A build type defines how a module is built, for example whether ProGuard is run.
    * A product flavor defines what is built, such as which resources are included in the build.
    * Gradle creates a build variant for every possible combination of your project’s product flavors and build types.</br> 
  
-* <b>Explain the build process in Android:</b> </br>
+* **Explain the build process in Android:** </br>
   * First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
   * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex. 
   * The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.</br>
 
-* <b>What is the Android Application Architecture?</b></br>
+* **What is the Android Application Architecture?** </br>
     * Android application architecture has the following components:</br>
     a. Activities - Provides the window in which the app draws its UI</br>
     b. Services − It will perform background functionalities</br>
@@ -1089,14 +1083,14 @@ class Employee {
     e. Notification − light,sound,icon,notification,dialog box,and toast</br>
     f. Content Providers − It will share the data between applications</br>
     
-* <b>What is Manifest file and R.java file in Android?</b></br>
-    * <b>Manifest</b>: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
-    * <b>R.Java</b>: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. </br>
+* **What is Manifest file and R.java file in Android?** </br>
+    * **Manifest**: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
+    * **R.Java**: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. </br>
   
-* <b>Describe activities</b> </br>
+* **Describe activities** </br>
   Activities are basically containers or windows to the user interface.</br>
   
-* <b>Lifecycle of an Activity</b></br>
+* **Lifecycle of an Activity** </br>
   * ```OnCreate()```: This is when the view is first created. This is normally where we create views, get data from bundles etc.</br>
   * ```OnStart()```: Called when the activity is becoming visible to the user. Followed by onResume() if the activity comes to the foreground, or onStop() if it becomes hidden.</br>
   * ```OnResume()```: Called when the activity will start interacting with the user. At this point your activity is at the top of the activity stack, with user input going to it.</br>
@@ -1105,66 +1099,66 @@ class Employee {
   * ```OnDestroy()```: Called when the activity is finishing</br>
   * ```OnRestart()```: Called after your activity has been stopped, prior to it being started again</br>
   
-* <b>What’s the difference between onCreate() and onStart()?</b></br>
+* **What’s the difference between onCreate() and onStart()?** </br>
   * The onCreate() method is called once during the Activity lifecycle, either when the application starts, or when the Activity has been destroyed and then recreated, for example during a configuration change.</br>
   * The onStart() method is called whenever the Activity becomes visible to the user, typically after onCreate() or onRestart().</br>
   
-* <b>Scenario in which only onDestroy is called for an activity without onPause() and onStop()?</b></br>
+* **Scenario in which only onDestroy is called for an activity without onPause() and onStop()?** </br>
   If finish() is called in the OnCreate method of an activity, the system will invoke onDestroy() method directly.</br>
 
-* <b>Why would you do the setContentView() in onCreate() of Activity class?</b></br>
+* **Why would you do the setContentView() in onCreate() of Activity class?** </br>
   * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
    
- * <b>Launch modes in Android?</b></br>
-   * <b>Standard</b>: It creates a new instance of an activity in the task from which it was started. Multiple instances of the activity can be created and multiple instances can be added to the same or different tasks. 
+ * **Launch modes in Android?** </br>
+   * **Standard**: It creates a new instance of an activity in the task from which it was started. Multiple instances of the activity can be created and multiple instances can be added to the same or different tasks. 
      * Example: Suppose there is an activity stack of A -> B -> C. Now if we launch B again with the launch mode as “standard”, the new stack will be A -> B -> C -> B.
-   * <b>SingleTop</b>: It is the same as the standard, except if there is a previous instance of the activity that exists in the top of the stack, then it will not create a new instance but rather send the intent to the existing instance of the activity. 
+   * **SingleTop**: It is the same as the standard, except if there is a previous instance of the activity that exists in the top of the stack, then it will not create a new instance but rather send the intent to the existing instance of the activity. 
      * Example: Suppose there is an activity stack of A -> B. Now if we launch C with the launch mode as “singleTop”, the new stack will be A -> B -> C as usual. 
      * Now if there is an activity stack of A -> B -> C. If we launch C again with the launch mode as “singleTop”, the new stack will still be A -> B -> C.
-   * <b>SingleTask</b>: A new task will always be created and a new instance will be pushed to the task as the root one. So if the activity is already in the task, the intent will be redirected to onNewIntent() else a new instance will be created. At a time only one instance of activity will exist. 
+   * **SingleTask**: A new task will always be created and a new instance will be pushed to the task as the root one. So if the activity is already in the task, the intent will be redirected to onNewIntent() else a new instance will be created. At a time only one instance of activity will exist. 
      * Example: Suppose there is an activity stack of A -> B -> C -> D. Now if we launch D with the launch mode as “singleTask”, the new stack will be A -> B -> C -> D as usual. 
      * Now if there is an activity stack of A -> B -> C -> D.  If we launch activity B again with the launch mode as “singleTask”, the new activity stack will be A -> B. Activities C and D will be destroyed.
-   * <b>SingleInstance</b>: Same as single task but the system does not launch any activities in the same task as this activity. If new activities are launched, they are done so in a separate task. 
+   * **SingleInstance**: Same as single task but the system does not launch any activities in the same task as this activity. If new activities are launched, they are done so in a separate task. 
      * Eg: Suppose there is an activity stack of A -> B -> C -> D. If we launch activity B again with the launch mode as “singleTask”, the new activity stack will be: 
      * Task1 — A -> B -> C  and Task2 — D</br>
  
- * <b>How does the activity respond when the user rotates the screen?</b></br>
+ * **How does the activity respond when the user rotates the screen?** </br>
    When the screen is rotated, the current instance of activity is destroyed a new instance of the Activity is created in the new orientation. The onRestart() method is invoked first when a screen is rotated. The other lifecycle methods get invoked in the similar flow as they were when the activity was first created.</br>
   
- * <b>How to prevent the data from reloading and resetting when the screen is rotated?</b></br>
+ * **How to prevent the data from reloading and resetting when the screen is rotated?** </br>
    * The most common approach these days would be to use a combination of ViewModels and onSaveInstanceState(). So how we do we that?
    * Basics of [ViewModel](https://developer.android.com/reference/android/arch/lifecycle/ViewModel): A ViewModel is LifeCycle-Aware. In other words, a ViewModel will not be destroyed if its owner is destroyed for a configuration change (e.g. rotation). The new instance of the owner will just re-connected to the existing ViewModel. So if you rotate an Activity three times, you have just created three different Activity instances, but you only have one ViewModel.
    * So the common practice is to store data in the ViewModel class (since it persists data during configuration changes) and use OnSaveInstanceState to store small amounts of UI data.
    * For instance, let’s say we have a search screen and the user has entered a query in the Edittext. This results in a list of items being displayed in the RecyclerView. Now if the screen is rotated, the ideal way to prevent resetting of data would be to store the list of search items in the ViewModel and the query text user has entered in the OnSaveInstanceState method of the activity.</br>
   
-* <b>Mention two ways to clear the back stack of Activities when a new Activity is called using intent</b></br>
+* **Mention two ways to clear the back stack of Activities when a new Activity is called using intent** </br>
   The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag. The second way is by using FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_NEW_TASK in conjunction.</br>
   
-* <b>What’s the difference between FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_CLEAR_TOP?</b></br>
-  * <b>FLAG_ACTIVITY_CLEAR_TASK</b> is used to clear all the activities from the task including any existing instances of the class invoked. The Activity launched by intent becomes the new root of the otherwise empty task list. This flag has to be used in conjunction with FLAG_ ACTIVITY_NEW_TASK.</br>
-  * <b>FLAG_ACTIVITY_CLEAR_TOP</b> on the other hand, if set and if an old instance of this Activity exists in the task list then barring that all the other activities are removed and that old activity becomes the root of the task list. Else if there’s no instance of that activity then a new instance of it is made the root of the task list. Using FLAG_ACTIVITY_NEW_TASK in conjunction is a good practice, though not necessary.</br>  
+* **What’s the difference between FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_CLEAR_TOP?** </br>
+  * **FLAG_ACTIVITY_CLEAR_TASK** is used to clear all the activities from the task including any existing instances of the class invoked. The Activity launched by intent becomes the new root of the otherwise empty task list. This flag has to be used in conjunction with FLAG_ ACTIVITY_NEW_TASK.</br>
+  * **FLAG_ACTIVITY_CLEAR_TOP** on the other hand, if set and if an old instance of this Activity exists in the task list then barring that all the other activities are removed and that old activity becomes the root of the task list. Else if there’s no instance of that activity then a new instance of it is made the root of the task list. Using FLAG_ACTIVITY_NEW_TASK in conjunction is a good practice, though not necessary.</br>  
   
-* <b>Describe content providers</b></br>
+* **Describe content providers** </br>
   * A ContentProvider provides data from one application to another, when requested. It manages access to a structured set of data.  It provides mechanisms for defining data security. ContentProvider is the standard interface that connects data in one process with code running in another process.</br>  
-  * When you want to access data in a <b>ContentProvider</b>, you must instead use the ContentResolver object in your application’s Context to communicate with the provider as a client. The provider object receives data requests from clients, performs the requested action, and returns the results.</br>
+  * When you want to access data in a **ContentProvider**, you must instead use the ContentResolver object in your application’s Context to communicate with the provider as a client. The provider object receives data requests from clients, performs the requested action, and returns the results.</br>
   
-* <b>Access data using Content Provider:</b></br>
+* **Access data using Content Provider:** </br>
   * Start by making sure your Android application has the necessary read access permissions. Then, get access to the ContentResolver object by calling getContentResolver() on the Context object, and retrieving the data by constructing a query using ContentResolver.query().</br>
   * The ContentResolver.query() method returns a Cursor, so you can retrieve data from each column using Cursor methods.</br> 
   
-* <b>Describe services</b></br>
+* **Describe services** </br>
   * A Service is an application component that can perform long-running operations in the background, and it doesn't provide a user interface. It can run in the background, even when the user is not interacting with your application. These are the three different types of services:
     * Foreground Service: A foreground service performs some operation that is noticeable to the user. For example, we can use a foreground service to play an audio track. A [Notification](https://developer.android.com/guide/topics/ui/notifiers/notifications.html) must be displayed to the user.
     * Background Service: A background service performs an operation that isn’t directly noticed by the user. In Android API level 26 and above, there are restrictions to using background services and it is recommended to use [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) in these cases.
     * Bound Service: A service is bound when an application component binds to it by calling bindService(). A bound service offers a client-server interface that allows components to interact with the service, send requests, receive results. A bound service runs only as long as another application component is bound to it.</br>
    
-* <b>Difference between Service, Intent Service, AsyncTask & Threads</b></br>
-  * <b>Android service</b> is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.</br>
-  * <b>AsyncTask</b> allows you to perform asynchronous work on your user interface. It performs the blocking operations in a worker thread and then publishes the results on the UI thread, without requiring you to handle threads and/or handlers yourself.</br>
-  * <b>IntentService</b> is a base class for Services that handle asynchronous requests (expressed as Intents) on demand. Clients send requests through startService(Intent) calls; the service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.</br>
-  * A <b>thread</b> is a single sequential flow of control within a program. it should be used to separate long running operations from main thread so that performance is improved. But it can't be cancelled elegantly and it can't handle configuration changes of Android. You can't update UI from Thread. </br>
+* **Difference between Service, Intent Service, AsyncTask & Threads** </br>
+  * **Android service** is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.</br>
+  * **AsyncTask** allows you to perform asynchronous work on your user interface. It performs the blocking operations in a worker thread and then publishes the results on the UI thread, without requiring you to handle threads and/or handlers yourself.</br>
+  * **IntentService** is a base class for Services that handle asynchronous requests (expressed as Intents) on demand. Clients send requests through startService(Intent) calls; the service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.</br>
+  * A **thread** is a single sequential flow of control within a program. it should be used to separate long running operations from main thread so that performance is improved. But it can't be cancelled elegantly and it can't handle configuration changes of Android. You can't update UI from Thread. </br>
   
- * <b>What is a Job Scheduling?</b></br>
+ * **What is a Job Scheduling?** </br>
    * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
    * The JobScheduler supports batch scheduling of jobs. The Android system can combine jobs so that battery consumption is reduced. JobManager makes handling uploads easier as it handles automatically the unreliability of the network. It also survives application restarts. 
    * Scenarios:
@@ -1174,23 +1168,23 @@ class Employee {
      * Tasks that should be running on a regular basis as batch where the timing is not critical
      * [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
   
-* <b>What is the relationship between the life cycle of an AsyncTask and an Activity? What problems can this result in? How can these problems be avoided?</b></br>
+* **What is the relationship between the life cycle of an AsyncTask and an Activity? What problems can this result in? How can these problems be avoided?** </br>
    * An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.
    * Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e., the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).
    * There’s also the potential for this to result in a memory leak since the AsyncTask maintains a reference to the Activity, which prevents the Activity from being garbage collected as long as the AsyncTask remains alive.
    * For these reasons, using AsyncTasks for long-running background tasks is generally a bad idea . Rather, for long-running background tasks, a different mechanism (such as a service) should be employed.
    * Note: AsyncTasks by default run on a single thread using a serial executor, meaning it has only 1 thread and each task runs one after the other.</br>
 
-* <b>What is the onTrimMemory() method?</b></br>
+* **What is the onTrimMemory() method?** </br>
    * ```onTrimMemory()```: Called when the operating system has determined that it is a good time for a process to trim unneeded memory from its process. This will happen for example when it goes in the background and there is not enough memory to keep as many background processes running as desired.
    * Android can reclaim memory for from your app in several ways or kill your app entirely if necessary to free up memory for critical tasks. To help balance the system memory and avoid the system's need to kill your app process, you can implement the ```ComponentCallbacks2``` interface in your Activity classes. The provided onTrimMemory() callback method allows your app to listen for memory related events when your app is in either the foreground or the background, and then release objects in response to app lifecycle or system events that indicate the system needs to reclaim memory. [Reference](https://developer.android.com/topic/performance/memory)</br>
 
-* <b>AIDL vs Messenger Queue</b></br>
+* **AIDL vs Messenger Queue** </br>
   * AIDL is for purpose when you've to go application level communication for data and control sharing, a scenario depicting it can be : An app requires list of all contacts from Contacts app (content part lies here) plus it also wants to show the call's duration and you can also disconnect it from that app (control part lies here).
   * In Messenger queues you're more IN the application and working on threads and processes to manage the queue having messages so no Outside services interference here.</br>
   * Messenger is needed if you want to bind a remote service (e.g. running in another process).</br>
 
-* <b>What is a ThreadPool? And is it more effective than using several separate Threads?</b></br>
+* **What is a ThreadPool? And is it more effective than using several separate Threads?** </br>
   * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
   * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
 
@@ -1198,34 +1192,34 @@ class Employee {
   - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
   - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
     
-* <b>How would you update the UI of an activity from a background service</b></br>
+* **How would you update the UI of an activity from a background service** </br>
   We need to register a LocalBroadcastReceiver in the activity. And send a broadcast with the data using intents from the background service. As long as the activity is in the foreground, the UI will be updated from the background. Ensure to unregister the broadcast receiver in the onStop() method of the activity to avoid memory leaks. 
 We can also register a Handler and pass data using Handlers. I have detailed a sample implementation on this. You can check it out [here](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)</br>
 
-* <b>What is an intent?</b></br>
+* **What is an intent?** </br>
   * Intents are messages that can be used to pass information to the various components of android. For instance, launch an activity, open a webview etc.</br>
   * Two types of intents-</br> 
     * Implicit: Implicit intent is when you call system default intent like send email, send SMS, dial number.</br>
     * Explicit: Explicit intent is when you call an application activity from another activity of the same application.</br>
 
-* <b>What is a Sticky Intent?</b></br>
+* **What is a Sticky Intent?** </br>
   * Sticky Intents allows communication between a function and a service. 
   * ```sendStickyBroadcast()``` performs a sendBroadcast(Intent) known as sticky, i.e. the Intent you are sending stays around after the broadcast is complete, so that others can quickly retrieve that data through the return value of ```registerReceiver(BroadcastReceiver, IntentFilter)```.
-  * For example, if you take an intent for ACTION_BATTERY_CHANGED to get battery change events: When you call registerReceiver() for that action — even with a null BroadcastReceiver — you <b>get the Intent that was last Broadcast for that action</b>. Hence, you can use this to find the state of the battery without necessarily registering for all future state changes in the battery.</br>
+  * For example, if you take an intent for ACTION_BATTERY_CHANGED to get battery change events: When you call registerReceiver() for that action — even with a null BroadcastReceiver — you **get the Intent that was last Broadcast for that action**. Hence, you can use this to find the state of the battery without necessarily registering for all future state changes in the battery.</br>
 
-* <b>What is a Pending Intent?</b></br>
+* **What is a Pending Intent?** </br>
   If you want someone to perform any Intent operation at future point of time on behalf of you, then we will use Pending Intent. </br>
   
-* <b>What is an Action?</b></br>
+* **What is an Action?** </br>
   Description of the intent. For instance, ACTION_CALL - used to perform calls</br>
   
-* <b>What are intent Filters?</b></br>
+* **What are intent Filters?** </br>
   * Specifies the type of intent that the activity/service can respond to.</br>
   
-* <b>Describe fragments:</b></br>
+* **Describe fragments:** </br>
   Fragment is a UI entity attached to Activity. Fragments can be reused by attaching in different activities. Activity can have multiple fragments attached to it. Fragment must be attached to an activity and its lifecycle will depend on its host activity.</br>
   
-* <b>Describe fragment lifecycle</b></br>
+* **Describe fragment lifecycle** </br>
   * ```onAttach()``` : The fragment instance is associated with an activity instance.The fragment and the activity is not fully initialized. Typically you get in this method a reference to the activity which uses the fragment for further initialization work.
   * ```onCreate()``` : The system calls this method when creating the fragment. You should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
   * ```onCreateView()``` : The system calls this callback when it’s time for the fragment to draw its user interface for the first time. To draw a UI for your fragment, you must return a View component from this method that is the root of your fragment’s layout. You can return null if the fragment does not provide a UI.
@@ -1237,51 +1231,51 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   * ```onDestroyView()``` : Fragment view will destroy after call this method
   * ```onDestroy()``` :called to do final clean up of the fragment’s state but Not guaranteed to be called by the Android platform.</br>  
   
-* <b>What is the difference between fragments & activities. Explain the relationship between the two.</b></br>
+* **What is the difference between fragments & activities. Explain the relationship between the two.** </br>
   An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).</br>
   
-* <b>Why is it recommended to use only the default constructor to create a Fragment?</b></br>
+* **Why is it recommended to use only the default constructor to create a Fragment?** </br>
   The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle. This way you are guaranteed to restore the state of the fragment correctly to the same state the fragment was initialised with.</br>
   
-* <b>You’re replacing one Fragment with another — how do you ensure that the user can return to the previous Fragment, by pressing the Back button?</b></br>
+* **You’re replacing one Fragment with another — how do you ensure that the user can return to the previous Fragment, by pressing the Back button?** </br>
   We need to save each Fragment transaction to the backstack, by calling ```addToBackStack()``` before you ```commit()``` that transaction</br>
  
-* <b>Callbacks invoked during addition of a fragment to back stack and while popping back from back stack:</b></br>
+* **Callbacks invoked during addition of a fragment to back stack and while popping back from back stack:** </br>
   * ```addOnBackStackChangedListener``` is called when fragment is added or removed from the backstack. Use this [link](https://why-android.com/2016/03/29/learn-how-to-use-the-onbackstackchangedlistener/) for reference</br>
   
-* <b>What are retained fragments</b></br>
+* **What are retained fragments** </br>
   * By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs. Calling ```setRetainInstance(true)``` allows us to bypass this destroy-and-recreate cycle, signaling the system to retain the current instance of the fragment when the activity is recreated.</br>
   
-* <b>What is Toast in Android?</b></br>
+* **What is Toast in Android?** </br>
   Android Toast can be used to display information for the short period of time. A toast contains message to be displayed quickly and disappears after sometime.</br>
   
-* <b>What are Loaders in Android?</b></br>
+* **What are Loaders in Android?** </br>
    * Loader API was introduced in API level 11 and is used to load data from a data source to display in an activity or fragment. Loaders persist and cache results across configuration changes to prevent duplicate queries.
    * [Sample Implementation](https://medium.com/mindorks/a-journey-to-the-world-of-mvp-and-loaders-part-2-e176200e5866) </br>
    
-* <b>What is the difference between Dialog & DialogFragment?</b></br>
+* **What is the difference between Dialog & DialogFragment?** </br>
   A fragment that displays a dialog window, floating on top of its activity's window. This fragment contains a Dialog object, which it displays as appropriate based on the fragment's state. Dialogs are entirely dependent on Activities. If the screen is rotated, the dialog is dismissed. Dialog fragments take care of orientation, configuration changes as well.</br>
    
-* <b>What is the difference between a regular .png and a nine-patch image?</b></br>
+* **What is the difference between a regular .png and a nine-patch image?** </br>
    * It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device. The NinePatch class allows drawing a bitmap in nine sections. The four corners are unscaled; the middle of the image is scaled in both axes, the four edges are scaled into one axis.</br>
      
-* <b>Difference between RelativeLayout and LinearLayout?</b></br>
-   * <b>Linear Layout</b> - Arranges elements either vertically or horizontally. i.e. in a row or column. 
-   * <b>Relative Layout</b> - Arranges elements relative to parent or other elements.</br>
+* **Difference between RelativeLayout and LinearLayout?** </br>
+   * **Linear Layout** - Arranges elements either vertically or horizontally. i.e. in a row or column. 
+   * **Relative Layout** - Arranges elements relative to parent or other elements.</br>
    
-* <b>What is ConstraintLayout?</b></br>
+* **What is ConstraintLayout?** </br>
    * It allows you to create large and complex layouts with a flat view hierarchy (no nested view groups). It's similar to RelativeLayout in that all views are laid out according to relationships between sibling views and the parent layout, but it's more flexible than RelativeLayout and easier to use with Android Studio's Layout Editor.
    * [Sample Implementation](https://github.com/anitaa1990/ConstraintLayout-Sample) 
    * You can read more about how to implement a simple app with ConstraintLayout [here](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a), by yours truly :)</br>
    
-* <b>When might you use a FrameLayout?</b></br>
+* **When might you use a FrameLayout?** </br>
    * Frame Layouts are designed to contain a single item, making them an efficient choice when you need to display a single View.
    * If you add multiple Views to a FrameLayout then it’ll stack them one above the other, so FrameLayouts are also useful if you need overlapping Views, for example if you’re implementing an overlay or a HUD element.</br> 
    
-* <b>What is Adapters?</b></br>
+* **What is Adapters?** </br>
   An adapter responsible for converting each data entry into a View that can then be added to the AdapterView (ListView/RecyclerView).</br>
 
-* <b>How to support different screen sizes?</b></br>
+* **How to support different screen sizes?** </br>
    * Create a flexible layout - The best way to create a responsive layout for different screen sizes is to use ConstraintLayout as the base layout in your UI. ConstraintLayout allows you to specify the position and size for each view according to spatial relationships with other views in the layout. This way, all the views can move and stretch together as the screen size changes.
    * Create stretchable nine-patch bitmaps
    * Avoid hard-coded layout sizes - Use wrap_content or match_parent. Create alternative layouts - The app should provide alternative layouts to optimize the UI design for certain screen sizes. For eg: different UI for tablets
@@ -1290,7 +1284,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
       * res/layout-sw600dp/main_activity.xml   # For 7” tablets (600dp wide and bigger). 
       * The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation, so it's a simple way to specify the overall screen size available for your layout.</br>
   
-* <b>Outline the process of creating custom Views:</b></br>
+* **Outline the process of creating custom Views:** </br>
    * Create a class that Subclass a view
    * Create a res/values/attrs.xml file and declare the attributes you want to use with your custom View.
    * In your View class, add a constructor method, instantiate the Paint object, and retrieve your custom attributes.
@@ -1298,27 +1292,27 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * Draw your View by overriding onDraw().
    * [Sample Implementation](https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548) </br>
    
-* <b>Briefly describe some ways that you can optimize View usage</b></br>
+* **Briefly describe some ways that you can optimize View usage** </br>
    * Checking for excessive overdraw: install your app on an Android device, and then enable the "Debug GPU Overview" option.
    * Flattening your view hierarchy: inspect your view hierarchy using Android Studio’s ‘Hierarchy Viewer’ tool.
    * Measuring how long it takes each View to complete the measure, layout, and draw phases. You can also use Hierarchy Viewer to identify any parts of the rendering pipeline that you need to optimize.</br>
    
-* <b>Bitmap pooling in android?</b></br>
+* **Bitmap pooling in android?** </br>
    * Bitmap pooling is a simple technique, that aims to reuse bitmaps instead of creating new ones every time. When you need a bitmap, you check a bitmap stack to see if there are any bitmaps available. If there are not bitmaps available you create a new bitmap otherwise you pop a bitmap from the stack and reuse it. Then when you are done with the bitmap, you can put it on a stack. [Find more info here](https://www.linkedin.com/pulse/performance-improvement-bitmap-pooling-android-ali-muzaffar/)</br>
    
-* <b>How to load bitmap to memory?</b></br>
+* **How to load bitmap to memory?** </br>
   [Find more info here](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)</br>   
   
-* <b>What are the permission protection levels in Android?</b></br>
-   * <b>Normal</b> - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
-   * <b>Dangerous</b> - A higher-risk permission. Any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.
-   * <b>Signature</b> - A permission that the system grants only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.
-   * <b>SignatureOrSystem</b> - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.</br>  
+* **What are the permission protection levels in Android?** </br>
+   * **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
+   * **Dangerous** - A higher-risk permission. Any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.
+   * **Signature** - A permission that the system grants only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.
+   * **SignatureOrSystem** - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.</br>  
   
-* <b>What is an Application Not Responding (ANR) error, and how can you prevent them from occurring in an app?</b></br>
+* **What is an Application Not Responding (ANR) error, and how can you prevent them from occurring in an app?** </br>
   An ANR dialog appears when your UI has been unresponsive for more than 5 seconds, usually because you’ve blocked the main thread. To avoid encountering ANR errors, you should move as much work off the main thread as possible.</br>
    
-* <b>What is a singleton class in Android?</b></br>
+* **What is a singleton class in Android?** </br>
   A singleton class is a class which can create only an object that can be shared all other classes.
    ```
    private static volatile RESTService instance;
@@ -1337,20 +1331,20 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     ```
    </br>
     
-* <b>How does RecyclerView work?</b></br>
+* **How does RecyclerView work?** </br>
    * Let's start with some background on RecyclerView which is needed to understand ```onBindViewHolder()``` method inside RecyclerView.</br>
    * RecyclerView is designed to display long lists (or grids) of items. Say you want to display 100 rows of something. A simple approach would be to just create 100 views, one for each row and lay all of them out. But that would be wasteful because at any point of time, only 10 or so items could fit on screen and the remaining items would be off screen. So RecyclerView instead creates only the 10 or so views that are on screen. This way you get 10x better speed and memory usage. 
-   * <b>But what happens when you start scrolling and need to start showing next views?</b>
-     * Again a simple approach would be to create a new view for each new row that you need to show. But this way by the time you reach the end of the list you will have created 100 views and your memory usage would be the same as in the first approach. And creating views takes time, so your scrolling most probably wouldn't be smooth. This is why RecyclerView takes advantage of the fact that as you scroll, <b>new rows come on screen also old rows disappear off screen</b>. Instead of creating new view for each new row, an old view is recycled and reused by binding new data to it.
+   * **But what happens when you start scrolling and need to start showing next views?**
+     * Again a simple approach would be to create a new view for each new row that you need to show. But this way by the time you reach the end of the list you will have created 100 views and your memory usage would be the same as in the first approach. And creating views takes time, so your scrolling most probably wouldn't be smooth. This is why RecyclerView takes advantage of the fact that as you scroll, **new rows come on screen also old rows disappear off screen**. Instead of creating new view for each new row, an old view is recycled and reused by binding new data to it.
      * This happens inside the ```onBindViewHolder()``` method. Initially you will get new unused view holders and you have to fill them with data you want to display. But as you scroll you will start getting view holders that were used for rows that went off screen and you have to replace old data that they held with new data.</br>
 
-* <b>How does RecyclerView differ from ListView?</b></br>
-   * <b>ViewHolder Pattern</b>:  Recyclerview implements the ViewHolders pattern whereas it is not mandatory in a ListView. A RecyclerView recycles and reuses cells when scrolling. 
-   * <b>What is a ViewHolder Pattern?</b> - A ViewHolder object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In ListView, the code might call ```findViewById()``` frequently during the scrolling of ListView, which can slow down performance. Even when the Adapter returns an inflated view for recycling, you still need to look up the elements and update them. A way around repeated use of ```findViewById()``` is to use the "view holder" design pattern.
-   * <b>LayoutManager</b>: In a ListView, the only type of view available is the vertical ListView.  A RecyclerView decouples list from its container so we can put list items easily at run time in the different containers (linearLayout, gridLayout) by setting LayoutManager.
-   * <b>Item Animator</b>: ListViews are lacking in support of good animations, but the RecyclerView brings a whole new dimension to it.</br> 
+* **How does RecyclerView differ from ListView?** </br>
+   * **ViewHolder Pattern**:  Recyclerview implements the ViewHolders pattern whereas it is not mandatory in a ListView. A RecyclerView recycles and reuses cells when scrolling. 
+   * **What is a ViewHolder Pattern?** - A ViewHolder object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In ListView, the code might call ```findViewById()``` frequently during the scrolling of ListView, which can slow down performance. Even when the Adapter returns an inflated view for recycling, you still need to look up the elements and update them. A way around repeated use of ```findViewById()``` is to use the "view holder" design pattern.
+   * **LayoutManager**: In a ListView, the only type of view available is the vertical ListView.  A RecyclerView decouples list from its container so we can put list items easily at run time in the different containers (linearLayout, gridLayout) by setting LayoutManager.
+   * **Item Animator**: ListViews are lacking in support of good animations, but the RecyclerView brings a whole new dimension to it.</br> 
    
-* <b>How would you implement swipe animation in Android</b></br> 
+* **How would you implement swipe animation in Android** </br> 
    ```
    <set xmlns:android="http://schemas.android.com/apk/res/android"
      android:shareInterpolator="false">
@@ -1361,11 +1355,11 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     ```
 </br>   
   
-* <b>Arraymap/SparseArray vs HashMap in Android?</b></br>
+* **Arraymap/SparseArray vs HashMap in Android?** </br>
    * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
    * [Article 2 on the subject](https://medium.com/@mohom.r/optimising-android-app-performance-with-arraymap-9296f4a1f9eb) </br>
    
-* <b>How to reduce apk size?</b></br>
+* **How to reduce apk size?** </br>
    * Enable proguard in your project by adding following lines to your release build type.
    * Enable shrinkResources.
    * Strip down all the unused locale resources by adding required resources name in “resConfigs”.
@@ -1373,7 +1367,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [Article on the subject](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
    </br>   
    
-* <b>How to reduce build time of an Android app?</b></br>
+* **How to reduce build time of an Android app?** </br>
    * Check out this awesome [article](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43) on it. 
    * What I got from the article: A few commands we can add to the gradle.properties file:
      * ```org.gradle.configureondemand=true``` - This command will tell gradle to only build the projects that it really needs to build.
@@ -1386,28 +1380,28 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
   Instead use fixed versions i.e. ```'com.android.support:appcompat-v7:27.0.2'```    
    </br>   
    
-* <b>Android Architecture Components?</b></br>
+* **Android Architecture Components?** </br>
    * A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)
-      * <b>Room</b> - [Official documentation](https://developer.android.com/topic/libraries/architecture/room)   
+      * **Room** - [Official documentation](https://developer.android.com/topic/libraries/architecture/room)   
         [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)  
         [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
         
-      * <b>Live Data</b> - [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)   
+      * **Live Data** - [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)   
         [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
         
-      * <b>ViewModel</b> - [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)   
+      * **ViewModel** - [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)   
         [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
         
-      * <b>Data Binding</b> - [Official documentation](https://developer.android.com/topic/libraries/data-binding/)   
+      * **Data Binding** - [Official documentation](https://developer.android.com/topic/libraries/data-binding/)   
         [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)        
         
-      * <b>Lifecycles</b> - [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)
+      * **Lifecycles** - [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)
   </br> 
   
-* <b>Difference between MVC & MVP & MVVM?</b></br>
-   * <b>MVC</b> is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
-   * <b>MVP architecture</b>: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
-   * <b>MVVM</b>: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)</br></br>
+* **Difference between MVC & MVP & MVVM?** </br>
+   * **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
+   * **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
+   * **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)</br></br>
 
 -   **What is the role of Presenter in MVP?** <br/>
     The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
@@ -1583,17 +1577,17 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 -   **What are different launch modes available in Android?** <br/>
     There are four launch modes for an Activity in Android as follows:
 
-    1) <b>standard</b> : Creates a new instance of an activity in the task from which it is started every single time. It is the default mode if not declared. 
+    1) **standard** : Creates a new instance of an activity in the task from which it is started every single time. It is the default mode if not declared. 
     <br/>Eg: If we have an activity stack of A->B->C, If we launch Activity C again using standard Mode, the activity stack will now be A->B->C->C. We can see that two instances of C are present in the activity stack.
 
-    1) <b>singleTop</b> : Same as standard except that if the activity is at the top of the stack, then the same instance will be used. Now the existing Activity at the top will receive the intent through a call to its onNewIntent() method.
+    1) **singleTop** : Same as standard except that if the activity is at the top of the stack, then the same instance will be used. Now the existing Activity at the top will receive the intent through a call to its onNewIntent() method.
      <br/>Eg: If we have an activity stack of A->B->C, If we launch Activity C again using singleTop Mode, the activity stack remains to be A->B->C. However if we launch B, then B will be added as new Instance to the stack (A->B->C->B).
 
-    2) <b>singleTask</b> : A new task will be created and activity will be created at the root of this new task whenever we use launch mode as singleTask. However, if there is already a separate task with same instance, the system will call that activity's onNewIntent() method to route the intent. There can only be one instance of activity existing at a time.
+    2) **singleTask** : A new task will be created and activity will be created at the root of this new task whenever we use launch mode as singleTask. However, if there is already a separate task with same instance, the system will call that activity's onNewIntent() method to route the intent. There can only be one instance of activity existing at a time.
     <br/>Eg: If our activity stack is A->B->C and if we launch D using singleTask, it will be A->B->C->[D]. Here braces represents the stack in separate task. If we call E using standard mode, then it will be A->B->C->[D->E].<br/>
     If we have A->B->C and if we call B again using singleTask launch Mode, the stack will now be A->[B] with B in a separate task. Activity C will be destroyed.
 
-    1) <b>singleInstance</b> : Same as Single Task except it creates a new activity in a task and no other activities can then launched into that task. That task will forever contains only that activity. If we use standard or singleTop to launch another activities, they are launched into another tasks.
+    1) **singleInstance** : Same as Single Task except it creates a new activity in a task and no other activities can then launched into that task. That task will forever contains only that activity. If we use standard or singleTop to launch another activities, they are launched into another tasks.
     <br/>Eg: if the Activity stack is A->B and now we launched C using singleInstance Launch Mode, the new stack will be A->B->[C]. Now if we call a new activity D from C, it will be launched into separate task. Now the new stack will be A->B->[C]->[D].  Now if we launch E from activity B, Then new stack will be A->B->E [C]->[D]. If we call C again, onNewIntent() of C will be called and new stack will be A->B->E->[C] [D].
 
     You can read more about them [here](https://developer.android.com/guide/components/activities/tasks-and-back-stack#ManifestForTasks).
@@ -1767,7 +1761,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
     @Inject annotation is used to request dagger to provide the respective Object. We use @Inject on Constructor, Fields (mostly where constructor is not accessible like Activities, Fragments, etc.) and Methods.
 
 ### Common Coding Programs
-* <b>Arrays</b></br>
+* **Arrays** </br>
   * [Find Maximum Sell Profit](/src/arrays/FindMaximumSellProfit.java)
   * [Find Low & High Index of a key from a given array](/src/arrays/LowHighIndex.java)
   * [Merge Overlapping Intervals](/src/arrays/MergeOverlappingIntervals.java)
@@ -1784,7 +1778,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
 
 
-* <b>Dynamic Programming</b></br>
+* **Dynamic Programming** </br>
    * [Fibonacci Series](/src/dynamicprogramming/FibonacciSeries.java)
    * [Given an array, find the contiguous subarray with the largest sum](/src/dynamicprogramming/LargestSumSubarray.java)
    * [Find the maximum sum of a subsequence such that no consecutive elements are part of the subsequence](/src/dynamicprogramming/MaxSumSubsequenceOfNonadjacentElements.java)
@@ -1793,12 +1787,12 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [Given coin denominations and the total amount, find out the number​ of ways to make the change](/src/dynamicprogramming/CoinChangingProblem.java)   
    </br>
    
-* <b>Queues</b></br>
+* **Queues** </br>
    * [Find the Maximum in a Sliding Window](/src/queue/Dequeue.java)
    * [Implement a queue using stack](/src/queue/QueuesUsingStack.java)
    </br>
    
-* <b>LinkedList</b></br>
+* **LinkedList** </br>
    * [Reverse a Linked List](/src/linkedlist/ReverseLinkedList.java)
    * [Remove duplicates from a Linked List](/src/linkedlist/RemoveDuplicates.java)
    * [Delete Node of a given key from a Linked List](/src/linkedlist/DeleteNodeWithKey.java)   
@@ -1817,7 +1811,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [Add the head pointers of two linked lists](/src/linkedlist/AddTwoIntegers.java)   
    </br>   
    
-* <b>Stacks</b></br>
+* **Stacks** </br>
    * [Evaluate an expression](/src/stacks/EvaluationExpression.java)
    * [Implement a stack using queues](/src/stacks/StacksUsingQueues.java)
    * [Check if paranthesis are equal](/src/stacks/EqualDelimiters.java)
@@ -1825,20 +1819,20 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [ReverseAStack](/src/stacks/ReverseStack.java)
    </br>
    
-* <b>Back Tracking</b></br>
+* **Back Tracking** </br>
    * [Solve Boggle](/src/backtracks/Boggle.java)
    * [Print paranthesis combination for a given value](/src/backtracks/Parenthesis.java)
    * [Solve N queen problem](/src/backtracks/NQueenProblem.java)
    * [find all the subsets of the given array that sum up to the number K](/src/backtracks/KSumSubsets.java)
    </br>
    
-* <b>Graphs</b></br>
+* **Graphs** </br>
    * [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
    * [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java)
    * [Form circular chain by given list of words](/src/graphs/WordChaining.java)   
    </br> 
    
-* <b>Trees</b></br>
+* **Trees** </br>
    * [Implements an InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java)
    * [Convert a binary tree to a doubly linked list](/src/trees/BinaryTreeToLinkedList.java)
    * [Connect a sibling pointer of a binary tree to next node in the same level](/src/trees/ConnectAllSiblings.java)
@@ -1855,7 +1849,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [Serialize binary tree to a file and then deserialize back to tree](/src/trees/SerializeBinaryTree.java)   
    </br>
 
-* <b>Strings</b></br>
+* **Strings** </br>
    * [Reverse String](/src/strings/ReverseString.java)
    * [Palindrone String](/src/strings/PalindroneStrings.java)
    * [Regular Expression](/src/strings/RegularExpression.java)
@@ -1867,7 +1861,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [Check if two strings are anagrams](/src/strings/CheckIfAnagram.java)   
    </br>
    
-* <b>Integers</b></br>
+* **Integers** </br>
    * [Reverse Integer](/src/math/ReverseInteger.java)
    * [Find sum of digits of an integer](/src/math/FindSumOfInteger.java)   
    * [Find Next highest Number from a Integer](/src/math/NextHighestNumber.java)
@@ -1888,7 +1882,7 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    * [Minimum Number of Platforms Required for a Railway/Bus Station](/src/math/MinimumPlatforms.java)   
    </br>   
    
-* <b>Miscellaneous</b></br>
+* **Miscellaneous** </br>
    * [Find three integers in the array with sum equal to the given value](/src/misc/SumOfThreeValues.java)
    * [Find position of a given key in 2D matrix](/src/misc/SearchMatrix.java)
    * [Determine the host byte order of any system](/src/misc/HostByteOrder.java)
@@ -1897,27 +1891,27 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
    </br>   
   
 ### Data Structure Coding Programs
-* <b>Sorting</b></br>
+* **Sorting** </br>
    * [BubbleSort](/src/sort/BubbleSort.java)
    * [InsertionSort](/src/sort/InsertionSort.java)
    * [SelectionSort](/src/sort/SelectionSort.java)
    * [QuickSort](/src/sort/QuickSort.java)
    * [MergeSort](/src/sort/MergeSort.java)
-     * <b>Question: Why is quicksort preferred over merge sort for sorting arrays?</b></br>
+     * **Question: Why is quicksort preferred over merge sort for sorting arrays?** </br>
          * Quicksort does not require any extra storage whereas merge sort requires O(n) space allocation. Allocating/de-allocating memory space can increase the run time.</br>
-     * <b>Question: Why is merge sort preferred over quicksort for sorting linked lists?</b></br>
+     * **Question: Why is merge sort preferred over quicksort for sorting linked lists?** </br>
          * There is a difference in linked lists due to memory allocation. In linked lists we can insert items in the middle in O(n) space and time. There is no extra memory allocation required.     
    </br>
    
-* <b>Searching</b></br>
+* **Searching** </br>
    * [Binary Search](/src/search/BinarySearch.java)
    * [Rotated Binary Search](/src/search/RotatedBinarySearch.java)
    * [Ternary Search](/src/search/TernarySearch.java)  
-     * <b>Question: Why is binary search preferred over ternary search?</b></br>
+     * **Question: Why is binary search preferred over ternary search?** </br>
          * When dividing an array by k ( 2(binary) or 3(ternary)), it reduces the array size to 1/k. But it increases the no of comparisons by k.
    </br>
    
-* <b>Runtime Complexity Table:</b> </br></br>
+* **Runtime Complexity Table:** </br></br>
    <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png"></a></br>
 
 
@@ -2045,19 +2039,19 @@ We can also register a Handler and pass data using Handlers. I have detailed a s
 
 ### Data Structures And Algorithms
 
-* <b>Explain Big O Notation?</b></br>
+* **Explain Big O Notation?** </br>
    * The notation Ο(n) is the formal way to express the upper bound of an algorithm's running time. It measures the worst case time complexity or the longest amount of time an algorithm can possibly take to complete. 
-   * Note: <b>O(1)</b> means that it takes a constant time, like three minutes no matter the amount of data in the set.
-<b>O(n)</b> means it takes an amount of time linear with the size of the set.</br>
+   * Note: **O(1)** means that it takes a constant time, like three minutes no matter the amount of data in the set.
+**O(n)** means it takes an amount of time linear with the size of the set.</br>
 
-* <b>Explain Big Omega Notation</b></br>
+* **Explain Big Omega Notation** </br>
    * The Big Omega Notation is used to describe the best case running time for a given algorithm.</br>
 
-* <b>Sorting Techniques</b> </br>
+* **Sorting Techniques** </br>
   - Count Sort [Link](https://www.includehelp.com/kotlin/sorting-in-linear-time-and-program-for-count-sort.aspx)
   - Shell Sort [Link](https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm)
    
-* <b>Difference between stacks & queues?</b></br>
+* **Difference between stacks & queues?** </br>
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>
 
 * **Data Structure and Algorithms** </br>
