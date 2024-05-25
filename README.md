@@ -689,10 +689,7 @@ class Employee {
 *  **What is an Application class?** <br/>
     The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
    
-* **What is Context?** </br>
-  A Context is a handle to the system; it provides services like resolving resources, obtaining access to databases and preferences, and so on. An Android app has activities. Context is like a handle to the environment your application is currently running in.</br>
-**Application Context:** This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of an activity.</br>
-**Activity Context:** This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.</br>
+* **What is Context?** [Link](https://amitshekhar.me/blog/context-in-android-application)
 
 * **What is the Android Application Architecture?** </br>
     * Android application architecture has the following components:</br>
