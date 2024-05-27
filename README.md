@@ -512,9 +512,6 @@ class Employee {
 - **What are "annotations"?** </br>
   Java annotations are used to provide meta data for your Java code. Being meta data, Java annotations do not directly affect the execution of your code, although some types of annotations can actually be used for that purpose. [read more](http://tutorials.jenkov.com/java/annotations.html)
 
-- **what is the difference between `throw` and `throws`?** </br>
-  Keyword `throw` is used to explicitly throw as an exception in the body of function, while `throws` is utilized to handle checked exceptions for re-intimating the compiler that exceptions are being handled. The throws need to be used in the function’s signature and also while invoking the method that raises checked exceptions.
-
 * **What is a deadlock in Java** </br>
    * A deadlock occurs when a thread enters a waiting state because a requested system resource is held by another waiting process, which in turn is waiting for another resource held by another waiting process.
    * [Example on how deadlock occurs](/src/deadlock/ThreadLockDemo.java)
