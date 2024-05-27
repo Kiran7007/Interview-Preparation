@@ -1,4 +1,4 @@
-# Interview-Question
+# Interview Preparation
 
 ## Contents
  * [Core Java](#core-java)
