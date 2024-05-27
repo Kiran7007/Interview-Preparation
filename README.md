@@ -18,12 +18,12 @@
   Object-Oriented Programming is a methodology to design a program using classes, objects, [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)), [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)), [abstraction](https://en.wikipedia.org/wiki/Abstraction_(software_engineering)) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
 
 - **What is an Object?** <br/>
-  An object is an instance of a class that has states and behaviors. A Class
-  can be defined as a template that describes the behavior/state that the object
-  of its type support.
+  An object is an instance of a class that has states and behaviors. A Class can be defined as a template that describes the behavior/state that the object of its type support.
 
 * **What is Inheritance?** </br>
-  Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are: a) To promote code reuse. b) To use polymorphism.</br>
+  Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are:
+  a) To promote code reuse.
+  b) To use polymorphism.</br>
 
 * **Composition over inheritance?** </br>
   Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
@@ -64,7 +64,7 @@ class Employee {
 * **Java 8 Changes in Interface** [Link](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 
 - **Can Interfaces to be extended?** </br>
-  Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface. But every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
+  Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface, but every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
   
 - **Difference between abstract and interface?** </br>
   | Interface     | Abstract class     |
@@ -173,7 +173,7 @@ class Employee {
   | In method overloading, return type can or can not be be same, but we must have to change the parameter. | While in this, return type must be same or co-variant. |
    
 * **Why would you not call abstract method in constructor?** </br>
-  The problem is that the class is not yet fully initialized, and when the method is called in a subclass, it may cause trouble.</br>
+  The problem is that the class is not yet fully initialized and when the method is called in a subclass, it may cause trouble.</br>
        
 * **Difference between Encapsulation & Abstraction?** </br>
    * **Abstraction** focuses on the outside view of an object (i.e. the interface) 
@@ -479,9 +479,6 @@ class Employee {
     100 20 300 0
     ```
 
-- **Multiple inheritances? Possible? How can we do that?** </br>
-  Multiple inheritance in Java programming is achieved or implemented using interfaces. Java does not support multiple inheritance using classes. In simple term, a class can inherit only one class and multiple interfaces in a java programs.
-
 - **Object scopes?** </br>
   `public` , `protected` , default (no modifier) , `private`
 
@@ -505,9 +502,6 @@ class Employee {
 - **What are Autoboxing and unboxing?** </br>
   - **Autoboxing:** Converting a primitive value into an object of the corresponding wrapper class is called autoboxing. For example, converting `int` to `Integer` class.
   - **Unboxing:**  Converting an object of a wrapper type to its corresponding primitive value is called unboxing. For example conversion of `Integer` to `int`.
-
-- **What is `transient` modifier? What does it come for?** </br>
-  [complete explanation](https://www.geeksforgeeks.org/transient-keyword-java/)
 
 - **What is the `hashCode()` used for?** </br>
   `hashcode()` returns the hashcode value as an Integer. Hashcode value is mostly used in hashing based collections like HashMap, HashSet, HashTable….etc. According to the official documentation, The general contract of `hashCode()` is:
