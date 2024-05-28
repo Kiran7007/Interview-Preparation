@@ -603,29 +603,9 @@ class Employee {
     // RxAndroid tutorial - observer subscribing to observable
     stringObservable.subscribe(stringObserver);
     ```
-    
-*  **What are the different types of Observables in RxJava?** [Link](https://amitshekhar.me/blog/types-of-observables-in-rxjava)<br/>
-    1) single
-    2) Maybe
-    3) Completable
-    4) Observable
-    5) Flowable
-
-*  **What is a Single in RxJava?** <br/>
-    A Single in RxJava is an Observable which emits only one item if completed or returns error.
-
-*  **What is Maybe in RxJava?** <br/>
-    A Maybe in RxJava is used when the Observable needs to emit a value or a no value or an error.
-
-*  **What is Completable in RxJava?** <br/>
-    A Completable in RxJava is an Observable which just completes the task and does not emit anything if completed. It returns an error if anything fails.
-    It is similar to reactive concept of runnable.
 
 *  **What is Back Pressure in RxJava?** <br/>
     Back Pressure is the state where your observable (publisher) is creating more events than your subscriber can handle.
-
-*  **What is Flowable in RxJava?** <br/>
-    A Flowable in RxJava is used when the Observable emits more data than the Observer can consume. In Other words, Flowable can handle back pressure where as an Observable cannot.
 
 *  **What is a Cold Observable?** <br/>
     A Cold Observable is an Observable that does not emit items until a Subscriber subscribes. If we have more than one Subscriber, then the Cold Observable will emit each sequence of items to all Subscribers one by one.
