@@ -615,10 +615,7 @@ class Employee {
 
 *  **What is Design Pattern?**
    - https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial
-   - https://www.journaldev.com/1827/java-design-patterns-example-tutorial#singleton-pattern
    - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
-   - https://github.com/iluwatar/java-design-patterns
-   - https://github.com/Kiran7007/Interview-Question/edit/main/README.md
    
     <img src="https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09" alt="Lamp" width="600"> </br>
 
