@@ -536,7 +536,7 @@ class Employee {
    * **Enumeration** does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
    * **ListIterator**: is just like an iterator except it allows access to the collection in either the forward or backward direction</br>
    
-* **How Hashmap works in Java?** </br>
+* **How Hashmap works in Java?** [Link](https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray) </br>
    * HashMap in Java works on hashing principle. It is a data structure which allows us to store object and retrieve it in constant time O(1) provided we know the key. When we call put method, ```hashcode()``` method of the key object is called so that hash function of the map can find a bucket location to store Entry object.
    * If two different objects have the same hashcode: in this case, a linked list is formed at that bucket location and a new entry is stored as next node. After finding bucket location, we will call ```keys.equals()``` method to identify a correct node in LinkedList and return associated value object for that key in Java HashMap</br>
    
