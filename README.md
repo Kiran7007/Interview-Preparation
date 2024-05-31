@@ -690,9 +690,6 @@ class Employee {
   * The onCreate() method is called once during the Activity lifecycle, either when the application starts, or when the Activity has been destroyed and then recreated, for example during a configuration change.</br>
   * The onStart() method is called whenever the Activity becomes visible to the user, typically after onCreate() or onRestart().</br>
   
-* **Scenario in which only onDestroy is called for an activity without onPause() and onStop()?** </br>
-  If finish() is called in the OnCreate method of an activity, the system will invoke onDestroy() method directly.</br>
-
 * **Why would you do the setContentView() in onCreate() of Activity class?** </br>
   * As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
 
