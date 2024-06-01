@@ -822,9 +822,7 @@ class Employee {
     - When there are multiple views that can be displayed side by side (viewPager tabs)
     - When you have data that needs to be persisted across Activity restarts (such as retained fragments)</br>
 
-* **ViewPager vs ViewPager2**
-   - https://developer.android.com/training/animation/vp2-migration
-   - https://developer.android.com/develop/ui/views/animations/vp2-migration
+* **ViewPager vs ViewPager2** [Link](https://developer.android.com/develop/ui/views/animations/vp2-migration)
 
 - **What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?**
     - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
