@@ -890,12 +890,12 @@ class Employee {
   - **Item Animator**: `ListViews` are lacking in support of good animations,
     but the `RecyclerView` brings a whole new dimension to it.
 
-*  **How do we save and restore an activity's state during screen screen rotation?** <br/>
+*  **How do we save and restore an activity's state during screen rotation?** <br/>
     We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
 
 *  **How to handle crashing of AsyncTask during screen rotation?** <br/>
     One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.  </br>
-    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the gist below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42  </br>
+    The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the list below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42  </br>
     We can also avoid this crash by using 2 Alternatives -  1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively, 2) Using LiveData - lifecycle aware component.
   
 - **How does the activity respond when orientation is changed?**  </br>
