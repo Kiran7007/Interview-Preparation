@@ -985,7 +985,7 @@ class Employee {
   * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
   * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
 
-* **Modern background execution** [Link](Modern background execution)
+* **Modern background execution** [Link](https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html)
   
 * **What is a Job Scheduling?** </br>
    * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
