@@ -4,7 +4,6 @@
  * [Core Java](#core-java)
  * [Kotlin](#kotlin)
  * [Core Android](#core-android)
- * [Architecture](#architecture)
  * [Data Structures And Algorithms](#data-structures-and-algorithms)
  * [Design Problem](#design-problem)
  * [Tools And Technologies](#tools-and-technologies)
@@ -1364,7 +1363,6 @@ class Employee {
 
 *  **How to Work With Geofences?** [Link](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
 
-### Android Security Related
 *  **Why Do You Need SSL Certificate Pinning? How it works?**
     - https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109
     - https://dzone.com/articles/encryption-and-signing
