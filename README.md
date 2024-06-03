@@ -1270,26 +1270,14 @@ class Employee {
    * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
    * [Article 2 on the subject](https://medium.com/@mohom.r/optimising-android-app-performance-with-arraymap-9296f4a1f9eb) </br>
    
-* **How to reduce apk size?** </br>
+* **How to reduce apk size?** [Link](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e) </br>
    * Enable proguard in your project by adding following lines to your release build type.
    * Enable shrinkResources.
    * Strip down all the unused locale resources by adding required resources name in “resConfigs”.
    * Convert all the images to the webp or vector drawables.
-   * [Article on the subject](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
    </br>   
    
-* **How to reduce build time of an Android app?** </br>
-   * Check out this awesome [article](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43) on it. 
-   * What I got from the article: A few commands we can add to the gradle.properties file:
-     * ```org.gradle.configureondemand=true``` - This command will tell gradle to only build the projects that it really needs to build.
-     * Use Daemon - ```org.gradle.daemon=true``` - Daemon keeps the instance of the gradle up and running in the background even after your build finishes. This will remove the time required to initialize the gradle and decrease your build timing significantly.
-     * ```org.gradle.parallel=true``` - Allow gradle to build your project in parallel. If you have multiple modules in you project, then by enabling this, gradle can run build operations for independent modules parallelly.
-     * Increase Heap Size - ```org.gradle.jvmargs=-Xmx3072m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8``` - Since android studio 2.0, gradle uses dex in the process to decrease the build timings for the project. Generally, while building the applications, multiple dx processes runs on different VM instances. But starting from the Android Studio 2.0, all these dx processes runs in the single VM and that VM is also shared with the gradle. This decreases the build time significantly as all the dex process runs on the same VM instances. But this requires larger memory to accommodate all the dex processes and gradle. That means you need to increase the heap size required by the gradle daemon. By default, the heap size for the daemon is about 1GB. 
-  * Ensure that dynamic dependency is not used. i.e. do not use 
-  </br>```implementation 'com.android.support:appcompat-v7:27.0.+'```. </br>
-  This command means gradle will go online and check for the latest version every time it builds the app.</br> 
-  Instead use fixed versions i.e. ```'com.android.support:appcompat-v7:27.0.2'```    
-   </br>   
+* **How to reduce build time of an Android app?** [Link](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43) </br>   
    
 * **Android Architecture Components?** </br>
    * A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)
@@ -1318,7 +1306,7 @@ class Employee {
 * **Difference between MVC & MVP & MVVM?** </br>
    * **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
    * **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
-   * **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)</br></br>
+   * **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)
    * **MVI**: [Link](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
 
 *  **What is the role of Presenter in MVP?** <br/>
@@ -1333,7 +1321,7 @@ class Employee {
    *  https://github.com/facebook/screenshot-tests-for-android
    *  https://facebook.github.io/screenshot-tests-for-android/#getting-started
 
-*  **What are SOLID Principles? How they are applicable in Android?** <br/>
+*  **What are SOLID Principles? How they are applicable in Android?** [Link](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/) <br/>
     SOLID unites all the best practices of software development over the years to deliver good quality apps. Understanding SOLID Principles will help us write clean and elegant code. It helps us write the code with SOC (Separation of Concerns).
     SOLID Principles is an acronym for:
     1. S stands for Single Responsibility Principle(SRP) - A class should have only one reason to change
@@ -1344,8 +1332,6 @@ class Employee {
        1. High Level Modules should not directly depend on Low level modules. Instead both should depend on abstractions.
        2. Abstractions should not depend on details. Details should depend on abstractions.
 
-    [Learn More about SOLID principles with Android Examples Here.](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
-
 *  **What is Reflection?** <br/>
     Reflection is an API that is used to examine or modify the behaviour of methods, classes and interfaces at runtime. The required classes for reflection are present in java.lang.reflect package.
 
@@ -1355,8 +1341,8 @@ class Employee {
     3. using bundle instead of apk in developer console
     4. converting the images to vector drawables.
 
-*  **What is the advantage of using Retrofit over AsyncTask?** <br/>
-    Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself. More use-cases at: https://stackoverflow.com/a/16903205/3424919
+*  **What is the advantage of using Retrofit over AsyncTask?** [Stackoverflow](https://stackoverflow.com/a/16903205/3424919) <br/>
+    Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself.
    
 *  **Advantage of Retrofit over Volley?** <br/>
     Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
@@ -1374,51 +1360,21 @@ class Employee {
 *  **What is Alarm Manager?** <br/>
     AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
 
-*  **How can I get continuous location updates in android like in Google Maps?** <br/>
-    We can use Fused location provider in Android set our interval in that. [More](https://stackoverflow.com/a/41500910/3424919)
+*  **How can I get continuous location updates in android like in Google Maps?** [Link](https://stackoverflow.com/a/41500910/3424919) <br/>
 
-*   **How to Work With Geofences?** [Link](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
+*  **How to Work With Geofences?** [Link](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
 
 ### Android Security Related
--   * **SSL Pinning**
-   - Generally SSL Certificates are issued by CAs (Certificate Authorities). SSL Certificates are used to secure a connection between a Client and a Server. But there might be some chances that if any CA is breached, our app becomes vulnerable to MITM (Man in the Middle Attack). To mitigate this problem, we can pin our Server's SSL Certificate in our Application as an additional security layer so that we can check if the certificate is really from our server or not. In few words, SSL Pinning is to increase security. Disadvantages is if the server changes the certificate, Client app needs a software update.
-   - When an client application such as mobile app or web browser begins secure session with the server there is the 3 things client and server must be agree on.
-        - How will the key exchanged
-        - How will be the data encrypted
-        - How will messages marked as authentic
-
-    - The server may decide AES256 encrypted data, SHA1 to sign messages. if client can support this messages the client request for the the certificate exchange from the server once client has validate the certificate chainning the public key is extracked from the server.
-
-    - Developer can compile the public key into the application code this is essecially pins the key into the appliction. when client receives the public key from the server, it compare this key with the pinned key in apllciation. the key should should match. if the key dont match. the client terminates the session.
-
-    - Types of SSL Pinning
-        - Public key pinning
-        - Certificate pinning
-            - https://dzone.com/articles/encryption-and-signing
-            - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
-            - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
-        - SPKI pinning
-
-    **How do you implement it in Android?** </br>
-    SSL Pinning can be done using OkHttpClient's Builder methods as follows:
-    ```Kotlin
-        val certificatePinner = CertificatePinner.Builder()
-        .add(
-            "www.coderefer.com",
-    "sha256/ZCOF65ADBWPDK8P2V7+mqodtvbsTRR/D74FCU+CEEA="
-        )
-        .build()
-    val okHttpClient = OkHttpClient.Builder()
-        .certificatePinner(certificatePinner)
-        .build()
-    ```
-    Then you supply this generated okHttpClient object to Retrofit.
-    For more info, click on this [link](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e).
-
-*  **Why Do You Need SSL Certificate Pinning? How it works?** [Link](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)
+*  **Why Do You Need SSL Certificate Pinning? How it works?**
+    - https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109
+    - https://dzone.com/articles/encryption-and-signing
+    - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
+    - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
+    - https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e
 
 *  **How do you know if the device is rooted?** <br/>
-    We can check if superUser apk is installed in the device or if it contains su file or xbin folder. Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub. For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
+   We can check if superUser apk is installed in the device or if it contains su file or xbin folder. </br>
+   Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub. For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
     
 *  **What is Symmetric Encryption?** </br>
     Symmetric encryption deals with creating a passphrase and encrypting the file with it. Then the server needs to send this passphrase(key) to the client so that the client can decrypt. Here the problem is sending that key to decrypt the file. If Hackers can access that key, they can misuse the data.
