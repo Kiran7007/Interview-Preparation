@@ -1,5 +1,6 @@
 # Mock Interview
 
+
 <details>
     <summary>Can you tell me about the most challenging Android application you’ve worked on, and what specific contributions you made to the project?</summary>
     The most challenging project I worked on was a large-scale enterprise resource planning (ERP) app. My contributions included architecting the overall solution, ensuring seamless integration with the company’s backend systems, and implementing a robust security protocol to protect sensitive data.

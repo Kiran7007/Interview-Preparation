@@ -1,5 +1,6 @@
 # Jetpack Compose
 
+
 * **What is Jetpack Compose, and how does it differ from the traditional Android View system?**<br>
   Jetpack Compose is a modern Android UI toolkit that simplifies UI development through a declarative syntax. Unlike the traditional View system, Compose allows developers to define UI using functions (@Composable) that describe the UI's current state, making it more intuitive and concise.</p>
 
