@@ -21,7 +21,7 @@
     An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
 
 *  **Activity Lifecycle** <br/>
-    ![Activity Lifecycle Image](/assets/activity_lifecycle.png)
+   <img src="/assets/activity_lifecycle.png" width="350">
 
 * **Lifecycle of an Activity** </br>
   * ```OnCreate()```: This is when the view is first created. This is normally where we create views, get data from bundles etc.</br>
@@ -49,8 +49,8 @@
     <img src="/assets/fragment_lifecycle_2.png" width="500">
 
 *  **What is the correlation between activity and fragment life cycle?** <br/>
-    Here is how Activity's and Fragment's lifecyle are called together:
-    ![Activity Fragment Lifecycle](/assets/activity-fragment-lifecycles.png)
+    Here is how Activity's and Fragment's lifecyle are called together:<br/>
+   <img src="/assets/activity-fragment-lifecycles.png" width="350">
 
 - **How to pass items to `fragment`?** </br>
   Using `Bundle` you can pass items to the fragment.
