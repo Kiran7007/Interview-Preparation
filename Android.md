@@ -46,7 +46,7 @@
   A `Fragment` is a piece of an activity which enable more modular activity design. A fragment has its layout, its behavior, and its life cycle callbacks. You can add or remove fragments in an activity while the activity is running. You can combine multiple fragments in a single activity to build a multi-pane UI. A fragment can also be used in multiple activities. The fragment life cycle is closely related to its host activity which means when the activity is paused, all the fragments available in the activity will also be stopped.
 
 *  **Fragment Lifecycle** <br/>
-    <img src="/assets/fragment_lifecycle_2.png" width="500">
+    <img src="/assets/fragment_lifecycle.png" width="200"> <img src="/assets/fragment_lifecycle_2.png" width="400">
 
 *  **What is the correlation between activity and fragment life cycle?** <br/>
     Here is how Activity's and Fragment's lifecyle are called together:<br/>
@@ -62,10 +62,9 @@
   - `replace` removes the existing `fragment` and adds a new `fragment`. This means when you press back button the fragment that got replaced will be created with its onCreateView being invoked.
   - `add` retains the existing fragments and adds a new `fragment` that means existing fragment  will be active and they wont be in 'paused' state hence when a back button is pressed onCreateView is not called for the existing fragment(the fragment which was there before new fragment was added).
     In terms of fragment’s life cycle events `onPause()`, `onResume()`, `onCreateView()` and other life cycle events will be invoked in case of `replace` but they wont be invoked in case of `add`. </br>
-    ![image](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
-    ![image](https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png)
-    ![image](https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png)
-    <br>
+   <img src="https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png" width="400"><br>
+   <img src="https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png" width="400"><br>
+   <img src="https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png" width="400"><br><br>
     <p align="center">
         <img src="https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png" width="400">
         <img src="https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png" width="400">
@@ -261,7 +260,7 @@
 * **Headless fragment vs Service** [Link](https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android)
 
 *  **Service Lifecycle** <br/>
-    ![Fragment Lifecycle Image](/assets/service_lifecycle.png)
+  <img src="/assets/service_lifecycle.png" width="250">
    
 - **Difference between `Activity` and `Service`?**
   - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
