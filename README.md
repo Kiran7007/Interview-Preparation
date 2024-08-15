@@ -4,7 +4,7 @@
  * [Core Java](Core_Java.md)
  * [Kotlin](Kotlin.md)
  * [Android](Android.md)
- * [Jetpack Compose](https://medium.com/@sujathamudadla1213/interview-questions-on-android-jetpack-compose-a9a28759ef11)
+ * [Jetpack Compose](Jetpack_Compose.md)
  * [Data Structures And Algorithms](Data_Structure_Algorithm.md)
  * [Android Test Driven Development](UI_Unit_Testing.md)
 
