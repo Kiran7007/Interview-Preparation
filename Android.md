@@ -219,10 +219,6 @@
     - **600dp:** a 7” tablet (600x1024 mdpi).
     - **720dp:** a 10” tablet (720x1280 mdpi, 800x1280 mdpi, etc).
 
-  Figure below provides a more detailed view of how different screen dp widths generally correspond to different screen sizes and orientations.
-
-  ![](/assets/images/layout-adaptive-breakpoints_2x.png)
-
 - **What is the difference between `sw` and `w` and `h` as postfix in order to define the resources folder?**
     - `sw`: The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation,
     - `w`: The width qualifier specifies the available width. For example, if you have a two-pane layout, you might want to use that whenever the screen provides at least 600dp of width, which might change depending on whether the device is in landscape or portrait orientation. Notice that this qualifier is orientation related.
@@ -368,10 +364,10 @@
 * **FlatBuffers vs JSON.** [Link](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
 
 - **What is `contentProvider` and what is typically used for?** </br>
-  A `ContentProvider` provides data from one application to another, when requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more]("https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42" "An idiot guide to android content providers").
+  A `ContentProvider` provides data from one application to another, when requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42).
   For further reading see the [official android documentation]("https://developer.android.com/guide/topics/providers/content-provider-basics" "Android official documentation")
 
-  ![Conent Provider diagram](/assets/images/content-provider-diagram.png)
+  ![Conent Provider diagram](/assets/content-provider-diagram.png)
 
 - **What is the difference between `implementation` and `api`?** </br>
   These two keywords work the same when you want to add a new library but the main difference occurs when using it in the internal library. Let's explain it with an example. Consider your app has a library called 'libraryA'. This library is also dependant on another library called 'libraryB'. the dependency flow will be : `app -> libraryA -> libraryB` . If the libraryB is declared in libraryA with keyword `implementation`, so your app module does not know anything about the classes of libraryB. So you can't access and use any classes of libraryB. If you want to do that, you must declare libraryB in the libraryA Gradle file with keyword `api`. For more information read [this medium link]("https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa").
