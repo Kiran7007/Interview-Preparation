@@ -46,7 +46,7 @@
   A `Fragment` is a piece of an activity which enable more modular activity design. A fragment has its layout, its behavior, and its life cycle callbacks. You can add or remove fragments in an activity while the activity is running. You can combine multiple fragments in a single activity to build a multi-pane UI. A fragment can also be used in multiple activities. The fragment life cycle is closely related to its host activity which means when the activity is paused, all the fragments available in the activity will also be stopped.
 
 *  **Fragment Lifecycle** <br/>
-    ![Fragment Lifecycle Image](/assets/fragment_lifecycle.png)    ![Full Life Cycle](/assets/fragment_lifecycle_2.png)
+    <img src="/assets/fragment_lifecycle_2.png" width="500">
 
 *  **What is the correlation between activity and fragment life cycle?** <br/>
     Here is how Activity's and Fragment's lifecyle are called together:
