@@ -641,28 +641,49 @@
 * **How to reduce build time of an Android app?** [Link](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43) </br>   
    
 * **Android Architecture Components?** </br>
-   * A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)
-      * **Room**
+  A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)
+  **Room**:
         * [Official documentation](https://developer.android.com/topic/libraries/architecture/room)   
         * [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)  
         * [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
         * [Securing a Room Database With Passcode-Based Encryption](https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e)
         
-      * **Live Data**
+  **Live Data**:
         * [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)
         * [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
         
-      * **ViewModel**
+  **ViewModel**:
         * [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)
         * [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)
         
-      * **Data Binding & View Binding**
+  **Data Binding & View Binding**:
         * [Official documentation](https://developer.android.com/topic/libraries/data-binding/)
         * [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)
         * [Data Binding vs View Binding](https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding)
           
-      * **Lifecycles** - [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)
+  **Lifecycles**:
+        * [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)
   </br> 
+
+* **Why we should use MVP / MVVM architectures?**<br>
+   - to avoid too much logic code in the UI layer and god activities
+   - reusable code that's easier to test
+   - avoid duplicated code between common views
+   - Easier to maintain
+   - we can test logic without using instrumentation tests
+
+* **Why the View should be implemented with an interface in MVP?**<br>
+   - Because we want to decouple the code from the implementation view.
+   - We want to abstract the framework used to write our presentation layer, regardless of any external dependency.
+   - We want to be able to easily change the implementation of view if needed.
+   - We want to follow the SOLID dependency rule to improve unit testability and in order to follow the dependency rule, high-level concepts (such as the presenter implementation) can't depend on low-level details (like the implementation view).
+
+* **Why do you use dependency injection (DI / Dagger)?**<br>
+   According to this concept a class should not configure its dependencies statically but should be configured from the outside = Inversion of Control
+   - useful for decoupling the whole system
+   - allow easier unit testing
+   - much easier moving things around and keeping classes small and simple
+   - help wiring different elements 
   
 * **Difference between MVC & MVP & MVVM?** </br>
    * **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
