@@ -46,9 +46,6 @@
 * **What is a Composable function in Jetpack Compose?**<br>
   A Composable function is a regular Kotlin function annotated with the @Composable annotation. It is the fundamental building block in Jetpack Compose and describes a UI component's appearance and behavior. Composable functions are independent of the activity or fragment lifecycle, making them reusable and testable.
 
-* **How does state management work in Jetpack Compose?**<br>
-  State management in Jetpack Compose revolves around the concept of mutable state. Compose provides the mutableStateOf function to create observable state objects. When the state changes, Jetpack Compose automatically recomposes only the affected parts of the UI, ensuring efficient UI updates.
-
 * **What is the role of the Modifier in Jetpack Compose?**<br>
   The Modifier is used to customize and apply transformations to UI elements in Jetpack Compose. It allows you to specify properties such as size, padding, alignment, background color, and more. Modifiers can be chained together to apply multiple transformations to a single UI element.
 
@@ -126,4 +123,3 @@
   - Minimize unnecessary recompositions by using immutable state objects and avoiding excessive state changes.- Use the remember function to cache expensive computations and avoid unnecessary recomputations.
   - Use the key parameter to explicitly control the identity of Composable functions and optimize the diffing algorithm.
   - Use LaunchedEffect and other coroutine-based APIs to perform asynchronous operations off the main thread and ensure smooth and responsive user interfaces in Jetpack Compose.
-  

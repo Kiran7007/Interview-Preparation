@@ -429,12 +429,63 @@
   
 * **Why bytecode cannot be run in Android?** </br>
   Android uses DVM (Dalvik Virtual Machine ) rather using JVM(Java Virtual Machine).</br>
+
+* **What are Android Runtime (ART) and Dalvik?** <br>
+    Android Runtime (ART) and Dalvik are both execution environments for running Android applications, but they have some key differences:<br>
+
+    **Dalvik:** It was the default runtime environment used by Android devices up until version 4.4 KitKat. Dalvik utilizes a Just-In-Time (JIT) compiler, which means it compiles the code at runtime, as needed. This approach is efficient in terms of memory usage because only the parts of the code that are needed are compiled.<br>
+    **ART:** Introduced as an experimental feature in KitKat and later becoming the default runtime in Android 5.0 Lollipop, ART uses an Ahead-Of-Time (AOT) compiler. With AOT, the entire application code is compiled during installation, which improves app performance, especially startup times, because the code is already compiled to native instructions that the device’s CPU can execute directly.<br>
+
+    Here are some of the features and differences between ART and Dalvik:
+    **Compilation Approach**:
+      - **Dalvik** compiles only the necessary parts of the code at runtime (JIT).
+      - **ART** compiles the entire application code at install time (AOT).<br>
+      
+    **Performance**:
+      - **Dalvik** may experience lag during execution as it compiles code on the fly.
+      - **ART** provides faster execution of applications due to pre-compilation.<br>
+      
+    **Storage and Booting Time**:
+      - **Dalvik** has a smaller memory footprint and boots faster compared to ART.
+      - **ART** requires more storage space because it compiles the entire code during installation.<br>
+      
+    **Battery Performance and Garbage Collection**:
+      - **ART** improves battery performance and has better garbage collection capabilities, leading to improved memory management<br>
+
+    Both ART and Dalvik are compatible with running DEX (Dalvik Executable) bytecode, which is the format Android apps are compiled into. This means apps developed for Dalvik should generally work when running with ART, although some techniques that work on Dalvik do not work on ART.
   
 * **What is a BuildType in Gradle? And what can you use it for?** </br>
    * Build types define properties that Gradle uses when building and packaging your Android app.
    * A build type defines how a module is built, for example whether ProGuard is run.
    * A product flavor defines what is built, such as which resources are included in the build.
    * Gradle creates a build variant for every possible combination of your project’s product flavors and build types.</br> 
+
+* **Are you familiar with ProGuard/DexGuard/R8 Minification?** <br>
+   ProGuard, DexGuard, and R8 are tools used in Android development to optimize and protect the application code. Here’s a brief overview of each:<br>
+
+   **ProGuard:** It is an open-source tool that shrinks, optimizes, and obfuscates Java code. It removes unused code and resources, making the APK smaller. ProGuard also makes the code more difficult to reverse-engineer by renaming classes, fields, and methods with non-descriptive names.<br>
+
+   **DexGuard:**: A commercial tool that offers more advanced protection features than ProGuard. It provides stronger encryption and obfuscation techniques, and it can also protect against static and dynamic analysis, making it harder for attackers to tamper with or reverse-engineer the application.<br>
+   
+   **R8:** The latest official code shrinker and minifier from Google, which is integrated into Android Studio. R8 combines shrinking, desugaring, dexing, and obfuscation into one step. It’s designed to be backward-compatible with ProGuard, meaning it can use ProGuard configuration files. R8 improves build times and results in smaller APK sizes compared to ProGuard.
+
+* **What is the difference between a process and a thread?** <br>
+    **Process**:
+        - Runs in its own instance of the virtual machine.
+        - Contains components like activities, services, and broadcast receivers.
+        - Can be specified to run certain components in separate processes via `AndroidManifest.xml`.
+        - Managed by the Android system, which may shut down processes to conserve resources.
+        - Each process is isolated from others, ensuring that one process does not interfere with another.<br>
+
+    **Thread**:
+        - The smallest unit of execution within a process.
+        - The main thread handles UI and event dispatching.
+        - Additional threads can be created for background work.
+        - Threads within the same process share the same memory space
+
+* **What is the difference between a process and a task?** <br>
+    - A **process** is about the execution and management of resources at the system level.
+    - A **task** is about the user’s journey through a sequence of activities within or across applications.
 
 *  **What is AAPT?** <br/>
     AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
@@ -643,7 +694,7 @@
 * **Android Architecture Components?** </br>
   A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)</br>
   **Room**:
-    -[Official documentation](https://developer.android.com/topic/libraries/architecture/room)
+    - [Official documentation](https://developer.android.com/topic/libraries/architecture/room)
     - [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)
     - [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
     - [Securing a Room Database With Passcode-Based Encryption](https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e)</br>
