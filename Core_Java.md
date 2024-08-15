@@ -171,6 +171,8 @@ class Employee {
 * **What is serialization? How do you implement it?** </br>
     Serialization is the process of converting an object into a stream of bytes in order to store an object into memory so that it can be recreated at a later time while still keeping the objects original state and data. In Java there are two methods of doing this, one is by implementing Serializable or Parcelable. In Android, however, Serializable should never be used in Android. Parcelable was created to be more efficient then Serializable, and performs about 10x faster then Serializable because Serializable uses reflection which is a slow process and tends to create a lot of temporary objects which may cause garbage collection to occur more often.
 
+* **What is reflection?** [Link](http://tutorials.jenkov.com/java-reflection/index.html)
+
 * **What is Transient Keyword?** [Link](https://www.geeksforgeeks.org/transient-keyword-java/)
 
 * **Why is Java said to be platform independent?** </br>
@@ -325,6 +327,8 @@ class Employee {
    
 * **Multi threading?** </br>
   Multiple tasks are running concurrently in a program.</br>
+
+* **What is a ThreadPoolExecutor?** [Link](https://blog.mindorks.com/threadpoolexecutor-in-android-8e9d22330ee3)
    
 * **Fail-fast & Fail-Safe?** </br>
    * Fail-fast Iterators throws ConcurrentModificationException when one Thread is iterating over collection object and other thread structurally modify Collection either by adding, removing or modifying objects on underlying collection. They are called fail-fast because they try to immediately throw Exception when they encounter failure. 
@@ -519,6 +523,11 @@ class Employee {
    *	**HashTable**: Does not allow null values. It is not fail-safe and it is synchronized whereas 
    * **HashMap** allows null values and it is fail-safe and it is not synchronized. 
    * **LinkedHashMap**: This is a subclass of Hashmap. The order of insertion is preserved since it has a linkedList.</br>
+
+
+* **`HashMap`, `ArrayMap` and `SparseArray`** [Link](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
+
+* **Explain Looper, Handler and HandlerThread.** [Link](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
    
 * **Difference between Enumeration and Iterators?** </br>
    * **Enumeration** does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
