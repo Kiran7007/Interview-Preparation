@@ -9,13 +9,12 @@
 * **What is Context?** [Link](https://amitshekhar.me/blog/context-in-android-application)
 
 * **What is the Android Application Architecture?** </br>
-    * Android application architecture has the following components:</br>
-    a. Activities - Provides the window in which the app draws its UI</br>
-    b. Services − It will perform background functionalities</br>
-    c. Intent − It will perform the inter connection between activities and the data passing mechanism</br>
-    d. Resource Externalization − strings and graphics</br>
-    e. Notification − light,sound,icon,notification,dialog box,and toast</br>
-    f. Content Providers − It will share the data between applications</br>
+    - Activities - Provides the window in which the app draws its UI</br>
+    - Services − It will perform background functionalities</br>
+    - Intent − It will perform the inter connection between activities and the data passing mechanism</br>
+    - Resource Externalization − strings and graphics</br>
+    - Notification − light,sound,icon,notification,dialog box,and toast</br>
+    - Content Providers − It will share the data between applications</br>
 
 *  **What is an Activity?** <br/>
     An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
