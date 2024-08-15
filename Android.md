@@ -643,26 +643,26 @@
 * **Android Architecture Components?** </br>
   A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)</br>
   **Room**:
-        * [Official documentation](https://developer.android.com/topic/libraries/architecture/room)   
-        * [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)  
-        * [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
-        * [Securing a Room Database With Passcode-Based Encryption](https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e)</br>
+    -[Official documentation](https://developer.android.com/topic/libraries/architecture/room)
+    - [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)
+    - [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
+    - [Securing a Room Database With Passcode-Based Encryption](https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e)</br>
         
   **Live Data**:
-        * [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)
-        * [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)</br>
+    - [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)
+    - [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)</br>
         
   **ViewModel**:
-        * [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)
-        * [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)</br>
+    - [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)
+    - [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)</br>
         
   **Data Binding & View Binding**:
-        * [Official documentation](https://developer.android.com/topic/libraries/data-binding/)
-        * [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)
-        * [Data Binding vs View Binding](https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding)</br>
+    - [Official documentation](https://developer.android.com/topic/libraries/data-binding/)
+    - [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)
+    - [Data Binding vs View Binding](https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding)</br>
           
   **Lifecycles**:
-        * [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)</br>
+    - [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)</br>
 
 * **Why we should use MVP / MVVM architectures?**<br>
    - to avoid too much logic code in the UI layer and god activities
