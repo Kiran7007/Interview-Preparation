@@ -1,6 +1,6 @@
 # Data Structure and Algorithm
 
-
+* **Leet code problem's solution video** [Link](https://takeuforward.org/interviews/blind-75-leetcode-problems-detailed-video-solutions)
 * **Sorting** </br>
    * [BubbleSort](/src/sort/BubbleSort.java)
    * [InsertionSort](/src/sort/InsertionSort.java)
