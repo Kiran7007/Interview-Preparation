@@ -8,6 +8,7 @@
  * [Jetpack Compose](Jetpack_Compose.md)
  * [Flutter](Flutter.md)
  * [Data Structures And Algorithms](Data_Structure_Algorithm.md)
+ * [System Design]("/assets/system_design_quesions.pdf)
  * [Android Test Driven Development](UI_Unit_Testing.md)
 
 ## Android Mock Interviews
