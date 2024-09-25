@@ -1,5 +1,7 @@
 # Data Structure and Algorithm
 
+* Mostly asked questions [Link](https://github.com/user-attachments/files/17138348/Coding.Interview.Questions.pdf)
+
 * **Sorting** </br>
    * [BubbleSort](/src/sort/BubbleSort.java)
    * [InsertionSort](/src/sort/InsertionSort.java)
