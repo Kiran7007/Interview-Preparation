@@ -1,6 +1,5 @@
 # Data Structure and Algorithm
 
-
 * **Sorting** </br>
    * [BubbleSort](/src/sort/BubbleSort.java)
    * [InsertionSort](/src/sort/InsertionSort.java)
