@@ -1,6 +1,6 @@
 # Data Structure and Algorithm
 
-* Mostly asked questions [Link](https://github.com/user-attachments/files/17138348/Coding.Interview.Questions.pdf)
+* FAANG questions [Link](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/coding_interview_questions.pdf)
 
 * **Sorting** </br>
    * [BubbleSort](/src/sort/BubbleSort.java)
