@@ -1,7 +1,5 @@
 # Data Structure and Algorithm
 
-* FAANG questions [Link](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/coding_interview_questions.pdf)
-
 * **Sorting** </br>
    * [BubbleSort](/src/sort/BubbleSort.java)
    * [InsertionSort](/src/sort/InsertionSort.java)
