@@ -15,6 +15,7 @@
 
 * [Mock interview](Mock_Interview.md)
 * [STAR method for interviews](https://www.testgorilla.com/blog/star-method-interviews/)
+* [FAANG coding interview](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/coding_interview_questions.pdf)
 * [DSA Problems Pattern](https://github.com/Chanda-Abdul/Several-Coding-Patterns-for-Solving-Data-Structures-and-Algorithms-Problems-during-Interviews)
 * [Leetcode Solutions](https://takeuforward.org/interviews/blind-75-leetcode-problems-detailed-video-solutions)
 
