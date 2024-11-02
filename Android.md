@@ -3,7 +3,7 @@
 
 * **Android Code Style And Guidelines.** [Link](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
 
-* **𝗔𝗻𝗱𝗿𝗼𝗶𝗱 𝗔𝗿𝗰𝗵𝗶𝘁𝗲𝗰𝘁𝘂𝗿𝗲 𝗖𝗼𝗺𝗽𝗼𝗻𝗲𝗻𝘁𝘀**  [Link](https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864)
+* **Android Architecture Components**  [Link](https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864)
 
 *  **What is an Application class?** <br/>
     The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
@@ -1034,3 +1034,5 @@
    * [Find the point that requires the least total distance covered by all the ​people to meet at that point](/src/misc/ClosestMeetingPoint.java)
    * [Given a two dimensional array, if any element in it is zero make its whole row and column zero](/src/misc/SumOfThreeValues.java)
    </br>
+
+* **Usecases of HTTP Polling and WebSocket** [Link](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
