@@ -1,6 +1,10 @@
 # Mock Interview
 
-
+* **Tips to Interview Preparation**</br>
+  - https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/
+  - https://blog.sp3.in/dsa
+  
 * **Could you share a scenario where you had to troubleshoot a performance issue in an Android application and how you optimized the code?** <br>
 In a project where I worked on optimizing the HSBC banking application, we encountered a performance issue related to excessive application size and sluggish responsiveness. To address this, I conducted a thorough performance analysis using profiling tools to identify bottlenecks in code execution and resource utilization. Upon pinpointing areas of improvement, I focused on optimizing critical sections by refactoring code for efficiency and reducing unnecessary operations. Specifically, I implemented caching mechanisms to minimize redundant data retrieval, utilized asynchronous processing to offload heavy tasks from the main thread, and applied code minification techniques to decrease app size. Through iterative testing and performance monitoring, I was able to significantly enhance the application's speed and responsiveness, delivering an improved user experience.
 
