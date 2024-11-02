@@ -2,6 +2,7 @@
 
 
 * **System Design Questions & Answers.** [Link](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/system_design_questions.pdf)
+* **9 Architectural Patterns for Data and Communication Flow** [Link](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
 * **Object-Oriented Design (OOD) Principles**</br>
   - SOLID : https://lnkd.in/dafK6TzQ</br>
   - DRY : https://lnkd.in/dreUT7_h</br>
