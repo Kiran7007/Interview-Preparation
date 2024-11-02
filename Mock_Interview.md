@@ -6,6 +6,7 @@
   - https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/
   - https://www.linkedin.com/feed/update/urn:li:activity:7220663449440161793/
   - https://www.linkedin.com/feed/update/urn:li:activity:7219036304691388418/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7217827106083266560/
   - https://blog.sp3.in/dsa
   
 * **Could you share a scenario where you had to troubleshoot a performance issue in an Android application and how you optimized the code?** <br>
