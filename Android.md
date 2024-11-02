@@ -789,6 +789,8 @@
 
 *  **How to upload an image file in Retrofit 2?** [Link](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)
 
+*  **Usecases of OkHttp Interceptor** [Link](https://outcomeschool.com/blog/okhttp-interceptor)
+
 *  **What is Alarm Manager?** <br/>
     AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
 
