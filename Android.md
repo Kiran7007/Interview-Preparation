@@ -828,6 +828,7 @@
     - https://developer.android.com/privacy-and-security/keystore
     - https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b
     - https://source.android.com/docs/security/features/keystore
+    - https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/
  
 *   **How to avoid memory leaks in Android?** [Link](https://www.geeksforgeeks.org/memory-leaks-in-android/)
 
