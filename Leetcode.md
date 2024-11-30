@@ -1,6 +1,8 @@
 # Leetcode
 
-* **Coding Patterns** [Link](/assets/coding_patterns.pdf)
+* **Coding Patterns PDF** [Link](/assets/coding_patterns.pdf)
+
+* **Coding Patterns Github** [Link](https://github.com/Chanda-Abdul/Several-Coding-Patterns-for-Solving-Data-Structures-and-Algorithms-Problems-during-Interviews)
   
 * **Coding Interview Quetions** [Link](/assets/coding_interview_questions.pdf)
 
