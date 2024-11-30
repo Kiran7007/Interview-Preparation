@@ -1,5 +1,9 @@
 # Leetcode
 
+* **Coding Patterns** [Link](/assets/coding_patterns.pdf)
+  
+* **Coding Interview Quetions** [Link](/assets/coding_interview_questions.pdf)
+
 * **Video roadmap** [Link](https://takeuforward.org/interviews/blind-75-leetcode-problems-detailed-video-solutions)
   
 * **Leetcode Roadmap**
