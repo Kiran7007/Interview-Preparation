@@ -867,6 +867,9 @@
 ### Dagger 2 Related Questions:
 
 *  **What is Dependency Injection Pattern?** <br/>
+<img src="https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7" width="400">
+
+*  **What is Dependency Injection Pattern?** <br/>
     Dependency Injection pattern is where if our object requires other object, it will be passed to our object instead of us having to create that object. This other object is called as dependency.
 
 *  **What is Service Locator Pattern?** <br/>
