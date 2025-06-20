@@ -1,5 +1,6 @@
 # Android
 
+* **Android project skeleton** [Link](https://github.com/gbajaj/interviewready)
 
 * **Android Code Style And Guidelines.** [Link](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
 
