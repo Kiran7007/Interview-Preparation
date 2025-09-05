@@ -357,3 +357,59 @@ fun postorderTraversal(root: TreeNode?): List<Int> {
 }
 ```
 
+### BFS Template:
+```kotlin
+fun levelOrder(root: TreeNode?): List<List<Int>> {
+    val result = mutableListOf<List<Int>>()
+    if (root == null) return result
+    
+    val queue = ArrayDeque<TreeNode>()
+    queue.add(root)
+    
+    while (queue.isNotEmpty()) {
+        val levelSize = queue.size
+        val currentLevel = mutableListOf<Int>()
+        
+        repeat(levelSize) {
+            val node = queue.removeFirst()
+            currentLevel.add(node.`val`)
+            
+            node.left?.let { queue.add(it) }
+            node.right?.let { queue.add(it) }
+        }
+        
+        result.add(currentLevel)
+    }
+    
+    return result
+}
+```
+
+### Tree Properties:
+```kotlin
+// Maximum Depth
+fun maxDepth(root: TreeNode?): Int {
+    if (root == null) return 0
+    return 1 + maxOf(maxDepth(root.left), maxDepth(root.right))
+}
+
+// Balanced Tree Check
+fun isBalanced(root: TreeNode?): Boolean {
+    fun height(node: TreeNode?): Int {
+        if (node == null) return 0
+        
+        val leftHeight = height(node.left)
+        val rightHeight = height(node.right)
+        
+        if (leftHeight == -1 || rightHeight == -1 || 
+            kotlin.math.abs(leftHeight - rightHeight) > 1) {
+            return -1
+        }
+        
+        return 1 + maxOf(leftHeight, rightHeight)
+    }
+    
+    return height(root) != -1
+}
+```
+
