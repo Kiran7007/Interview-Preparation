@@ -1,4 +1,4 @@
-## Two Pointer
+## Two Pointer:
 ```kotlin
 fun twoPointers(arr: IntArray): Int {
     var left = 0
@@ -19,7 +19,7 @@ fun twoPointers(arr: IntArray): Int {
 }
 ```
 
-## Fixed Sliding Window
+## Fixed Sliding Window:
 ```kotlin
 fun fixedSlidingWindow(arr: IntArray, k: Int): Int {
     var windowSum = 0
@@ -41,7 +41,7 @@ fun fixedSlidingWindow(arr: IntArray, k: Int): Int {
 }
 ```
 
-## Variable Size Sliding Window
+## Variable Size Sliding Window:
 ```kotlin
 fun variableSlidingWindow(arr: IntArray, target: Int): Int {
     var left = 0
@@ -62,7 +62,7 @@ fun variableSlidingWindow(arr: IntArray, target: Int): Int {
 }
 ```
 
-## Prefix Sum
+## Prefix Sum:
 ```kotlin
 fun prefixSum(arr: IntArray): IntArray {
     val prefix = IntArray(arr.size)
@@ -82,7 +82,7 @@ fun rangeSum(prefix: IntArray, left: Int, right: Int): Int {
 }
 ```
 
-## KMP Algorithm
+## KMP Algorithm:
 ```kotlin
 fun kmpSearch(text: String, pattern: String): List<Int> {
     if (needle.isEmpty()) return 0
@@ -128,7 +128,7 @@ fun computeLPS(pattern: String): IntArray {
 } 
 ```
 
-## Palindrom Check
+## Palindrom Check:
 ```kotlin
 fun isPalindrome(s: String): Boolean {
     var left = 0
@@ -142,8 +142,10 @@ fun isPalindrome(s: String): Boolean {
     
     return true
 }
+```
 
-// Longest Palindromic Substring
+## Longest Palindromic Substring:
+```kotlin
 fun longestPalindrome(s: String): String {
     var start = 0
     var maxLen = 1
@@ -174,6 +176,23 @@ fun expandAroundCenter(s: String, left: Int, right: Int): Int {
     }
     
     return r - l - 1
+}
+```
+
+## Reversal Template:
+```kotlin
+kotlinfun reverseList(head: ListNode?): ListNode? {
+    var prev: ListNode? = null
+    var current = head
+    
+    while (current != null) {
+        val next = current.next
+        current.next = prev
+        prev = current
+        current = next
+    }
+    
+    return prev
 }
 ```
 
