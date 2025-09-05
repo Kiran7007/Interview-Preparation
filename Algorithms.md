@@ -181,7 +181,7 @@ fun expandAroundCenter(s: String, left: Int, right: Int): Int {
 
 ## Reversal Template:
 ```kotlin
-kotlinfun reverseList(head: ListNode?): ListNode? {
+fun reverseList(head: ListNode?): ListNode? {
     var prev: ListNode? = null
     var current = head
     
