@@ -288,15 +288,15 @@ class CustomQueue {
 }
 ```
 
-### Monotonic Stack Template:
+### Monotonic Stack:
 ```kotlin
 fun nextGreaterElement(nums: IntArray): IntArray {
-    val result = IntArray(nums.size) { -1 }
-    val stack = mutableListOf<Int>() // stores indices
+    val result = IntArray(nums.size)
+    val stack = Stack<Int>() // stores indices
     
     for (i in nums.indices) {
-        while (stack.isNotEmpty() && nums[i] > nums[stack.last()]) {
-            val index = stack.removeAt(stack.size - 1)
+        while (stack.isNotEmpty() && nums[i] > nums[stack.peek()]) {
+            val index = stack.pop()
             result[index] = nums[i]
         }
         stack.add(i)
@@ -357,7 +357,7 @@ fun postorderTraversal(root: TreeNode?): List<Int> {
 }
 ```
 
-### BFS Template:
+### BFS:
 ```kotlin
 fun levelOrder(root: TreeNode?): List<List<Int>> {
     val result = mutableListOf<List<Int>>()
@@ -410,6 +410,119 @@ fun isBalanced(root: TreeNode?): Boolean {
     }
     
     return height(root) != -1
+}
+```
+
+ DFS Template:
+kotlinfun dfs(graph: Graph, start: Int, visited: MutableSet<Int>) {
+    visited.add(start)
+    
+    graph[start]?.forEach { neighbor ->
+        if (neighbor !in visited) {
+            dfs(graph, neighbor, visited)
+        }
+    }
+}
+
+### DFS with path
+```kotlin
+fun dfsWithPath(graph: Graph, start: Int, target: Int, 
+                visited: MutableSet<Int>, path: MutableList<Int>): Boolean {
+    visited.add(start)
+    path.add(start)
+    
+    if (start == target) return true
+    
+    graph[start]?.forEach { neighbor ->
+        if (neighbor !in visited) {
+            if (dfsWithPath(graph, neighbor, target, visited, path)) {
+                return true
+            }
+        }
+    }
+    
+    path.removeAt(path.size - 1)
+    return false
+}
+```
+
+### BFS:
+```kotlin
+kotlinfun bfs(graph: Graph, start: Int): List<Int> {
+    val visited = mutableSetOf<Int>()
+    val queue = ArrayDeque<Int>()
+    val result = mutableListOf<Int>()
+    
+    queue.add(start)
+    visited.add(start)
+    
+    while (queue.isNotEmpty()) {
+        val node = queue.removeFirst()
+        result.add(node)
+        
+        graph[node]?.forEach { neighbor ->
+            if (neighbor !in visited) {
+                visited.add(neighbor)
+                queue.add(neighbor)
+            }
+        }
+    }
+    
+    return result
+}
+
+// Shortest path in unweighted graph
+fun shortestPath(graph: Graph, start: Int, target: Int): Int {
+    val queue = ArrayDeque<Pair<Int, Int>>()
+    val visited = mutableSetOf<Int>()
+    
+    queue.add(start to 0)
+    visited.add(start)
+    
+    while (queue.isNotEmpty()) {
+        val (node, distance) = queue.removeFirst()
+        
+        if (node == target) return distance
+        
+        graph[node]?.forEach { neighbor ->
+            if (neighbor !in visited) {
+                visited.add(neighbor)
+                queue.add(neighbor to distance + 1)
+            }
+        }
+    }
+    
+    return -1 // Path not found
+}
+```
+
+### Dijkstra's Algorithm:
+```kotlin
+data class Edge(val to: Int, val weight: Int)
+
+fun dijkstra(graph: Map<Int, List<Edge>>, start: Int): Map<Int, Int> {
+    val distances = mutableMapOf<Int, Int>()
+    val pq = PriorityQueue<Pair<Int, Int>>(compareBy { it.second })
+    
+    distances[start] = 0
+    pq.add(start to 0)
+    
+    while (pq.isNotEmpty()) {
+        val (node, currentDist) = pq.poll()
+        
+        if (currentDist > distances[node] ?: Int.MAX_VALUE) continue
+        
+        graph[node]?.forEach { edge ->
+            val newDist = currentDist + edge.weight
+            
+            if (newDist < distances[edge.to] ?: Int.MAX_VALUE) {
+                distances[edge.to] = newDist
+                pq.add(edge.to to newDist)
+            }
+        }
+    }
+    
+    return distances
 }
 ```
 
