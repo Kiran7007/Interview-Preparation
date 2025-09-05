@@ -1,4 +1,4 @@
-### KMP Algorithm
+## KMP Algorithm
 
 class Solution {
     fun strStr(haystack: String, needle: String): Int {
