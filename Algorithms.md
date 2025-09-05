@@ -196,3 +196,164 @@ fun reverseList(head: ListNode?): ListNode? {
 }
 ```
 
+## Cycle Detection (Floyd's Algorithm):
+```kotlin
+fun hasCycle(head: ListNode?): Boolean {
+    var slow = head
+    var fast = head
+    
+    while (fast?.next != null) {
+        slow = slow?.next
+        fast = fast.next?.next
+        
+        if (slow == fast) return true
+    }
+    
+    return false
+}
+
+fun detectCycle(head: ListNode?): ListNode? {
+    var slow = head
+    var fast = head
+    
+    // Find meeting point
+    while (fast?.next != null) {
+        slow = slow?.next
+        fast = fast.next?.next
+        
+        if (slow == fast) break
+    }
+    
+    if (fast?.next == null) return null
+    
+    // Find start of cycle
+    slow = head
+    while (slow != fast) {
+        slow = slow?.next
+        fast = fast?.next
+    }
+    
+    return slow
+}
+```
+
+# Merge Two Lists
+```kotlin
+fun mergeTwoLinkLists(l1: ListNode?, l2: ListNode?): ListNode? {
+    val dummy = ListNode(0)
+    var current = dummy
+    var list1 = l1
+    var list2 = l2
+    
+    while (list1 != null && list2 != null) {
+        if (list1.`val` <= list2.`val`) {
+            current.next = list1
+            list1 = list1.next
+        } else {
+            current.next = list2
+            list2 = list2.next
+        }
+        current = current.next!!
+    }
+    
+    current.next = list1 ?: list2
+    
+    return dummy.next
+}
+```
+
+### Stack Implementation:
+```kotlin
+class CustomStack {
+    private val stack = mutableListOf<Int>()
+    
+    fun push(item: Int) = stack.add(item)
+    fun pop(): Int? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
+    fun peek(): Int? = stack.lastOrNull()
+    fun isEmpty() = stack.isEmpty()
+    fun size() = stack.size
+}
+```
+
+### Queue Implementation:
+```kotlin
+class CustomQueue {
+    private val queue = mutableListOf<Int>()
+    
+    fun enqueue(item: Int) = queue.add(item)
+    fun dequeue(): Int? = if (queue.isEmpty()) null else queue.removeAt(0)
+    fun front(): Int? = queue.firstOrNull()
+    fun isEmpty() = queue.isEmpty()
+    fun size() = queue.size
+}
+```
+
+### Monotonic Stack Template:
+```kotlin
+fun nextGreaterElement(nums: IntArray): IntArray {
+    val result = IntArray(nums.size) { -1 }
+    val stack = mutableListOf<Int>() // stores indices
+    
+    for (i in nums.indices) {
+        while (stack.isNotEmpty() && nums[i] > nums[stack.last()]) {
+            val index = stack.removeAt(stack.size - 1)
+            result[index] = nums[i]
+        }
+        stack.add(i)
+    }
+    
+    return result
+}
+```
+
+### DFS Templates:
+```kotlin
+// Inorder: Left -> Root -> Right
+fun inorderTraversal(root: TreeNode?): List<Int> {
+    val result = mutableListOf<Int>()
+    
+    fun dfs(node: TreeNode?) {
+        if (node == null) return
+        
+        dfs(node.left)
+        result.add(node.`val`)
+        dfs(node.right)
+    }
+    
+    dfs(root)
+    return result
+}
+
+// Preorder: Root -> Left -> Right
+fun preorderTraversal(root: TreeNode?): List<Int> {
+    val result = mutableListOf<Int>()
+    
+    fun dfs(node: TreeNode?) {
+        if (node == null) return
+        
+        result.add(node.`val`)
+        dfs(node.left)
+        dfs(node.right)
+    }
+    
+    dfs(root)
+    return result
+}
+
+// Postorder: Left -> Right -> Root
+fun postorderTraversal(root: TreeNode?): List<Int> {
+    val result = mutableListOf<Int>()
+    
+    fun dfs(node: TreeNode?) {
+        if (node == null) return
+        
+        dfs(node.left)
+        dfs(node.right)
+        result.add(node.`val`)
+    }
+    
+    dfs(root)
+    return result
+}
+```
+
