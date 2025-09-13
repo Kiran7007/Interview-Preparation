@@ -305,6 +305,24 @@ fun lowestCommonAncestor(root: TreeNode?, p: TreeNode?, q: TreeNode?): TreeNode?
         else -> left ?: right
     }
 }
+
+fun lowestCommonAncestorV2(root: TreeNode?, p: TreeNode?, q: TreeNode?): TreeNode? {
+    var curr = root
+
+    while(curr != null) {
+        when {
+            p.'val' > curr.'val' && q.'val' > curr.'val' -> {
+                curr = curr.right
+            }
+
+            p.'val' < curr.'val' && q.'val' < curr.'val' -> {
+                curr = curr.left
+            }
+
+            else -> return curr
+        }
+    }
+}
 ```
 
 ### Pattern 6: Serialize/Deserialize
