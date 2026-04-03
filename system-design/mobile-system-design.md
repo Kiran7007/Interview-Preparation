@@ -1,0 +1,225 @@
+# Mobile System Design & OOD (Senior)
+
+> Sources merged: `System_Design.md`, mobile-relevant themes from `Mock_Interview.md`, and FAANG-style mobile extensions (offline, sync, privacy, notifications).
+
+---
+
+### Question
+
+How do you approach **mobile system design** differently from backend system design?
+
+### Answer
+
+- **Deep explanation:** Mobile design is constrained by **battery, radio cost, storage, OS background limits, and UI thread jank**. You optimize for perceived performance and graceful degradation offline—not just raw throughput.
+- **Internal working:** You still clarify requirements, estimate scale, define APIs, choose storage (local DB/cache), sync strategy, auth, observability, and rollout.
+- **Trade-offs:** Strong consistency vs offline-first; push vs pull; client ML vs server inference; monolith module vs feature modules.
+- **Real-world example:** Designing a healthcare charting app—HIPAA logging, encrypted Room, background sync with WorkManager, conflict resolution, and certificate pinning.
+
+### Useful links (preserved)
+
+- [System design Q&A PDF (original repo reference)](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/system_design_questions.pdf)
+- [9 Architectural Patterns for Data and Communication Flow](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
+
+### Key Takeaway
+
+**Constraints-first architecture** wins interviews.
+
+---
+
+### Question
+
+Walk me through **SOLID** and how it shows up in Android codebases.
+
+### Answer
+
+- **S:** One reason to change per class (don’t mix navigation + analytics + JSON parsing in one god-object).
+- **O:** Extend via interfaces/sealed contracts (feature plugins) vs editing core classes endlessly.
+- **L:** Substitutable implementations for repositories/test doubles.
+- **I:** Small interfaces for Room DAOs/repositories; avoid “god interfaces”.
+- **D:** Depend on abstractions (`PaymentGateway`) not concrete SDK classes—critical for testability and vendor swaps.
+- **Real-world example:** Replacing an analytics SDK without touching feature modules by routing through an interface + DI graph.
+
+### Useful links
+
+- SOLID: https://lnkd.in/dafK6TzQ  
+- DRY: https://lnkd.in/dreUT7_h  
+- KISS: https://lnkd.in/d-nFYfdR  
+- YAGNI: https://lnkd.in/dHzEi__Y  
+- [SOLID in Android (Kotlin examples)](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
+
+### Key Takeaway
+
+SOLID is how you keep **large apps mergeable**.
+
+---
+
+### Question
+
+Name core **design patterns** you’d use on mobile and anti-patterns you avoid.
+
+### Answer
+
+- **Patterns:** Singleton (DI scope, not static god), Factory (create ViewModels w/ assisted injection), Adapter (UI + legacy APIs), Observer (Flow/LiveData), Strategy (payment/auth providers).
+- **Anti-patterns:** Service locator hiding dependencies, “utils” package dumping ground, leaking `Context`, blocking main thread “just once”.
+- **Real-world example:** Strategy for remote config sources: Firebase vs static JSON fallback.
+
+### Useful links
+
+- Singleton: https://lnkd.in/dB5aDUXr  
+- Factory: https://lnkd.in/dvZtfe-k  
+- Adapter: https://lnkd.in/dKQpsTfe  
+- Observer: https://lnkd.in/dByc-whP  
+- Strategy: https://lnkd.in/d9dz8ER7  
+
+### Key Takeaway
+
+Patterns are **dependency boundaries**, not trivia.
+
+---
+
+### Question
+
+How do you document **class, sequence, and deployment** views for a mobile feature?
+
+### Answer
+
+- **Class diagram:** Modules, key entities, repositories, and SDK boundaries.
+- **Sequence diagram:** Login → token refresh → API retry → cache write → UI emission.
+- **Deployment-ish on mobile:** Build flavors, feature flags, remote config, crash pipelines, staged rollouts, Play integrity checks.
+
+### Useful links
+
+- Class diagrams: https://lnkd.in/d8_8rYCp  
+- Sequence diagrams: https://lnkd.in/duPf_cJ2  
+- Interfaces: https://lnkd.in/d8NzSRgG  
+
+### Key Takeaway
+
+Interviewers reward **clear diagrams** + explicit failure paths.
+
+---
+
+### Question
+
+What’s your **API design** checklist for mobile clients?
+
+### Answer
+
+- Versioning + backward compatibility (feature flags, nullable fields).
+- Pagination (cursor/keyset > deep offsets for feeds).
+- Idempotency for retries (safe POST keys).
+- Auth: OAuth2/OIDC, refresh rotation, certificate pinning strategy.
+- Observability: correlation IDs in logs + server traces.
+
+### Useful links
+
+- RESTful API: https://lnkd.in/dqDrkbDS  
+- Pagination: https://lnkd.in/dJfwFqmd  
+- Authentication: https://lnkd.in/dQ94BgzQ  
+
+### Key Takeaway
+
+Mobile clients **retry aggressively**—design APIs for that reality.
+
+---
+
+### Question
+
+How do you discuss **scalability & performance** credibly as a mobile tech lead?
+
+### Answer
+
+- Client-side: caching layers (memory/disk), image pipelines, DB indexes, pagination, background scheduling, startup profiling.
+- Cross-team: CDN, edge caching, rate limits, backoff, gzip/br, binary payloads.
+- **Real-world example:** Feed scroll performance—prefetch window, diffutil, cancel stale requests, stabilize pagination cursors.
+
+### Useful links
+
+- Caching: https://lnkd.in/deMQvEJ9  
+- Load balancing: https://lnkd.in/dkeYMX74  
+- Lazy loading: https://lnkd.in/dvcdY_RX  
+
+### Key Takeaway
+
+Show you can **partner with backend**—not blame it.
+
+---
+
+### Question (FAANG-style)
+
+Design **offline-first sync** for a notes app with multi-device edits.
+
+### Answer
+
+- **Model:** CRDT vs last-write-wins vs server reconciliation; define conflict UX.
+- **Transport:** incremental sync, etag/watermarks, push notifications to hint refresh.
+- **Storage:** encrypted Room/SQLite; migrations; outbox pattern for pending writes.
+- **Privacy:** encryption at rest, key in Keystore, secure network, audit logs.
+- **Testing:** property tests for merge, integration tests for retry storms.
+
+### Key Takeaway
+
+State **conflict policy** explicitly—don’t hand-wave.
+
+---
+
+### Question
+
+How do you structure **error handling & logging** across mobile + backend?
+
+### Answer
+
+- User-facing errors: actionable copy + non-sensitive codes.
+- Internal: structured logs, breadcrumbs, remote logging with PII scrubbing.
+- Post-mortems: timelines, blast radius, guardrails (feature flags).
+
+### Useful links
+
+- Exception handling: https://lnkd.in/dkUHDGBu  
+- Logging strategies: https://lnkd.in/dvikcadQ  
+
+### Key Takeaway
+
+**PII discipline** is part of system design.
+
+---
+
+### Question
+
+Concurrency on mobile—what do staff engineers emphasize?
+
+### Answer
+
+- Main-thread discipline; structured concurrency; cancellation; backpressure for streams.
+- Cross-process: binder thread limits, avoiding blocking IPC.
+
+### Useful links
+
+- Thread safety: https://lnkd.in/dNe6FpfS  
+- Locks: https://lnkd.in/dN2YdpvU  
+- Atomic operations: https://lnkd.in/dcfZF9Jb  
+
+### Key Takeaway
+
+**Cancellation + backpressure** separate senior answers from junior ones.
+
+---
+
+### Question
+
+**Database design** on device vs server—what changes?
+
+### Answer
+
+- On-device: normalize vs denormalize for read patterns; migrations; FTS for search; page-size tuning.
+- Server: ER modeling, normalization, sharding—not your day job, but you should understand consumption patterns.
+
+### Useful links
+
+- ER diagrams: https://lnkd.in/d6xygCrb  
+- Normalization: https://lnkd.in/dz7MCVaj  
+- Relationships: https://lnkd.in/da3YTaJN  
+
+### Key Takeaway
+
+Optimize for **read latency** the UI actually needs.

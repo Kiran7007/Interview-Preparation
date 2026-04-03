@@ -1,0 +1,439 @@
+# Android SDLC, Leadership & Behavioral (Senior / Staff)
+
+> Sources: merged + upgraded from `Mock_Interview.md` (de-duplicated overlapping architecture/API security/testing/CI questions) + external STAR method link.
+
+---
+
+### Question
+
+Tips & curated resources for interview preparation (preserved links)
+
+### Answer
+
+- Use consistent DSA practice + system design drills + behavioral stories with metrics.
+- **Links (all preserved from `Mock_Interview.md`):**
+  - https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7220663449440161793/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7219036304691388418/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7217827106083266560/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7213379334311448576/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7194272210679705600/
+  - https://www.linkedin.com/feed/update/urn:li:activity:7177985319269502977/
+  - https://blog.sp3.in/dsa
+- **STAR method reference:** https://www.testgorilla.com/blog/star-method-interviews/
+
+### Key Takeaway
+
+**STAR + metrics** beats adjective soup.
+
+---
+
+### Question (merged behavioral)
+
+Describe a **performance troubleshooting** story on Android.
+
+### Answer
+
+- **Situation:** Large banking app sluggish + bloated binary.
+- **Task:** Identify CPU/mem/network hotspots and reduce ship risk.
+- **Action:** Android Studio profilers, flamegraphs, main-thread audits, caching, async boundaries, R8/shrinkResources, image pipeline tuning.
+- **Result:** Quantify startup, jank frames, APK delta, crash-free rate.
+- **Note:** Original narrative referenced HSBC-scale optimization in `Mock_Interview.md`—replace with your own metrics if you reuse the structure.
+
+### Key Takeaway
+
+Interviewers want **methodology + numbers**.
+
+---
+
+### Question (merged)
+
+**Error monitoring & logging** for post-mortems
+
+### Answer
+
+- Logcat structured logging, Crashlytics/non-fatals, breadcrumbs, remote config to toggle logging, PII scrubbing, on-call runbooks.
+
+### Key Takeaway
+
+**Actionable dashboards**, not log spam.
+
+---
+
+### Question (merged)
+
+**API security** with sensitive data
+
+### Answer
+
+- TLS, pinning strategy, token lifecycle, least privilege scopes, encryption at rest, OWASP Mobile Top 10 awareness, regular key rotation, abuse detection.
+
+### Key Takeaway
+
+Security is **process + architecture**, not one library.
+
+---
+
+### Question (merged)
+
+**Firebase integration** experience (Realtime DB, FCM, Analytics)
+
+### Answer
+
+- Discuss data modeling, indexing, security rules, notification segmentation, analytics event design, Crashlytics triage, Remote Config experimentation.
+
+### Key Takeaway
+
+Connect Firebase choices to **privacy + cost**.
+
+---
+
+### Question (merged)
+
+Testing **MVP/MVVM/MVI** — strategy differences
+
+### Answer
+
+- Presenter interfaces, ViewModel output contracts, MVI pure reducers + snapshot tests.
+
+### Key Takeaway
+
+Architecture dictates **test doubles**.
+
+---
+
+### Question (merged)
+
+**Tell me about yourself / hobbies / not on resume** (templates)
+
+### Answer
+
+- Keep professional spine (domains, tech, scale) + authentic human note; avoid rambling.
+
+### Key Takeaway
+
+**2 minutes**, structured.
+
+---
+
+### Question (merged)
+
+**Production incident handling**
+
+### Answer
+
+- Communicate impact, mitigate, root cause, preventive controls, feature flags, postmortem blameless culture.
+
+### Key Takeaway
+
+Show **calm command** + **customer focus**.
+
+---
+
+### Question (merged)
+
+**MVP/MVVM/MVI project examples** (banking/clinician/bus tracker narratives)
+
+### Answer
+
+- Original file repeats similar answer—merge into one story bank with **different metrics per domain**.
+
+### Key Takeaway
+
+Prepare **3 stories** spanning scale, conflict, and ambiguity.
+
+---
+
+### Question (merged)
+
+**Data security in databases**
+
+### Answer
+
+- Encryption, integrity constraints, authenticated APIs, backups, least privilege.
+
+### Key Takeaway
+
+Defense in depth across **client + server**.
+
+---
+
+### Question (merged)
+
+**Jetpack (Room, VM, LiveData)** usage story
+
+### Answer
+
+- Offline cache, migration safety, lifecycle-aware UI, reduced overfetch.
+
+### Key Takeaway
+
+Tie Jetpack to **business outcomes**.
+
+---
+
+### Question (merged)
+
+**UI + unit testing strategy**
+
+### Answer
+
+- Pyramid, deterministic CI, screenshot goldens for UI, MockWebServer, TDD where ROI positive.
+
+### Key Takeaway
+
+Flake elimination is a **staff-level skill**.
+
+---
+
+### Question (merged)
+
+**Code optimization / APK size** narrative (25% claim in source)
+
+### Answer
+
+- Use your own verified numbers; mention R8, resource shrink, dynamic delivery, profiling.
+
+### Key Takeaway
+
+Never fabricate **metrics you can’t defend**.
+
+---
+
+### Question (merged)
+
+**Simple solution to complex problem**
+
+### Answer
+
+- Show how you reframed problem—query optimization + caching vs microservices rewrite.
+
+### Key Takeaway
+
+**Elegance** wins over buzzwords.
+
+---
+
+### Question (merged)
+
+**Git collaboration & branching**
+
+### Answer
+
+- Trunk-based vs GitFlow, PR quality gates, CODEOWNERS, protected branches.
+
+### Key Takeaway
+
+Branch strategy serves **release cadence**.
+
+---
+
+### Question (merged)
+
+**Dependency injection frameworks (Dagger/Koin)**
+
+### Answer
+
+- Compile-time safety vs simplicity; testing strategy; module boundaries.
+
+### Key Takeaway
+
+Pick DI for **graph complexity**, not fashion.
+
+---
+
+### Question (merged)
+
+**Google Maps / geo** experience
+
+### Answer
+
+- Accuracy vs battery, geofencing reliability, privacy prompts, enterprise billing.
+
+### Key Takeaway
+
+Location is **policy + UX + tech**.
+
+---
+
+### Question (merged)
+
+**Code optimization impact** (deep narrative)
+
+### Answer
+
+- Profilers, structural improvements, data structure choices, caching, measurement loops.
+
+### Key Takeaway
+
+Always close loop with **before/after**.
+
+---
+
+### Question (merged)
+
+**Code reviews** example
+
+### Answer
+
+- Security review anecdote with constructive feedback + follow-up.
+
+### Key Takeaway
+
+Reviews teach **culture**.
+
+---
+
+### Question (merged)
+
+**Roles & responsibilities**
+
+### Answer
+
+- Scope, leadership, cross-functional work, quality ownership.
+
+### Key Takeaway
+
+Align with **job ladder**.
+
+---
+
+### Question (merged)
+
+**Backward compatible API changes**
+
+### Answer
+
+- Versioning, additive changes, contract tests, dual-read/dual-write patterns.
+
+### Key Takeaway
+
+Compatibility is **distributed systems** discipline.
+
+---
+
+### Question (merged)
+
+**Challenging project** (maps + realtime)
+
+### Answer
+
+- Concurrency, consistency, offline, performance.
+
+### Key Takeaway
+
+Show **depth over breadth**.
+
+---
+
+### Question (merged)
+
+**Design patterns in practice** (Singleton/Observer/Factory)
+
+### Answer
+
+- Justify with constraints; acknowledge singleton test issues.
+
+### Key Takeaway
+
+Patterns are **tools**, not tattoos.
+
+---
+
+### Question (merged)
+
+**Difficult bug / intermittent crash**
+
+### Answer
+
+- Crashlytics breadcrumbs, repro harness, architectural fix vs patch.
+
+### Key Takeaway
+
+Intermittent == **missing instrumentation**.
+
+---
+
+### Question (merged)
+
+**Staying current with API integration trends**
+
+### Answer
+
+- RFC reading, conferences, secure coding labs, internal guilds.
+
+### Key Takeaway
+
+Continuous learning is **scheduled**, not aspirational.
+
+---
+
+### Question (merged)
+
+**Refactoring definition + legacy refactor story**
+
+### Answer
+
+- Risk reduction strategy, incremental steps, tests-first, stakeholder comms.
+
+### Key Takeaway
+
+Refactor needs **business sponsor**.
+
+---
+
+### Question (merged)
+
+**CI/CD setup** (Gradle + GH Actions/Jenkins + Test Lab + Fastlane)
+
+### Answer
+
+- Caching, signing, tracks, automated UI, release notes.
+
+### Key Takeaway
+
+Pipeline mirrors **product quality**.
+
+---
+
+### Question (merged)
+
+**Concurrent development in CI/CD**
+
+### Answer
+
+- Feature flags, small PRs, merge queues, integration branches.
+
+### Key Takeaway
+
+Reduce **integration pain** mechanically.
+
+---
+
+### Question (merged)
+
+**Tools used for CI/CD**
+
+### Answer
+
+- Jenkins, Bitrise, CircleCI, Fastlane, Play Console, Firebase Test Lab, Espresso.
+
+### Key Takeaway
+
+Name **what you measured** with each tool.
+
+---
+
+### Question (merged)
+
+**Code quality in CI/CD**
+
+### Answer
+
+- Lint, static analysis, coverage gates (carefully), formatting, CODEOWNERS.
+
+### Key Takeaway
+
+Gates should be **high-signal** to avoid bypass culture.
