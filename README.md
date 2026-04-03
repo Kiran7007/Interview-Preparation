@@ -1,12 +1,5 @@
 # Interview Preparation (Senior Android Engineer / Tech Lead)
 
-Structured notes follow [`Instruction.md`](Instruction.md).
-
-- **Merged sources** live in [`dsa/patterns.md`](dsa/patterns.md) (DSA cheatsheets, LeetCode patterns, Kotlin templates, PDF link list).
-- **Verbatim archives:** [`android/android-core.md`](android/android-core.md) ends with the full legacy Android Q&A export; [`java/java-core.md`](java/java-core.md) includes the full legacy Java appendix.
-
----
-
 ## Android
 
 - [Android Core](android/android-core.md)
@@ -46,19 +39,8 @@ Structured notes follow [`Instruction.md`](Instruction.md).
 
 - [Flutter](cross-platform/flutter.md)
 
----
+## Other
 
-## Other assets
-
-- [Instruction.md](Instruction.md) — how this corpus was generated
-- [`assets/`](assets/) — diagrams and PDFs referenced from the notes
-
-## Behavioral
-
+- [Instruction.md](Instruction.md)
+- [assets/](assets/)
 - [STAR method for interviews](https://www.testgorilla.com/blog/star-method-interviews/)
-
----
-
-## Refinement pass (optional)
-
-Per `Instruction.md`, tighten answers with a strong opening line, one owned production example, and common mistakes—without changing file layout.
