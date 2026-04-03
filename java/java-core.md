@@ -712,13 +712,13 @@ Why is the main method static in java?
 
 ### Code example
 
+```java
+public class Hello {
+    static {
+        System.out.println("Hello, World!");
+    }
+}
 ```
-   public class Hello { 
-       static { 
-        System.out.println("Hello, World!"); 
-       } 
-     }
-     ```
 
 ### Key takeaway
 
@@ -1239,8 +1239,10 @@ What is an object cloning? can you use clone() method of every object?
 ### Code example
 
 ```java
-  protected Object clone() throws CloneNotSupportedException
-  ```
+protected Object clone() throws CloneNotSupportedException {
+    return super.clone();
+}
+```
 
 ### Key takeaway
 
@@ -1270,110 +1272,89 @@ What is the difference between Shallow copy and deep copy?
 
 ### Code example
 
+Shallow copy (shared nested object):
+
 ```java
-  class Test  {
-      int x, y;
-  }   
-  // Contains a reference of Test and implements
-  // clone with shallow copy.
-  class Test2 implements Cloneable {
-      int a;
-      int b;
-      Test c = new Test();
+class Test {
+    int x, y;
+}
 
-      public Object clone() throws CloneNotSupportedException {
+// Contains a reference of Test and implements clone with shallow copy.
+class Test2 implements Cloneable {
+    int a;
+    int b;
+    Test c = new Test();
+
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
-      }
-  }  
-  public class Main {
+    }
+}
 
-      public static void main(String args[]) throws CloneNotSupportedException {
+public class Main {
+
+    public static void main(String args[]) throws CloneNotSupportedException {
         Test2 t1 = new Test2();
         t1.a = 10;
         t1.b = 20;
         t1.c.x = 30;
         t1.c.y = 40;
 
-        Test2 t2 = (Test2)t1.clone();
-
-        // Creating a copy of object t1 and passing
-        //  it to t2
+        Test2 t2 = (Test2) t1.clone();
         t2.a = 100;
-
-        // Change in primitive type of t2 will not
-        // be reflected in t1 field
         t2.c.x = 300;
 
-        // Change in object type field will be
-        // reflected in both t2 and t1(shallow copy)
-        System.out.println(t1.a + " " + t1.b + " " +
-                          t1.c.x + " " + t1.c.y);
-        System.out.println(t2.a + " " + t2.b + " " +
-                          t2.c.x + " " + t2.c.y);
-      }
-  }
-  ```
-
-  ```
-  10 20 300 40
-  100 20 300 40
-  ```
-
-    ```java
-    class Test {
-      int x, y;
-    }   
-    // Contains a reference of Test and implements
-    // clone with deep copy.
-    class Test2 implements Cloneable {
-      int a, b;
-
-      Test c = new Test();
-
-      public Object clone() throws CloneNotSupportedException {
-        // Assign the shallow copy to new reference variable t
-        Test2 t = (Test2)super.clone();
-
-        t.c = new Test();
-
-        // Create a new object for the field c
-        // and assign it to shallow copy obtained,
-        // to make it a deep copy
-        return t;
-      }
+        System.out.println(t1.a + " " + t1.b + " " + t1.c.x + " " + t1.c.y);
+        System.out.println(t2.a + " " + t2.b + " " + t2.c.x + " " + t2.c.y);
     }
+}
+```
 
-    public class Main {
+```text
+10 20 300 40
+100 20 300 40
+```
 
-      public static void main(String args[]) throws CloneNotSupportedException {
+Deep copy (clone nested object):
+
+```java
+class Test {
+    int x, y;
+}
+
+class Test2 implements Cloneable {
+    int a, b;
+    Test c = new Test();
+
+    public Object clone() throws CloneNotSupportedException {
+        Test2 t = (Test2) super.clone();
+        t.c = new Test();
+        return t;
+    }
+}
+
+public class Main {
+
+    public static void main(String args[]) throws CloneNotSupportedException {
         Test2 t1 = new Test2();
         t1.a = 10;
         t1.b = 20;
         t1.c.x = 30;
         t1.c.y = 40;
 
-        Test2 t3 = (Test2)t1.clone();
+        Test2 t3 = (Test2) t1.clone();
         t3.a = 100;
-
-        // Change in primitive type of t2 will not
-        // be reflected in t1 field
         t3.c.x = 300;
 
-        // Change in object type field of t2 will not
-        // be reflected in t1(deep copy)
-        System.out.println(t1.a + " " + t1.b + " " +
-                          t1.c.x + " " + t1.c.y);
-        System.out.println(t3.a + " " + t3.b + " " +
-                          t3.c.x + " " + t3.c.y);
-      }
+        System.out.println(t1.a + " " + t1.b + " " + t1.c.x + " " + t1.c.y);
+        System.out.println(t3.a + " " + t3.b + " " + t3.c.x + " " + t3.c.y);
     }
+}
+```
 
-    ```
-
-    ```
-    10 20 30 40
-    100 20 300 0
-    ```
+```text
+10 20 30 40
+100 20 300 0
+```
 
 ### Key takeaway
 
@@ -1707,17 +1688,21 @@ Generics in Java
 
 ### Code example
 
-```
-   List list = new ArrayList();  
-   list.add("hello");  
-   String s = (String) list.get(0); //typecasting  
-   ```
+Before generics (requires cast):
 
-    ```
-    List<String> list = new ArrayList<String>();  
-    list.add("hello");  
-    String s = list.get(0);  
-    ```
+```java
+List list = new ArrayList();
+list.add("hello");
+String s = (String) list.get(0); // typecasting
+```
+
+With generics:
+
+```java
+List<String> list = new ArrayList<String>();
+list.add("hello");
+String s = list.get(0);
+```
 
 ### Key takeaway
 
@@ -1824,9 +1809,9 @@ What is an Observable in RXJava2?
 ### Code example
 
 ```java
-    // RxAndroid Tutorial - Adding Observable
-    Observable<String> stringObservable = Observable.just("Hello Reactive Programming!");
-    ```
+// RxAndroid Tutorial - Adding Observable
+Observable<String> stringObservable = Observable.just("Hello Reactive Programming!");
+```
 
 ### Key takeaway
 
@@ -1849,26 +1834,26 @@ What is an Observer in RXJava2?
 ### Code example
 
 ```java
-    // RxAndroid Tutorial - Adding observer
-    Observer<String> stringObserver = new Observer<String>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
+// RxAndroid Tutorial - Adding observer
+Observer<String> stringObserver = new Observer<String>() {
+    @Override
+    public void onSubscribe(Disposable d) {
+    }
 
-            @Override
-            public void onNext(String s) {
-                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-            }
+    @Override
+    public void onNext(String s) {
+        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+    }
 
-            @Override
-            public void onError(Throwable e) {
-            }
+    @Override
+    public void onError(Throwable e) {
+    }
 
-            @Override
-            public void onComplete() {
-            }
-        };
-    ```
+    @Override
+    public void onComplete() {
+    }
+};
+```
 
 ### Key takeaway
 
@@ -1891,13 +1876,13 @@ How to Subscribe / Unsubscribe in RXJava?
 ### Code example
 
 ```java
-    // RxAndroid tutorial - observer subscribing to observable
-    stringObservable.subscribe(stringObserver);
-    ```
+// RxAndroid tutorial - observer subscribing to observable
+stringObservable.subscribe(stringObserver);
+```
 
 ### Key takeaway
 
-> We can make an Observer to subscribe to Observable as follows: ```java // RxAndroid tutorial - observer subscribing to observable stringObservable.
+> Attach the observer with `subscribe()`; dispose subscriptions when done to avoid leaks and stale callbacks.
 
 
 ---

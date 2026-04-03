@@ -2,11 +2,6 @@
 
 ---
 
-> **How to read this file**  
-> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
-
----
-
 ### Question
 
 What is the **`Application` class** and how should teams use it safely?
@@ -933,14 +928,14 @@ What is an Intent Filter?
 ### Code example
 
 ```xml
-    <activity android:name=".ExampleActivity" android:icon="@drawable/app_icon">
-      <intent-filter>
-          <action android:name="android.intent.action.SEND" />
-          <category android:name="android.intent.category.DEFAULT" />
-          <data android:mimeType="text/plain" />
-      </intent-filter>
-    </activity>
-    ```
+<activity android:name=".ExampleActivity" android:icon="@drawable/app_icon">
+    <intent-filter>
+        <action android:name="android.intent.action.SEND" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="text/plain" />
+    </intent-filter>
+</activity>
+```
 
 ### Key takeaway
 
@@ -989,23 +984,23 @@ What is Pending Intent in Android?
 ### Code example
 
 ```java
-    Intent intent = new Intent(this, AnyActivity.class);
+Intent intent = new Intent(this, AnyActivity.class);
 
-    // Creating a pending intent and wrapping our intent
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    try {
-        // Perform the operation associated with our pendingIntent
-        pendingIntent.send();
-    } catch (PendingIntent.CanceledException e) {
-        e.printStackTrace();
-    }
-    ```
+// Creating a pending intent and wrapping our intent
+PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+try {
+    // Perform the operation associated with our pendingIntent
+    pendingIntent.send();
+} catch (PendingIntent.CanceledException e) {
+    e.printStackTrace();
+}
+```
 
-    ```java
-    PendingIntent.getActivity();//Retrieves a PendingIntent to start an Activity
-    PendingIntent.getBroadcast();// Retrieves a PendingIntent to perform a Broadcast
-    PendingIntent.getService();// Retrieves a PendingIntent to start a Service
-    ```
+```java
+PendingIntent.getActivity();   // Retrieves a PendingIntent to start an Activity
+PendingIntent.getBroadcast(); // Retrieves a PendingIntent to perform a Broadcast
+PendingIntent.getService();  // Retrieves a PendingIntent to start a Service
+```
 
 ### Key takeaway
 
@@ -3501,21 +3496,22 @@ What is a singleton class in Android?
 
 ### Code example
 
-```
-   private static volatile RESTService instance;
-    protected RESTService(Context context) {
-        super(context);
-    }
-    
-    public static RESTService getInstance(Context context) {
+```java
+private static volatile RESTService instance;
+
+protected RESTService(Context context) {
+    super(context);
+}
+
+public static RESTService getInstance(Context context) {
     if (instance == null) {
-       synchronized (RESTService.class) {
-          if (instance == null) instance = new RESTService(context);
-            }
+        synchronized (RESTService.class) {
+            if (instance == null) instance = new RESTService(context);
         }
-        return instance;
     }
-    ```
+    return instance;
+}
+```
 
 ### Key takeaway
 
@@ -3622,14 +3618,17 @@ How would you implement swipe animation in Android
 
 ### Code example
 
+```xml
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <translate
+        android:fromXDelta="-100%"
+        android:toXDelta="0%"
+        android:fromYDelta="0%"
+        android:toYDelta="0%"
+        android:duration="700" />
+</set>
 ```
-   <set xmlns:android="http://schemas.android.com/apk/res/android"
-     android:shareInterpolator="false">
-    <translate android:fromXDelta="-100%" android:toXDelta="0%"
-             android:fromYDelta="0%" android:toYDelta="0%"
-             android:duration="700"/>
-    </set>
-    ```
 
 ### Key takeaway
 
@@ -4675,12 +4674,12 @@ What is the use-case of @BindsInstance Annotation?
 ### Code example
 
 ```java
-        @Component.Builder
-        interface Builder {
-            @BindsInstance Builder userName(@UserName String userName);
-            AppComponent build();
-        }
-    ```
+@Component.Builder
+interface Builder {
+    @BindsInstance Builder userName(@UserName String userName);
+    AppComponent build();
+}
+```
 
 ### Key takeaway
 

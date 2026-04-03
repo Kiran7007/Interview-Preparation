@@ -2,11 +2,6 @@
 
 ---
 
-> **How to read this file**  
-> This is a **long reference**: curated links first, then pasted notes and **Kotlin pattern templates** (arrays through graphs, strings, DP, etc.). Major blocks are separated by `---`. Use your editor search or outline to jump to a section.
-
----
-
 ## Starter resources
 
 - [Coding Interview University (jwasham)](https://github.com/jwasham/coding-interview-university/blob/main/README.md)

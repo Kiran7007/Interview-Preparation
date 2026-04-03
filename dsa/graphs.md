@@ -2,11 +2,6 @@
 
 ---
 
-> **How to read this file**  
-> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
-
----
-
 ### Question
 
 How do you represent a graph for mobile interview problems—**adjacency list vs matrix**—and when does either fail?

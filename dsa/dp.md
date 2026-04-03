@@ -2,11 +2,6 @@
 
 ---
 
-> **How to read this file**  
-> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
-
----
-
 ### Question
 
 How do you decide between **top-down memoization** vs **bottom-up DP** in interviews?

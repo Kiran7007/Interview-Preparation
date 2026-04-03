@@ -2,11 +2,6 @@
 
 ---
 
-> **How to read this file**  
-> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
-
----
-
 ### Question
 
 Why is quicksort preferred over mergesort for sorting **arrays** in practice?
