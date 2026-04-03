@@ -10,8 +10,8 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 
 - **remember:** Survives recomposition within the composition; lost on process death/configuration unless backed elsewhere.
 - **rememberSaveable:** Persists small state via saved instance state mechanism—survives some configuration/process restarts with size limits.
-- **Trade-offs:** Don’t stash large lists in saveable; use ViewModel + repository for real state.
-- **Real-world example:** Text field scroll position vs selected tab index (saveable) vs fetched feed (ViewModel).
+- **What to watch for:** Don’t stash large lists in saveable; use ViewModel + repository for real state.
+- **Example:** Text field scroll position vs selected tab index (saveable) vs fetched feed (ViewModel).
 
 ### Useful links
 
@@ -31,7 +31,7 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 
 - **map:** 1:1 transform (`List<UserDto>` → `List<User>`).
 - **flatMap:** 1:many flatten (`List<Order>` → all `LineItem`s).
-- **Real-world example:** Flatten nested pagination envelopes into a single `Flow<List<Item>>` pipeline.
+- **Example:** Flatten nested pagination envelopes into a single `Flow<List<Item>>` pipeline.
 
 ### Useful links
 
@@ -51,8 +51,8 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 
 - **StateFlow:** Hot, always has a value, conflates rapid updates—great for UI state snapshots.
 - **SharedFlow:** Hot, no single value by default, configurable replay/extraBuffer—great for one-shot events *if* you accept buffering discipline.
-- **Trade-offs:** `SharedFlow` “events” are easy to mishandle (dropped/collected twice); many teams model events as state + `Channel`/`callbackFlow` patterns instead.
-- **Real-world example:** `StateFlow<UiState>` + `SharedFlow<SnackbarMessage>` with replay=0 and careful collection in `LaunchedEffect`.
+- **What to watch for:** `SharedFlow` “events” are easy to mishandle (dropped/collected twice); many teams model events as state + `Channel`/`callbackFlow` patterns instead.
+- **Example:** `StateFlow<UiState>` + `SharedFlow<SnackbarMessage>` with replay=0 and careful collection in `LaunchedEffect`.
 
 ### Useful links
 
@@ -72,7 +72,7 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 
 - **Cold:** `flow { }` runs per collector; safe for per-UI subscriptions if scoped.
 - **Hot:** `SharedFlow/StateFlow` emits independent of individual collectors (subject-like).
-- **Real-world example:** Cold for DB queries per screen; hot for global session ticker (rare).
+- **Example:** Cold for DB queries per screen; hot for global session ticker (rare).
 
 ### Useful links
 
@@ -91,7 +91,7 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 ### Answer
 
 - Synchronized methods/blocks, `Atomic*`, `ConcurrentHashMap`, structured coroutines with single-thread dispatchers for domain state.
-- **Real-world example:** Guard cache map updates in repository with `Mutex` in coroutines instead of scattered `synchronized`.
+- **Example:** Guard cache map updates in repository with `Mutex` in coroutines instead of scattered `synchronized`.
 
 ### Useful links
 

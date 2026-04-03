@@ -8,13 +8,15 @@ Why use **MVP / MVVM / MVI** instead of “god Activities”?
 
 ### Answer
 
-- **Deep explanation:** Separate concerns for testability, merge velocity, and parallel team work; avoid lifecycle-tangled business rules.
-- **Trade-offs:** More boilerplate without tooling; MVI can be heavy for simple screens.
-- **Real-world example:** Banking apps isolating presentation from domain to pass compliance reviews + unit tests without Espresso.
+When all logic lives inside huge **Activities**, tests are painful, reviews are noisy, and teams step on each other. Splitting **UI**, **presentation logic**, and **data** makes changes safer and lets you **unit test** without spinning up the full framework.
+
+The cost is more **files and wiring**—and **MVI** can feel heavy on small screens. Pick a style that matches team size and how complex the screen state really is.
+
+**Example:** A banking app keeps payment rules out of Activities so compliance-friendly tests can run on the JVM without Espresso for every rule.
 
 ### Key takeaway
 
-> Architecture buys **test seams** and **change isolation**.
+> Good architecture gives you **test seams** and **clear boundaries** between UI and logic.
 
 ---
 
@@ -24,12 +26,13 @@ Why should the **View be an interface in MVP**?
 
 ### Answer
 
-- Presenter depends on abstraction; enables JVM tests and alternate UIs (tablet/compose migration).
-- **Trade-offs:** Extra indirection; still ensure interface reflects real user intents, not widgets.
+The **presenter** talks to the **view through an interface** (what to show, which errors to display) instead of holding a concrete `Activity`. That makes it easy to **fake the view in tests** and to swap implementations (phone vs tablet, or later **Compose**).
+
+The downside is another layer: the interface must describe **user-facing intents**, not random widget methods, or it becomes useless.
 
 ### Key takeaway
 
-> **Invert dependency** toward the presenter.
+> **Depend on abstractions** so the presenter can be tested without a real screen.
 
 ---
 
@@ -39,18 +42,20 @@ Why should the **View be an interface in MVP**?
 
 ### Answer
 
-- **MVC:** View + Controller coupling hurts testing on Android.
-- **MVP:** Presenter mediates; view passive; good test story.
-- **MVVM:** Data binding / observable state; ViewModel survives config; presenter-less.
-- **MVI:** Single state reducer; great for complex UX, more ceremony.
-- **Useful links / samples:**
-  - MVP sample: https://github.com/anitaa1990/Inshorts  
-  - MVVM sample: https://github.com/anitaa1990/Trailers  
-  - MVI: https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec  
+- **MVC:** On Android the “controller” often collapses into the Activity, so **view and logic stay tangled**—hard to test.
+- **MVP:** The **presenter** sits in the middle; the view is dumb. Strong **test story** for presentation rules.
+- **MVVM:** **ViewModel** holds UI-ready state; views observe. Survives **configuration changes** when scoped correctly. Less “presenter calls view” glue.
+- **MVI:** One **state tree** and **reducers/events**—great when many things update the same screen, more **ceremony** for simple forms.
+
+### Useful links
+
+- MVP sample: https://github.com/anitaa1990/Inshorts  
+- MVVM sample: https://github.com/anitaa1990/Trailers  
+- MVI: https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec  
 
 ### Key takeaway
 
-> Pick **MVVM+UDF** for most greenfield; **MVI** when state explosion demands it.
+> **MVVM (+ clear state)** fits most new apps; **MVI** when shared screen state gets hard to reason about.
 
 ---
 
@@ -60,12 +65,13 @@ What is the **role of Presenter in MVP** and **advantage of MVVM over MVP**?
 
 ### Answer
 
-- **Presenter:** orchestrates view events + model; decides navigation side-effects in some teams.
-- **MVVM advantage:** ViewModel typically has **no view reference**—less leak risk, easier rotation handling with correct scope.
+In **MVP**, the **presenter** handles user actions, talks to the model, and tells the **view interface** what to render. Some teams also put **navigation** decisions there.
+
+**MVVM** usually means the **ViewModel does not hold a reference to the view**, which **reduces leak risk** and fits **LiveData/Flow** observation. Rotation is easier when state lives in a **scoped ViewModel** instead of a presenter that must reattach.
 
 ### Key takeaway
 
-> MVVM reduces **view coupling**; still need clear domain boundaries.
+> MVVM **decouples** the view more; you still need clear **domain** boundaries.
 
 ---
 
@@ -75,17 +81,19 @@ Why **Dependency Injection (Dagger/Hilt/Koin)** on large apps?
 
 ### Answer
 
-- **Inversion of control** for testability, scoping (`Singleton`, `@ActivityRetainedScoped`), and modular builds.
-- **Trade-offs:** Compile-time graphs (Dagger) vs runtime DSL (Koin)—choose based on graph complexity and CI time budgets.
-- **Real-world example:** Swap payment SDK implementation in QA builds via test modules.
+Large apps need **clear ownership** of dependencies: who creates **Retrofit**, who gets a **user-scoped** object, what lives for one **Activity** vs the whole app. **DI** (Dagger/Hilt compile-time, Koin runtime) wires that graph instead of `new` everywhere.
+
+**Trade-off:** compile-time graphs catch mistakes early but need **build time**; runtime DI is flexible but errors may appear **at runtime**.
+
+**Example:** Swap a **payment SDK** implementation in QA builds using test modules and bindings.
 
 ### Useful links
 
-- IoC discussion: https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO  
+- https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO  
 
 ### Key takeaway
 
-> DI is how you keep **feature flags + SDK swaps** sane.
+> DI keeps **feature flags, test doubles, and SDK swaps** manageable as the app grows.
 
 ---
 
@@ -95,29 +103,30 @@ Explain **Jetpack Architecture Components** and how **Room / LiveData / ViewMode
 
 ### Answer
 
-- **Room:** typed persistence + migrations + (optional) encryption.
-- **LiveData:** lifecycle-aware observer (prefer Flow in greenfield).
-- **ViewModel:** UI state + survives config change when scoped correctly.
-- **Lifecycle:** repeatable startup/teardown contracts.
-- **Data/View Binding:** reduces boilerplate; view binding is simpler when you don’t need two-way binding.
-- **Official docs:**
-  - Architecture: https://developer.android.com/topic/libraries/architecture/  
-  - Room: https://developer.android.com/topic/libraries/architecture/room  
-  - LiveData: https://developer.android.com/topic/libraries/architecture/livedata  
-  - ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel  
-  - Lifecycle: https://developer.android.com/topic/libraries/architecture/lifecycle  
-  - Data binding: https://developer.android.com/topic/libraries/data-binding/  
-- **Samples:**
-  - Room article: https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24  
-  - Room sample: https://github.com/anitaa1990/RoomDb-Sample  
-  - LiveData sample: https://github.com/anitaa1990/GameOfThronesTrivia  
-  - Data binding sample: https://github.com/anitaa1990/DataBindingExample  
-  - Room encryption: https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e  
-  - Data binding vs view binding: https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding  
+- **Room:** SQLite with **compile-time checks** and **migrations**—your local source of truth for structured data.
+- **LiveData:** Observes data and respects **lifecycle** (stops when the screen is gone). On new Kotlin codebases many teams prefer **Flow** with explicit collection rules.
+- **ViewModel:** Holds **UI state and use cases** for a scope (often a Fragment/Activity); **survives rotation** when scoped correctly.
+- **Lifecycle:** Common vocabulary for **when** to start and stop work (observers, `LifecycleOwner`).
+- **Data / View binding:** Less findViewById glue; **view binding** is simpler if you do not need two-way binding or expressions in XML.
+
+### Useful links
+
+- Architecture: https://developer.android.com/topic/libraries/architecture/  
+- Room: https://developer.android.com/topic/libraries/architecture/room  
+- LiveData: https://developer.android.com/topic/libraries/architecture/livedata  
+- ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel  
+- Lifecycle: https://developer.android.com/topic/libraries/architecture/lifecycle  
+- Data binding: https://developer.android.com/topic/libraries/data-binding/  
+- Room article: https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24  
+- Room sample: https://github.com/anitaa1990/RoomDb-Sample  
+- LiveData sample: https://github.com/anitaa1990/GameOfThronesTrivia  
+- Data binding sample: https://github.com/anitaa1990/DataBindingExample  
+- Room encryption: https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e  
+- Data binding vs view binding: https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding  
 
 ### Key takeaway
 
-> Modern stack = **persistence + structured concurrency + lifecycle-aware collection**.
+> Typical modern stack: **Room + ViewModel + coroutines/Flow + lifecycle-aware collection**.
 
 ---
 
@@ -127,13 +136,17 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- **Internal:** `ViewModelStore` + `SavedStateHandle` + factory; cleared when owner scope ends (not on rotation).
-- **Context risk:** memory leaks + testability; use `Application` context only for app-scoped dependencies via Hilt if truly needed.
-- **Useful link:** https://blog.mindorks.com/android-viewmodels-under-the-hood  
+A **ViewModel** is stored in a **ViewModelStore** tied to a lifecycle owner (Activity, Fragment, or navigation back stack entry). It is **cleared** when that scope is **finished for good**—not on every **rotation**.
+
+Putting an **Activity `Context`** in a ViewModel is risky: the ViewModel can **outlive** the Activity configuration, which **leaks** the old Activity. Use **`Application`** context only for truly app-wide things, and prefer **Hilt/AndroidEntryPoint** patterns over stashing contexts.
+
+### Useful links
+
+- https://blog.mindorks.com/android-viewmodels-under-the-hood  
 
 ### Key takeaway
 
-> ViewModel is a **state bucket + use-case host**, not a UI class.
+> Treat ViewModel as **state + coordinators**, not as another **Activity helper**.
 
 ---
 
@@ -143,15 +156,19 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- **ObservableField:** data binding era; still works but less lifecycle-aware than LiveData.
-- **`setValue`:** main thread; **`postValue`** marshals to main—racey if called back-to-back (last wins/coalescing surprises).
-- **Links:**
-  - https://blog.mindorks.com/livedata-vs-observable-in-android  
-  - https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80  
+**ObservableField** comes from the **data binding** era; it still works but is less **lifecycle-aware** than **LiveData**.
+
+- **`setValue`:** must run on the **main thread**; updates observers immediately.
+- **`postValue`:** safe from **background** threads—it posts the update to the main thread. Calling **`postValue` many times in a row** can mean **only the last value** is delivered (coalescing), which surprises people in tests.
+
+### Useful links
+
+- https://blog.mindorks.com/livedata-vs-observable-in-android  
+- https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80  
 
 ### Key takeaway
 
-> On Kotlin coroutines-first codebases, prefer **StateFlow** with explicit dispatch rules.
+> On coroutine-first code, **StateFlow** plus clear **main vs background** rules is often simpler.
 
 ---
 
@@ -161,13 +178,17 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- **StateFlow:** Kotlin-first, integrates with coroutines; always has value; careful with collectors + lifecycle.
-- **LiveData:** lifecycle-aware out of the box; Java interop.
-- **Link:** https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html  
+**StateFlow** is Kotlin-first and works naturally with **coroutines**; it **always has a current value**. You must **collect** it with lifecycle in mind (`repeatOnLifecycle`, etc.) so you do not leak or run work when the screen is off.
+
+**LiveData** is **lifecycle-aware** out of the box and is still useful for **Java** interop.
+
+### Useful links
+
+- https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html  
 
 ### Key takeaway
 
-> Use **`repeatOnLifecycle`** patterns when collecting flows.
+> When collecting **Flow**, use **`repeatOnLifecycle`** (or equivalent) so work stops when the UI is not active.
 
 ---
 
@@ -177,12 +198,15 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- Tie each principle to modules (feature vs core), repository interfaces, and navigation boundaries.
-- **Link:** https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/  
+**SOLID** is five design habits (single responsibility, open/closed, Liskov substitution, interface segregation, dependency inversion). On Android you see them in **feature modules**, **repository interfaces** hiding Room vs network, and **navigation** boundaries so one team does not own the whole graph.
+
+### Useful links
+
+- https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/  
 
 ### Key takeaway
 
-> SOLID is **merge conflict reduction**.
+> SOLID is less about buzzwords and more about **smaller, testable pieces** and fewer merge fights.
 
 ---
 
@@ -192,21 +216,23 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- **What it is:** Compose builds UI as `@Composable` functions of state; recomposition updates invalidated subtrees.
-- **State:** `remember` / `rememberSaveable` for local; ViewModel + `StateFlow` for screen truth; avoid business logic in composables.
-- **Modifiers:** ordered, immutable chains describing layout/semantics/behavior.
-- **InterOp:** `AndroidView`/`ComposeView` bridge legacy Views.
-- **Navigation:** Navigation-Compose with typed routes (type safety plugins) + deep links.
-- **Performance:** stabilize parameters (`stable` lists), keys, avoid lazy list allocations, use `derivedStateOf`, profile recomposition counts.
-- **Side effects:** `LaunchedEffect`/`DisposableEffect`/`SideEffect` for lifecycle-aligned work.
-- **Theming:** `MaterialTheme` + composition locals.
-- **Accessibility:** semantics, content descriptions, focus order.
-- **Testing:** compose test rules, semantics matchers, idle synchronization.
-- **Real-world example:** Incremental Compose adoption in payments SDK screens with strict regression screenshot tests.
+**Compose** builds UI from **`@Composable`** functions that describe the screen from **state**. When state changes, Compose **recomposes** (re-runs) the affected parts of the tree—not the whole app.
+
+- **State:** `remember` / `rememberSaveable` for local UI; **ViewModel + StateFlow** for screen truth. Keep **business rules** out of composables when possible.
+- **Modifiers:** Ordered chains describe layout, clicks, semantics—order matters.
+- **Interop:** `AndroidView` / `ComposeView` bridges **Views** and **Compose**.
+- **Navigation:** Navigation-Compose with **routes** and **deep links**.
+- **Performance:** Stable parameters, **keys** in lazy lists, **`derivedStateOf`**, and **recomposition counts** in debug.
+- **Side effects:** `LaunchedEffect`, `DisposableEffect`, `SideEffect` tie work to lifecycle.
+- **Theming:** `MaterialTheme` and composition locals.
+- **A11y:** semantics, content descriptions, focus order.
+- **Testing:** Compose test APIs and **semantics** (prefer **`testTag`** discipline).
+
+**Example:** Migrate a payments SDK screen to Compose behind **screenshot tests** so regressions are visible.
 
 ### Key takeaway
 
-> Compose rewards **explicit state ownership** and punishes **hidden side effects**.
+> Compose works best when **state ownership is obvious** and **side effects** are explicit—not hidden in random composables.
 
 ---
 
@@ -216,19 +242,23 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- **Component:** graph root; generates `DaggerX`.
-- **Module:** supplies bindings; `@Binds` for interfaces, `@Provides` for construction.
-- **Inject:** constructor/field/method injection sites.
-- **Scope:** lifetime boundary (`@Singleton`, custom `@FeatureScope`).
-- **Qualifier:** disambiguate multiple bindings of same type (`@Named("prod")`).
-- **BindsInstance:** pass runtime values (e.g., `userId`) into builder—use carefully to avoid test pain.
-- **DI pattern vs Service Locator:** prefer DI; service locator is test-hostile global lookup.
-- **Anti-pattern link:** https://stackoverflow.com/a/980616/3424919  
-- Diagram: `https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7`
+- **`@Component`:** Root of the object graph; Dagger generates **`DaggerYourComponent`**.
+- **`@Module`:** Methods that **provide** or **bind** dependencies. **`@Binds`** for interfaces (implementation class), **`@Provides`** for construction you control.
+- **`@Inject`:** Marks **constructor / field / method** injection sites.
+- **`@Scope`:** Ties lifetime to a scope (`@Singleton`, custom feature scope).
+- **`@Qualifier` / `@Named`:** Tell two bindings of the **same type** apart (`@Named("prod")`).
+- **`@BindsInstance`:** Pass **runtime values** (e.g. `userId`) into the builder—powerful but easy to make **tests** painful if overused.
+
+**Service locator** (global `getX()`) is harder to test than **constructor injection**.
+
+### Useful links
+
+- https://stackoverflow.com/a/980616/3424919  
+- https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7  
 
 ### Key takeaway
 
-> If you can’t **test** your graph, your scopes are wrong.
+> If the **graph is hard to test**, your **scopes** or **modules** are probably wrong.
 
 ---
 
@@ -238,14 +268,18 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- **Factory:** create one product type.
-- **Abstract factory:** families of related objects (toolkits).
-- **Example:** https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java  
-- **Creational patterns link:** https://www.baeldung.com/kotlin/builder-pattern  
+A **factory** creates **one kind of object**. An **abstract factory** creates **families** of related objects (think UI toolkits).
+
+On Android you more often use **DI** or simple builders than textbook factories inside every Fragment—save factories for **SDK boundaries** and **test doubles**.
+
+### Useful links
+
+- https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java  
+- https://www.baeldung.com/kotlin/builder-pattern  
 
 ### Key takeaway
 
-> Use factories at **SDK boundaries** and **test doubles**.
+> Use factories at **integration boundaries** and in **tests**, not as wallpaper in UI code.
 
 ---
 
@@ -255,12 +289,13 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- Wrap third-party SDKs behind your interfaces to absorb breaking changes.
-- **Real-world example:** Analytics adapter swapping Firebase ↔ internal pipeline.
+Wrap a **third-party SDK** behind **your own interface**. When the vendor changes APIs or you swap vendors, you change **one adapter** instead of every call site.
+
+**Example:** An **analytics** interface with implementations for Firebase vs an internal pipeline.
 
 ### Key takeaway
 
-> Adapters are **migration insurance**.
+> Adapters are **insurance** when external SDKs churn.
 
 ---
 
@@ -270,9 +305,10 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 
 ### Answer
 
-- Synchronizing entire method is coarse; **double-checked locking with `volatile`** is standard pattern for lazy singleton initialization.
-- **Android note:** Prefer DI scopes over hand-rolled singletons.
+Synchronizing the **entire `getInstance()`** is simple but can be slow under contention. **Double-checked locking** with a **`volatile`** field is the usual **lazy** singleton pattern.
+
+On Android, **prefer DI scopes** (singleton in the graph) instead of hand-rolled globals.
 
 ### Key takeaway
 
-> **Scope singletons**, don’t “static them everywhere”.
+> Prefer **scoped singletons from DI** over static **`getInstance()`** everywhere.

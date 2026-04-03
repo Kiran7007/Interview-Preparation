@@ -8,14 +8,15 @@
 
 ### Answer
 
-- **`commit()`** synchronous; returns boolean; can block UI if abused.
-- **`apply()`** asynchronous commit; no return; batches writes—preferred for UI thread callers.
-- **Interaction:** outstanding `apply()` can block a following `commit()`—document ordering in hot paths.
-- **Real-world example:** Feature flags written on main → `apply()`; critical gating config read-back in tests → `commit()` in test doubles only.
+**`commit()`** writes **right away** (blocking) and returns **true/false** so you know if disk write succeeded. **`apply()`** saves **in the background**—better when you are on the **main thread** and do not need an immediate result.
+
+If an **`apply()`** is still in flight and you call **`commit()`**, the **`commit()`** can **wait**—worth knowing in hot paths.
+
+**Example:** Feature flags toggled from the UI → usually **`apply()`**. Tests that must read back immediately might use **`commit()`** in test doubles.
 
 ### Key takeaway
 
-> Default **`apply()`**; understand **fsync timing** for crash consistency requirements.
+> Prefer **`apply()`** for normal UI saves; know **`commit()`** when you need a **confirmed** write.
 
 ---
 
@@ -25,20 +26,21 @@ What is a **ContentProvider** — when do you still build one?
 
 ### Answer
 
-- **Deep explanation:** Cross-process structured data API with URI permissions; integrates with `ContentResolver`.
-- **Internal working:** CRUD via URIs; enforce permissions in manifest + runtime checks.
-- **Trade-offs:** Heavy boilerplate; prefer app-internal Room for private data; providers shine for **secure sharing** and **CursorLoader-era interop** (legacy).
-- **Real-world example:** Sharing patient read-only slices to a partner app under signature permission.
+A **ContentProvider** exposes **structured data** to other processes through **`content://` URIs** with **permissions**. The system routes queries/updates through **`ContentResolver`**.
+
+They are **verbose** to build. For **data only your app uses**, **Room** is simpler. Providers still matter when you **share data securely** with another app or need the old **CursorLoader**-style patterns.
+
+**Example:** Read-only health data shared with a partner app under a **signature-level** permission.
 
 ### Useful links
 
 - https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42  
-- Official basics: https://developer.android.com/guide/topics/providers/content-provider-basics  
-- Diagram image: `/assets/content-provider-diagram.png`  
+- https://developer.android.com/guide/topics/providers/content-provider-basics  
+- Diagram: `/assets/content-provider-diagram.png`  
 
 ### Key takeaway
 
-> Treat providers as **API surfaces** with ACLs.
+> Think of a provider as a **small public API** with **access control**, not “free database.”
 
 ---
 
@@ -48,12 +50,15 @@ What is a **ContentProvider** — when do you still build one?
 
 ### Answer
 
-- Strongly typed SQL; migration tests mandatory; SQLCipher/SQLite encryption options for sensitive domains.
-- **Links:** see `android-architecture.md` Room link bundle (official docs + samples).
+**Room** is SQLite with **compile-time query checking** and **migration** APIs. **Ship a migration test** whenever you bump the schema. For sensitive domains, consider **SQLCipher** or other **encryption** options on top of SQLite.
+
+### Useful links
+
+- See Room link bundle in `android-architecture.md` (official docs + samples).
 
 ### Key takeaway
 
-> Ship **migration tests** with every schema bump.
+> Every **schema change** should include a **migration test**.
 
 ---
 
@@ -63,12 +68,15 @@ What is a **ContentProvider** — when do you still build one?
 
 ### Answer
 
-- No wholesale file path scanning; use SAF for user files; cache in app-specific dirs.
-- **Link:** https://blog.mindorks.com/understanding-the-scoped-storage-in-android  
+Avoid assuming **full filesystem** access. Use **MediaStore** for shared media, **SAF** when the user picks files, and **app-specific** directories for caches and internal files.
+
+### Useful links
+
+- https://blog.mindorks.com/understanding-the-scoped-storage-in-android  
 
 ### Key takeaway
 
-> **User data** vs **app cache** paths drive UX + privacy.
+> Separate **user-visible files** from **app-private cache**—privacy and UX depend on it.
 
 ---
 
@@ -78,8 +86,8 @@ How do you ensure **DB security & integrity** (health/finance examples)?
 
 ### Answer
 
-- Encryption at rest, validated schemas, authenticated access, backups encrypted, tamper detection on critical tables, least-privilege content providers.
+Use **encryption at rest** when required, **validate** inputs and schemas, enforce **auth** on the server (never trust the client alone), **encrypt backups**, and use **least privilege** for any shared providers.
 
 ### Key takeaway
 
-> Pair **client encryption** with **server-side authorization**.
+> **Client-side encryption** pairs with **server authorization**—one without the other is weak.

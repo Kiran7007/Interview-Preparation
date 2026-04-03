@@ -8,10 +8,10 @@ Why is quicksort preferred over mergesort for sorting **arrays** in practice?
 
 ### Answer
 
-- **Deep explanation:** Quicksort is in-place for arrays (partitioning swaps within the array) and has excellent cache behavior on contiguous memory. Mergesort needs \(O(n)\) auxiliary space for merging, which increases memory traffic and allocator pressure.
-- **Internal working:** Quicksort chooses a pivot, partitions into `< pivot` and `> pivot`, recurses. Mergesort divides halves, merges sorted subarrays.
-- **Trade-offs:** Quicksort worst-case \(O(n^2)\) with bad pivots (mitigated by randomized pivot / introsort). Mergesort is stable and worst-case \(O(n \log n)\) but pays extra space.
-- **Real-world example:** Sorting a large list of UI metrics in-memory on device—quicksort variants (e.g., `Arrays.sort` for primitives) are typical; mergesort appears when stability matters or for linked structures.
+- **In plain words:** Quicksort is in-place for arrays (partitioning swaps within the array) and has excellent cache behavior on contiguous memory. Mergesort needs \(O(n)\) auxiliary space for merging, which increases memory traffic and allocator pressure.
+- **How it works:** Quicksort chooses a pivot, partitions into `< pivot` and `> pivot`, recurses. Mergesort divides halves, merges sorted subarrays.
+- **What to watch for:** Quicksort worst-case \(O(n^2)\) with bad pivots (mitigated by randomized pivot / introsort). Mergesort is stable and worst-case \(O(n \log n)\) but pays extra space.
+- **Example:** Sorting a large list of UI metrics in-memory on device—quicksort variants (e.g., `Arrays.sort` for primitives) are typical; mergesort appears when stability matters or for linked structures.
 
 ### Code example
 
@@ -29,10 +29,10 @@ Why is mergesort often preferred over quicksort for **linked lists**?
 
 ### Answer
 
-- **Deep explanation:** Linked lists support \(O(1)\) insertion in the middle after you’ve found the split point; mergesort’s merge step can splice nodes without allocating a separate array buffer like array mergesort often does.
-- **Internal working:** Merge two sorted lists by pointer rewiring; divide list via slow/fast pointers.
-- **Trade-offs:** Quicksort on lists is less standard; mergesort is stable and \(O(n \log n)\) worst case with appropriate implementation.
-- **Real-world example:** Merging sorted event streams in a custom in-memory timeline buffer.
+- **In plain words:** Linked lists support \(O(1)\) insertion in the middle after you’ve found the split point; mergesort’s merge step can splice nodes without allocating a separate array buffer like array mergesort often does.
+- **How it works:** Merge two sorted lists by pointer rewiring; divide list via slow/fast pointers.
+- **What to watch for:** Quicksort on lists is less standard; mergesort is stable and \(O(n \log n)\) worst case with appropriate implementation.
+- **Example:** Merging sorted event streams in a custom in-memory timeline buffer.
 
 ### Code example
 
@@ -50,10 +50,10 @@ Why is binary search usually preferred over ternary search for interview + produ
 
 ### Answer
 
-- **Deep explanation:** Each ternary split reduces the range by a factor of 3 but performs **more comparisons per step** than binary (which splits by 2). Constants dominate for typical \(n\).
-- **Internal working:** Binary search maintains `lo/hi`, compares mid once per iteration.
-- **Trade-offs:** Ternary may appear in numeric unimodal function optimization on **continuous** domains—not the same as classic discrete array search.
-- **Real-world example:** Searching sorted remote config keys locally after sync.
+- **In plain words:** Each ternary split reduces the range by a factor of 3 but performs **more comparisons per step** than binary (which splits by 2). Constants dominate for typical \(n\).
+- **How it works:** Binary search maintains `lo/hi`, compares mid once per iteration.
+- **What to watch for:** Ternary may appear in numeric unimodal function optimization on **continuous** domains—not the same as classic discrete array search.
+- **Example:** Searching sorted remote config keys locally after sync.
 
 ### Code example
 
@@ -71,10 +71,10 @@ Explain Big-O, Big-Omega, and how you communicate complexity in interviews.
 
 ### Answer
 
-- **Deep explanation:** Big-O is an upper bound on growth; Big-Omega is a lower bound; Big-Theta is tight bound when both match. Interviewers care about **worst-case** unless they specify amortized/average.
-- **Internal working:** Count nested loops, recurrence relations (master theorem), or aggregate analysis for amortized (e.g., union-find).
-- **Trade-offs:** Optimize the metric the product cares about: CPU vs memory vs IO.
-- **Real-world example:** Replacing \(O(n^2)\) diffing in a RecyclerView adapter update with \(O(n)\) using proper diffing utilities.
+- **In plain words:** Big-O is an upper bound on growth; Big-Omega is a lower bound; Big-Theta is tight bound when both match. Interviewers care about **worst-case** unless they specify amortized/average.
+- **How it works:** Count nested loops, recurrence relations (master theorem), or aggregate analysis for amortized (e.g., union-find).
+- **What to watch for:** Optimize the metric the product cares about: CPU vs memory vs IO.
+- **Example:** Replacing \(O(n^2)\) diffing in a RecyclerView adapter update with \(O(n)\) using proper diffing utilities.
 
 ### Useful links
 
@@ -140,8 +140,8 @@ How do you choose between **prefix sums**, **difference array**, and **sliding w
 - **Prefix sums:** Static array, many `sum(l..r)` queries after \(O(n)\) preprocess.
 - **Difference array:** Many range increments then finalize with prefix sum (scheduling, offline updates).
 - **Sliding window:** Optimization over contiguous subarrays with monotonicity / bounded constraints.
-- **Trade-offs:** Mutability + query mix determines structure; don’t pay \(O(n)\) per query if queries are hot.
-- **Real-world example:** Analytics histogram buckets for session lengths (window), or precomputing cumulative spend for fraud rules (prefix).
+- **What to watch for:** Mutability + query mix determines structure; don’t pay \(O(n)\) per query if queries are hot.
+- **Example:** Analytics histogram buckets for session lengths (window), or precomputing cumulative spend for fraud rules (prefix).
 
 ### Key takeaway
 

@@ -8,10 +8,10 @@ When do you use **DFS vs BFS** on trees, and what breaks if you pick the wrong o
 
 ### Answer
 
-- **Deep explanation:** DFS (pre/in/post-order) is natural for path problems, recursion structure, and many BST invariants. BFS (level-order) is natural for shortest path on **unweighted** tree edges, level-by-level aggregation, and width computations.
-- **Internal working:** DFS uses call stack or explicit stack; BFS uses queue.
-- **Trade-offs:** DFS depth can overflow stack on degenerate trees—iterate with explicit stack if needed. BFS uses \(O(w)\) memory where \(w\) is max width.
-- **Real-world example:** Computing UI tree depth for accessibility vs computing minimum taps to reach a node in a shallow navigation tree.
+- **In plain words:** DFS (pre/in/post-order) is natural for path problems, recursion structure, and many BST invariants. BFS (level-order) is natural for shortest path on **unweighted** tree edges, level-by-level aggregation, and width computations.
+- **How it works:** DFS uses call stack or explicit stack; BFS uses queue.
+- **What to watch for:** DFS depth can overflow stack on degenerate trees—iterate with explicit stack if needed. BFS uses \(O(w)\) memory where \(w\) is max width.
+- **Example:** Computing UI tree depth for accessibility vs computing minimum taps to reach a node in a shallow navigation tree.
 
 ### Code example
 
@@ -29,10 +29,10 @@ How do you validate a **BST** in an interview without carrying buggy global stat
 
 ### Answer
 
-- **Deep explanation:** A BST requires all left subtree values `< node < all right subtree values (for strict definitions) — implement via valid `(min, max)` bounds per node, not only comparing immediate children.
-- **Internal working:** DFS with narrowing bounds; or inorder traversal must be strictly increasing for unique BST with no duplicates.
-- **Trade-offs:** Inorder check needs \(O(h)\) stack space; bounds DFS is usually clearest.
-- **Real-world example:** Validating a deserialized config tree where children carry numeric thresholds.
+- **In plain words:** A BST requires all left subtree values `< node < all right subtree values (for strict definitions) — implement via valid `(min, max)` bounds per node, not only comparing immediate children.
+- **How it works:** DFS with narrowing bounds; or inorder traversal must be strictly increasing for unique BST with no duplicates.
+- **What to watch for:** Inorder check needs \(O(h)\) stack space; bounds DFS is usually clearest.
+- **Example:** Validating a deserialized config tree where children carry numeric thresholds.
 
 ### Code example
 
@@ -50,10 +50,10 @@ Explain how you’d implement **persistent immutable tree updates** (copy-on-wri
 
 ### Answer
 
-- **Deep explanation:** Path copying updates only nodes along the path from root to changed leaf; unchanged subtrees are shared (structural sharing), giving \(O(h)\) time and small extra memory per operation.
-- **Internal working:** Clone nodes along the path; reuse old child pointers for untouched branches.
-- **Trade-offs:** More complex than mutable trees; great for concurrency + undo stacks.
-- **Real-world example:** Compose-like state snapshots or collaborative outline trees.
+- **In plain words:** Path copying updates only nodes along the path from root to changed leaf; unchanged subtrees are shared (structural sharing), giving \(O(h)\) time and small extra memory per operation.
+- **How it works:** Clone nodes along the path; reuse old child pointers for untouched branches.
+- **What to watch for:** More complex than mutable trees; great for concurrency + undo stacks.
+- **Example:** Compose-like state snapshots or collaborative outline trees.
 
 ### Key takeaway
 

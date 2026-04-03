@@ -8,23 +8,25 @@ Tips & curated resources for interview preparation
 
 ### Answer
 
-- Use consistent DSA practice + system design drills + behavioral stories with metrics.
-- **Links:**
-  - https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7220663449440161793/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7219036304691388418/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7217827106083266560/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7213379334311448576/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7194272210679705600/
-  - https://www.linkedin.com/feed/update/urn:li:activity:7177985319269502977/
-  - https://blog.sp3.in/dsa
-- **STAR method reference:** https://www.testgorilla.com/blog/star-method-interviews/
+Mix **consistent DSA practice**, **system design** drills, and **behavioral** stories with **real numbers** (latency saved, crash rate, team size). Use the links below as **starting points**, not a checklist to cram in one night.
+
+### Useful links
+
+- https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/
+- https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/
+- https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/
+- https://www.linkedin.com/feed/update/urn:li:activity:7220663449440161793/
+- https://www.linkedin.com/feed/update/urn:li:activity:7219036304691388418/
+- https://www.linkedin.com/feed/update/urn:li:activity:7217827106083266560/
+- https://www.linkedin.com/feed/update/urn:li:activity:7213379334311448576/
+- https://www.linkedin.com/feed/update/urn:li:activity:7194272210679705600/
+- https://www.linkedin.com/feed/update/urn:li:activity:7177985319269502977/
+- https://blog.sp3.in/dsa
+- STAR method: https://www.testgorilla.com/blog/star-method-interviews/
 
 ### Key takeaway
 
-> **STAR + metrics** beats adjective soup.
+> **STAR + metrics** beat a list of adjectives about how “passionate” you are.
 
 ---
 
@@ -34,13 +36,11 @@ Describe a **performance troubleshooting** story on Android.
 
 ### Answer
 
-- **Situation:** Large banking app sluggish + bloated binary.
-- **Task:** Identify CPU/mem/network hotspots and reduce ship risk.
-- **Action:** Android Studio profilers, flamegraphs, main-thread audits, caching, async boundaries, R8/shrinkResources, image pipeline tuning.
-- **Result:** Quantify startup, jank frames, APK delta, crash-free rate.
+Use **STAR**: **Situation** (slow app, big APK, bad reviews). **Task** (find hotspots without guessing). **Action** (Android Studio CPU/memory/network profilers, main-thread audit, caching, async boundaries, R8/shrinkResources, image pipeline). **Result** (startup ms, jank frames, APK size, crash-free rate—**real numbers**).
+
 ### Key takeaway
 
-> Interviewers want **methodology + numbers**.
+> Interviewers want **how you thought** and **what improved**, with **numbers**.
 
 ---
 
@@ -50,11 +50,11 @@ Describe a **performance troubleshooting** story on Android.
 
 ### Answer
 
-- Logcat structured logging, Crashlytics/non-fatals, breadcrumbs, remote config to toggle logging, PII scrubbing, on-call runbooks.
+Use **structured logs** where they help, **Crashlytics** (or similar) for crashes and **non-fatals**, **breadcrumbs** around risky flows, **remote flags** to tune logging, and **PII scrubbing**. Dashboards should answer **“what broke for whom?”** not dump noise.
 
 ### Key takeaway
 
-> **Actionable dashboards**, not log spam.
+> Logs and dashboards should drive **action**, not scroll fatigue.
 
 ---
 
@@ -64,11 +64,11 @@ Describe a **performance troubleshooting** story on Android.
 
 ### Answer
 
-- TLS, pinning strategy, token lifecycle, least privilege scopes, encryption at rest, OWASP Mobile Top 10 awareness, regular key rotation, abuse detection.
+Cover **TLS**, **pinning** if needed, **token lifecycle**, **least privilege** scopes, **encryption at rest** on device, **OWASP Mobile** awareness, **key rotation**, and **abuse detection** on the server.
 
 ### Key takeaway
 
-> Security is **process + architecture**, not one library.
+> Security is **process + design**, not one library you drop in once.
 
 ---
 
@@ -78,11 +78,11 @@ Describe a **performance troubleshooting** story on Android.
 
 ### Answer
 
-- Discuss data modeling, indexing, security rules, notification segmentation, analytics event design, Crashlytics triage, Remote Config experimentation.
+Be ready to talk about **data modeling**, **indexes**, **security rules**, **notification** segments, **analytics** event design, **Crashlytics** triage, and **Remote Config** experiments—and how each choice affects **privacy** and **cost**.
 
 ### Key takeaway
 
-> Connect Firebase choices to **privacy + cost**.
+> Tie Firebase decisions to **privacy, cost, and reliability**, not “we use Firebase.”
 
 ---
 
@@ -92,11 +92,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Presenter interfaces, ViewModel output contracts, MVI pure reducers + snapshot tests.
+**MVP:** test the **presenter** with a fake **view**. **MVVM:** test **ViewModel outputs** and fakes for repos. **MVI:** test **pure reducers** and **snapshots** of state where it helps.
 
 ### Key takeaway
 
-> Architecture dictates **test doubles**.
+> Your architecture picks **what you mock** and **what you assert**.
 
 ---
 
@@ -106,11 +106,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Keep professional spine (domains, tech, scale) + authentic human note; avoid rambling.
+Keep a **tight spine**: domains, tech, scale, impact. Add **one human detail** if asked—avoid **rambling** or unrelated life story unless they invite it.
 
 ### Key takeaway
 
-> **2 minutes**, structured.
+> Aim for about **two minutes**, clear structure.
 
 ---
 
@@ -120,11 +120,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Communicate impact, mitigate, root cause, preventive controls, feature flags, postmortem blameless culture.
+Show **calm steps**: assess **user impact**, **mitigate** fast, **communicate**, then **root cause** and **prevention** (flags, tests, runbooks). **Blameless** postmortems build trust.
 
 ### Key takeaway
 
-> Show **calm command** + **customer focus**.
+> They want **customer focus** and **clear communication**, not panic.
 
 ---
 
@@ -134,11 +134,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Original file repeats similar answer—merge into one story bank with **different metrics per domain**.
+Prepare **a few real projects** with **different metrics** (latency, MAU, compliance, offline). Avoid repeating the **same story** with different buzzwords.
 
 ### Key takeaway
 
-> Prepare **3 stories** spanning scale, conflict, and ambiguity.
+> Have **three solid stories**: scale, conflict, ambiguity.
 
 ---
 
@@ -148,11 +148,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Encryption, integrity constraints, authenticated APIs, backups, least privilege.
+Discuss **encryption**, **integrity**, **authenticated APIs**, **backup** protection, and **least privilege** access—on **client and server**.
 
 ### Key takeaway
 
-> Defense in depth across **client + server**.
+> Defense in depth across **device + backend**.
 
 ---
 
@@ -162,11 +162,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Offline cache, migration safety, lifecycle-aware UI, reduced overfetch.
+Connect Jetpack to **outcomes**: offline cache, **safe migrations**, **lifecycle-aware** UI, fewer **over-fetch** bugs.
 
 ### Key takeaway
 
-> Tie Jetpack to **business outcomes**.
+> Frame Jetpack as **business value**, not a feature list.
 
 ---
 
@@ -176,11 +176,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Pyramid, deterministic CI, screenshot goldens for UI, MockWebServer, TDD where ROI positive.
+**Pyramid** shape, **deterministic CI**, **screenshots** for a small golden UI set, **MockWebServer** for APIs, **TDD** where it pays back.
 
 ### Key takeaway
 
-> Flake elimination is a **staff-level skill**.
+> **Killing flakes** is a senior skill—not “rerun until green.”
 
 ---
 
@@ -190,11 +190,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Use your own verified numbers; mention R8, resource shrink, dynamic delivery, profiling.
+Use **numbers you can defend**. Mention **R8**, **resource shrink**, **dynamic delivery**, and **profiling**—never invent **25%** without a real measurement.
 
 ### Key takeaway
 
-> Never fabricate **metrics you can’t defend**.
+> Do not quote **metrics** you cannot explain under follow-up questions.
 
 ---
 
@@ -204,11 +204,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Show how you reframed problem—query optimization + caching vs microservices rewrite.
+Tell a story where you **reframed** the problem—e.g. **query + cache** instead of a **big rewrite**—and **measured** the win.
 
 ### Key takeaway
 
-> **Elegance** wins over buzzwords.
+> **Simple** beats **clever** when it meets the requirement.
 
 ---
 
@@ -218,11 +218,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Trunk-based vs GitFlow, PR quality gates, CODEOWNERS, protected branches.
+Compare **trunk-based** vs **GitFlow** honestly; mention **PR** quality gates, **CODEOWNERS**, **protected** branches.
 
 ### Key takeaway
 
-> Branch strategy serves **release cadence**.
+> Branching should match **release cadence** and **team size**.
 
 ---
 
@@ -232,11 +232,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Compile-time safety vs simplicity; testing strategy; module boundaries.
+**Dagger/Hilt:** compile-time graph, catches errors early. **Koin:** runtime, lighter setup. Pick for **graph size**, **build time**, and **test** needs—not fashion.
 
 ### Key takeaway
 
-> Pick DI for **graph complexity**, not fashion.
+> Choose DI for **complexity you actually have**.
 
 ---
 
@@ -246,11 +246,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Accuracy vs battery, geofencing reliability, privacy prompts, enterprise billing.
+Balance **accuracy vs battery**, handle **geofence** imperfection, clear **privacy** prompts, and **enterprise** billing/API limits.
 
 ### Key takeaway
 
-> Location is **policy + UX + tech**.
+> Location is **policy + UX + engineering** together.
 
 ---
 
@@ -260,11 +260,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Profilers, structural improvements, data structure choices, caching, measurement loops.
+Walk through **profilers**, **structural** fixes, **data structures**, **caching**, and how you **measured before/after**.
 
 ### Key takeaway
 
-> Always close loop with **before/after**.
+> Always close with **before/after** evidence.
 
 ---
 
@@ -274,11 +274,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Security review anecdote with constructive feedback + follow-up.
+Share a review where you caught a **security** or **correctness** issue **constructively** and followed up after merge.
 
 ### Key takeaway
 
-> Reviews teach **culture**.
+> Reviews shape **team culture**, not only code.
 
 ---
 
@@ -288,11 +288,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Scope, leadership, cross-functional work, quality ownership.
+Align your story with **scope**, **leadership**, **cross-functional** work, and **quality ownership** at your level.
 
 ### Key takeaway
 
-> Align with **job ladder**.
+> Match examples to the **job level** you are interviewing for.
 
 ---
 
@@ -302,11 +302,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Versioning, additive changes, contract tests, dual-read/dual-write patterns.
+Prefer **additive** changes, **versioning**, **contract tests**, and patterns like **dual read/write** during migrations.
 
 ### Key takeaway
 
-> Compatibility is **distributed systems** discipline.
+> Compatibility is **distributed systems** discipline, even for mobile clients.
 
 ---
 
@@ -316,11 +316,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Concurrency, consistency, offline, performance.
+Highlight **concurrency**, **consistency**, **offline**, and **performance** trade-offs you navigated.
 
 ### Key takeaway
 
-> Show **depth over breadth**.
+> Depth on **one** hard problem beats ten shallow ones.
 
 ---
 
@@ -330,7 +330,7 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Justify with constraints; acknowledge singleton test issues.
+Name patterns you **actually used** and **why**—including **downsides** (singletons and tests, overuse of observers).
 
 ### Key takeaway
 
@@ -344,11 +344,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Crashlytics breadcrumbs, repro harness, architectural fix vs patch.
+**Crashlytics** breadcrumbs, **repro** harness, **fix root cause** vs papering over with retries only.
 
 ### Key takeaway
 
-> Intermittent == **missing instrumentation**.
+> Intermittent bugs usually mean **missing signals**—add instrumentation.
 
 ---
 
@@ -358,11 +358,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- RFC reading, conferences, secure coding labs, internal guilds.
+**RFCs**, **conferences**, **secure coding** practice, **internal guilds**—learning should be **scheduled**, not vague “I read sometimes.”
 
 ### Key takeaway
 
-> Continuous learning is **scheduled**, not aspirational.
+> Show **habits**, not a one-time course list.
 
 ---
 
@@ -372,11 +372,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Risk reduction strategy, incremental steps, tests-first, stakeholder comms.
+Refactoring changes **structure** without changing **behavior**—done in **small steps** with **tests** and **stakeholder** communication.
 
 ### Key takeaway
 
-> Refactor needs **business sponsor**.
+> Big refactors need a **business sponsor** and a **plan**.
 
 ---
 
@@ -386,11 +386,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Caching, signing, tracks, automated UI, release notes.
+Cover **caching**, **signing**, **tracks**, **automated UI**, **release notes**—tie each piece to **quality** or **speed**.
 
 ### Key takeaway
 
-> Pipeline mirrors **product quality**.
+> Pipeline design should mirror **product quality goals**.
 
 ---
 
@@ -400,11 +400,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Feature flags, small PRs, merge queues, integration branches.
+**Feature flags**, **small PRs**, **merge queues**, **integration** branches when needed—reduce **big-bang** merges.
 
 ### Key takeaway
 
-> Reduce **integration pain** mechanically.
+> Reduce **integration pain** with mechanics, not heroics.
 
 ---
 
@@ -414,11 +414,11 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Jenkins, Bitrise, CircleCI, Fastlane, Play Console, Firebase Test Lab, Espresso.
+Name tools you **actually used** and **what you measured** with each (build time, flake rate, rollout time).
 
 ### Key takeaway
 
-> Name **what you measured** with each tool.
+> Tools without **metrics** are just names on a slide.
 
 ---
 
@@ -428,8 +428,8 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 ### Answer
 
-- Lint, static analysis, coverage gates (carefully), formatting, CODEOWNERS.
+**Lint**, **static analysis**, **coverage** gates (use carefully), **formatting**, **CODEOWNERS**—gates must stay **high signal** or people bypass them.
 
 ### Key takeaway
 
-> Gates should be **high-signal** to avoid bypass culture.
+> Noisy gates create a **culture of overrides**.

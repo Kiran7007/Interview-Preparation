@@ -8,14 +8,13 @@ Explain the **test pyramid** on mobile.
 
 ### Answer
 
-- **Unit:** fast, deterministic—domain + ViewModels with fakes.
-- **Integration:** DAO+DB, Retrofit with MockWebServer, navigation + fragment scenarios.
-- **UI:** Espresso/Compose tests—few, high value; device labs for OEM quirks.
-- **Image:** `assets/test_pyramid.png`
+Most tests should be **fast unit tests** (pure logic, ViewModels with fakes). Fewer **integration tests** hit real **Room**, **Retrofit + MockWebServer**, or navigation. **UI tests** (Espresso / Compose) are the smallest top—slow and flaky if overused—save them for **critical flows** and run on **labs** for OEM quirks.
+
+Diagram: `assets/test_pyramid.png`
 
 ### Key takeaway
 
-> Invert the pyramid only if you enjoy **3AM flakes**.
+> A **top-heavy** pyramid means **slow CI** and **flaky nights**.
 
 ---
 
@@ -25,11 +24,11 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- Guards regressions on every PR; enables refactor confidence; pairs with static analysis.
+Unit tests run on **every PR** and catch **regressions** in logic before merge. They also make **refactors** safer because you have a **safety net** when behavior is specified.
 
 ### Key takeaway
 
-> Unit tests are **change velocity insurance**.
+> Unit tests are **cheap insurance** for change.
 
 ---
 
@@ -39,14 +38,16 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- Synchronous idling resources; flaky if animations/async ignored; use `CountingIdlingResource` carefully or architectural fixes.
-- **Links:**
-  - Official: https://developer.android.com/training/testing/ui-testing/espresso-testing.html  
-  - Mindorks intro: https://medium.com/mindorks/android-testing-part-1-espresso-basics  
+Espresso waits for the UI thread to be **idle** using **idling resources**. Tests get **flaky** when **animations**, **background work**, or **shared mutable state** are not accounted for—sometimes you fix the **architecture** instead of piling on idling hacks.
+
+### Useful links
+
+- https://developer.android.com/training/testing/ui-testing/espresso-testing.html  
+- https://medium.com/mindorks/android-testing-part-1-espresso-basics  
 
 ### Key takeaway
 
-> Flakiness is usually **missing idling** or **shared mutable state**.
+> Flakes usually mean **missing synchronization** or **shared mutable state**.
 
 ---
 
@@ -56,12 +57,15 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- JVM-fast approximations of framework; great for logic near framework without devices.
-- **Link:** http://robolectric.org/  
+**Robolectric** runs Android framework–ish code on the **JVM** quickly. Great for logic that sits **near** Android APIs without needing a device. It is still an **approximation**—know when you need a **real device** or emulator.
+
+### Useful links
+
+- http://robolectric.org/  
 
 ### Key takeaway
 
-> Know limits vs **true device** behavior.
+> Robolectric is **fast**, not **identical** to every device behavior.
 
 ---
 
@@ -71,12 +75,15 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- Cross-app UI testing; slower; use for flows spanning apps/settings.
-- **Link:** https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html  
+**UI Automator** drives UI **across apps** and **system screens** (settings, permissions). It is **slower** than Espresso—use for **true end-to-end** flows, not every screen.
+
+### Useful links
+
+- https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html  
 
 ### Key takeaway
 
-> Reserve for **true E2E**, not everyday screens.
+> Save UI Automator for **cross-app** journeys, not daily feature tests.
 
 ---
 
@@ -86,12 +93,15 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- Stub collaborators; verify interactions; Kotlin needs inline mock maker / mockK alternative.
-- **Link:** http://site.mockito.org/  
+**Mockito** builds **test doubles** so you can **stub** dependencies and **verify** interactions. On **Kotlin**, you may need the **inline mock maker** or prefer **MockK** for some patterns.
+
+### Useful links
+
+- http://site.mockito.org/  
 
 ### Key takeaway
 
-> Mocks document **expected collaborations**.
+> Mocks show **what you expect collaborators to do**—they document design.
 
 ---
 
@@ -101,12 +111,15 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- JUnit4/5 with AndroidX test runners; rules for temporary folders, instant exec.
-- **Link:** https://devqa.io/junit-5-annotations/  
+Use **JUnit 4 or 5** with AndroidX test **runners** and **rules** (temp files, instant apps where relevant). Pick **JUnit 5** when your toolchain supports it cleanly.
+
+### Useful links
+
+- https://devqa.io/junit-5-annotations/  
 
 ### Key takeaway
 
-> Prefer **JUnit5** where toolchain allows.
+> Prefer **JUnit 5** when your build and plugins allow it.
 
 ---
 
@@ -116,14 +129,16 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- Catch visual regressions in CI with deterministic fonts/locale.
-- **Links:**
-  - https://github.com/facebook/screenshot-tests-for-android  
-  - https://facebook.github.io/screenshot-tests-for-android/#getting-started  
+**Screenshot tests** catch **visual** regressions in CI. You need **stable fonts, locale, and timing** so images are comparable. Keep the **golden set small** or maintenance hurts.
+
+### Useful links
+
+- https://github.com/facebook/screenshot-tests-for-android  
+- https://facebook.github.io/screenshot-tests-for-android/#getting-started  
 
 ### Key takeaway
 
-> Pair with **small golden set** to avoid maintenance hell.
+> A **small, high-value** golden set beats screenshotting everything.
 
 ---
 
@@ -133,12 +148,11 @@ What does **unit testing** accomplish in CI?
 
 ### Answer
 
-- Semantic tree + matchers; synchronization differs; test `Modifier.testTag` discipline.
-- **Guidance:** see Compose testing section in `android-architecture.md`.
+Compose tests use a **semantic tree** (roles, text, **`testTag`**) instead of **View IDs**. Synchronization differs from Espresso—follow **Compose testing** guidance (see `android-architecture.md`).
 
 ### Key takeaway
 
-> Compose rewards **semantic selectors**, not raw view IDs.
+> Compose favors **semantic matchers**, not fragile **view hierarchy** IDs.
 
 ---
 
@@ -148,8 +162,10 @@ How do you test **MVP/MVVM/MVI** differently?
 
 ### Answer
 
-- MVP: test presenter with fake view; MVVM: test VM outputs; MVI: test reducers + state transitions deterministically.
+- **MVP:** Fake the **view interface**; drive the **presenter**.
+- **MVVM:** Assert **ViewModel outputs** (state, events) with fakes for repositories.
+- **MVI:** Test **reducers** and **state transitions** as **pure functions** where possible.
 
 ### Key takeaway
 
-> Architecture choice changes **what you fake**.
+> Architecture changes **what you fake** and **what you assert**.

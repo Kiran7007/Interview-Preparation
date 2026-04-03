@@ -8,10 +8,10 @@ How do you decide between **top-down memoization** vs **bottom-up DP** in interv
 
 ### Answer
 
-- **Deep explanation:** Same math, different engineering. Top-down mirrors recursive structure + pruning; bottom-up often gives tighter constant factors and easier space rolling.
-- **Internal working:** Memoization stores `dp[state]` on first visit; tabulation fills in topological order of states.
-- **Trade-offs:** Top-down can skip unreachable states; bottom-up can be \(O(1)\) space for many 1D recurrences.
-- **Real-world example:** Computing minimal edit distance for offline subtitle corrections (string DP); feature rollout combinatorics with constraints (bounded knapsack style).
+- **In plain words:** Same math, different engineering. Top-down mirrors recursive structure + pruning; bottom-up often gives tighter constant factors and easier space rolling.
+- **How it works:** Memoization stores `dp[state]` on first visit; tabulation fills in topological order of states.
+- **What to watch for:** Top-down can skip unreachable states; bottom-up can be \(O(1)\) space for many 1D recurrences.
+- **Example:** Computing minimal edit distance for offline subtitle corrections (string DP); feature rollout combinatorics with constraints (bounded knapsack style).
 
 ### Code example
 
@@ -29,10 +29,10 @@ What’s the difference between **backtracking** and **DP**—when can you not m
 
 ### Answer
 
-- **Deep explanation:** Backtracking explores combinatorial choices; DP applies when subproblems **overlap** and optimal substructure holds. Pure permutation generation often doesn’t benefit from memo without extra state.
-- **Internal working:** Backtracking = DFS + prune; DP adds memo/table when repeated substates appear.
-- **Trade-offs:** DP memory vs time; backtracking can explode if pruning is weak.
-- **Real-world example:** Sudoku/CSP-style search vs counting distinct paths in a grid with obstacles.
+- **In plain words:** Backtracking explores combinatorial choices; DP applies when subproblems **overlap** and optimal substructure holds. Pure permutation generation often doesn’t benefit from memo without extra state.
+- **How it works:** Backtracking = DFS + prune; DP adds memo/table when repeated substates appear.
+- **What to watch for:** DP memory vs time; backtracking can explode if pruning is weak.
+- **Example:** Sudoku/CSP-style search vs counting distinct paths in a grid with obstacles.
 
 ### Key takeaway
 

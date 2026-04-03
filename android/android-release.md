@@ -8,14 +8,13 @@
 
 ### Answer
 
-- **ProGuard:** classic shrink/obfuscate; rules ecosystem.
-- **R8:** default shrinker/obfuscator + desugaring integration; faster builds.
-- **DexGuard:** commercial hardening (encrypt/strings/anti-tamper)—evaluate cost vs threat model.
-- **Real-world example:** Enable R8 full mode in release; maintain keep rules for reflection (Retrofit, Gson types).
+**ProGuard** was the classic **shrink + obfuscate** toolchain. **R8** is the default now: it **shrinks**, **obfuscates**, and ties into **desugaring** with generally **faster** builds. **DexGuard** adds **commercial hardening** (extra obfuscation, tamper resistance)—buy it when your **threat model** justifies cost.
+
+**Example:** Turn on **R8 full mode** in release and maintain **keep rules** for **reflection** (Retrofit models, Gson types, etc.).
 
 ### Key takeaway
 
-> Shrinker breaks **reflection**—rules are part of source code.
+> Shrinking **breaks reflection**—**ProGuard/R8 rules** are part of your source tree.
 
 ---
 
@@ -25,13 +24,13 @@
 
 ### Answer
 
-- **Build type:** debug/release instrumentation, minify, signing config.
-- **Flavor:** dimensions (free/pro, region).
-- **Variant:** cross product.
+- **Build type:** **debug** vs **release** (minify, signing, debuggable).
+- **Product flavor:** different **products** (free/pro, region) along **dimensions**.
+- **Variant:** one **flavor** × one **build type** (e.g. `prodRelease`).
 
 ### Key takeaway
 
-> Matrix explosion is a **CI cost**—prune unused variants.
+> Many variants multiply **CI time**—delete what you do not ship.
 
 ---
 
@@ -41,12 +40,15 @@
 
 ### Answer
 
-- `implementation` hides transitive types from consumers → faster compile; `api` leaks classpath.
-- **Link:** https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa  
+**`implementation`** hides **transitive types** from **consumers** of your library → **faster compiles**. **`api`** **exports** those types → consumers see them on their classpath.
+
+### Useful links
+
+- https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa  
 
 ### Key takeaway
 
-> Default **`implementation`** in libraries.
+> In libraries, default to **`implementation`** unless you intentionally expose types.
 
 ---
 
@@ -56,11 +58,11 @@
 
 ### Answer
 
-- Reproducible builds across machines/CI; pins Gradle version.
+The **wrapper** (`gradlew` + properties) pins the **Gradle version** so **CI** and every developer use the **same** build tool.
 
 ### Key takeaway
 
-> Commit **wrapper**—always.
+> **Commit the wrapper**—do not rely on “whatever Gradle is installed.”
 
 ---
 
@@ -70,11 +72,11 @@
 
 ### Answer
 
-- Resources compiled to `resTables`, dexing via D8/R8, packaged into AAB/APK; understand incremental compilation benefits.
+**Resources** compile to **binary tables**; **Java/Kotlin** compiles to **DEX** via **D8/R8**; everything packs into **APK/AAB**. Incremental steps exist so small edits do not rebuild the world.
 
 ### Key takeaway
 
-> Know enough to debug **resource merge** failures.
+> Know enough to read **resource merge** and **AAPT** error output.
 
 ---
 
@@ -84,12 +86,15 @@
 
 ### Answer
 
-- Ship per-arch APKs or use App Bundles; understand native lib packaging.
-- **NDK ABI doc:** https://developer.android.com/ndk/guides/abis  
+**Native** `.so` files are **per CPU architecture**. **App Bundles** let Play deliver **split APKs** per ABI. Understand **which ABIs** you support—dropping **x86** in dev builds can speed iteration.
+
+### Useful links
+
+- https://developer.android.com/ndk/guides/abis  
 
 ### Key takeaway
 
-> Native SDKs explode **artifact size**—split thoughtfully.
+> Native SDKs inflate **download size**—split and filter with intent.
 
 ---
 
@@ -99,14 +104,16 @@
 
 ### Answer
 
-- GitHub Actions, Jenkins+Docker, Bitrise, caching Gradle, deterministic signing, Play internal tracks, automated tests (Firebase Test Lab).
-- **Links:**
-  - https://blog.mindorks.com/github-actions-for-android/  
-  - https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/  
+Typical pieces: **GitHub Actions**, **Jenkins + Docker**, **Bitrise**, **Gradle caching**, **secure signing**, **Play internal tracks**, and **automated tests** (including **Firebase Test Lab**).
+
+### Useful links
+
+- https://blog.mindorks.com/github-actions-for-android/  
+- https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/  
 
 ### Key takeaway
 
-> Cache **Gradle deps + build cache** aggressively.
+> Cache **dependencies** and **build cache**—Android CI is I/O heavy.
 
 ---
 
@@ -116,11 +123,11 @@
 
 ### Answer
 
-- Faster releases, automated quality gates, reduced rollout risk; GitFlow/trunk-based with feature flags.
+Automation gives **faster releases**, **consistent quality gates**, and **smaller rollout risk**. **Trunk-based** development with **feature flags** usually scales better than long-lived branches.
 
 ### Key takeaway
 
-> **Trunk-based + flags** scales better than long-lived branches.
+> **Short-lived branches + flags** beat months-long **integration branches**.
 
 ---
 
@@ -130,8 +137,8 @@
 
 ### Answer
 
-- Use Play App Signing; protect upload key; document disaster recovery.
+Use **Play App Signing** so Google holds the **app signing key** and you manage an **upload key**. Document **recovery** if an upload key is lost.
 
 ### Key takeaway
 
-> **Key loss** = business continuity incident.
+> Losing **signing keys** is a **business continuity** problem—treat it seriously.

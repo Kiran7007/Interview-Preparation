@@ -8,10 +8,11 @@ What is the **`Application` class** and how should teams use it safely?
 
 ### Answer
 
-- **Deep explanation:** `Application` is the first instantiable entry for your process-wide singletons and process-level callbacks (`onCreate`, `onTrimMemory`, `registerActivityLifecycleCallbacks`).
-- **Internal working:** Created before components; lives for process lifetime.
-- **Trade-offs:** Heavy work here delays **cold start**; prefer lazy init + background schedulers; never leak `Activity` contexts.
-- **Real-world example:** Initialize crash reporting, DI root, and strictly bounded image pipeline singletons—not feature flags that block UI thread.
+The **`Application`** class is created once **per app process**, before your activities and most other components. It is the usual place to register **process-wide** setup: crash reporting, dependency injection roots, image loader singletons, and callbacks like **`onTrimMemory`**.
+
+Because it lives as long as the process, **never store an `Activity` here** (that leaks the whole screen). Also avoid **heavy work in `onCreate`**—it slows **cold start**. Prefer **lazy** initialization and real background APIs for anything expensive.
+
+**Examples that fit:** crash SDK init, DI container, bounded image pipeline. **Poor fit:** blocking feature-flag fetches on the main thread.
 
 ### Useful links
 
@@ -29,10 +30,11 @@ What is **`Context`** — compare **Activity / Application / Service** contexts.
 
 ### Answer
 
-- **Deep explanation:** `Context` is handle to environment: resources, package, prefs, starting components, etc.
-- **Internal working:** `Activity` context is theme-aware and tied to UI lifecycle; `Application` context outlives UI but must not be used where UI theming or short-lived scope is required (dialogs from app context fail, for example).
-- **Trade-offs:** Holding any context in long-lived objects causes leaks—prefer `applicationContext` for long-lived utilities **when appropriate**.
-- **Real-world example:** Singleton image loader uses `applicationContext`; `AlertDialog` requires Activity-themed context.
+**`Context`** is Android’s handle to the environment: **resources**, **package name**, **SharedPreferences**, starting **components**, and more. You almost always receive one from the framework.
+
+**Activity `Context`** is tied to a **screen** and carries **UI theme** information—you need it for things like **`AlertDialog`**. **`applicationContext`** lives for the **whole app** and is safer for **long-lived** objects (for example a singleton image loader), but it is **not** a substitute when the UI needs a real **Activity** context.
+
+**Rule of thumb:** keep references as **short-lived** as possible. Storing the wrong `Context` in a static field is a classic **memory leak**.
 
 ### Useful links
 
@@ -241,7 +243,7 @@ Lifecycle diagrams:
 ### Answer
 
 - `volatile` does not compose arbitrary atomicity for read-modify-write; use `Atomic*` or synchronized blocks.
-- **Real-world example:** `boolean flag` toggled from multiple threads.
+- **Example:** `boolean flag` toggled from multiple threads.
 
 ### Key takeaway
 
@@ -276,7 +278,7 @@ Lifecycle diagrams:
 
 - **AIDL:** typed IPC for frequent, rich cross-process calls; generates stubs; requires threading discipline.
 - **Messenger:** `Handler`-backed lightweight IPC using `Message` queues—great for simple command/response.
-- **Trade-offs:** AIDL complexity vs Messenger throughput limits.
+- **What to watch for:** AIDL complexity vs Messenger throughput limits.
 
 ### Key takeaway
 
@@ -496,7 +498,7 @@ Android project skeleton
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -517,7 +519,7 @@ Android Code Style And Guidelines.
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -538,7 +540,7 @@ Android Architecture Components
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -559,7 +561,7 @@ What is an Application class?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
 
@@ -577,7 +579,7 @@ What is Context?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -598,7 +600,7 @@ What is the Android Application Architecture?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - Activities - Provides the window in which the app draws its UI</br>
       - Services − It will perform background functionalities</br>
@@ -621,7 +623,7 @@ What is an Activity?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
 
@@ -639,7 +641,7 @@ Activity Lifecycle
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   <img src="/assets/activity_lifecycle.png" width="350">
 
@@ -657,7 +659,7 @@ Lifecycle of an Activity
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * ```OnCreate()```: This is when the view is first created. This is normally where we create views, get data from bundles etc.</br>
     * ```OnStart()```: Called when the activity is becoming visible to the user. Followed by onResume() if the activity comes to the foreground, or onStop() if it becomes hidden.</br>
@@ -681,7 +683,7 @@ Is there any scenario where onDestoy() will be called without calling onPause() 
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   If we call finish() method inside onCreate() of our Activity, then onDestroy() will be called directly.
 
@@ -699,7 +701,7 @@ What’s the difference between onCreate() and onStart()?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * The onCreate() method is called once during the Activity lifecycle, either when the application starts, or when the Activity has been destroyed and then recreated, for example during a configuration change.</br>
     * The onStart() method is called whenever the Activity becomes visible to the user, typically after onCreate() or onRestart().</br>
@@ -718,7 +720,7 @@ Why would you do the setContentView() in onCreate() of Activity class?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   As onCreate() of an Activity is called only once, this is the point where most initialization should go. It is inefficient to set the content in onResume() or onStart() (which are called multiple times) as the setContentView() is a heavy operation.</br>
 
@@ -736,7 +738,7 @@ What is `Fragment`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   A `Fragment` is a piece of an activity which enable more modular activity design. A fragment has its layout, its behavior, and its life cycle callbacks. You can add or remove fragments in an activity while the activity is running. You can combine multiple fragments in a single activity to build a multi-pane UI. A fragment can also be used in multiple activities. The fragment life cycle is closely related to its host activity which means when the activity is paused, all the fragments available in the activity will also be stopped.
 
@@ -754,7 +756,7 @@ Fragment Lifecycle
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   <img src="/assets/fragment_lifecycle.png" width="200"> <img src="/assets/fragment_lifecycle_2.png" width="400">
 
@@ -772,7 +774,7 @@ What is the correlation between activity and fragment life cycle?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Here is how Activity's and Fragment's lifecyle are called together:<br/>
      <img src="/assets/activity-fragment-lifecycles.png" width="350">
@@ -791,7 +793,7 @@ How to pass items to `fragment`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Using `Bundle` you can pass items to the fragment.
 
@@ -809,7 +811,7 @@ How would you communicate between two `fragments`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   There are several ways to communicate two fragments. Using `interfaces` are a common way to do that. You can connect two fragments through interfaces that are implemented in the parent activity.
 
@@ -827,7 +829,7 @@ Difference between adding/replacing `fragment` in `backstack`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - `replace` removes the existing `fragment` and adds a new `fragment`. This means when you press back button the fragment that got replaced will be created with its onCreateView being invoked.
     - `add` retains the existing fragments and adds a new `fragment` that means existing fragment  will be active and they wont be in 'paused' state hence when a back button is pressed onCreateView is not called for the existing fragment(the fragment which was there before new fragment was added).
@@ -864,7 +866,7 @@ What is the difference between Dialog and DialogFragment?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **Dialog** is a small window that prompts the user to make a decision or enter additional information. Instead, `dialogFragment` is a fragment that displays a dialog windows and contains a dialog object. </br>
     - **DialogFragment** does various things to keep the fragment's lifecycle driving it, instead of the Dialog. Dialogs are generally autonomous entities -- they are their own window, receiving their own input events, and often deciding on their own when to disappear. DialogFragment needs to ensure that what is happening with the Fragment and Dialog states remains consistent. To do this, it watches for dismiss events from the dialog and takes care of removing its own state when they happen.
@@ -883,7 +885,7 @@ What is the difference between `apply()` and `commit()` in `sharedPreferences`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - `commit()` writes the data **synchronously** and returns a boolean value of success or failure depending on the result immediately.
     - `apply()` is **asynchronous** and it won’t return any boolean response. Also if there is an `apply()` outstanding and we perform another `commit()`, The `commit()` will be blocked until the `apply()` is not completed.
@@ -902,7 +904,7 @@ What is a Loader in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Note: (Loader is Deprecated. We Have to use combination of ViewModels and LiveData instead of using Loaders) A Loader is used to fetch the data from a Content provider and cache the results across the configuration changes to avoid duplicate queries. Loader does it by running on separate threads and handling the lifecycle changes (so no need of asynctasks or new thread creations or manual handling of life cycle changes). Few implementations of Loaders like CursorLoader can implement an observer (called ContentObserver) to monitor any data changes and can then trigger a reload.
 
@@ -920,7 +922,7 @@ What is an Intent Filter?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Intent filters are a very powerful feature of the Android platform. They provide the ability to launch an activity based not only on an explicit request, but also an implicit one. For example, an explicit request might tell the system to “Start the Send Email activity in the Gmail app". By contrast, an implicit request tells the system to “Start a Send Email screen in any activity that can do the job." When the system UI asks a user which app to use in performing a task, that’s an intent filter at work. Here's an example of how to declare Intent Filter in AndroidManifest:
 
@@ -950,7 +952,7 @@ What is an Intent? What are the different types of Intents?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   It is a kind of message or information that is passed between different components of Android. It is used to launch an activity, display a web page, send SMS, send email, etc. There are two types of intents in android: </br>
 
@@ -973,7 +975,7 @@ What is Pending Intent in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.  </br>
 
@@ -1015,7 +1017,7 @@ What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVE
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   **START_NOT_STICKY:** <br>
       If the system kills the service after onStartCommand() returns, do not recreate the service unless there are pending intents to deliver. This is the safest option to avoid running your service when not necessary and when your application can simply restart any unfinished jobs.
@@ -1040,7 +1042,7 @@ What is the StrictMode?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1061,7 +1063,7 @@ Launch modes in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   **Standard**:  </br>It creates a new instance of an activity in the task from which it was started. Multiple instances of the activity can be created and multiple instances can be added to the same or different tasks.  </br>
     Example: Suppose there is an activity stack of A -> B -> C. Now if we launch B again with the launch mode as “standard”, the new stack will be A -> B -> C -> B.  </br>
@@ -1089,7 +1091,7 @@ How do you declare the launch mode in your application?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   via manifest, in activity's tag. For Eg., -> android:launchMode="singleTask"
 
@@ -1107,7 +1109,7 @@ What is a RetainFragment / Headless Fragment?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Generally, Fragments are destroyed and recreated along with their parent Activity’s whenever a configuration change occurs. Calling setRetainInstance(true) allows us to bypass this destroy-and-recreate cycle, notifying the system to retain the current instance of the fragment when the activity is recreated.
 
@@ -1125,7 +1127,7 @@ What are Processes in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution. By default all the components of the same application runs in the same process. While most apps donot change this behavior, some apps like games, might want to run in different processes. Then we can use *android:process* attribute in our AndroidManifest.xml to specify the process name.
 
@@ -1143,7 +1145,7 @@ Compilesdkversion vs Targetsdkversion
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1164,7 +1166,7 @@ What is onSavedInstanceState() and onRestoreInstanceState() in activity?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
       - **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
@@ -1183,7 +1185,7 @@ When should you use a Fragment rather than an Activity?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - When there are ui components that are going to be used across multiple activities.
       - When there are multiple views that can be displayed side by side (viewPager tabs)
@@ -1203,7 +1205,7 @@ ViewPager vs ViewPager2
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1224,7 +1226,7 @@ What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
       - **FragmentStatePagerAdapter:** the fragment instance is destroyed when it is not visible to the User, except the saved state of the fragment. This results in using only a small amount of Memory and can be useful for handling larger data sets. Should be used when we have to use dynamic fragments, like fragments with widgets, as their data could be stored in the savedInstanceState.Also it won't affect the performance even if there are large number of fragments.</br>
@@ -1243,7 +1245,7 @@ View & ViewGroup
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **View**: View objects are the basic building blocks of User Interface(UI) elements in Android. View is a simple rectangle box which responds to the user's actions. Examples are EditText, Button, CheckBox etc. View refers to the ```android.view.View``` class, which is the base class of all UI classes.
      - **ViewGroup**: ViewGroup is the invisible container. It holds View and ViewGroup. For example, LinearLayout is the ViewGroup that contains Button(View), and other Layouts also. ViewGroup is the base class for Layouts.</br>
@@ -1262,7 +1264,7 @@ Why do android apps need to ask permission like `INTERNET` or `LOCATION`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The Android platform takes advantage of the Linux user-based protection to identify and isolate app resources called sandbox. This isolates apps from each other and protects apps and the system from malicious apps. If an app needs to use some system resources (like internet, or location sensor,..) or needs to connect other apps (like IAB library), it should request this access. Then android OS give this request and get permission to access the resource. If you want to use system resources, request the permission under the `<uses-permission>` tag in the `android-manifest.xml` file.
 
@@ -1280,7 +1282,7 @@ Differences between `serializable` and `Parcelable`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Serializable is a standard java interface but not a part of the Android SDK. Just by implementating this interface your POJO will be ready to jump from one activity to another. So what's the problem with Serializable? Serializable use reflection during the process and lots of additional temp objects created along the way and it may cause garbage collection to occue more often. That is why the serializable is more than 10x slower than Parcelable.
 
@@ -1298,7 +1300,7 @@ Why `serializable` body is empty? How is it doing?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Yes, It's empty because the Java reflection API is performed for marshaling operations (by JVM). This helps identify the Java object's member and behavior but also ends up creating a lot of garbage objects.
 
@@ -1316,7 +1318,7 @@ Which method in `fragment` runs only once?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   According to the [documentation](https://developer.android.com/guide/components/fragments#Creating), the `onCreate()` method is called once a fragment is created. Within your implementation, you should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
 
@@ -1339,7 +1341,7 @@ How to know `configChange` happens in `onDestroy()` function?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
 
@@ -1357,7 +1359,7 @@ How to handle multiple screen sizes?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   It's a long debate but in a very nutshell, you can do it in these ways:
       - Use flexible layout like `ConstraintLayout` unless create alternative layout in different layout folders. (e.g. layout-sw480, layout-sw600, layout-sw720 ...)    
@@ -1386,7 +1388,7 @@ What is the difference between margin and padding?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **Padding** will be space added inside the container, for instance, if it is a button, padding will be added inside the button.       
     - **Margin** will be space added outside the container.
@@ -1405,7 +1407,7 @@ What is `sw` keyword in `layout-sw600` folder meaning?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The `sw` keywrod which stands on "smallest width" is an screen size qualifier that allow you to provide alternative layouts for screens that have a minimum width measured in dp.
     The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation, so it's a simple way to specify the overall screen size available for your layout. Here is some useful values:
@@ -1429,7 +1431,7 @@ What is the difference between `sw` and `w` and `h` as postfix in order to defin
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - `sw`: The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation,
       - `w`: The width qualifier specifies the available width. For example, if you have a two-pane layout, you might want to use that whenever the screen provides at least 600dp of width, which might change depending on whether the device is in landscape or portrait orientation. Notice that this qualifier is orientation related.
@@ -1451,7 +1453,7 @@ What are the major differences between `ListView` and `RecyclerView`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **ViewHolder Pattern**: `Recyclerview` implements the ViewHolders pattern whereas it is not mandatory in a ListView. A `ViewHolder` object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In `ListView`, the code might call `findViewById()` frequently during the scrolling of `ListView`, which can slow down performance. Even when the `Adapter` returns an inflated view for recycling, you still need to look up
       the elements and update them. A way around repeated use of `findViewById()`  is to use the "view holder" design pattern.
@@ -1475,7 +1477,7 @@ How do we save and restore an activity's state during screen rotation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
 
@@ -1493,7 +1495,7 @@ How to handle crashing of AsyncTask during screen rotation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.  </br>
       The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the list below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42  </br>
@@ -1520,7 +1522,7 @@ How does the activity respond when orientation is changed?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   According to the [documentation](https://developer.android.com/guide/topics/resources/runtime-changes), Some device configurations can change during runtime (such as screen orientation, keyboard availability, and when the user enables multi-window mode). When such a change occurs, Android restarts the running `Activity` ( `onDestroy()` is called, followed by `onCreate()`). The restart behavior is designed to help your application adapt to new configurations by automatically reloading your application with alternative resources that match the new device configuration.
 
@@ -1543,7 +1545,7 @@ How to prevent the data from reloading when orientation is changed?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`. A `ViewModel` is LifeCycle-Aware. In other words, a `ViewModel` will not be destroyed if its owner is destroyed for a configuration change (e.g. rotation). The new instance of the owner will just re-connected to the existing `ViewModel`. So if you rotate an `Activity` three times, you have just created three different `Activity` instances, but you only have one `ViewModel`. So the common practice is to store data in the `ViewModel` class (since it persists data during configuration changes) and use `OnSaveInstanceState()` to store small amounts of UI data.
 
@@ -1561,7 +1563,7 @@ What is the relationship between the life cycle of an `AsyncTask` and an `Activi
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An AsyncTask is not tied to the life cycle of the Activity that contains it. So, for example, if you start an AsyncTask inside an Activity and the user rotates the device, the Activity will be destroyed (and a new Activity instance will be created) but the AsyncTask will not die but instead goes on living until it completes.  </br>
     Then, when the AsyncTask does complete, rather than updating the UI of the new Activity, it updates the former instance of the Activity (i.e. the one in which it was created but that is not displayed anymore!). This can lead to an Exception (of the type java.lang.IllegalArgumentException: View not attached to window manager if you use, for instance, findViewById to retrieve a view inside the Activity).  </br>
@@ -1582,7 +1584,7 @@ Headless fragment vs Service
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1603,7 +1605,7 @@ Service Lifecycle
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   <img src="/assets/service_lifecycle.png" width="250">
 
@@ -1621,7 +1623,7 @@ Difference between `Activity` and `Service`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **Activity:** An activity is the entry point for interacting with the user. It represents a single screen with a user interface.
     - **Service:** A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons. It is a component that runs in the background to perform long-running operations or to perform work for remote processes. A service does not provide a user interface.
@@ -1640,7 +1642,7 @@ How would you update the UI of an activity from a background service
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1661,7 +1663,7 @@ What is thread-safe mean? How we can make our code thread-safe?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
       - Synchronization
@@ -1686,7 +1688,7 @@ What are Handlers?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Handlers are objects for managing threads. It receives messages and writes code on how to handle the message. They run outside of the activity’s lifecycle, so they need to be cleaned up properly or else you will have thread leaks. Handlers allow communicating between the background thread and the main thread. Handler delivers messages and runnables to the message queue and execute them as they come out of the message queue. We will generally use handler class when we want to repeat task every few seconds.
 
@@ -1704,7 +1706,7 @@ What is HandlerThread?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1725,7 +1727,7 @@ What is a Message?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Message contains a description and arbitrary data object that can be sent to a Handler. Basically its used to process / send some data across threads.
 
@@ -1743,7 +1745,7 @@ AIDL vs Messenger Queue
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * AIDL is for purpose when you've to go application level communication for data and control sharing, a scenario depicting it can be : An app requires list of all contacts from Contacts app (content part lies here) plus it also wants to show the call's duration and you can also disconnect it from that app (control part lies here).
     * In Messenger queues you're more IN the application and working on threads and processes to manage the queue having messages so no Outside services interference here.</br>
@@ -1763,7 +1765,7 @@ What is the difference between `Foreground` and `Background` and `Bounded` servi
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **Foreground Service:** A foreground `service` performs some operation that is noticeable to the user. For example, we can use a foreground service to play an audio track. A `Notification` must be displayed to the user.
     - **Background Service:** A background `service` performs an operation that isn’t directly noticed by the user. In Android API level 26 and above, there are restrictions to using background services and it is recommended to use WorkManager in these cases
@@ -1788,7 +1790,7 @@ Bound Service vs UnBounded service?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   **A Bound service** is started by using method bindService(). As mentioned above system destroys bound service when no application component is accessing it. A Bound Service will stop automatically by the system when all the Application Components bound to it are unbinded.</br>
       **Unbounded service (started service)** is started by using a method called startService(). Once started, it will run indefinitely even if the application component that started it is destroyed.
@@ -1807,7 +1809,7 @@ Difference between `Intent` and `IntentService`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - `Service` is the base class for Android services that can be extended to create any service. A class that directly extends `Service` runs on the main thread so it will block the UI (if there is one) and should therefore either be used only for short tasks or should make use of other threads for longer tasks.
 
@@ -1832,7 +1834,7 @@ Difference between Service, Intent Service, AsyncTask & Threads
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Android service** is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one). This might cause ANR errors and hould therefore either be used only for short tasks or should make use of other threads for longer tasks. To stop a service from an activity we can call stopService(Intent intent) method. To Stop a service from itself, we can call stopSelf() method.</br>
     * **AsyncTask** allows you to perform asynchronous work on your user interface. It performs the blocking operations in a worker thread and then publishes the results on the UI thread, without requiring you to handle threads and/or handlers yourself.</br>
@@ -1853,7 +1855,7 @@ When to use AsyncTask and when to use services?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Services are useful when you want to run code even when your application's Activity isn't open. AsyncTask is a helper class used to run some code in a separate thread and publish results in main thread. Usually AsyncTask is used for small operations and services are used for long running operations.
 
@@ -1871,7 +1873,7 @@ What is an Intent Service? What is the method that differentiates it to make Ser
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   IntentService is a subclass of Service that can perform tasks using worker thread unlike service that blocks main thread. The additional method of IntentService is -
       **<i>onHandleIntent(Intent)</i>** which helps the IntentService to run a particular code block declared inside it, in worker/background thread. The speciality of Intent Service is if there are more tasks given to it, IntentService will pass those intents one by one to the Worker thread. So if there are multiple download operations to be handled, They will be performed in a sequential order. Only one request will be processed at a time.
@@ -1896,7 +1898,7 @@ When to use a service and when to use a thread?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   We will use a Thread when we want to perform background operations when application is running in foreground. We will use a service even when the application is not running.
 
@@ -1914,7 +1916,7 @@ What is Java ExecutorService
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1935,7 +1937,7 @@ What is a ThreadPool? And is it more effective than using several separate Threa
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.</br>
     * ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.</br>
@@ -1954,7 +1956,7 @@ Modern background execution
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1975,7 +1977,7 @@ What is a Job Scheduling?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
      * The JobScheduler supports batch scheduling of jobs. The Android system can combine jobs so that battery consumption is reduced. JobManager makes handling uploads easier as it handles automatically the unreliability of the network. It also survives application restarts. 
@@ -2005,7 +2007,7 @@ What is a BroadcastReceiver?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2026,7 +2028,7 @@ What is a LocalBroadcastManager?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2047,7 +2049,7 @@ What is a JobScheduler?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2068,7 +2070,7 @@ What is Workmanager?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   *  https://flexiple.com/android/android-workmanager-tutorial-getting-started
     *  https://blog.mindorks.com/integrating-work-manager-in-android
@@ -2093,7 +2095,7 @@ How Workmanager works?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2114,7 +2116,7 @@ Stateflow vs LiveData
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2135,7 +2137,7 @@ Livedata vs ObservableField
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2156,7 +2158,7 @@ Livedata Setvalue vs Postvalue
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2177,7 +2179,7 @@ What is renderscript?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2198,7 +2200,7 @@ FlatBuffers vs JSON.
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2219,7 +2221,7 @@ What is `contentProvider` and what is typically used for?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   A `ContentProvider` provides data from one application to another, when requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42).
     For further reading see the [official android documentation]("https://developer.android.com/guide/topics/providers/content-provider-basics" "Android official documentation")
@@ -2246,7 +2248,7 @@ What is the difference between `implementation` and `api`?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   These two keywords work the same when you want to add a new library but the main difference occurs when using it in the internal library. Let's explain it with an example. Consider your app has a library called 'libraryA'. This library is also dependant on another library called 'libraryB'. the dependency flow will be : `app -> libraryA -> libraryB` . If the libraryB is declared in libraryA with keyword `implementation`, so your app module does not know anything about the classes of libraryB. So you can't access and use any classes of libraryB. If you want to do that, you must declare libraryB in the libraryA Gradle file with keyword `api`. For more information read [this medium link]("https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa").
 
@@ -2269,7 +2271,7 @@ What do you mean by Gradle wrapper?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The Gradle wrapper is the most suitable way to initiate a Gradle build. A Gradle wrapper is a Window’s batch script which has a shell script for the OS (operating system). Once you start the Gradle build via the wrapper, you will see an auto download which runs the build.
 
@@ -2287,7 +2289,7 @@ When to use Adapter pattern? (Not for RecyclerView or ListView)
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Use Adapter pattern when you need to make two class work with incompatible interfaces. Adapter pattern can also be used to encapsulate third party code so that your application only depends upon Adapter, which can adapt itself when third party code changes or you moved to a different third party library.
 
@@ -2305,7 +2307,7 @@ In singleton pattern whether it is better to make the whole `getInstance()` meth
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Synchronization of whole `getInstance()` method is costly and is only needed during the initialization on singleton instance, to stop creating another instance of Singleton.  Therefore it is better to only synchronize critical section and not the whole method.
 
@@ -2323,7 +2325,7 @@ Log.v(), Log.d(), Log.i(), Log.w(), Log.e() - When to use each one?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2344,7 +2346,7 @@ Understanding scope storage in android
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2365,7 +2367,7 @@ Solve out of memory error
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2386,7 +2388,7 @@ What is ART? Difference between ART and Dalvik
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2429,7 +2431,7 @@ Reason for the exit in Android Application
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2450,7 +2452,7 @@ Android Jetpack component
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2471,7 +2473,7 @@ Android Architecture Component
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2492,7 +2494,7 @@ How ViewModel work internally?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2513,7 +2515,7 @@ Arraymap vs Sparsh Array
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2534,7 +2536,7 @@ Java Android Multithreading programming
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2555,7 +2557,7 @@ How can you prevent creating another instance of singleton using `clone()` metho
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
 
@@ -2573,7 +2575,7 @@ When will you prefer to use a Factory Pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The factory pattern is preferred in the following cases:
       - A class does not know which class of objects it must create
@@ -2594,7 +2596,7 @@ Why use a factory class to instantiate a class when we can use new operator?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Factory classes provide flexibility in terms of design. Below are some of the
     benefits of factory class:
@@ -2623,7 +2625,7 @@ which pattern is used when we need to decouple an abstraction from its implement
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
 
@@ -2641,7 +2643,7 @@ What is ABI Management?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Different Android handsets use different CPUs, which in turn support different instruction sets. Each combination of CPU and instruction sets has its own Application Binary Interface, or ABI. The ABI defines, with great precision, how an  application's machine code is supposed to interact with the system at runtime. You must specify an ABI for each CPU  architecture you want your app to work with. You can checkout the full specifcations [here](https://developer.android.com/ndk/guides/abis)</br>
 
@@ -2664,7 +2666,7 @@ Why bytecode cannot be run in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Android uses DVM (Dalvik Virtual Machine ) rather using JVM(Java Virtual Machine).</br>
 
@@ -2682,7 +2684,7 @@ What are Android Runtime (ART) and Dalvik?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Android Runtime (ART) and Dalvik are both execution environments for running Android applications, but they have some key differences:<br>
 
@@ -2721,7 +2723,7 @@ What is a BuildType in Gradle? And what can you use it for?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Build types define properties that Gradle uses when building and packaging your Android app.
      * A build type defines how a module is built, for example whether ProGuard is run.
@@ -2742,7 +2744,7 @@ Are you familiar with ProGuard/DexGuard/R8 Minification?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   ProGuard, DexGuard, and R8 are tools used in Android development to optimize and protect the application code. Here’s a brief overview of each:<br>
 
@@ -2766,7 +2768,7 @@ What is the difference between a process and a thread?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   **Process**:
           - Runs in its own instance of the virtual machine.
@@ -2795,7 +2797,7 @@ What is the difference between a process and a task?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - A **process** is about the execution and management of resources at the system level.
       - A **task** is about the user’s journey through a sequence of activities within or across applications.
@@ -2814,7 +2816,7 @@ What is AAPT?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
 
@@ -2832,7 +2834,7 @@ Explain the build process in Android:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
     * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex. 
@@ -2852,7 +2854,7 @@ What is Manifest file and R.java file in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Manifest**: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
       * **R.Java**: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. </br>
@@ -2874,7 +2876,7 @@ Mention two ways to clear the back stack of Activities when a new Activity is ca
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag. The second way is by using FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_NEW_TASK in conjunction.</br>
 
@@ -2892,7 +2894,7 @@ What’s the difference between FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_CLEAR
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **FLAG_ACTIVITY_CLEAR_TASK** is used to clear all the activities from the task including any existing instances of the class invoked. The Activity launched by intent becomes the new root of the otherwise empty task list. This flag has to be used in conjunction with FLAG_ ACTIVITY_NEW_TASK.</br>
     * **FLAG_ACTIVITY_CLEAR_TOP** on the other hand, if set and if an old instance of this Activity exists in the task list then barring that all the other activities are removed and that old activity becomes the root of the task list. Else if there’s no instance of that activity then a new instance of it is made the root of the task list. Using FLAG_ACTIVITY_NEW_TASK in conjunction is a good practice, though not necessary.</br>
@@ -2911,7 +2913,7 @@ Describe content providers
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * A ContentProvider provides data from one application to another, when requested. It manages access to a structured set of data.  It provides mechanisms for defining data security. ContentProvider is the standard interface that connects data in one process with code running in another process.</br>  
     * When you want to access data in a **ContentProvider**, you must instead use the ContentResolver object in your application’s Context to communicate with the provider as a client. The provider object receives data requests from clients, performs the requested action, and returns the results.</br>
@@ -2930,7 +2932,7 @@ Access data using Content Provider:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Start by making sure your Android application has the necessary read access permissions. Then, get access to the ContentResolver object by calling getContentResolver() on the Context object, and retrieving the data by constructing a query using ContentResolver.query().</br>
     * The ContentResolver.query() method returns a Cursor, so you can retrieve data from each column using Cursor methods.</br>
@@ -2949,7 +2951,7 @@ What is the onTrimMemory() method?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * ```onTrimMemory()```: Called when the operating system has determined that it is a good time for a process to trim unneeded memory from its process. This will happen for example when it goes in the background and there is not enough memory to keep as many background processes running as desired.
      * Android can reclaim memory for from your app in several ways or kill your app entirely if necessary to free up memory for critical tasks. To help balance the system memory and avoid the system's need to kill your app process, you can implement the ```ComponentCallbacks2``` interface in your Activity classes. The provided onTrimMemory() callback method allows your app to listen for memory related events when your app is in either the foreground or the background, and then release objects in response to app lifecycle or system events that indicate the system needs to reclaim memory. [Reference](https://developer.android.com/topic/performance/memory)</br>
@@ -2973,7 +2975,7 @@ What is an intent?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Intents are messages that can be used to pass information to the various components of android. For instance, launch an activity, open a webview etc.</br>
     * Two types of intents-</br> 
@@ -2994,7 +2996,7 @@ What is a Sticky Intent?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Sticky Intents allows communication between a function and a service. 
     * ```sendStickyBroadcast()``` performs a sendBroadcast(Intent) known as sticky, i.e. the Intent you are sending stays around after the broadcast is complete, so that others can quickly retrieve that data through the return value of ```registerReceiver(BroadcastReceiver, IntentFilter)```.
@@ -3014,7 +3016,7 @@ What is a Pending Intent?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   If you want someone to perform any Intent operation at future point of time on behalf of you, then we will use Pending Intent. </br>
 
@@ -3032,7 +3034,7 @@ Describe fragments:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Fragment is a UI entity attached to Activity. Fragments can be reused by attaching in different activities. Activity can have multiple fragments attached to it. Fragment must be attached to an activity and its lifecycle will depend on its host activity.</br>
 
@@ -3050,7 +3052,7 @@ Describe fragment lifecycle
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * ```onAttach()``` : The fragment instance is associated with an activity instance.The fragment and the activity is not fully initialized. Typically you get in this method a reference to the activity which uses the fragment for further initialization work.
     * ```onCreate()``` : The system calls this method when creating the fragment. You should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
@@ -3077,7 +3079,7 @@ What is the difference between fragments & activities. Explain the relationship 
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).</br>
 
@@ -3095,7 +3097,7 @@ Why is it recommended to use only the default constructor to create a Fragment?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle. This way you are guaranteed to restore the state of the fragment correctly to the same state the fragment was initialised with.</br>
 
@@ -3113,7 +3115,7 @@ You’re replacing one Fragment with another — how do you ensure that the user
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   We need to save each Fragment transaction to the backstack, by calling ```addToBackStack()``` before you ```commit()``` that transaction</br>
 
@@ -3151,7 +3153,7 @@ What are retained fragments
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs. Calling ```setRetainInstance(true)``` allows us to bypass this destroy-and-recreate cycle, signaling the system to retain the current instance of the fragment when the activity is recreated.</br>
 
@@ -3169,7 +3171,7 @@ What is Toast in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Android Toast can be used to display information for the short period of time. A toast contains message to be displayed quickly and disappears after sometime.</br>
 
@@ -3187,7 +3189,7 @@ What are Loaders in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Loader API was introduced in API level 11 and is used to load data from a data source to display in an activity or fragment. Loaders persist and cache results across configuration changes to prevent duplicate queries.
      * [Sample Implementation](https://medium.com/mindorks/a-journey-to-the-world-of-mvp-and-loaders-part-2-e176200e5866) </br>
@@ -3211,7 +3213,7 @@ What is the difference between a regular .png and a nine-patch image?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device. The NinePatch class allows drawing a bitmap in nine sections. The four corners are unscaled; the middle of the image is scaled in both axes, the four edges are scaled into one axis.</br>
 
@@ -3229,7 +3231,7 @@ Difference between RelativeLayout and LinearLayout?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Linear Layout** - Arranges elements either vertically or horizontally. i.e. in a row or column. 
      * **Relative Layout** - Arranges elements relative to parent or other elements.</br>
@@ -3248,7 +3250,7 @@ What is ConstraintLayout?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * It allows you to create large and complex layouts with a flat view hierarchy (no nested view groups). It's similar to RelativeLayout in that all views are laid out according to relationships between sibling views and the parent layout, but it's more flexible than RelativeLayout and easier to use with Android Studio's Layout Editor.
      * [Sample Implementation](https://github.com/anitaa1990/ConstraintLayout-Sample) 
@@ -3275,7 +3277,7 @@ When might you use a FrameLayout?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Frame Layouts are designed to contain a single item, making them an efficient choice when you need to display a single View.
      * If you add multiple Views to a FrameLayout then it’ll stack them one above the other, so FrameLayouts are also useful if you need overlapping Views, for example if you’re implementing an overlay or a HUD element.</br>
@@ -3294,7 +3296,7 @@ What is Adapters?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An adapter responsible for converting each data entry into a View that can then be added to the AdapterView (ListView/RecyclerView).</br>
 
@@ -3312,7 +3314,7 @@ How to support different screen sizes?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Create a flexible layout - The best way to create a responsive layout for different screen sizes is to use ConstraintLayout as the base layout in your UI. ConstraintLayout allows you to specify the position and size for each view according to spatial relationships with other views in the layout. This way, all the views can move and stretch together as the screen size changes.
      * Create stretchable nine-patch bitmaps
@@ -3336,7 +3338,7 @@ Outline the process of creating custom Views:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Create a class that Subclass a view
      * Create a res/values/attrs.xml file and declare the attributes you want to use with your custom View.
@@ -3364,7 +3366,7 @@ Briefly describe some ways that you can optimize View usage
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Checking for excessive overdraw: install your app on an Android device, and then enable the "Debug GPU Overview" option.
      * Flattening your view hierarchy: inspect your view hierarchy using Android Studio’s ‘Hierarchy Viewer’ tool.
@@ -3384,7 +3386,7 @@ Bitmap pooling in android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Bitmap pooling is a simple technique, that aims to reuse bitmaps instead of creating new ones every time. When you need a bitmap, you check a bitmap stack to see if there are any bitmaps available. If there are not bitmaps available you create a new bitmap otherwise you pop a bitmap from the stack and reuse it. Then when you are done with the bitmap, you can put it on a stack.
 
@@ -3407,7 +3409,7 @@ How you load your `Bitmaps`? What do you do for loading large bitmaps?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -3428,7 +3430,7 @@ What are the permission protection levels in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
      * **Dangerous** - A higher-risk permission. Any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.
@@ -3449,7 +3451,7 @@ Uses permission vs Permission
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -3470,7 +3472,7 @@ What is an Application Not Responding (ANR) error, and how can you prevent them 
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An ANR dialog appears when your UI has been unresponsive for more than 5 seconds, usually because you’ve blocked the main thread. To avoid encountering ANR errors, you should move as much work off the main thread as possible.</br>
 
@@ -3488,7 +3490,7 @@ What is a singleton class in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   A singleton class is a class which can create only an object that can be shared all other classes.
      </br>
@@ -3526,7 +3528,7 @@ What is `SnapHelper`?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -3547,7 +3549,7 @@ How to handle multi-touch in android
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -3568,7 +3570,7 @@ How does RecyclerView work?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Let's start with some background on RecyclerView which is needed to understand ```onBindViewHolder()``` method inside RecyclerView.</br>
      * RecyclerView is designed to display long lists (or grids) of items. Say you want to display 100 rows of something. A simple approach would be to just create 100 views, one for each row and lay all of them out. But that would be wasteful because at any point of time, only 10 or so items could fit on screen and the remaining items would be off screen. So RecyclerView instead creates only the 10 or so views that are on screen. This way you get 10x better speed and memory usage. 
@@ -3590,7 +3592,7 @@ How does RecyclerView differ from ListView?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **ViewHolder Pattern**:  Recyclerview implements the ViewHolders pattern whereas it is not mandatory in a ListView. A RecyclerView recycles and reuses cells when scrolling. 
      * **What is a ViewHolder Pattern?** - A ViewHolder object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In ListView, the code might call ```findViewById()``` frequently during the scrolling of ListView, which can slow down performance. Even when the Adapter returns an inflated view for recycling, you still need to look up the elements and update them. A way around repeated use of ```findViewById()``` is to use the "view holder" design pattern.
@@ -3611,7 +3613,7 @@ How would you implement swipe animation in Android
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   </br>
 
@@ -3643,7 +3645,7 @@ Shimmer effect animation placeholder
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -3664,7 +3666,7 @@ Arraymap/SparseArray vs HashMap in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
      * [Article 2 on the subject](https://medium.com/@mohom.r/optimising-android-app-performance-with-arraymap-9296f4a1f9eb) </br>
@@ -3689,7 +3691,7 @@ How to reduce apk size?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Enable proguard in your project by adding following lines to your release build type.
      * Enable shrinkResources.
@@ -3716,7 +3718,7 @@ How to reduce build time of an Android app?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -3737,7 +3739,7 @@ Android Architecture Components?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)</br>
     **Room**:
@@ -3792,7 +3794,7 @@ Why we should use MVP / MVVM architectures?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - to avoid too much logic code in the UI layer and god activities
      - reusable code that's easier to test
@@ -3814,7 +3816,7 @@ Why the View should be implemented with an interface in MVP?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - Because we want to decouple the code from the implementation view.
      - We want to abstract the framework used to write our presentation layer, regardless of any external dependency.
@@ -3835,7 +3837,7 @@ Why do you use dependency injection (DI / Dagger)?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   According to this concept a class should not configure its dependencies statically but should be configured from the outside = Inversion of Control
      - useful for decoupling the whole system
@@ -3857,7 +3859,7 @@ Difference between MVC & MVP & MVVM?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
      * **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
@@ -3885,7 +3887,7 @@ What is the role of Presenter in MVP?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
 
@@ -3903,7 +3905,7 @@ What is the advantage of MVVM over MVP?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View. It is the View's responsibility to pick the changes from ViewModel. This helps in writing more maintainable test cases since ViewModel does not depend upon View.
 
@@ -3921,7 +3923,7 @@ What is Espresso
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -3942,7 +3944,7 @@ What is Screenshot testing
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   *  https://github.com/facebook/screenshot-tests-for-android
      *  https://facebook.github.io/screenshot-tests-for-android/#getting-started
@@ -3967,7 +3969,7 @@ What are SOLID Principles? How they are applicable in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   SOLID unites all the best practices of software development over the years to deliver good quality apps. Understanding SOLID Principles will help us write clean and elegant code. It helps us write the code with SOC (Separation of Concerns).
       SOLID Principles is an acronym for:
@@ -3998,7 +4000,7 @@ What is Reflection?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Reflection is an API that is used to examine or modify the behaviour of methods, classes and interfaces at runtime. The required classes for reflection are present in java.lang.reflect package.
 
@@ -4016,7 +4018,7 @@ How to reduce your app size?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   1. setting minifyEnabled to true
       2. setting shrinkResources to true
@@ -4038,7 +4040,7 @@ What is the advantage of using Retrofit over AsyncTask?
 ### Answer
 
 - **Lead:** [Stackoverflow](https://stackoverflow.com/a/16903205/3424919)
-- **Deep explanation:**
+- **In plain words:**
 
   Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself.
 
@@ -4061,7 +4063,7 @@ Advantage of Retrofit over Volley?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
 
@@ -4079,7 +4081,7 @@ Advantage of Volley over Retrofit?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Android Volley has a very elaborate and flexible cache mechanism. When a request is made through Volley, first the cache is checked for Response. If it is found, then it is fetched and parsed, else, it will hit Network to fetch the data. Retrofit does not support cache by default.
 
@@ -4097,7 +4099,7 @@ How to handle multiple network calls using Retrofit?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
 
@@ -4115,7 +4117,7 @@ How to post multipart form data using Retrofit?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -4136,7 +4138,7 @@ How to upload an image file in Retrofit 2?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -4157,7 +4159,7 @@ Usecases of OkHttp Interceptor
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -4178,7 +4180,7 @@ What is Alarm Manager?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
 
@@ -4196,7 +4198,7 @@ How can I get continuous location updates in android like in Google Maps?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -4217,7 +4219,7 @@ How to Work With Geofences?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -4238,7 +4240,7 @@ Why Do You Need SSL Certificate Pinning? How it works?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109
       - https://dzone.com/articles/encryption-and-signing
@@ -4269,7 +4271,7 @@ How do you know if the device is rooted?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   We can check if superUser apk is installed in the device or if it contains su file or xbin folder. </br>
      Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub. For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
@@ -4294,7 +4296,7 @@ What is Symmetric Encryption?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Symmetric encryption deals with creating a passphrase and encrypting the file with it. Then the server needs to send this passphrase(key) to the client so that the client can decrypt. Here the problem is sending that key to decrypt the file. If Hackers can access that key, they can misuse the data.
 
@@ -4312,7 +4314,7 @@ What is Asymmetric Encryption?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Using algorithms like RSA, AES256, etc., the server generates 2 keys - public key and private key. The server then gives public key to clients. Client then encrypts the sensitive data with that public key and send it back to server. Now as the server alone has the private key, only it can decrypt the data. This is the most efficient way of sending data across the client and server.
 
@@ -4339,7 +4341,7 @@ How do you encrypt the Data in Java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Using javax.crypto package's Cipher class. We can call the methods such as encrypt() or decrypt() from the Cipher class to encode or decode our data.
 
@@ -4364,7 +4366,7 @@ App Data encryption
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -4385,7 +4387,7 @@ How to save password safely in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - https://developer.android.com/privacy-and-security/keystore
       - https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b
@@ -4414,7 +4416,7 @@ How to avoid memory leaks in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   ### Android Memory Related
 
@@ -4437,7 +4439,7 @@ How do you create a Memory Leak in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   By passing the context to static block (class or method), we can create a Memory Leak.
 
@@ -4455,7 +4457,7 @@ How do you avoid a Memory Leak in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   By making the objects eligible for GC (Garbage Collection) after a class (Activity or Fragment) is destroyed. We can also use Weak References like WeakHashMaps to loosely hold the data and make it easily available to GC.
 
@@ -4473,7 +4475,7 @@ How do you identify a Memory Leak in Android?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   By using Profiler in Android Studio or by using LeakCanary Library in Android.
 
@@ -4491,7 +4493,7 @@ APK Size Reduction.
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -4512,7 +4514,7 @@ CICD for Android
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Using Workflow](https://blog.mindorks.com/github-actions-for-android/)
     * [Using Jenkins and Docker](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/
@@ -4539,7 +4541,7 @@ How do you reduce battery consumption?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   1. Never poll the server for updates.
       2. Sync only when required. Ideally, sync when phone is on Wi-Fi and plugged in.
@@ -4561,7 +4563,7 @@ How do you improve battery while fetching location for an app?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   1. By changing Accuracy -> we can use setPriority() to PRIORITY_LOW_POWER
       2. By changing Frequency of fetching location -> we can use setInterval() to specify the time interval
@@ -4583,7 +4585,7 @@ What is Dependency Injection Pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   <img src="https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7" width="400">
 
@@ -4606,7 +4608,7 @@ What is Dependency Injection Pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Dependency Injection pattern is where if our object requires other object, it will be passed to our object instead of us having to create that object. This other object is called as dependency.
 
@@ -4624,7 +4626,7 @@ What is Service Locator Pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Service Locator Pattern uses central Registry known as Service Locator which upon request provides objects for our class. This pattern has severe criticism that its an Anti-Pattern.
 
@@ -4642,7 +4644,7 @@ What is Anti-Pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An anti-pattern are certain patterns in software development that are considered bad programming practices.<br/>
       For more, click [Here](https://stackoverflow.com/a/980616/3424919).
@@ -4666,7 +4668,7 @@ What is the use-case of @BindsInstance Annotation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   @BindsInstance is used to bind the available data at the time of building the Component. For example, while I needed to build dagger graph and username is already available to me, then I can bind that username to that dagger dependency graph as follows:
 
@@ -4694,7 +4696,7 @@ What is the use-case of @Module Annotation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   @Module is the Annotation used on the class for the Dagger to look inside it, to provide dependencies. We may be declaring methods inside the module class that are enclosed with @Provides annotation.
 
@@ -4712,7 +4714,7 @@ What is the use-case of @Provides Annotation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   @Provides annotation is used on a method in Module class and can return / provide a Dependency object.
 
@@ -4730,7 +4732,7 @@ What is the use-case of @Component Annotation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   @Component is used on Interface or abstract class. Dagger uses this interface to generate an implementation class with fully formed, dependency injected implementation, using the modules declared along with it. This generated class will be preceded by Dagger. For example if i create an interface named ProgramComponent with @Component annotation, Dagger will generate a Class named 'DaggerProgramComponent' implementing the  ProgramComponent interface.
 
@@ -4748,7 +4750,7 @@ What is the use-case of @Scope Annotation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   @Scope is an annotation used on Interface to create a new Custom Scope. A Scope declaration helps to keep single instance of a class as long as its scope exists. For example, in Android, we can use @ApplicationScope for the object to live as long as the Application is live or @ActivityScope for the object to be available till the activity is killed.
 
@@ -4766,7 +4768,7 @@ What is the use of Qualifier in Dagger?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   We are often in a situation where we will be needing multiple objects with different instance values. For example, we need declare Student("Vamsi") and Student("Krishna"). In such case we can use a Qualifier to tell Dagger that we need multiple instances of same class. The default implementation of Qualifier is using @Named annotation, for eg., @Named("student_vamsi") and @Named("student_krishna")
       If we want to create a Custom Qualifier we would be using @Qualifier to declare a custom Qualifier interface.
@@ -4785,7 +4787,7 @@ What is the use-case of @Inject Annotation in Dagger?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   @Inject annotation is used to request dagger to provide the respective Object. We use @Inject on Constructor, Fields (mostly where constructor is not accessible like Activities, Fragments, etc.) and Methods.
 
@@ -4805,7 +4807,7 @@ Arrays
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Find Maximum Sell Profit](/src/arrays/FindMaximumSellProfit.java)
     * [Find Low & High Index of a key from a given array](/src/arrays/LowHighIndex.java)
@@ -4835,7 +4837,7 @@ Dynamic Programming
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Fibonacci Series](/src/dynamicprogramming/FibonacciSeries.java)
      * [Given an array, find the contiguous subarray with the largest sum](/src/dynamicprogramming/LargestSumSubarray.java)
@@ -4859,7 +4861,7 @@ Queues
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Find the Maximum in a Sliding Window](/src/queue/Dequeue.java)
      * [Implement a queue using stack](/src/queue/QueuesUsingStack.java)
@@ -4879,7 +4881,7 @@ LinkedList
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Reverse a Linked List](/src/linkedlist/ReverseLinkedList.java)
      * [Remove duplicates from a Linked List](/src/linkedlist/RemoveDuplicates.java)
@@ -4913,7 +4915,7 @@ Stacks
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Evaluate an expression](/src/stacks/EvaluationExpression.java)
      * [Implement a stack using queues](/src/stacks/StacksUsingQueues.java)
@@ -4936,7 +4938,7 @@ Back Tracking
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Solve Boggle](/src/backtracks/Boggle.java)
      * [Print paranthesis combination for a given value](/src/backtracks/Parenthesis.java)
@@ -4958,7 +4960,7 @@ Graphs
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
      * [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java)
@@ -4979,7 +4981,7 @@ Trees
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Implements an InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java)
      * [Convert a binary tree to a doubly linked list](/src/trees/BinaryTreeToLinkedList.java)
@@ -5011,7 +5013,7 @@ Strings
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Reverse String](/src/strings/ReverseString.java)
      * [Palindrone String](/src/strings/PalindroneStrings.java)
@@ -5038,7 +5040,7 @@ Integers
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Reverse Integer](/src/math/ReverseInteger.java)
      * [Find sum of digits of an integer](/src/math/FindSumOfInteger.java)   
@@ -5074,7 +5076,7 @@ Miscellaneous
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * [Find three integers in the array with sum equal to the given value](/src/misc/SumOfThreeValues.java)
      * [Find position of a given key in 2D matrix](/src/misc/SearchMatrix.java)
@@ -5097,7 +5099,7 @@ Usecases of HTTP Polling and WebSocket
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links

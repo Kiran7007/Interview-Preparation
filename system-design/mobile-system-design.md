@@ -8,10 +8,10 @@ How do you approach **mobile system design** differently from backend system des
 
 ### Answer
 
-- **Deep explanation:** Mobile design is constrained by **battery, radio cost, storage, OS background limits, and UI thread jank**. You optimize for perceived performance and graceful degradation offline—not just raw throughput.
-- **Internal working:** You still clarify requirements, estimate scale, define APIs, choose storage (local DB/cache), sync strategy, auth, observability, and rollout.
-- **Trade-offs:** Strong consistency vs offline-first; push vs pull; client ML vs server inference; monolith module vs feature modules.
-- **Real-world example:** Designing a healthcare charting app—HIPAA logging, encrypted Room, background sync with WorkManager, conflict resolution, and certificate pinning.
+- **In plain words:** Mobile design is constrained by **battery, radio cost, storage, OS background limits, and UI thread jank**. You optimize for perceived performance and graceful degradation offline—not just raw throughput.
+- **How it works:** You still clarify requirements, estimate scale, define APIs, choose storage (local DB/cache), sync strategy, auth, observability, and rollout.
+- **What to watch for:** Strong consistency vs offline-first; push vs pull; client ML vs server inference; monolith module vs feature modules.
+- **Example:** Designing a healthcare charting app—HIPAA logging, encrypted Room, background sync with WorkManager, conflict resolution, and certificate pinning.
 
 ### Useful links
 
@@ -35,7 +35,7 @@ Walk me through **SOLID** and how it shows up in Android codebases.
 - **L:** Substitutable implementations for repositories/test doubles.
 - **I:** Small interfaces for Room DAOs/repositories; avoid “god interfaces”.
 - **D:** Depend on abstractions (`PaymentGateway`) not concrete SDK classes—critical for testability and vendor swaps.
-- **Real-world example:** Replacing an analytics SDK without touching feature modules by routing through an interface + DI graph.
+- **Example:** Replacing an analytics SDK without touching feature modules by routing through an interface + DI graph.
 
 ### Useful links
 
@@ -59,7 +59,7 @@ Name core **design patterns** you’d use on mobile and anti-patterns you avoid.
 
 - **Patterns:** Singleton (DI scope, not static god), Factory (create ViewModels w/ assisted injection), Adapter (UI + legacy APIs), Observer (Flow/LiveData), Strategy (payment/auth providers).
 - **Anti-patterns:** Service locator hiding dependencies, “utils” package dumping ground, leaking `Context`, blocking main thread “just once”.
-- **Real-world example:** Strategy for remote config sources: Firebase vs static JSON fallback.
+- **Example:** Strategy for remote config sources: Firebase vs static JSON fallback.
 
 ### Useful links
 
@@ -129,7 +129,7 @@ How do you discuss **scalability & performance** credibly as a mobile tech lead?
 
 - Client-side: caching layers (memory/disk), image pipelines, DB indexes, pagination, background scheduling, startup profiling.
 - Cross-team: CDN, edge caching, rate limits, backoff, gzip/br, binary payloads.
-- **Real-world example:** Feed scroll performance—prefetch window, diffutil, cancel stale requests, stabilize pagination cursors.
+- **Example:** Feed scroll performance—prefetch window, diffutil, cancel stale requests, stabilize pagination cursors.
 
 ### Useful links
 

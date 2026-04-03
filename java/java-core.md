@@ -6,9 +6,9 @@ Why does Android steer you away from Java Serializable for performance-critical 
 
 ### Answer
 
-- **Deep explanation:** Java serialization uses reflection and creates many temporary objects → GC pressure + CPU. Android IPC favors Parcelable (code-generated with @Parcelize in Kotlin) or structured formats.
-- **Trade-offs:** Serializable is convenient for pure JVM server code; on Android it’s a common performance footgun.
-- **Real-world example:** Passing large lists between activities—use ViewModel + repository, not giant serialized blobs.
+- **In plain words:** Java serialization uses reflection and creates many temporary objects → GC pressure + CPU. Android IPC favors Parcelable (code-generated with @Parcelize in Kotlin) or structured formats.
+- **What to watch for:** Serializable is convenient for pure JVM server code; on Android it’s a common performance footgun.
+- **Example:** Passing large lists between activities—use ViewModel + repository, not giant serialized blobs.
 
 ### Key takeaway
 
@@ -24,7 +24,7 @@ Explain OOP Concept.
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Object-Oriented Programming is a methodology to design a program using classes, objects, [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)), [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)), [abstraction](https://en.wikipedia.org/wiki/Abstraction_(software_engineering)) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
 
@@ -50,7 +50,7 @@ What is an Object?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An object is an instance of a class that has states and behaviors. A Class can be defined as a template that describes the behavior/state that the object of its type support.
 
@@ -68,7 +68,7 @@ What is Inheritance?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Inheritance is the process by which objects of one class acquire the properties & objects of another class. The two most common reasons to use inheritance are:
     a) To promote code reuse.
@@ -88,7 +88,7 @@ Composition over inheritance?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Composition is typically "has a" or "uses a" relationship. In the below example, the Employee class has a Person. It does not inherit from Person but instead gets the Person object passed to it, which is why it is a "has a" Person.
 
@@ -132,7 +132,7 @@ What are Interfaces?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Interfaces are only declared methods that an implementing class would need. 
      * Interfaces cannot be marked as final. Interface variables must be static or final. 
@@ -153,7 +153,7 @@ What is Functional Interface
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -174,7 +174,7 @@ What is Comparator Interface
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -195,7 +195,7 @@ Java 8 Changes in Interface
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -216,7 +216,7 @@ Can Interfaces to be extended?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Yes, an interface can extend other interfaces. it supports multiple inheritances, which means it can extend more than one interface, but every class which wants to use an interface must add it by keyword `implements` and using the keyword `extends` for interfaces in classes is illegal and cause compile error.
 
@@ -234,7 +234,7 @@ Difference between abstract and interface?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   | Interface     | Abstract class     |
     | :------------- | :------------- |
@@ -259,7 +259,7 @@ Does Java support multiple inheritance?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Java supports multiple inheritance by interface only since it can implement multiple interfaces but can extend only one class.</br>
 
@@ -277,7 +277,7 @@ What is Encapsulation?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - Encapsulation involves binding code and data together as a single unit. 
      - Encapsulation is a technique used for hiding the properties and behaviors of an object and allowing outside access only as appropriate. It prevents other objects from directly altering or accessing the properties or methods of the encapsulated object. 
@@ -299,7 +299,7 @@ What is Abstract class?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Abstract classes are classes that contain one or more abstract methods. An abstract method is a method that is declared, but contains no implementation. 
      * If even a single method is abstract, the whole class must be declared abstract.
@@ -321,7 +321,7 @@ What is Polymorphism?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The word polymorphism means having many forms. In simple words, we can define polymorphism as the ability of a message to be displayed in more than one form. In Java polymorphism is mainly divided into two types: compile-time and runtime polymorphism.
 
@@ -339,7 +339,7 @@ What is the difference between static and dynamic Polymorphism?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   *method overloading* represents a *static* form of polymorphism. method overloading means using two or more functions with same name but with the different parameters. Static polymorphism is resolved on compile-time and that is why it's called static. An example of this would be as follow:
 
@@ -424,7 +424,7 @@ What is the difference between overriding and overloading?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   | Method Overloading      | Method Overriding     |
     | :-------------   | :------------- |
@@ -449,7 +449,7 @@ Why would you not call abstract method in constructor?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The problem is that the class is not yet fully initialized and when the method is called in a subclass, it may cause trouble.</br>
 
@@ -467,7 +467,7 @@ Difference between Encapsulation & Abstraction?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Abstraction** focuses on the outside view of an object (i.e. the interface) 
      * **Encapsulation** (information hiding) prevents clients from seeing it’s inside view. 
@@ -487,7 +487,7 @@ What is serialization? How do you implement it?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Serialization is the process of converting an object into a stream of bytes in order to store an object into memory so that it can be recreated at a later time while still keeping the objects original state and data. In Java there are two methods of doing this, one is by implementing Serializable or Parcelable. In Android, however, Serializable should never be used in Android. Parcelable was created to be more efficient then Serializable, and performs about 10x faster then Serializable because Serializable uses reflection which is a slow process and tends to create a lot of temporary objects which may cause garbage collection to occur more often.
 
@@ -505,7 +505,7 @@ What is reflection?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -526,7 +526,7 @@ What is Transient Keyword?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -547,7 +547,7 @@ Why is Java said to be platform independent?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   The execution of the code does not depend upon the OS
 
@@ -585,7 +585,7 @@ Is there ever a scenario where we can skip the finally block in a try catch?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   By Calling System.exit(0) in try or catch block, we can skip the finally block. System.exit(int) method can throw a SecurityException. If System.exit(0) exits the JVM without throwing that exception then finally block will not execute. But, if System.exit(0) does throw security exception then finally block will be executed.</br>
 
@@ -603,7 +603,7 @@ What are anonymous classes?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * An anonymous class is just what its name implies -- it has no name. It combines the class declaration and the creation of an instance of the class in one step. Since anonymous classes have no name, objects can not be instantiated from outside the class in which the anonymous class is defined. In fact, an anonymous object can only be instantiated from within the same scope in which it is defined.
      * Rules:
@@ -637,7 +637,7 @@ What is Java Try with Resources?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -658,7 +658,7 @@ What are the Java 8 Interface changes?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -679,7 +679,7 @@ What is Function Interface?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -700,7 +700,7 @@ Why is the main method static in java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * The method is static because otherwise there would be ambiguity on which method to be called. If static is removed from the main method, Program compiles successfully . But at runtime throws an error “NoSuchMethodError”.
      * We can overload the main method in Java. But the program doesn’t execute the overloaded main method when we run your program, we need to call the overloaded main method from the actual main method only. To run a method without calling this main method, we would need to execute a static block.
@@ -733,7 +733,7 @@ What is garbage collector? How does it work?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   All objects are allocated on the heap area managed by the JVM. As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.</br>
 
@@ -751,7 +751,7 @@ Difference between stack memory & heap memory?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Stack is used for static memory allocation and Heap for dynamic memory allocation, both stored in the computer's RAM .
       * Heap memory is used by all the parts of the application whereas stack memory is used only by one thread of execution.
@@ -776,7 +776,7 @@ Constructors vs Methods?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Constructors** must have the name as the class name and does not have a return type. It can be used to instantiate any objects in the class whereas methods have no such rule and is another member of the class. Constructors cannot be inherited but a derived class can call the super constructor of parent class.
      * ```this()```: Constructors use this to refer to another constructor in the same class with a different parameter list.
@@ -797,7 +797,7 @@ What is the difference between instantiation and initialization of an object?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Initialization** is the process of the memory allocation, when a new variable is created. Variables should be explicitly given a value, otherwise they may contain a random value that remained from the previous variable that was using the same memory space. To avoid this problem, Java language assigns default values to data types.
      * **Instantiation** is the process of explicitly assigning definitive value to a declared variable.</br>
@@ -816,7 +816,7 @@ Do objects get passed by reference or value in Java? Elaborate on that.
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Java is always pass-by-value. When we pass the value of an object, we are passing the reference to it. 
      * Java creates a copy of the variable being passed in the method and then does the manipulations. Hence the change is not reflected in the main method.
@@ -837,7 +837,7 @@ Primitives in Java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
 
@@ -860,7 +860,7 @@ Difference between == and .equals() method in Java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - The `equals()` method compares two strings, character by character, to determine equality.
     - The `==` operator checks to see whether two object references refer to the same instance of an object
@@ -879,7 +879,7 @@ Why strings are Immutable?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Once a value is assigned to a string it cannot be changed. And if changed, it creates a new object of the String. This is not the case with StringBuffer.</br>
 
@@ -897,7 +897,7 @@ What is String.intern()? When and why should it be used?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * String.intern() method can be used to to deal with String duplication problem in Java. By carefully using the intern() method you can save a lot of memories consumed by duplicate String instances. A string is duplicate if it contains the same content as another string but occupied different memory location.
      * By calling  the intern() method on a string object, for instance “abc”, you can instruct JVM to put this String in the pool and whenever someone else creates "abc", this object will be returned instead of creating a new object. This way, you can save a lot of memory in Java, depending upon how many Strings are duplicated in your program.
@@ -917,7 +917,7 @@ String pool in Java:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * String Pool in java is a pool of Strings stored in Java Heap Memory. 
      * When we use double quotes to create a String, it first looks for String with same value in the String pool, if found it just returns the reference else it creates a new String in the pool and then returns the reference.
@@ -943,7 +943,7 @@ String pool in Java:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Final modifiers - once declared cannot be modified. A blank final variable in Java is a final variable that is not initialized during declaration. 
         * final Classes- A final class cannot have subclasses.
@@ -972,7 +972,7 @@ String pool in Java:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   `finalize()` method is a protected and non-static method of java.lang.Object class. This method will be available in all objects you create in java. This method is used to perform clean up processing just before object is garbage collected. you can override the `finalize()` method to keep those operations you want to perform before an object is destroyed. Here is the general form of `finalize()` method.
 
@@ -998,7 +998,7 @@ String pool in Java:
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   finally is a code block and is used to place important code, it will be executed whether exception is handled or not.</br>
 
@@ -1016,7 +1016,7 @@ What is a static variables in Java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   static is a non-access modifier in Java which is applicable for the following:
       - blocks
@@ -1049,7 +1049,7 @@ Overriding for static method, possible?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   quick response: no! </br>
 
@@ -1071,7 +1071,7 @@ What is reflection?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</br>
 
@@ -1089,7 +1089,7 @@ Multi threading?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Multiple tasks are running concurrently in a program.</br>
 
@@ -1107,7 +1107,7 @@ What is a ThreadPoolExecutor?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1128,7 +1128,7 @@ Fail-fast & Fail-Safe?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Fail-fast Iterators throws ConcurrentModificationException when one Thread is iterating over collection object and other thread structurally modify Collection either by adding, removing or modifying objects on underlying collection. They are called fail-fast because they try to immediately throw Exception when they encounter failure. 
      * On the other hand [fail-safe](http://javarevisited.blogspot.com/2011/10/java-iterator-tutorial-example-list.html) Iterators works on copy of collection instead of original collection.</br>
@@ -1152,7 +1152,7 @@ What does the keyword synchronized mean?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * When you have two threads that are reading and writing to the same 'resource', say a variable named 'test', you need to ensure that these threads access the variable in an atomic way. Without the synchronized keyword, your thread 1 may not see the change thread 2 made to test.
      * **synchronized** blocks the next thread's call to method as long as the previous thread's execution is not finished. Threads can access this method one at a time.</br>
@@ -1171,7 +1171,7 @@ What does the keyword volatile mean?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Suppose two threads are working on a method. If two threads run on different processors each thread may have its own local copy of variable. If one thread modifies its value the change might not reflect in the original one in the main memory instantly. 
      * Now the other thread is not aware of the modified value which leads to data inconsistency.Essentially, volatile is used to indicate that a variable's value will be modified by different threads. “volatile” tells the compiler that the value of a variable must never be cached as its value may change outside of the scope of the program itself.
@@ -1192,7 +1192,7 @@ Optionals in Java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Optional is a container object which is used to contain not-null objects. Optional object is used to represent null with absent value. This class has various utility methods to facilitate code to handle values as ‘available’ or ‘not available’ instead of checking null values.</br>
 
@@ -1210,7 +1210,7 @@ What is externalization?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * In serialization, the JVM is responsible for the process of writing and reading objects. This is useful in most cases, as the programmers do not have to care about the underlying details of the serialization process.
      * However, the default serialization does not protect sensitive information such as passwords and credentials.
@@ -1231,7 +1231,7 @@ What is an object cloning? can you use clone() method of every object?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Object cloning refers to creation of exact copy of an object. It creates a new instance of the class of current object and initializes all its fields with exactly the contents of the corresponding fields of this object. Every class that implements `clone()` methods should call super.clone() to obtain the cloned object reference. Also it must implement java.lang.Cloneable interface otherwise it will throw CloneNotSupportedException when clone method is called on that class’s object.
 
@@ -1257,7 +1257,7 @@ What is the difference between Shallow copy and deep copy?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **Shallow copy**: is method of copying an object and is followed by default in cloning. In this method the fields of an old object X are copied to the new object Y. While copying the object type field the reference is copied to Y i.e object Y will point to same location as pointed out by X. If the field value is a primitive type it copies the value of the primitive type.
     Therefore, any changes made in referenced objects in object X or Y will be reflected in other object.
@@ -1369,7 +1369,7 @@ Object scopes?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   `public` , `protected` , default (no modifier) , `private`
 
@@ -1394,7 +1394,7 @@ Override private methods, possible?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   No, a private method cannot be overridden since it is not visible from any other class.
 
@@ -1412,7 +1412,7 @@ why access to the non-static variable is not allowed from static method in Java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   because non-static variable are associated with a specific instance of an object while static is not associated with any instance.
 
@@ -1430,7 +1430,7 @@ What is the difference between int and Integer?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   `int` is a primitive type, while `Integer` is class with a single field of type `int`. Variables of type `int` store the avtual binary value for the integer. Variables of type `Integer` store references to `Integer` objects, just as with any other reference (object) type. The `Integer` class is used where you need an `int` to be treated like any other object, such as in generic types or situations where you need nullability.
 
@@ -1448,7 +1448,7 @@ What are Autoboxing and unboxing?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **Autoboxing:** Converting a primitive value into an object of the corresponding wrapper class is called autoboxing. For example, converting `int` to `Integer` class.
     - **Unboxing:**  Converting an object of a wrapper type to its corresponding primitive value is called unboxing. For example conversion of `Integer` to `int`.
@@ -1467,7 +1467,7 @@ What is the `hashCode()` used for?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   `hashcode()` returns the hashcode value as an Integer. Hashcode value is mostly used in hashing based collections like HashMap, HashSet, HashTable….etc. According to the official documentation, The general contract of `hashCode()` is:
       - Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer, provided no information used in equals comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.
@@ -1488,7 +1488,7 @@ What are "annotations"?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Java annotations are used to provide meta data for your Java code. Being meta data, Java annotations do not directly affect the execution of your code, although some types of annotations can actually be used for that purpose. [read more](http://tutorials.jenkov.com/java/annotations.html)
 
@@ -1511,7 +1511,7 @@ What is a deadlock in Java
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * A deadlock occurs when a thread enters a waiting state because a requested system resource is held by another waiting process, which in turn is waiting for another resource held by another waiting process.
      * [Example on how deadlock occurs](/src/deadlock/ThreadLockDemo.java)
@@ -1531,7 +1531,7 @@ What is the List interface & Set interface?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * List interface supports for ordered collection of objects and it may contain duplicates. The Set interface provides methods for accessing the elements of a finite mathematical set. Sets do not allow duplicate elements</br>
 
@@ -1549,7 +1549,7 @@ Difference between ArrayList & Vectors?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Vectors are thread safe (synchronized) whereas arraylists are not. So performance of arraylists are better than vectors.    * In ArrayList, you have to start searching for a particular element from the beginning of an Arraylist. But in the Vector, you can start searching for a particular element from a particular position in a vector. This makes the search operation in Vector faster than in ArrayList. Vectors have a default size of 10 whereas arraylists size can be dynamic. 
      * **Insertion and deletion in ArrayList is slow compared to LinkedList?**
@@ -1570,7 +1570,7 @@ Implementations of Map?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **TreeMap**: sorted based on ascending order of keys. For inserting, deleting, and locating elements in a Map, the HashMap offers the best alternative. If, however, you need to traverse the keys in a sorted order, then TreeMap is your better alternative.
      *	**HashTable**: Does not allow null values. It is not fail-safe and it is synchronized whereas 
@@ -1591,7 +1591,7 @@ Implementations of Map?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1612,7 +1612,7 @@ Explain Looper, Handler and HandlerThread.
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1633,7 +1633,7 @@ Difference between Enumeration and Iterators?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * **Enumeration** does not include remove() method whereas iterators do. Enumerators act as read only interface as it provides methods to read and traverse through a collection. 
      * **ListIterator**: is just like an iterator except it allows access to the collection in either the forward or backward direction</br>
@@ -1652,7 +1652,7 @@ How Hashmap works in Java?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * HashMap in Java works on hashing principle. It is a data structure which allows us to store object and retrieve it in constant time O(1) provided we know the key. When we call put method, ```hashcode()``` method of the key object is called so that hash function of the map can find a bucket location to store Entry object.
      * If two different objects have the same hashcode: in this case, a linked list is formed at that bucket location and a new entry is stored as next node. After finding bucket location, we will call ```keys.equals()``` method to identify a correct node in LinkedList and return associated value object for that key in Java HashMap</br>
@@ -1676,7 +1676,7 @@ Generics in Java
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   * Before generics, we can store any type of objects in collection i.e. non-generic. Now generics, forces the java programmer to store specific type of objects.
      * Type-safety : We can hold only a single type of objects in generics. It doesn’t allow to store other objects.
@@ -1717,7 +1717,7 @@ Types of Observable in Rx-Java
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1738,7 +1738,7 @@ Rx-Java Scheduler what, when, how?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1759,7 +1759,7 @@ RxJava Subject - Publish, Replay, Behavior, and Async
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1780,7 +1780,7 @@ Executor Service
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -1801,7 +1801,7 @@ What is an Observable in RXJava2?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   An Observable  simply emits the data to those which subscribed to it. All the emission is done asynchronously to the subscribers. A simple Observable can be created as follows:
 
@@ -1826,7 +1826,7 @@ What is an Observer in RXJava2?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Observer consumes the data emitted by the Observable. To do this, Observer needs to subscribe to the Observable. Example shows how to create an Observable in RxJava2.
 
@@ -1868,7 +1868,7 @@ How to Subscribe / Unsubscribe in RXJava?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   We can make an Observer to subscribe to Observable as follows:
 
@@ -1893,7 +1893,7 @@ What is Back Pressure in RxJava?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Back Pressure is the state where your observable (publisher) is creating more events than your subscriber can handle.
 
@@ -1911,7 +1911,7 @@ What is a Cold Observable?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   A Cold Observable is an Observable that does not emit items until a Subscriber subscribes. If we have more than one Subscriber, then the Cold Observable will emit each sequence of items to all Subscribers one by one.
 
@@ -1929,7 +1929,7 @@ What is a Hot Observable?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   A Hot observable is an Observer that will emit items
 
@@ -1947,7 +1947,7 @@ What is Design Pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial
      - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
@@ -1975,7 +1975,7 @@ What is the difference between factory and abstract factory design pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   Both factory and abstract factory are creational design patterns. The majordifference between these two is, a factory pattern creates an object through inheritance and produces only one Product. On the other hand, an abstract factory pattern creates the object through composition and produce families of products. In other word an abstract factory is "factory of factories". You can find an example [___here___]("https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java").
 
@@ -1998,7 +1998,7 @@ What is Creational Design Patterns?
 
 ### Answer
 
-- **Deep explanation:** Use the links below as the primary source; rehearse a short spoken summary.
+- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
 
 
 ### Useful links
@@ -2019,7 +2019,7 @@ What are the drawbacks of using singleton design pattern?
 
 ### Answer
 
-- **Deep explanation:**
+- **In plain words:**
 
   - **Testability issue:** The bad thing with singletons is that the `getInstance()` method is globally accessible. That means that you usually call it from within a class, instead of depending on an interface you can later mock. That's why it's impossible to replace it when you want to test the method or the class.
     - **Tight Coupling:** The singleton object is exposed globally and is available to a whole application. Thus, classes using this object become tightly coupled. So any change in the global object will impact all other classes using it.

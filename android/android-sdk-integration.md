@@ -8,15 +8,16 @@ Integrating **Firebase** end-to-end — what do staff engineers watch?
 
 ### Answer
 
-- **Realtime Database vs Firestore:** consistency models, offline, security rules complexity.
-- **FCM:** token rotation, topic misuse, background delivery changes.
-- **Analytics/Crashlytics:** PII boundaries, sampling, dSYM/mapping uploads for deobfuscation.
-- **Remote Config:** safe defaults + kill switches.
-- **Real-world example (from mock notes):** Banking + clinician apps combining auth, messaging, analytics with compliance constraints.
+- **Realtime Database vs Firestore:** different **consistency**, **offline**, and **security rules** ergonomics—pick for your **query patterns** and scale.
+- **FCM:** **token** rotation, avoid **topic** abuse, know **background delivery** changes by Android version.
+- **Analytics / Crashlytics:** **PII** boundaries, **sampling**, upload **mapping/dSYM** so stack traces deobfuscate.
+- **Remote Config:** ship **safe defaults** and **kill switches** so bad values do not brick users.
+
+**Example:** Regulated apps combine **auth**, **messaging**, and **analytics** with **compliance** reviews—not “drop in SDK and forget.”
 
 ### Key takeaway
 
-> Firebase is **fast to ship**, hard to **govern** without rules + reviews.
+> Firebase is **fast to adopt** and **easy to mis-govern** without rules, reviews, and ownership.
 
 ---
 
@@ -26,12 +27,11 @@ Integrating **Firebase** end-to-end — what do staff engineers watch?
 
 ### Answer
 
-- Markers clustering, geofencing, background location policies, billing/API key restriction, snapshot testing for map overlays.
-- **Example domains:** banking location services, clinician routing, bus tracking.
+Plan for **marker clustering**, **geofencing**, **background location** policy, **billing**, and **API key restriction** (by app signing + package). Snapshot or **visual** tests help **map overlays** not drift.
 
 ### Key takeaway
 
-> **API key restriction** + **Play policy** are non-negotiable.
+> **Lock down API keys** and **respect Play policy**—non-negotiable for maps at scale.
 
 ---
 
@@ -41,11 +41,11 @@ Integrating **Firebase** end-to-end — what do staff engineers watch?
 
 ### Answer
 
-- Vendor security review, data exfiltration audit (proguard keep rules), init cost on startup, transitive permissions, kill switch via feature flags, SBOM tracking.
+Review **vendor security**, audit **data leaving the device**, measure **startup cost** of SDK init, watch **transitive permissions**, add **feature-flag kill switches**, and track an **SBOM**-style inventory of what you ship.
 
 ### Key takeaway
 
-> Every SDK is **a liability budget**.
+> Every SDK is **risk and bytes**—budget it like headcount.
 
 ---
 
@@ -55,11 +55,11 @@ Integrating **Firebase** end-to-end — what do staff engineers watch?
 
 ### Answer
 
-- Server-driven UI schema versioning, fallback bundles, incremental sync, signed payloads, strict validation, A/B testing guards, offline cached templates.
+Treat server payloads as **untrusted**: **version** your schema, ship **fallback** bundles, **sign** or **validate** payloads, support **incremental sync**, and guard **A/B** experiments. **Cache** templates for **offline**.
 
 ### Key takeaway
 
-> Treat CMS payloads like **untrusted input**.
+> CMS JSON is **input**—validate, version, and fail safe.
 
 ---
 
@@ -69,8 +69,8 @@ Integrating **Firebase** end-to-end — what do staff engineers watch?
 
 ### Answer
 
-- Acknowledge purchases, idempotent backend, fraud checks, server notifications—don’t trust client alone.
+**Acknowledge** purchases, make the **backend idempotent**, run **fraud checks**, and use **server notifications**—never trust the client as the only source of truth for money.
 
 ### Key takeaway
 
-> **Server validation** is the product truth.
+> **Server validation** owns the business truth for purchases.

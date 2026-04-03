@@ -8,10 +8,10 @@ What are `@JvmStatic`, `@JvmOverloads`, and `@JvmField`—and when do they matte
 
 ### Answer
 
-- **Deep explanation:** Kotlin generates instance methods and accessors by default; Java callers sometimes need static facades, overload bridges, or direct field access for frameworks (e.g., DI, serialization glue, Android callbacks).
-- **Internal working:** `@JvmStatic` exposes static methods from `companion object`; `@JvmOverloads` generates overload stubs for default parameters; `@JvmField` exposes a field without accessors.
-- **Trade-offs:** `@JvmField` breaks encapsulation; `@JvmOverloads` can explode generated methods for large parameter lists; static interop can hide lifecycle context—prefer Kotlin-only modules when possible.
-- **Real-world example:** Dagger/annotation processors expecting Java static creators; legacy Java UI calling Kotlin utilities.
+- **In plain words:** Kotlin generates instance methods and accessors by default; Java callers sometimes need static facades, overload bridges, or direct field access for frameworks (e.g., DI, serialization glue, Android callbacks).
+- **How it works:** `@JvmStatic` exposes static methods from `companion object`; `@JvmOverloads` generates overload stubs for default parameters; `@JvmField` exposes a field without accessors.
+- **What to watch for:** `@JvmField` breaks encapsulation; `@JvmOverloads` can explode generated methods for large parameter lists; static interop can hide lifecycle context—prefer Kotlin-only modules when possible.
+- **Example:** Dagger/annotation processors expecting Java static creators; legacy Java UI calling Kotlin utilities.
 
 ### Code example
 
@@ -42,10 +42,10 @@ What is **destructuring** in Kotlin and where is it unsafe?
 
 ### Answer
 
-- **Deep explanation:** Destructuring maps component functions `componentN()` for data-like types, letting you unpack values in one step.
-- **Internal working:** Compiler expands `val (a,b) = x` into `component1/2` calls.
-- **Trade-offs:** Breaks silently if field order changes in non-data classes; avoid on wide tuples—name fields explicitly for stable APIs.
-- **Real-world example:** Unpacking network DTO pairs in UI state mappers.
+- **In plain words:** Destructuring maps component functions `componentN()` for data-like types, letting you unpack values in one step.
+- **How it works:** Compiler expands `val (a,b) = x` into `component1/2` calls.
+- **What to watch for:** Breaks silently if field order changes in non-data classes; avoid on wide tuples—name fields explicitly for stable APIs.
+- **Example:** Unpacking network DTO pairs in UI state mappers.
 
 ### Code example
 
@@ -67,8 +67,8 @@ val (name, age) = employee
 
 - **lateinit:** `var` only; for injection or lifecycle init you don’t have at construction; must ensure assignment before use or catch `UninitializedPropertyAccessException`.
 - **lazy:** `val` only; thread-safety modes (`SYNCHRONIZED`, `PUBLICATION`, `NONE`); good for expensive pure initialization.
-- **Trade-offs:** `lateinit` is not for primitives; `lazy` holds a lambda and can accidentally capture `Context` if written carelessly.
-- **Real-world example:** `lateinit` navigator/session; `lazy` for regex or parser used on first access.
+- **What to watch for:** `lateinit` is not for primitives; `lazy` holds a lambda and can accidentally capture `Context` if written carelessly.
+- **Example:** `lateinit` navigator/session; `lazy` for regex or parser used on first access.
 
 ### Key takeaway
 
@@ -84,7 +84,7 @@ Difference between `==` and `===` in Kotlin?
 
 - **`==`:** Structural equality → compiles to `equals()` (nullable-safe).
 - **`===`:** Referential equality (same object), with note that for many primitives you still reason about values but boxed identity can surprise you across platforms.
-- **Real-world example:** Compare UI state data classes with `==`; compare shared `Mutex` instance with `===` if ever needed.
+- **Example:** Compare UI state data classes with `==`; compare shared `Mutex` instance with `===` if ever needed.
 
 ### Key takeaway
 
@@ -98,9 +98,9 @@ What is `forEach` in Kotlin and when should you avoid it?
 
 ### Answer
 
-- **Deep explanation:** Higher-order iteration with inline contracts; readable for simple actions.
-- **Trade-offs:** Non-express `return` (unless labeled); can hide performance costs in hot paths vs indexed `for`.
-- **Real-world example:** Logging during debug; avoid in tight animation loops.
+- **In plain words:** Higher-order iteration with inline contracts; readable for simple actions.
+- **What to watch for:** Non-express `return` (unless labeled); can hide performance costs in hot paths vs indexed `for`.
+- **Example:** Logging during debug; avoid in tight animation loops.
 
 ### Key takeaway
 
@@ -114,9 +114,9 @@ What are **lambdas** and how do they relate to SAM conversion on Android?
 
 ### Answer
 
-- **Deep explanation:** Lambdas are function values; Kotlin supports SAM conversion for Java single-abstract-method interfaces (listeners).
-- **Trade-offs:** Capturing lambdas retain references → memory leaks if they capture `Activity` views; use `WeakReference` patterns only as last resort—fix lifecycle instead.
-- **Real-world example:** `setOnClickListener { }` SAM to `View.OnClickListener`.
+- **In plain words:** Lambdas are function values; Kotlin supports SAM conversion for Java single-abstract-method interfaces (listeners).
+- **What to watch for:** Capturing lambdas retain references → memory leaks if they capture `Activity` views; use `WeakReference` patterns only as last resort—fix lifecycle instead.
+- **Example:** `setOnClickListener { }` SAM to `View.OnClickListener`.
 
 ### Key takeaway
 
@@ -130,9 +130,9 @@ What is a **companion object** and how does it differ from Java `static`?
 
 ### Answer
 
-- **Deep explanation:** A singleton object scoped to the class; can implement interfaces; Kotlin uses it instead of static blocks.
-- **Trade-offs:** Still an object—can hold state; misuse becomes hidden global state.
-- **Real-world example:** Factory methods + constants colocated with class.
+- **In plain words:** A singleton object scoped to the class; can implement interfaces; Kotlin uses it instead of static blocks.
+- **What to watch for:** Still an object—can hold state; misuse becomes hidden global state.
+- **Example:** Factory methods + constants colocated with class.
 
 ### Useful links
 
@@ -150,9 +150,9 @@ What does the **`open`** keyword mean in Kotlin—and why is it the default oppo
 
 ### Answer
 
-- **Deep explanation:** Kotlin classes/members are **final by default** for safe reasoning and performance; `open` opts into inheritance.
-- **Trade-offs:** Frameworks needing inheritance (some test doubles) require `open` or all-open plugins.
-- **Real-world example:** Base `UiModel` sealed/open only where extension is intentional.
+- **In plain words:** Kotlin classes/members are **final by default** for safe reasoning and performance; `open` opts into inheritance.
+- **What to watch for:** Frameworks needing inheritance (some test doubles) require `open` or all-open plugins.
+- **Example:** Base `UiModel` sealed/open only where extension is intentional.
 
 ### Useful links
 
@@ -170,9 +170,9 @@ Where do **bitwise and bit-shift** operations show up in Android engineering?
 
 ### Answer
 
-- **Deep explanation:** Flags in `PendingIntent`, `Intent`, `MotionEvent`, `View` visibility/state, packed protobuf fields, image channel masks.
-- **Trade-offs:** Readability suffers—centralize flag math in named functions and tests.
-- **Real-world example:** Combining `PendingIntent` mutability flags correctly for Android 12+.
+- **In plain words:** Flags in `PendingIntent`, `Intent`, `MotionEvent`, `View` visibility/state, packed protobuf fields, image channel masks.
+- **What to watch for:** Readability suffers—centralize flag math in named functions and tests.
+- **Example:** Combining `PendingIntent` mutability flags correctly for Android 12+.
 
 ### Useful links
 
@@ -190,9 +190,9 @@ Why are **Kotlin collection operators** (`map`, `filter`, `flatMap`) both loved 
 
 ### Answer
 
-- **Deep explanation:** Expressive chain transforms; each step may allocate intermediate collections.
-- **Trade-offs:** Use sequences for large pipelines; choose `buildList` for imperative clarity.
-- **Real-world example:** Mapping DTO → domain in repository with `map` is fine; repeated mega-chains on hot paths → sequence.
+- **In plain words:** Expressive chain transforms; each step may allocate intermediate collections.
+- **What to watch for:** Use sequences for large pipelines; choose `buildList` for imperative clarity.
+- **Example:** Mapping DTO → domain in repository with `map` is fine; repeated mega-chains on hot paths → sequence.
 
 ### Useful links
 
