@@ -1,5 +1,12 @@
 # Android Storage & Data — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 `apply()` vs `commit()` in `SharedPreferences`
@@ -11,9 +18,9 @@
 - **Interaction:** outstanding `apply()` can block a following `commit()`—document ordering in hot paths.
 - **Real-world example:** Feature flags written on main → `apply()`; critical gating config read-back in tests → `commit()` in test doubles only.
 
-### Key Takeaway
+### Key takeaway
 
-Default **`apply()`**; understand **fsync timing** for crash consistency requirements.
+> Default **`apply()`**; understand **fsync timing** for crash consistency requirements.
 
 ---
 
@@ -34,9 +41,9 @@ What is a **ContentProvider** — when do you still build one?
 - Official basics: https://developer.android.com/guide/topics/providers/content-provider-basics  
 - Diagram image: `/assets/content-provider-diagram.png`  
 
-### Key Takeaway
+### Key takeaway
 
-Treat providers as **API surfaces** with ACLs.
+> Treat providers as **API surfaces** with ACLs.
 
 ---
 
@@ -49,9 +56,9 @@ Treat providers as **API surfaces** with ACLs.
 - Strongly typed SQL; migration tests mandatory; SQLCipher/SQLite encryption options for sensitive domains.
 - **Links:** see `android-architecture.md` Room link bundle (official docs + samples).
 
-### Key Takeaway
+### Key takeaway
 
-Ship **migration tests** with every schema bump.
+> Ship **migration tests** with every schema bump.
 
 ---
 
@@ -64,9 +71,9 @@ Ship **migration tests** with every schema bump.
 - No wholesale file path scanning; use SAF for user files; cache in app-specific dirs.
 - **Link:** https://blog.mindorks.com/understanding-the-scoped-storage-in-android  
 
-### Key Takeaway
+### Key takeaway
 
-**User data** vs **app cache** paths drive UX + privacy.
+> **User data** vs **app cache** paths drive UX + privacy.
 
 ---
 
@@ -78,6 +85,6 @@ How do you ensure **DB security & integrity** (health/finance examples)?
 
 - Encryption at rest, validated schemas, authenticated access, backups encrypted, tamper detection on critical tables, least-privilege content providers.
 
-### Key Takeaway
+### Key takeaway
 
-Pair **client encryption** with **server-side authorization**.
+> Pair **client encryption** with **server-side authorization**.

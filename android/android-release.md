@@ -1,5 +1,12 @@
 # Android Release Engineering & CI/CD — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 **ProGuard vs R8 vs DexGuard**
@@ -11,9 +18,9 @@
 - **DexGuard:** commercial hardening (encrypt/strings/anti-tamper)—evaluate cost vs threat model.
 - **Real-world example:** Enable R8 full mode in release; maintain keep rules for reflection (Retrofit, Gson types).
 
-### Key Takeaway
+### Key takeaway
 
-Shrinker breaks **reflection**—rules are part of source code.
+> Shrinker breaks **reflection**—rules are part of source code.
 
 ---
 
@@ -27,9 +34,9 @@ Shrinker breaks **reflection**—rules are part of source code.
 - **Flavor:** dimensions (free/pro, region).
 - **Variant:** cross product.
 
-### Key Takeaway
+### Key takeaway
 
-Matrix explosion is a **CI cost**—prune unused variants.
+> Matrix explosion is a **CI cost**—prune unused variants.
 
 ---
 
@@ -42,9 +49,9 @@ Matrix explosion is a **CI cost**—prune unused variants.
 - `implementation` hides transitive types from consumers → faster compile; `api` leaks classpath.
 - **Link:** https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa  
 
-### Key Takeaway
+### Key takeaway
 
-Default **`implementation`** in libraries.
+> Default **`implementation`** in libraries.
 
 ---
 
@@ -56,9 +63,9 @@ Default **`implementation`** in libraries.
 
 - Reproducible builds across machines/CI; pins Gradle version.
 
-### Key Takeaway
+### Key takeaway
 
-Commit **wrapper**—always.
+> Commit **wrapper**—always.
 
 ---
 
@@ -70,9 +77,9 @@ Commit **wrapper**—always.
 
 - Resources compiled to `resTables`, dexing via D8/R8, packaged into AAB/APK; understand incremental compilation benefits.
 
-### Key Takeaway
+### Key takeaway
 
-Know enough to debug **resource merge** failures.
+> Know enough to debug **resource merge** failures.
 
 ---
 
@@ -85,9 +92,9 @@ Know enough to debug **resource merge** failures.
 - Ship per-arch APKs or use App Bundles; understand native lib packaging.
 - **NDK ABI doc:** https://developer.android.com/ndk/guides/abis  
 
-### Key Takeaway
+### Key takeaway
 
-Native SDKs explode **artifact size**—split thoughtfully.
+> Native SDKs explode **artifact size**—split thoughtfully.
 
 ---
 
@@ -102,9 +109,9 @@ Native SDKs explode **artifact size**—split thoughtfully.
   - https://blog.mindorks.com/github-actions-for-android/  
   - https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/  
 
-### Key Takeaway
+### Key takeaway
 
-Cache **Gradle deps + build cache** aggressively.
+> Cache **Gradle deps + build cache** aggressively.
 
 ---
 
@@ -116,9 +123,9 @@ Cache **Gradle deps + build cache** aggressively.
 
 - Faster releases, automated quality gates, reduced rollout risk; GitFlow/trunk-based with feature flags.
 
-### Key Takeaway
+### Key takeaway
 
-**Trunk-based + flags** scales better than long-lived branches.
+> **Trunk-based + flags** scales better than long-lived branches.
 
 ---
 
@@ -130,6 +137,6 @@ Cache **Gradle deps + build cache** aggressively.
 
 - Use Play App Signing; protect upload key; document disaster recovery.
 
-### Key Takeaway
+### Key takeaway
 
-**Key loss** = business continuity incident.
+> **Key loss** = business continuity incident.

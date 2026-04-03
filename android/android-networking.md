@@ -1,5 +1,12 @@
 # Android Networking (Retrofit, OkHttp, Location, Realtime) — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 **Retrofit vs AsyncTask** — why Retrofit?
@@ -9,9 +16,9 @@
 - Type-safe API surface; integrates with coroutines/Call adapters; centralizes serialization/interceptors.
 - **Link:** https://stackoverflow.com/a/16903205/3424919  
 
-### Key Takeaway
+### Key takeaway
 
-AsyncTask is **obsolete**—structured concurrency + cancellable calls win.
+> AsyncTask is **obsolete**—structured concurrency + cancellable calls win.
 
 ---
 
@@ -25,9 +32,9 @@ AsyncTask is **obsolete**—structured concurrency + cancellable calls win.
 - Volley: built-in memory/disk cache layers historically stronger by default.
 - **Trade-offs:** For greenfield, Retrofit+OkHttp cache patterns are standard.
 
-### Key Takeaway
+### Key takeaway
 
-Discuss **caching** explicitly in interviews.
+> Discuss **caching** explicitly in interviews.
 
 ---
 
@@ -40,9 +47,9 @@ Discuss **caching** explicitly in interviews.
 - Elaborate cache pipeline for some workloads; understand image pipeline legacy.
 - **Real-world example:** Maintain legacy module—justify migration plan to OkHttp cache + Coil.
 
-### Key Takeaway
+### Key takeaway
 
-**Migration narrative** > religious wars.
+> **Migration narrative** > religious wars.
 
 ---
 
@@ -55,9 +62,9 @@ Discuss **caching** explicitly in interviews.
 - `async`/`await` + structured concurrency; `zip` in Rx if legacy; rate-limit and backoff at OkHttp layer.
 - **Real-world example:** Dashboard aggregating 3 endpoints—use `coroutineScope { awaitAll }` with timeouts.
 
-### Key Takeaway
+### Key takeaway
 
-Always specify **timeout + cancellation** per screen.
+> Always specify **timeout + cancellation** per screen.
 
 ---
 
@@ -72,9 +79,9 @@ Always specify **timeout + cancellation** per screen.
   - https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image  
   - https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2  
 
-### Key Takeaway
+### Key takeaway
 
-**Stream large files**—don’t read entire file into heap.
+> **Stream large files**—don’t read entire file into heap.
 
 ---
 
@@ -87,9 +94,9 @@ Always specify **timeout + cancellation** per screen.
 - Auth header injection, logging (debug-only), retry, certificate pinning, metrics.
 - **Link:** https://outcomeschool.com/blog/okhttp-interceptor  
 
-### Key Takeaway
+### Key takeaway
 
-Keep **logging interceptor out of release** or scrub aggressively.
+> Keep **logging interceptor out of release** or scrub aggressively.
 
 ---
 
@@ -102,9 +109,9 @@ Keep **logging interceptor out of release** or scrub aggressively.
 - Choose based on directionality, infra cost, battery; mobile prefers push + delta sync.
 - **Link:** https://outcomeschool.com/blog/http-request-long-polling-websocket-sse  
 
-### Key Takeaway
+### Key takeaway
 
-**Battery + radio** decide transport, not hype.
+> **Battery + radio** decide transport, not hype.
 
 ---
 
@@ -117,9 +124,9 @@ Continuous **location** like Maps — constraints?
 - Fused location provider; batching; foreground service when required; privacy disclosures.
 - **Link:** https://stackoverflow.com/a/41500910/3424919  
 
-### Key Takeaway
+### Key takeaway
 
-**User trust** + **Google Play policies** are part of design.
+> **User trust** + **Google Play policies** are part of design.
 
 ---
 
@@ -132,9 +139,9 @@ Continuous **location** like Maps — constraints?
 - Geofencing API + pending intents; handle unreliable triggers—design confirmation UX.
 - **Link:** https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t  
 
-### Key Takeaway
+### Key takeaway
 
-Treat geofences as **hints**, not guarantees.
+> Treat geofences as **hints**, not guarantees.
 
 ---
 
@@ -147,9 +154,9 @@ Treat geofences as **hints**, not guarantees.
 - WorkManager for deferrable constraints; exact alarms restricted—use `AlarmManager` only with justification + permissions on newer APIs.
 - **AlarmManager:** see Android platform documentation for scheduling semantics.
 
-### Key Takeaway
+### Key takeaway
 
-Default to **WorkManager** for maintenance tasks.
+> Default to **WorkManager** for maintenance tasks.
 
 ---
 
@@ -162,6 +169,6 @@ Default to **WorkManager** for maintenance tasks.
 - System merges jobs; declare constraints (charging, unmetered).
 - **Link:** http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html  
 
-### Key Takeaway
+### Key takeaway
 
-Batch work to survive **Doze**.
+> Batch work to survive **Doze**.

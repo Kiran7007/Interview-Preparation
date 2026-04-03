@@ -1,5 +1,12 @@
 # DSA: Trees & Heaps (Senior)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 When do you use **DFS vs BFS** on trees, and what breaks if you pick the wrong one?
@@ -11,13 +18,13 @@ When do you use **DFS vs BFS** on trees, and what breaks if you pick the wrong o
 - **Trade-offs:** DFS depth can overflow stack on degenerate trees—iterate with explicit stack if needed. BFS uses \(O(w)\) memory where \(w\) is max width.
 - **Real-world example:** Computing UI tree depth for accessibility vs computing minimum taps to reach a node in a shallow navigation tree.
 
-### Code Example (if applicable)
+### Code example
 
 See `patterns.md` → `levelOrder`, `maxDepth`, `isBalanced`, `lowestCommonAncestor`, `Codec serialize/deserialize`.
 
-### Key Takeaway
+### Key takeaway
 
-**Path + structure** → DFS; **level / shortest steps** → BFS.
+> **Path + structure** → DFS; **level / shortest steps** → BFS.
 
 ---
 
@@ -32,13 +39,13 @@ How do you validate a **BST** in an interview without carrying buggy global stat
 - **Trade-offs:** Inorder check needs \(O(h)\) stack space; bounds DFS is usually clearest.
 - **Real-world example:** Validating a deserialized config tree where children carry numeric thresholds.
 
-### Code Example (if applicable)
+### Code example
 
 See `patterns.md` → BST patterns / `isBST` references in repository tree exercises.
 
-### Key Takeaway
+### Key takeaway
 
-**Global “previous node”** inorder works, but **bounded DFS** is easier to explain under pressure.
+> **Global “previous node”** inorder works, but **bounded DFS** is easier to explain under pressure.
 
 ---
 
@@ -53,9 +60,9 @@ Explain how you’d implement **persistent immutable tree updates** (copy-on-wri
 - **Trade-offs:** More complex than mutable trees; great for concurrency + undo stacks.
 - **Real-world example:** Compose-like state snapshots or collaborative outline trees.
 
-### Key Takeaway
+### Key takeaway
 
-Immutability + sharing beats deep-cloning entire trees.
+> Immutability + sharing beats deep-cloning entire trees.
 
 ---
 

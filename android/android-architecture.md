@@ -1,5 +1,12 @@
 # Android Architecture (MVVM, MVP, MVI, Jetpack, DI) — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 Why use **MVP / MVVM / MVI** instead of “god Activities”?
@@ -10,9 +17,9 @@ Why use **MVP / MVVM / MVI** instead of “god Activities”?
 - **Trade-offs:** More boilerplate without tooling; MVI can be heavy for simple screens.
 - **Real-world example:** Banking apps isolating presentation from domain to pass compliance reviews + unit tests without Espresso.
 
-### Key Takeaway
+### Key takeaway
 
-Architecture buys **test seams** and **change isolation**.
+> Architecture buys **test seams** and **change isolation**.
 
 ---
 
@@ -25,9 +32,9 @@ Why should the **View be an interface in MVP**?
 - Presenter depends on abstraction; enables JVM tests and alternate UIs (tablet/compose migration).
 - **Trade-offs:** Extra indirection; still ensure interface reflects real user intents, not widgets.
 
-### Key Takeaway
+### Key takeaway
 
-**Invert dependency** toward the presenter.
+> **Invert dependency** toward the presenter.
 
 ---
 
@@ -46,9 +53,9 @@ Why should the **View be an interface in MVP**?
   - MVVM sample: https://github.com/anitaa1990/Trailers  
   - MVI: https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec  
 
-### Key Takeaway
+### Key takeaway
 
-Pick **MVVM+UDF** for most greenfield; **MVI** when state explosion demands it.
+> Pick **MVVM+UDF** for most greenfield; **MVI** when state explosion demands it.
 
 ---
 
@@ -61,9 +68,9 @@ What is the **role of Presenter in MVP** and **advantage of MVVM over MVP**?
 - **Presenter:** orchestrates view events + model; decides navigation side-effects in some teams.
 - **MVVM advantage:** ViewModel typically has **no view reference**—less leak risk, easier rotation handling with correct scope.
 
-### Key Takeaway
+### Key takeaway
 
-MVVM reduces **view coupling**; still need clear domain boundaries.
+> MVVM reduces **view coupling**; still need clear domain boundaries.
 
 ---
 
@@ -81,9 +88,9 @@ Why **Dependency Injection (Dagger/Hilt/Koin)** on large apps?
 
 - IoC discussion: https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO  
 
-### Key Takeaway
+### Key takeaway
 
-DI is how you keep **feature flags + SDK swaps** sane.
+> DI is how you keep **feature flags + SDK swaps** sane.
 
 ---
 
@@ -113,9 +120,9 @@ Explain **Jetpack Architecture Components** and how **Room / LiveData / ViewMode
   - Room encryption: https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e  
   - Data binding vs view binding: https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding  
 
-### Key Takeaway
+### Key takeaway
 
-Modern stack = **persistence + structured concurrency + lifecycle-aware collection**.
+> Modern stack = **persistence + structured concurrency + lifecycle-aware collection**.
 
 ---
 
@@ -129,9 +136,9 @@ How does **ViewModel** work internally (high level) and why not put `Context` in
 - **Context risk:** memory leaks + testability; use `Application` context only for app-scoped dependencies via Hilt if truly needed.
 - **Useful link:** https://blog.mindorks.com/android-viewmodels-under-the-hood  
 
-### Key Takeaway
+### Key takeaway
 
-ViewModel is a **state bucket + use-case host**, not a UI class.
+> ViewModel is a **state bucket + use-case host**, not a UI class.
 
 ---
 
@@ -147,9 +154,9 @@ ViewModel is a **state bucket + use-case host**, not a UI class.
   - https://blog.mindorks.com/livedata-vs-observable-in-android  
   - https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80  
 
-### Key Takeaway
+### Key takeaway
 
-On Kotlin coroutines-first codebases, prefer **StateFlow** with explicit dispatch rules.
+> On Kotlin coroutines-first codebases, prefer **StateFlow** with explicit dispatch rules.
 
 ---
 
@@ -163,9 +170,9 @@ On Kotlin coroutines-first codebases, prefer **StateFlow** with explicit dispatc
 - **LiveData:** lifecycle-aware out of the box; Java interop.
 - **Link:** https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html  
 
-### Key Takeaway
+### Key takeaway
 
-Use **`repeatOnLifecycle`** patterns when collecting flows.
+> Use **`repeatOnLifecycle`** patterns when collecting flows.
 
 ---
 
@@ -178,9 +185,9 @@ Use **`repeatOnLifecycle`** patterns when collecting flows.
 - Tie each principle to modules (feature vs core), repository interfaces, and navigation boundaries.
 - **Link:** https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/  
 
-### Key Takeaway
+### Key takeaway
 
-SOLID is **merge conflict reduction**.
+> SOLID is **merge conflict reduction**.
 
 ---
 
@@ -202,9 +209,9 @@ SOLID is **merge conflict reduction**.
 - **Testing:** compose test rules, semantics matchers, idle synchronization.
 - **Real-world example:** Incremental Compose adoption in payments SDK screens with strict regression screenshot tests.
 
-### Key Takeaway
+### Key takeaway
 
-Compose rewards **explicit state ownership** and punishes **hidden side effects**.
+> Compose rewards **explicit state ownership** and punishes **hidden side effects**.
 
 ---
 
@@ -224,9 +231,9 @@ Compose rewards **explicit state ownership** and punishes **hidden side effects*
 - **Anti-pattern link:** https://stackoverflow.com/a/980616/3424919  
 - Diagram: `https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7`
 
-### Key Takeaway
+### Key takeaway
 
-If you can’t **test** your graph, your scopes are wrong.
+> If you can’t **test** your graph, your scopes are wrong.
 
 ---
 
@@ -241,9 +248,9 @@ If you can’t **test** your graph, your scopes are wrong.
 - **Example:** https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java  
 - **Creational patterns link:** https://www.baeldung.com/kotlin/builder-pattern  
 
-### Key Takeaway
+### Key takeaway
 
-Use factories at **SDK boundaries** and **test doubles**.
+> Use factories at **SDK boundaries** and **test doubles**.
 
 ---
 
@@ -256,9 +263,9 @@ Use factories at **SDK boundaries** and **test doubles**.
 - Wrap third-party SDKs behind your interfaces to absorb breaking changes.
 - **Real-world example:** Analytics adapter swapping Firebase ↔ internal pipeline.
 
-### Key Takeaway
+### Key takeaway
 
-Adapters are **migration insurance**.
+> Adapters are **migration insurance**.
 
 ---
 
@@ -271,6 +278,6 @@ Adapters are **migration insurance**.
 - Synchronizing entire method is coarse; **double-checked locking with `volatile`** is standard pattern for lazy singleton initialization.
 - **Android note:** Prefer DI scopes over hand-rolled singletons.
 
-### Key Takeaway
+### Key takeaway
 
-**Scope singletons**, don’t “static them everywhere”.
+> **Scope singletons**, don’t “static them everywhere”.

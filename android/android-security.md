@@ -1,5 +1,12 @@
 # Android Security & API Hardening — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 Why **SSL certificate pinning** — and how does it work?
@@ -19,9 +26,9 @@ Why **SSL certificate pinning** — and how does it work?
 - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android  
 - https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e  
 
-### Key Takeaway
+### Key takeaway
 
-Pinning is **defense in depth**, not a substitute for solid auth.
+> Pinning is **defense in depth**, not a substitute for solid auth.
 
 ---
 
@@ -35,9 +42,9 @@ Pinning is **defense in depth**, not a substitute for solid auth.
 - **Asymmetric:** key exchange/signing; combine with hybrid schemes (TLS).
 - **Video:** https://youtu.be/AQDCe585Lnc  
 
-### Key Takeaway
+### Key takeaway
 
-Production systems are almost always **hybrid**.
+> Production systems are almost always **hybrid**.
 
 ---
 
@@ -50,9 +57,9 @@ How do you **encrypt data in Java/Android**?
 - `javax.crypto.Cipher` with correct modes (prefer AEAD like GCM), secure random IVs, never hardcode keys.
 - **Sample commit:** https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26  
 
-### Key Takeaway
+### Key takeaway
 
-**Mode + IV + key management** matter more than algorithm name-dropping.
+> **Mode + IV + key management** matter more than algorithm name-dropping.
 
 ---
 
@@ -70,9 +77,9 @@ How do you **encrypt data in Java/Android**?
   - https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/  
   - App data encryption: https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore  
 
-### Key Takeaway
+### Key takeaway
 
-**Keys out of app data**, enforce biometric/passcode gates when required.
+> **Keys out of app data**, enforce biometric/passcode gates when required.
 
 ---
 
@@ -87,9 +94,9 @@ Detecting **rooted/tampered** devices?
   - RootBeer: https://github.com/scottyab/rootbeer  
   - Code snippet: https://stackoverflow.com/a/35628977/3424919  
 
-### Key Takeaway
+### Key takeaway
 
-Treat root detection as **risk scoring**, not hard block unless policy demands.
+> Treat root detection as **risk scoring**, not hard block unless policy demands.
 
 ---
 
@@ -102,9 +109,9 @@ Treat root detection as **risk scoring**, not hard block unless policy demands.
 - Understand runtime prompts, install-time grants, partner-only permissions.
 - **Uses-permission vs permission element:** https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file  
 
-### Key Takeaway
+### Key takeaway
 
-Dangerous permissions need **UX + fallback paths**.
+> Dangerous permissions need **UX + fallback paths**.
 
 ---
 
@@ -117,9 +124,9 @@ Dangerous permissions need **UX + fallback paths**.
 - Prefer SAF/MediaStore; no broad external access; handle legacy paths.
 - **Link:** https://blog.mindorks.com/understanding-the-scoped-storage-in-android  
 
-### Key Takeaway
+### Key takeaway
 
-Design **content://** first file pipelines.
+> Design **content://** first file pipelines.
 
 ---
 
@@ -131,9 +138,9 @@ Design **content://** first file pipelines.
 
 - Disable JS bridge unless needed; validate URLs; no mixed content; keep WebView updated; file access off by default.
 
-### Key Takeaway
+### Key takeaway
 
-WebView is **browser-grade attack surface**.
+> WebView is **browser-grade attack surface**.
 
 ---
 
@@ -145,6 +152,6 @@ WebView is **browser-grade attack surface**.
 
 - Lockfiles (`dependency locking`), verify checksums, private repos, Dependabot, R8 mapping protection, reproducible builds.
 
-### Key Takeaway
+### Key takeaway
 
-**Dependency graph is part of threat model**.
+> **Dependency graph is part of threat model**.

@@ -1,5 +1,12 @@
 # Kotlin Basics (Senior Android)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 What are `@JvmStatic`, `@JvmOverloads`, and `@JvmField`—and when do they matter in a mixed Kotlin/Java codebase?
@@ -11,7 +18,7 @@ What are `@JvmStatic`, `@JvmOverloads`, and `@JvmField`—and when do they matte
 - **Trade-offs:** `@JvmField` breaks encapsulation; `@JvmOverloads` can explode generated methods for large parameter lists; static interop can hide lifecycle context—prefer Kotlin-only modules when possible.
 - **Real-world example:** Dagger/annotation processors expecting Java static creators; legacy Java UI calling Kotlin utilities.
 
-### Code Example (if applicable)
+### Code example
 
 ```kotlin
 @JvmField val profileId: String = "anon" // Java: instance.profileId
@@ -28,9 +35,9 @@ companion object {
 - https://www.ubuntupit.com/frequently-asked-kotlin-interview-questions-and-answers/  
 - https://www.fullstack.cafe/blog/kotlin-interview-questions  
 
-### Key Takeaway
+### Key takeaway
 
-Interop annotations are **ABI tools**, not style preferences.
+> Interop annotations are **ABI tools**, not style preferences.
 
 ---
 
@@ -45,15 +52,15 @@ What is **destructuring** in Kotlin and where is it unsafe?
 - **Trade-offs:** Breaks silently if field order changes in non-data classes; avoid on wide tuples—name fields explicitly for stable APIs.
 - **Real-world example:** Unpacking network DTO pairs in UI state mappers.
 
-### Code Example (if applicable)
+### Code example
 
 ```kotlin
 val (name, age) = employee
 ```
 
-### Key Takeaway
+### Key takeaway
 
-Great for **local ergonomics**, risky for **cross-module contracts**.
+> Great for **local ergonomics**, risky for **cross-module contracts**.
 
 ---
 
@@ -68,9 +75,9 @@ Great for **local ergonomics**, risky for **cross-module contracts**.
 - **Trade-offs:** `lateinit` is not for primitives; `lazy` holds a lambda and can accidentally capture `Context` if written carelessly.
 - **Real-world example:** `lateinit` navigator/session; `lazy` for regex or parser used on first access.
 
-### Key Takeaway
+### Key takeaway
 
-**Mutable post-construct** → `lateinit`; **expensive immutable** → `lazy`.
+> **Mutable post-construct** → `lateinit`; **expensive immutable** → `lazy`.
 
 ---
 
@@ -84,9 +91,9 @@ Difference between `==` and `===` in Kotlin?
 - **`===`:** Referential equality (same object), with note that for many primitives you still reason about values but boxed identity can surprise you across platforms.
 - **Real-world example:** Compare UI state data classes with `==`; compare shared `Mutex` instance with `===` if ever needed.
 
-### Key Takeaway
+### Key takeaway
 
-Default to **`==`** for business equality.
+> Default to **`==`** for business equality.
 
 ---
 
@@ -100,9 +107,9 @@ What is `forEach` in Kotlin and when should you avoid it?
 - **Trade-offs:** Non-express `return` (unless labeled); can hide performance costs in hot paths vs indexed `for`.
 - **Real-world example:** Logging during debug; avoid in tight animation loops.
 
-### Key Takeaway
+### Key takeaway
 
-Prefer **`for`** when you need **performance or control flow**.
+> Prefer **`for`** when you need **performance or control flow**.
 
 ---
 
@@ -116,9 +123,9 @@ What are **lambdas** and how do they relate to SAM conversion on Android?
 - **Trade-offs:** Capturing lambdas retain references → memory leaks if they capture `Activity` views; use `WeakReference` patterns only as last resort—fix lifecycle instead.
 - **Real-world example:** `setOnClickListener { }` SAM to `View.OnClickListener`.
 
-### Key Takeaway
+### Key takeaway
 
-Watch **capture lists** in UI listeners.
+> Watch **capture lists** in UI listeners.
 
 ---
 
@@ -136,9 +143,9 @@ What is a **companion object** and how does it differ from Java `static`?
 
 - https://blog.mindorks.com/what-is-the-equivalent-of-java-static-methods-in-kotlin/  
 
-### Key Takeaway
+### Key takeaway
 
-**Companion** ≈ namespace + singleton, not “free functions”.
+> **Companion** ≈ namespace + singleton, not “free functions”.
 
 ---
 
@@ -156,9 +163,9 @@ What does the **`open`** keyword mean in Kotlin—and why is it the default oppo
 
 - https://blog.mindorks.com/understanding-open-keyword-in-kotlin  
 
-### Key Takeaway
+### Key takeaway
 
-**Design for composition**; use `open` deliberately.
+> **Design for composition**; use `open` deliberately.
 
 ---
 
@@ -176,9 +183,9 @@ Where do **bitwise and bit-shift** operations show up in Android engineering?
 
 - https://www.programiz.com/kotlin-programming/bitwise  
 
-### Key Takeaway
+### Key takeaway
 
-Isolate **flag math** behind well-named helpers.
+> Isolate **flag math** behind well-named helpers.
 
 ---
 
@@ -197,6 +204,6 @@ Why are **Kotlin collection operators** (`map`, `filter`, `flatMap`) both loved 
 - https://blog.mindorks.com/kotlin-collection-functions  
 - [Map vs FlatMap (LinkedIn)](https://www.linkedin.com/feed/update/urn:li:activity:6770786744422998017/)  
 
-### Key Takeaway
+### Key takeaway
 
-**Measure** hot paths; default to clarity in cold paths.
+> **Measure** hot paths; default to clarity in cold paths.

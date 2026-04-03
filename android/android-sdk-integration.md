@@ -1,5 +1,12 @@
 # Android SDK & Third-Party Integration — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 Integrating **Firebase** end-to-end — what do staff engineers watch?
@@ -12,9 +19,9 @@ Integrating **Firebase** end-to-end — what do staff engineers watch?
 - **Remote Config:** safe defaults + kill switches.
 - **Real-world example (from mock notes):** Banking + clinician apps combining auth, messaging, analytics with compliance constraints.
 
-### Key Takeaway
+### Key takeaway
 
-Firebase is **fast to ship**, hard to **govern** without rules + reviews.
+> Firebase is **fast to ship**, hard to **govern** without rules + reviews.
 
 ---
 
@@ -27,9 +34,9 @@ Firebase is **fast to ship**, hard to **govern** without rules + reviews.
 - Markers clustering, geofencing, background location policies, billing/API key restriction, snapshot testing for map overlays.
 - **Example domains:** banking location services, clinician routing, bus tracking.
 
-### Key Takeaway
+### Key takeaway
 
-**API key restriction** + **Play policy** are non-negotiable.
+> **API key restriction** + **Play policy** are non-negotiable.
 
 ---
 
@@ -41,9 +48,9 @@ Firebase is **fast to ship**, hard to **govern** without rules + reviews.
 
 - Vendor security review, data exfiltration audit (proguard keep rules), init cost on startup, transitive permissions, kill switch via feature flags, SBOM tracking.
 
-### Key Takeaway
+### Key takeaway
 
-Every SDK is **a liability budget**.
+> Every SDK is **a liability budget**.
 
 ---
 
@@ -55,9 +62,9 @@ Every SDK is **a liability budget**.
 
 - Server-driven UI schema versioning, fallback bundles, incremental sync, signed payloads, strict validation, A/B testing guards, offline cached templates.
 
-### Key Takeaway
+### Key takeaway
 
-Treat CMS payloads like **untrusted input**.
+> Treat CMS payloads like **untrusted input**.
 
 ---
 
@@ -69,6 +76,6 @@ Treat CMS payloads like **untrusted input**.
 
 - Acknowledge purchases, idempotent backend, fraud checks, server notifications—don’t trust client alone.
 
-### Key Takeaway
+### Key takeaway
 
-**Server validation** is the product truth.
+> **Server validation** is the product truth.

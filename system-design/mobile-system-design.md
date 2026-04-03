@@ -1,5 +1,12 @@
 # Mobile System Design & OOD (Senior)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 How do you approach **mobile system design** differently from backend system design?
@@ -16,9 +23,9 @@ How do you approach **mobile system design** differently from backend system des
 - [System design Q&A PDF](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/system_design_questions.pdf)
 - [9 Architectural Patterns for Data and Communication Flow](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
 
-### Key Takeaway
+### Key takeaway
 
-**Constraints-first architecture** wins interviews.
+> **Constraints-first architecture** wins interviews.
 
 ---
 
@@ -43,9 +50,9 @@ Walk me through **SOLID** and how it shows up in Android codebases.
 - YAGNI: https://lnkd.in/dHzEi__Y  
 - [SOLID in Android (Kotlin examples)](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 
-### Key Takeaway
+### Key takeaway
 
-SOLID is how you keep **large apps mergeable**.
+> SOLID is how you keep **large apps mergeable**.
 
 ---
 
@@ -67,9 +74,9 @@ Name core **design patterns** you’d use on mobile and anti-patterns you avoid.
 - Observer: https://lnkd.in/dByc-whP  
 - Strategy: https://lnkd.in/d9dz8ER7  
 
-### Key Takeaway
+### Key takeaway
 
-Patterns are **dependency boundaries**, not trivia.
+> Patterns are **dependency boundaries**, not trivia.
 
 ---
 
@@ -89,9 +96,9 @@ How do you document **class, sequence, and deployment** views for a mobile featu
 - Sequence diagrams: https://lnkd.in/duPf_cJ2  
 - Interfaces: https://lnkd.in/d8NzSRgG  
 
-### Key Takeaway
+### Key takeaway
 
-Interviewers reward **clear diagrams** + explicit failure paths.
+> Interviewers reward **clear diagrams** + explicit failure paths.
 
 ---
 
@@ -113,9 +120,9 @@ What’s your **API design** checklist for mobile clients?
 - Pagination: https://lnkd.in/dJfwFqmd  
 - Authentication: https://lnkd.in/dQ94BgzQ  
 
-### Key Takeaway
+### Key takeaway
 
-Mobile clients **retry aggressively**—design APIs for that reality.
+> Mobile clients **retry aggressively**—design APIs for that reality.
 
 ---
 
@@ -135,9 +142,9 @@ How do you discuss **scalability & performance** credibly as a mobile tech lead?
 - Load balancing: https://lnkd.in/dkeYMX74  
 - Lazy loading: https://lnkd.in/dvcdY_RX  
 
-### Key Takeaway
+### Key takeaway
 
-Show you can **partner with backend**—not blame it.
+> Show you can **partner with backend**—not blame it.
 
 ---
 
@@ -153,9 +160,9 @@ Design **offline-first sync** for a notes app with multi-device edits.
 - **Privacy:** encryption at rest, key in Keystore, secure network, audit logs.
 - **Testing:** property tests for merge, integration tests for retry storms.
 
-### Key Takeaway
+### Key takeaway
 
-State **conflict policy** explicitly—don’t hand-wave.
+> State **conflict policy** explicitly—don’t hand-wave.
 
 ---
 
@@ -174,9 +181,9 @@ How do you structure **error handling & logging** across mobile + backend?
 - Exception handling: https://lnkd.in/dkUHDGBu  
 - Logging strategies: https://lnkd.in/dvikcadQ  
 
-### Key Takeaway
+### Key takeaway
 
-**PII discipline** is part of system design.
+> **PII discipline** is part of system design.
 
 ---
 
@@ -195,9 +202,9 @@ Concurrency on mobile—what do staff engineers emphasize?
 - Locks: https://lnkd.in/dN2YdpvU  
 - Atomic operations: https://lnkd.in/dcfZF9Jb  
 
-### Key Takeaway
+### Key takeaway
 
-**Cancellation + backpressure** separate senior answers from junior ones.
+> **Cancellation + backpressure** separate senior answers from junior ones.
 
 ---
 
@@ -216,6 +223,6 @@ Concurrency on mobile—what do staff engineers emphasize?
 - Normalization: https://lnkd.in/dz7MCVaj  
 - Relationships: https://lnkd.in/da3YTaJN  
 
-### Key Takeaway
+### Key takeaway
 
-Optimize for **read latency** the UI actually needs.
+> Optimize for **read latency** the UI actually needs.

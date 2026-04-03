@@ -1,5 +1,12 @@
 # DSA: Arrays, Sorting & Searching (Senior)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 Why is quicksort preferred over mergesort for sorting **arrays** in practice?
@@ -11,13 +18,13 @@ Why is quicksort preferred over mergesort for sorting **arrays** in practice?
 - **Trade-offs:** Quicksort worst-case \(O(n^2)\) with bad pivots (mitigated by randomized pivot / introsort). Mergesort is stable and worst-case \(O(n \log n)\) but pays extra space.
 - **Real-world example:** Sorting a large list of UI metrics in-memory on device—quicksort variants (e.g., `Arrays.sort` for primitives) are typical; mergesort appears when stability matters or for linked structures.
 
-### Code Example (if applicable)
+### Code example
 
 See `patterns.md` → sorting implementations (quicksort/mergesort) in `DSA_Patterns_Cheatsheet.md` section.
 
-### Key Takeaway
+### Key takeaway
 
-Pick mergesort when **stability** or **predictable worst case** matters; pick quicksort when **in-place + arrays + throughput** matters.
+> Pick mergesort when **stability** or **predictable worst case** matters; pick quicksort when **in-place + arrays + throughput** matters.
 
 ---
 
@@ -32,13 +39,13 @@ Why is mergesort often preferred over quicksort for **linked lists**?
 - **Trade-offs:** Quicksort on lists is less standard; mergesort is stable and \(O(n \log n)\) worst case with appropriate implementation.
 - **Real-world example:** Merging sorted event streams in a custom in-memory timeline buffer.
 
-### Code Example (if applicable)
+### Code example
 
 See `patterns.md` → linked list merge / reversal templates.
 
-### Key Takeaway
+### Key takeaway
 
-**Structure matters:** array algorithms ≠ list algorithms even for the same Big-O class.
+> **Structure matters:** array algorithms ≠ list algorithms even for the same Big-O class.
 
 ---
 
@@ -53,13 +60,13 @@ Why is binary search usually preferred over ternary search for interview + produ
 - **Trade-offs:** Ternary may appear in numeric unimodal function optimization on **continuous** domains—not the same as classic discrete array search.
 - **Real-world example:** Searching sorted remote config keys locally after sync.
 
-### Code Example (if applicable)
+### Code example
 
 See `patterns.md` → binary search & rotated array variants.
 
-### Key Takeaway
+### Key takeaway
 
-**Fewer comparisons per elimination step** usually wins on arrays.
+> **Fewer comparisons per elimination step** usually wins on arrays.
 
 ---
 
@@ -79,9 +86,9 @@ Explain Big-O, Big-Omega, and how you communicate complexity in interviews.
 - [Big O cheat sheet (time complexity chart)](https://www.freecodecamp.org/news/big-o-cheat-sheet-time-complexity-chart/)
 - [Complexity table (image)](https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png)
 
-### Key Takeaway
+### Key takeaway
 
-Always state **what \(n\) is** (users, items, pixels, graph nodes).
+> Always state **what \(n\) is** (users, items, pixels, graph nodes).
 
 ---
 
@@ -141,6 +148,6 @@ How do you choose between **prefix sums**, **difference array**, and **sliding w
 - **Trade-offs:** Mutability + query mix determines structure; don’t pay \(O(n)\) per query if queries are hot.
 - **Real-world example:** Analytics histogram buckets for session lengths (window), or precomputing cumulative spend for fraud rules (prefix).
 
-### Key Takeaway
+### Key takeaway
 
-**Query vs update pattern** picks the tool.
+> **Query vs update pattern** picks the tool.

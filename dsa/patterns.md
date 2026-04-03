@@ -1,5 +1,12 @@
 ﻿# DSA: Patterns, Cheatsheets & Curated Links (Senior / FAANG)
 
+---
+
+> **How to read this file**  
+> This is a **long reference**: curated links first, then pasted notes and **Kotlin pattern templates** (arrays through graphs, strings, DP, etc.). Major blocks are separated by `---`. Use your editor search or outline to jump to a section.
+
+---
+
 ## Starter resources
 
 - [Coding Interview University (jwasham)](https://github.com/jwasham/coding-interview-university/blob/main/README.md)
@@ -7,6 +14,8 @@
 - [NeetCode practice (all)](https://neetcode.io/practice/practice/allNC)
 - [NeetCode YouTube channel](https://www.youtube.com/@NeetCode/courses)
 - [Striver DSA playlist](https://www.youtube.com/watch?v=0bHoB32fuj0&list=PLgUwDviBIf0oF6QL8m22w1hIDC1vJ_BHz)
+
+---
 
 # Data Structure and Algorithm
 
@@ -58,9 +67,7 @@
 
 ---
 
-
-
-# Leetcode
+## Leetcode (links & roadmaps)
 
 * **Coding Patterns PDF** [Link](/assets/coding_patterns.pdf)
 
@@ -334,6 +341,8 @@ fun detectCycle(head: ListNode?): ListNode? {
     return slow
 }
 ```
+
+---
 
 # Merge Two Lists
 ```kotlin

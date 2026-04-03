@@ -1,5 +1,12 @@
 # Android Core Platform (Components, Lifecycle, Concurrency Primitives) — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 What is the **`Application` class** and how should teams use it safely?
@@ -15,9 +22,9 @@ What is the **`Application` class** and how should teams use it safely?
 
 - Project skeleton reference: https://github.com/gbajaj/interviewready  
 
-### Key Takeaway
+### Key takeaway
 
-`Application` is for **process scope**, not “hide globals”.
+> `Application` is for **process scope**, not “hide globals”.
 
 ---
 
@@ -36,9 +43,9 @@ What is **`Context`** — compare **Activity / Application / Service** contexts.
 
 - https://amitshekhar.me/blog/context-in-android-application  
 
-### Key Takeaway
+### Key takeaway
 
-**Scope your context** to the shortest correct lifetime.
+> **Scope your context** to the shortest correct lifetime.
 
 ---
 
@@ -55,9 +62,9 @@ Describe classic **Android application architecture components**.
 - **Intents:** messaging between components.
 - **Resources:** localization, density, configuration qualifiers.
 
-### Key Takeaway
+### Key takeaway
 
-Modern apps still host these primitives—**Jetpack wraps**, doesn’t erase them.
+> Modern apps still host these primitives—**Jetpack wraps**, doesn’t erase them.
 
 ---
 
@@ -72,15 +79,15 @@ Explain **`Activity` lifecycle**, **`onCreate` vs `onStart`**, and **`setContent
 - **`setContentView`:** expensive inflation—do in `onCreate` (or `setContent` in Compose activity) not on every resume.
 - **Edge case:** `finish()` inside `onCreate` can skip intermediate callbacks—know ordering for teardown hooks.
 
-### Code Example (if applicable)
+### Code example
 
 Lifecycle diagrams:
 
 - `/assets/activity_lifecycle.png`
 
-### Key Takeaway
+### Key takeaway
 
-Lifecycle is a **contract** with the system—don’t fight it with silent work in `onResume`.
+> Lifecycle is a **contract** with the system—don’t fight it with silent work in `onResume`.
 
 ---
 
@@ -111,9 +118,9 @@ Lifecycle is a **contract** with the system—don’t fight it with silent work 
 - Fragment back stack listener: https://why-android.com/2016/03/29/learn-how-to-use-the-onbackstackchangedlistener/
 - Official fragment creation doc: https://developer.android.com/guide/components/fragments#Creating
 
-### Key Takeaway
+### Key takeaway
 
-If back navigation feels random, your **transactions** are inconsistent.
+> If back navigation feels random, your **transactions** are inconsistent.
 
 ---
 
@@ -128,9 +135,9 @@ If back navigation feels random, your **transactions** are inconsistent.
 - **PendingIntent:** delegates future execution with original app identity; mind **mutability flags** (Android 12+), request codes, and **immutable** requirements.
 - **Sticky:** historical `sendStickyBroadcast`—largely obsolete/restricted; prefer modern APIs.
 
-### Key Takeaway
+### Key takeaway
 
-PendingIntents are **security boundaries**—treat them like public APIs.
+> PendingIntents are **security boundaries**—treat them like public APIs.
 
 ---
 
@@ -144,9 +151,9 @@ PendingIntents are **security boundaries**—treat them like public APIs.
 - **STICKY:** restart with `null` intent unless pending starts exist—good for long-lived “wait for work” services (still prefer modern alternatives).
 - **REDELIVER_INTENT:** replay last intent after kill—downloads/uploads.
 
-### Key Takeaway
+### Key takeaway
 
-Maps directly to **user-visible correctness** vs **cost**.
+> Maps directly to **user-visible correctness** vs **cost**.
 
 ---
 
@@ -162,9 +169,9 @@ Maps directly to **user-visible correctness** vs **cost**.
 - **`singleInstance`:** activity is alone in its task; subsequent launches route elsewhere—use rarely (widgets/VoIP entry points).
 - **Correction note:** Some informal examples online confuse `singleTask` vs `singleInstance` stack pictures—always verify with official docs + logging in a sample app.
 
-### Key Takeaway
+### Key takeaway
 
-Launch modes interact with **taskAffinity**, **intent flags**, and **deep links**—debug empirically.
+> Launch modes interact with **taskAffinity**, **intent flags**, and **deep links**—debug empirically.
 
 ---
 
@@ -178,9 +185,9 @@ Launch modes interact with **taskAffinity**, **intent flags**, and **deep links*
 - **Thread:** execution unit inside process; **main thread** is UI + event dispatch.
 - **Task:** user-facing back stack of activities—NOT identical to process.
 
-### Key Takeaway
+### Key takeaway
 
-“App in background” often means **activity stopped**, process may still live.
+> “App in background” often means **activity stopped**, process may still live.
 
 ---
 
@@ -206,9 +213,9 @@ Launch modes interact with **taskAffinity**, **intent flags**, and **deep links*
 - Headless fragment vs Service: https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android  
 - Update UI from background service: https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74  
 
-### Key Takeaway
+### Key takeaway
 
-If it must outlive UI, justify **foreground** or **WorkManager**.
+> If it must outlive UI, justify **foreground** or **WorkManager**.
 
 ---
 
@@ -226,9 +233,9 @@ If it must outlive UI, justify **foreground** or **WorkManager**.
 - Looper/Handler deep dive: https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181  
 - Mindorks core article: https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a  
 
-### Key Takeaway
+### Key takeaway
 
-Prefer **structured concurrency** for new code; understand Handlers to debug legacy.
+> Prefer **structured concurrency** for new code; understand Handlers to debug legacy.
 
 ---
 
@@ -241,9 +248,9 @@ Prefer **structured concurrency** for new code; understand Handlers to debug leg
 - `volatile` does not compose arbitrary atomicity for read-modify-write; use `Atomic*` or synchronized blocks.
 - **Real-world example:** `boolean flag` toggled from multiple threads.
 
-### Key Takeaway
+### Key takeaway
 
-Concurrency bugs are **intermittent**—design invariants.
+> Concurrency bugs are **intermittent**—design invariants.
 
 ---
 
@@ -260,9 +267,9 @@ Concurrency bugs are **intermittent**—design invariants.
 - https://www.javatpoint.com/java-executorservice  
 - Java multithreading on Android: https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor  
 
-### Key Takeaway
+### Key takeaway
 
-Unbounded thread creation is a **battery + latency** trap.
+> Unbounded thread creation is a **battery + latency** trap.
 
 ---
 
@@ -276,9 +283,9 @@ Unbounded thread creation is a **battery + latency** trap.
 - **Messenger:** `Handler`-backed lightweight IPC using `Message` queues—great for simple command/response.
 - **Trade-offs:** AIDL complexity vs Messenger throughput limits.
 
-### Key Takeaway
+### Key takeaway
 
-Pick Messenger unless you **need** a typed high-throughput IPC contract.
+> Pick Messenger unless you **need** a typed high-throughput IPC contract.
 
 ---
 
@@ -296,9 +303,9 @@ Pick Messenger unless you **need** a typed high-throughput IPC contract.
 - BroadcastReceiver primer: https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it  
 - LocalBroadcastManager (deprecated reference): https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html  
 
-### Key Takeaway
+### Key takeaway
 
-Avoid **broadcast-as-eventbus** in new code.
+> Avoid **broadcast-as-eventbus** in new code.
 
 ---
 
@@ -310,9 +317,9 @@ Avoid **broadcast-as-eventbus** in new code.
 
 - Deprecated; use **ViewModel + coroutines/Flow + repository**.
 
-### Key Takeaway
+### Key takeaway
 
-If you maintain legacy loaders, plan **migration**.
+> If you maintain legacy loaders, plan **migration**.
 
 ---
 
@@ -328,9 +335,9 @@ If you maintain legacy loaders, plan **migration**.
   - https://blog.mindorks.com/integrating-work-manager-in-android  
   - How it works: https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager  
 
-### Key Takeaway
+### Key takeaway
 
-WorkManager is **not a replacement** for foreground music playback.
+> WorkManager is **not a replacement** for foreground music playback.
 
 ---
 
@@ -343,9 +350,9 @@ WorkManager is **not a replacement** for foreground music playback.
 - **Parcelable:** designed for Android IPC performance (prefer `@Parcelize`).
 - **Serializable:** Java reflection; more allocations—avoid on hot paths.
 
-### Key Takeaway
+### Key takeaway
 
-**Parcelize** reduces boilerplate and mistakes.
+> **Parcelize** reduces boilerplate and mistakes.
 
 ---
 
@@ -358,9 +365,9 @@ WorkManager is **not a replacement** for foreground music playback.
 - ViewModel survives config change but **not** process death; persist small UI in saved state; large data in storage.
 - **Runtime changes:** official doc: https://developer.android.com/guide/topics/resources/runtime-changes  
 
-### Key Takeaway
+### Key takeaway
 
-**Process death** always wins—design idempotent restoration.
+> **Process death** always wins—design idempotent restoration.
 
 ---
 
@@ -374,9 +381,9 @@ WorkManager is **not a replacement** for foreground music playback.
 - **targetSdk:** behavior toggles for compatibility modes; raising it triggers review of behavior changes.
 - **Link:** https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion  
 
-### Key Takeaway
+### Key takeaway
 
-Raising **targetSdk** is a **QA project**, not a one-line change.
+> Raising **targetSdk** is a **QA project**, not a one-line change.
 
 ---
 
@@ -394,9 +401,9 @@ Raising **targetSdk** is a **QA project**, not a one-line change.
   - Article: https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a  
   - Custom views tutorial: https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548  
 
-### Key Takeaway
+### Key takeaway
 
-Depth == **measure/layout cost**—flatten aggressively.
+> Depth == **measure/layout cost**—flatten aggressively.
 
 ---
 
@@ -412,9 +419,9 @@ Depth == **measure/layout cost**—flatten aggressively.
 
 - Official migration: https://developer.android.com/develop/ui/views/animations/vp2-migration  
 
-### Key Takeaway
+### Key takeaway
 
-All new code: **ViewPager2**.
+> All new code: **ViewPager2**.
 
 ---
 
@@ -430,9 +437,9 @@ All new code: **ViewPager2**.
 
 - Retain fragment gist (legacy): https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42  
 
-### Key Takeaway
+### Key takeaway
 
-If you see AsyncTask in production, schedule **removal**.
+> If you see AsyncTask in production, schedule **removal**.
 
 ---
 
@@ -448,9 +455,9 @@ If you see AsyncTask in production, schedule **removal**.
 
 - ART vs Dalvik: https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik  
 
-### Key Takeaway
+### Key takeaway
 
-Performance story today includes **baseline profiles + R8**.
+> Performance story today includes **baseline profiles + R8**.
 
 ---
 
@@ -465,9 +472,9 @@ Performance story today includes **baseline profiles + R8**.
 - Jetpack overview: https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it  
 - Architecture components: https://blog.mindorks.com/what-are-android-architecture-components/  
 
-### Key Takeaway
+### Key takeaway
 
-Operational hygiene matters in **staff** interviews too.
+> Operational hygiene matters in **staff** interviews too.
 
 ---
 
@@ -480,9 +487,9 @@ Android **code style** links
 - https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7  
 - Architecture components LinkedIn post: https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864  
 
-### Key Takeaway
+### Key takeaway
 
-Consistency enables **scale**.
+> Consistency enables **scale**.
 
 ---
 

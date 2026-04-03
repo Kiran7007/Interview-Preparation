@@ -1,5 +1,12 @@
 # Android SDLC, Leadership & Behavioral (Senior / Staff)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 Tips & curated resources for interview preparation
@@ -20,9 +27,9 @@ Tips & curated resources for interview preparation
   - https://blog.sp3.in/dsa
 - **STAR method reference:** https://www.testgorilla.com/blog/star-method-interviews/
 
-### Key Takeaway
+### Key takeaway
 
-**STAR + metrics** beats adjective soup.
+> **STAR + metrics** beats adjective soup.
 
 ---
 
@@ -36,9 +43,9 @@ Describe a **performance troubleshooting** story on Android.
 - **Task:** Identify CPU/mem/network hotspots and reduce ship risk.
 - **Action:** Android Studio profilers, flamegraphs, main-thread audits, caching, async boundaries, R8/shrinkResources, image pipeline tuning.
 - **Result:** Quantify startup, jank frames, APK delta, crash-free rate.
-### Key Takeaway
+### Key takeaway
 
-Interviewers want **methodology + numbers**.
+> Interviewers want **methodology + numbers**.
 
 ---
 
@@ -50,9 +57,9 @@ Interviewers want **methodology + numbers**.
 
 - Logcat structured logging, Crashlytics/non-fatals, breadcrumbs, remote config to toggle logging, PII scrubbing, on-call runbooks.
 
-### Key Takeaway
+### Key takeaway
 
-**Actionable dashboards**, not log spam.
+> **Actionable dashboards**, not log spam.
 
 ---
 
@@ -64,9 +71,9 @@ Interviewers want **methodology + numbers**.
 
 - TLS, pinning strategy, token lifecycle, least privilege scopes, encryption at rest, OWASP Mobile Top 10 awareness, regular key rotation, abuse detection.
 
-### Key Takeaway
+### Key takeaway
 
-Security is **process + architecture**, not one library.
+> Security is **process + architecture**, not one library.
 
 ---
 
@@ -78,9 +85,9 @@ Security is **process + architecture**, not one library.
 
 - Discuss data modeling, indexing, security rules, notification segmentation, analytics event design, Crashlytics triage, Remote Config experimentation.
 
-### Key Takeaway
+### Key takeaway
 
-Connect Firebase choices to **privacy + cost**.
+> Connect Firebase choices to **privacy + cost**.
 
 ---
 
@@ -92,9 +99,9 @@ Testing **MVP/MVVM/MVI** — strategy differences
 
 - Presenter interfaces, ViewModel output contracts, MVI pure reducers + snapshot tests.
 
-### Key Takeaway
+### Key takeaway
 
-Architecture dictates **test doubles**.
+> Architecture dictates **test doubles**.
 
 ---
 
@@ -106,9 +113,9 @@ Architecture dictates **test doubles**.
 
 - Keep professional spine (domains, tech, scale) + authentic human note; avoid rambling.
 
-### Key Takeaway
+### Key takeaway
 
-**2 minutes**, structured.
+> **2 minutes**, structured.
 
 ---
 
@@ -120,9 +127,9 @@ Architecture dictates **test doubles**.
 
 - Communicate impact, mitigate, root cause, preventive controls, feature flags, postmortem blameless culture.
 
-### Key Takeaway
+### Key takeaway
 
-Show **calm command** + **customer focus**.
+> Show **calm command** + **customer focus**.
 
 ---
 
@@ -134,9 +141,9 @@ Show **calm command** + **customer focus**.
 
 - Original file repeats similar answer—merge into one story bank with **different metrics per domain**.
 
-### Key Takeaway
+### Key takeaway
 
-Prepare **3 stories** spanning scale, conflict, and ambiguity.
+> Prepare **3 stories** spanning scale, conflict, and ambiguity.
 
 ---
 
@@ -148,9 +155,9 @@ Prepare **3 stories** spanning scale, conflict, and ambiguity.
 
 - Encryption, integrity constraints, authenticated APIs, backups, least privilege.
 
-### Key Takeaway
+### Key takeaway
 
-Defense in depth across **client + server**.
+> Defense in depth across **client + server**.
 
 ---
 
@@ -162,9 +169,9 @@ Defense in depth across **client + server**.
 
 - Offline cache, migration safety, lifecycle-aware UI, reduced overfetch.
 
-### Key Takeaway
+### Key takeaway
 
-Tie Jetpack to **business outcomes**.
+> Tie Jetpack to **business outcomes**.
 
 ---
 
@@ -176,9 +183,9 @@ Tie Jetpack to **business outcomes**.
 
 - Pyramid, deterministic CI, screenshot goldens for UI, MockWebServer, TDD where ROI positive.
 
-### Key Takeaway
+### Key takeaway
 
-Flake elimination is a **staff-level skill**.
+> Flake elimination is a **staff-level skill**.
 
 ---
 
@@ -190,9 +197,9 @@ Flake elimination is a **staff-level skill**.
 
 - Use your own verified numbers; mention R8, resource shrink, dynamic delivery, profiling.
 
-### Key Takeaway
+### Key takeaway
 
-Never fabricate **metrics you can’t defend**.
+> Never fabricate **metrics you can’t defend**.
 
 ---
 
@@ -204,9 +211,9 @@ Never fabricate **metrics you can’t defend**.
 
 - Show how you reframed problem—query optimization + caching vs microservices rewrite.
 
-### Key Takeaway
+### Key takeaway
 
-**Elegance** wins over buzzwords.
+> **Elegance** wins over buzzwords.
 
 ---
 
@@ -218,9 +225,9 @@ Never fabricate **metrics you can’t defend**.
 
 - Trunk-based vs GitFlow, PR quality gates, CODEOWNERS, protected branches.
 
-### Key Takeaway
+### Key takeaway
 
-Branch strategy serves **release cadence**.
+> Branch strategy serves **release cadence**.
 
 ---
 
@@ -232,9 +239,9 @@ Branch strategy serves **release cadence**.
 
 - Compile-time safety vs simplicity; testing strategy; module boundaries.
 
-### Key Takeaway
+### Key takeaway
 
-Pick DI for **graph complexity**, not fashion.
+> Pick DI for **graph complexity**, not fashion.
 
 ---
 
@@ -246,9 +253,9 @@ Pick DI for **graph complexity**, not fashion.
 
 - Accuracy vs battery, geofencing reliability, privacy prompts, enterprise billing.
 
-### Key Takeaway
+### Key takeaway
 
-Location is **policy + UX + tech**.
+> Location is **policy + UX + tech**.
 
 ---
 
@@ -260,9 +267,9 @@ Location is **policy + UX + tech**.
 
 - Profilers, structural improvements, data structure choices, caching, measurement loops.
 
-### Key Takeaway
+### Key takeaway
 
-Always close loop with **before/after**.
+> Always close loop with **before/after**.
 
 ---
 
@@ -274,9 +281,9 @@ Always close loop with **before/after**.
 
 - Security review anecdote with constructive feedback + follow-up.
 
-### Key Takeaway
+### Key takeaway
 
-Reviews teach **culture**.
+> Reviews teach **culture**.
 
 ---
 
@@ -288,9 +295,9 @@ Reviews teach **culture**.
 
 - Scope, leadership, cross-functional work, quality ownership.
 
-### Key Takeaway
+### Key takeaway
 
-Align with **job ladder**.
+> Align with **job ladder**.
 
 ---
 
@@ -302,9 +309,9 @@ Align with **job ladder**.
 
 - Versioning, additive changes, contract tests, dual-read/dual-write patterns.
 
-### Key Takeaway
+### Key takeaway
 
-Compatibility is **distributed systems** discipline.
+> Compatibility is **distributed systems** discipline.
 
 ---
 
@@ -316,9 +323,9 @@ Compatibility is **distributed systems** discipline.
 
 - Concurrency, consistency, offline, performance.
 
-### Key Takeaway
+### Key takeaway
 
-Show **depth over breadth**.
+> Show **depth over breadth**.
 
 ---
 
@@ -330,9 +337,9 @@ Show **depth over breadth**.
 
 - Justify with constraints; acknowledge singleton test issues.
 
-### Key Takeaway
+### Key takeaway
 
-Patterns are **tools**, not tattoos.
+> Patterns are **tools**, not tattoos.
 
 ---
 
@@ -344,9 +351,9 @@ Patterns are **tools**, not tattoos.
 
 - Crashlytics breadcrumbs, repro harness, architectural fix vs patch.
 
-### Key Takeaway
+### Key takeaway
 
-Intermittent == **missing instrumentation**.
+> Intermittent == **missing instrumentation**.
 
 ---
 
@@ -358,9 +365,9 @@ Intermittent == **missing instrumentation**.
 
 - RFC reading, conferences, secure coding labs, internal guilds.
 
-### Key Takeaway
+### Key takeaway
 
-Continuous learning is **scheduled**, not aspirational.
+> Continuous learning is **scheduled**, not aspirational.
 
 ---
 
@@ -372,9 +379,9 @@ Continuous learning is **scheduled**, not aspirational.
 
 - Risk reduction strategy, incremental steps, tests-first, stakeholder comms.
 
-### Key Takeaway
+### Key takeaway
 
-Refactor needs **business sponsor**.
+> Refactor needs **business sponsor**.
 
 ---
 
@@ -386,9 +393,9 @@ Refactor needs **business sponsor**.
 
 - Caching, signing, tracks, automated UI, release notes.
 
-### Key Takeaway
+### Key takeaway
 
-Pipeline mirrors **product quality**.
+> Pipeline mirrors **product quality**.
 
 ---
 
@@ -400,9 +407,9 @@ Pipeline mirrors **product quality**.
 
 - Feature flags, small PRs, merge queues, integration branches.
 
-### Key Takeaway
+### Key takeaway
 
-Reduce **integration pain** mechanically.
+> Reduce **integration pain** mechanically.
 
 ---
 
@@ -414,9 +421,9 @@ Reduce **integration pain** mechanically.
 
 - Jenkins, Bitrise, CircleCI, Fastlane, Play Console, Firebase Test Lab, Espresso.
 
-### Key Takeaway
+### Key takeaway
 
-Name **what you measured** with each tool.
+> Name **what you measured** with each tool.
 
 ---
 
@@ -428,6 +435,6 @@ Name **what you measured** with each tool.
 
 - Lint, static analysis, coverage gates (carefully), formatting, CODEOWNERS.
 
-### Key Takeaway
+### Key takeaway
 
-Gates should be **high-signal** to avoid bypass culture.
+> Gates should be **high-signal** to avoid bypass culture.

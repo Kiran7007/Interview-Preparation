@@ -1,5 +1,12 @@
 # DSA: Graphs (Senior)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 How do you represent a graph for mobile interview problems—**adjacency list vs matrix**—and when does either fail?
@@ -11,13 +18,13 @@ How do you represent a graph for mobile interview problems—**adjacency list vs
 - **Trade-offs:** Matrix flood-fill mutates input unless you copy—clarify in interviews. List representation saves memory for social/dependency graphs.
 - **Real-world example:** Module dependency graph for feature flags (list) vs image region labeling (grid DFS).
 
-### Code Example (if applicable)
+### Code example
 
 See `patterns.md` → `countComponents`, `bfs`, `dfs`, `numIslands` (matrix), `UnionFind`, `dijkstra`, topological sort.
 
-### Key Takeaway
+### Key takeaway
 
-**Sparsity + API** → adjacency list; **2D spatial** → grid traversal.
+> **Sparsity + API** → adjacency list; **2D spatial** → grid traversal.
 
 ---
 
@@ -32,9 +39,9 @@ Explain **Union-Find** and a production pitfall you’d call out in a staff revi
 - **Trade-offs:** Doesn’t naturally give shortest path lengths unless weights are trivial; offline dynamic connectivity only.
 - **Real-world example:** Kruskal MST, percolation, grouping equivalent identifiers in analytics pipelines.
 
-### Key Takeaway
+### Key takeaway
 
-Always mention **path compression** + **union by rank**—interviewers listen for both.
+> Always mention **path compression** + **union by rank**—interviewers listen for both.
 
 ---
 
@@ -58,9 +65,9 @@ Compare **Dijkstra**, **Bellman-Ford**, and **0-1 BFS** in one minute.
 - [Topological sort — curated list](https://lnkd.in/gBaaZCbM)
 - [Bridges / articulation points — curated list](https://lnkd.in/gRpJ6qxN)
 
-### Key Takeaway
+### Key takeaway
 
-**Negative weights** changes the algorithm family completely.
+> **Negative weights** changes the algorithm family completely.
 
 ---
 

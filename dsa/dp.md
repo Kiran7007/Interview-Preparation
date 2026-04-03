@@ -1,5 +1,12 @@
 # DSA: Dynamic Programming & Backtracking (Senior)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 How do you decide between **top-down memoization** vs **bottom-up DP** in interviews?
@@ -11,13 +18,13 @@ How do you decide between **top-down memoization** vs **bottom-up DP** in interv
 - **Trade-offs:** Top-down can skip unreachable states; bottom-up can be \(O(1)\) space for many 1D recurrences.
 - **Real-world example:** Computing minimal edit distance for offline subtitle corrections (string DP); feature rollout combinatorics with constraints (bounded knapsack style).
 
-### Code Example (if applicable)
+### Code example
 
 See `patterns.md` → DP sections in `DSA_Patterns_Cheatsheet.md` + `AlgorithmV2.md` (intervals, strings, LIS, etc.).
 
-### Key Takeaway
+### Key takeaway
 
-State = **`(index, constraint, parity, …)`** — define it explicitly first.
+> State = **`(index, constraint, parity, …)`** — define it explicitly first.
 
 ---
 
@@ -32,9 +39,9 @@ What’s the difference between **backtracking** and **DP**—when can you not m
 - **Trade-offs:** DP memory vs time; backtracking can explode if pruning is weak.
 - **Real-world example:** Sudoku/CSP-style search vs counting distinct paths in a grid with obstacles.
 
-### Key Takeaway
+### Key takeaway
 
-If your state repeats, **memoize**; if not, **prune hard**.
+> If your state repeats, **memoize**; if not, **prune hard**.
 
 ---
 

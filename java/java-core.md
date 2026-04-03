@@ -10,9 +10,9 @@ Why does Android steer you away from Java Serializable for performance-critical 
 - **Trade-offs:** Serializable is convenient for pure JVM server code; on Android it’s a common performance footgun.
 - **Real-world example:** Passing large lists between activities—use ViewModel + repository, not giant serialized blobs.
 
-### Key Takeaway
+### Key takeaway
 
-**Parcelable for Android handoffs**; **Serializable** only with eyes open.
+> **Parcelable for Android handoffs**; **Serializable** only with eyes open.
 
 ---
 

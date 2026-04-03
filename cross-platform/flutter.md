@@ -1,5 +1,12 @@
 # Flutter (Cross-platform) — Full Topic Coverage (Senior)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 What is Flutter?
@@ -11,9 +18,9 @@ What is Flutter?
 - **Trade-offs:** Engine size + embedding complexity vs velocity of shared UI.
 - **Real-world example:** Internal ops apps where Android+iOS parity matters more than OEM-specific styling.
 
-### Key Takeaway
+### Key takeaway
 
-Flutter is a **UI engine + framework**, not just a cross-platform API shim.
+> Flutter is a **UI engine + framework**, not just a cross-platform API shim.
 
 ---
 
@@ -27,9 +34,9 @@ How does Flutter differ from other mobile development frameworks?
 - **Trade-offs:** Less reliance on OEM widgets → different accessibility/integration considerations.
 - **Real-world example:** Brand-identical experiences across platforms.
 
-### Key Takeaway
+### Key takeaway
 
-**Consistent rendering** is the differentiator.
+> **Consistent rendering** is the differentiator.
 
 ---
 
@@ -43,9 +50,9 @@ What is Dart?
 - **Trade-offs:** Smaller hiring pool than Kotlin/Swift for platform-specific modules.
 - **Real-world example:** Share parsers and validators between client and server (if you adopt Dart backend tooling).
 
-### Key Takeaway
+### Key takeaway
 
-Dart exists to serve **fast iteration + AOT performance**.
+> Dart exists to serve **fast iteration + AOT performance**.
 
 ---
 
@@ -58,9 +65,9 @@ What are the main features of Flutter?
 - Hot reload/hot restart, rich widget catalog, Impeller/Skia rendering, multi-platform targets, strong tooling (DevTools).
 - **Real-world example:** Rapid UX iteration with designers in the loop.
 
-### Key Takeaway
+### Key takeaway
 
-**Tooling + rendering** enable the productivity story.
+> **Tooling + rendering** enable the productivity story.
 
 ---
 
@@ -74,9 +81,9 @@ Explain the widget tree in Flutter.
 - **Trade-offs:** Deep trees cost readability—compose smaller widgets.
 - **Real-world example:** Mirror feature modules in widget subtrees for test isolation.
 
-### Key Takeaway
+### Key takeaway
 
-Widget tree = **declarative description**, not the final render graph.
+> Widget tree = **declarative description**, not the final render graph.
 
 ---
 
@@ -91,9 +98,9 @@ What is the difference between StatelessWidget and StatefulWidget?
 - **Trade-offs:** Stateful widgets encourage local state—know when to lift state up.
 - **Real-world example:** `Stateless` icon row; `Stateful` text field with validation state.
 
-### Key Takeaway
+### Key takeaway
 
-**Ephemeral UI state** → Stateful; **injected models** → Stateless.
+> **Ephemeral UI state** → Stateful; **injected models** → Stateless.
 
 ---
 
@@ -107,9 +114,9 @@ How do you use `setState()`?
 - **Trade-offs:** Overuse causes rebuild storms; extract subtrees or use memoization/`const`.
 - **Real-world example:** Toggle expand/collapse for a card.
 
-### Key Takeaway
+### Key takeaway
 
-`setState` = **local mutation + schedule frame**.
+> `setState` = **local mutation + schedule frame**.
 
 ---
 
@@ -123,9 +130,9 @@ What are keys in Flutter, and when should you use them?
 - **Trade-offs:** Wrong key worse than none—debug carefully.
 - **Real-world example:** `ValueKey(orderId)` in `ListView` of dynamic items.
 
-### Key Takeaway
+### Key takeaway
 
-Keys fix **identity**, not layout.
+> Keys fix **identity**, not layout.
 
 ---
 
@@ -139,9 +146,9 @@ How do you handle navigation? What is a `Navigator` and what are routes?
 - **Trade-offs:** Deep linking + state restoration needs a router strategy, not ad-hoc pushes.
 - **Real-world example:** Onboarding flow with guarded routes to home.
 
-### Key Takeaway
+### Key takeaway
 
-Treat navigation as **app state**, not scattered calls.
+> Treat navigation as **app state**, not scattered calls.
 
 ---
 
@@ -155,9 +162,9 @@ How do you pass data between screens?
 - **Trade-offs:** Constructor coupling vs opaque maps—prefer typed args for compile safety.
 - **Real-world example:** Pass immutable `UserId` value class, not entire `User` graph.
 
-### Key Takeaway
+### Key takeaway
 
-**Typed arguments** + **single source of truth** for shared data.
+> **Typed arguments** + **single source of truth** for shared data.
 
 ---
 
@@ -172,9 +179,9 @@ Explain `Future` and `Stream` in Dart.
 - **Trade-offs:** Stream subscriptions need lifecycle disposal.
 - **Real-world example:** `Future` for login RPC; `Stream` for websocket ticker.
 
-### Key Takeaway
+### Key takeaway
 
-Think **single-shot vs timeline**.
+> Think **single-shot vs timeline**.
 
 ---
 
@@ -188,9 +195,9 @@ What is the purpose of `async` and `await`?
 - **Trade-offs:** Hidden thread hops—still avoid blocking isolates.
 - **Real-world example:** `await dio.get(...)` in repository.
 
-### Key Takeaway
+### Key takeaway
 
-`async/await` improves **readability**, not magic parallelism.
+> `async/await` improves **readability**, not magic parallelism.
 
 ---
 
@@ -203,9 +210,9 @@ How do you handle and validate forms?
 - `Form` + `GlobalKey<FormState>` + field validators; keep validation rules testable.
 - **Real-world example:** Multi-step KYC form with progressive disclosure.
 
-### Key Takeaway
+### Key takeaway
 
-Validators = **pure functions** where possible.
+> Validators = **pure functions** where possible.
 
 ---
 
@@ -219,9 +226,9 @@ How do you handle gestures? What is `GestureDetector` for?
 - **Trade-offs:** Hit testing order matters in layered UI.
 - **Real-world example:** Swipe actions on list tiles with proper arena resolution.
 
-### Key Takeaway
+### Key takeaway
 
-Understand **gesture arena** when gestures fight.
+> Understand **gesture arena** when gestures fight.
 
 ---
 
@@ -235,7 +242,7 @@ How do you create custom animations and use `AnimationController`?
 - **Trade-offs:** For implicit animations prefer built-ins; controllers for interactive transitions.
 - **Real-world example:** Drag-to-dismiss sheet with spring simulation vs tween.
 
-### Code Example (if applicable)
+### Code example
 
 ```dart
 late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
@@ -246,9 +253,9 @@ void dispose() {
 }
 ```
 
-### Key Takeaway
+### Key takeaway
 
-Always **`dispose` controllers**—this is a classic leak class.
+> Always **`dispose` controllers**—this is a classic leak class.
 
 ---
 
@@ -261,9 +268,9 @@ How do you handle network requests?
 - `http`, `dio`, or platform channels for native stacks; add timeouts, retries with backoff, interceptors.
 - **Real-world example:** Certificate pinning via native channel if Dart stack insufficient.
 
-### Key Takeaway
+### Key takeaway
 
-Mirror Android **OkHttp interceptor** thinking.
+> Mirror Android **OkHttp interceptor** thinking.
 
 ---
 
@@ -277,9 +284,9 @@ How do you manage state?
 - **Trade-offs:** BLoC verbosity vs Provider simplicity; pick based on team skill and test needs.
 - **Real-world example:** Riverpod for testable async providers + scoped overrides in tests.
 
-### Key Takeaway
+### Key takeaway
 
-**Scale the solution** to team and complexity.
+> **Scale the solution** to team and complexity.
 
 ---
 
@@ -293,9 +300,9 @@ What is the purpose of the `build` method?
 - **Trade-offs:** Side effects belong in controllers/listeners/effects.
 - **Real-world example:** Read `watch`ed provider, return widget tree.
 
-### Key Takeaway
+### Key takeaway
 
-`build` should be a **projection**, not a worker.
+> `build` should be a **projection**, not a worker.
 
 ---
 
@@ -308,9 +315,9 @@ Explain the lifecycle of a Flutter widget.
 - `createState` → `initState` → `didChangeDependencies` → `build` → (updates) → `deactivate` → `dispose`.
 - **Real-world example:** Start animations/listeners in `initState`, cancel in `dispose`.
 
-### Key Takeaway
+### Key takeaway
 
-**Symmetric setup/teardown** prevents leaks.
+> **Symmetric setup/teardown** prevents leaks.
 
 ---
 
@@ -323,9 +330,9 @@ What is an `InheritedWidget`?
 - Propagates data down the tree; `Provider` builds on this model.
 - **Trade-offs:** Prefer modern provider APIs for ergonomics unless framework-level needs.
 
-### Key Takeaway
+### Key takeaway
 
-It’s the **primitive** for ambient dependencies.
+> It’s the **primitive** for ambient dependencies.
 
 ---
 
@@ -338,9 +345,9 @@ What are the different ways to handle asynchronous operations?
 - Futures/streams/async-await; `FutureBuilder`/`StreamBuilder`; RxDart for complex event composition.
 - **Trade-offs:** Builders rebuild often—consider `AsyncValue` patterns (Riverpod) for finer control.
 
-### Key Takeaway
+### Key takeaway
 
-Pick **builder** vs **listener** based on rebuild cost.
+> Pick **builder** vs **listener** based on rebuild cost.
 
 ---
 
@@ -353,9 +360,9 @@ How do you use `FutureBuilder` and `StreamBuilder`?
 - Snapshot states: none/waiting/error/done; always handle errors explicitly.
 - **Real-world example:** Show shimmer while waiting, error panel with retry.
 
-### Key Takeaway
+### Key takeaway
 
-Never leave **`connectionState` unhandled**.
+> Never leave **`connectionState` unhandled**.
 
 ---
 
@@ -368,9 +375,9 @@ What is the BLoC pattern, and how is it used?
 - Separates UI from business logic via events/states; great test seams.
 - **Trade-offs:** Boilerplate; consider Cubit for simpler cases.
 
-### Key Takeaway
+### Key takeaway
 
-BLoC shines for **explicit state machines**.
+> BLoC shines for **explicit state machines**.
 
 ---
 
@@ -383,9 +390,9 @@ How do you implement dependency injection?
 - `get_it`, `provider`, `riverpod`, compile-time DI where available.
 - **Real-world example:** Register singleton HTTP client + scoped feature modules.
 
-### Key Takeaway
+### Key takeaway
 
-DI is **scopes + test doubles**, not just `get_it()`.
+> DI is **scopes + test doubles**, not just `get_it()`.
 
 ---
 
@@ -398,9 +405,9 @@ What is the Provider package, and how is it used?
 - Exposes `Listenable`/`InheritedWidget` values; `context.watch`/`read`.
 - **Trade-offs:** Misuse causes rebuild issues—keep providers granular.
 
-### Key Takeaway
+### Key takeaway
 
-**Granular providers** > mega `AppState`.
+> **Granular providers** > mega `AppState`.
 
 ---
 
@@ -414,9 +421,9 @@ Tween animation vs physics-based animation?
 - Physics: interactive, natural motion (springs).
 - **Real-world example:** Page transitions tween; fling scroll physics sim.
 
-### Key Takeaway
+### Key takeaway
 
-Match animation type to **interaction model**.
+> Match animation type to **interaction model**.
 
 ---
 
@@ -429,9 +436,9 @@ How do you optimize performance of a Flutter app?
 - Minimize rebuilds (`const`, keys, `Selector`/granular listens), split widgets, memoize expensive children, image cache discipline, avoid heavy synchronous work in build/layout, use DevTools timeline.
 - **Real-world example:** Replace full-list rebuild with `ListView.builder` + stable keys.
 
-### Key Takeaway
+### Key takeaway
 
-**Measure jank** before micro-optimizing.
+> **Measure jank** before micro-optimizing.
 
 ---
 
@@ -444,9 +451,9 @@ How do you debug a Flutter app? What is the Flutter Inspector for?
 - DevTools (performance, memory, network), logging, breakpoints, inspector for widget/layout diagnostics.
 - **Real-world example:** Track rebuild counts with performance overlay.
 
-### Key Takeaway
+### Key takeaway
 
-Inspector answers **“what rebuilt and why”**.
+> Inspector answers **“what rebuilt and why”**.
 
 ---
 
@@ -459,9 +466,9 @@ What is a `FutureProvider` (Riverpod) and how is it used?
 - Async provider exposing `AsyncValue` states—great for one-shot remote fetches with caching/refetch policies.
 - **Trade-offs:** Understand invalidation and family keys for parameterized queries.
 
-### Key Takeaway
+### Key takeaway
 
-Model async UI as **`AsyncValue` states**, not booleans.
+> Model async UI as **`AsyncValue` states**, not booleans.
 
 ---
 
@@ -474,9 +481,9 @@ How do you handle errors?
 - `try/catch` around awaits; `runZonedGuarded` for global hooks; `FlutterError.onError` for framework errors; user-friendly surfaces.
 - **Real-world example:** Map domain failures to UI snackbars without leaking stack traces.
 
-### Key Takeaway
+### Key takeaway
 
-**Centralize** error translation, not string building in widgets.
+> **Centralize** error translation, not string building in widgets.
 
 ---
 
@@ -489,9 +496,9 @@ How do you implement localization? What is `intl` for?
 - `flutter_localizations` + ARB files; `intl` formats dates/numbers/pluralization.
 - **Trade-offs:** Keep strings out of code; test RTL layouts.
 
-### Key Takeaway
+### Key takeaway
 
-Localization is a **release gate**, not a string hunt.
+> Localization is a **release gate**, not a string hunt.
 
 ---
 
@@ -504,9 +511,9 @@ How do you access native features? What is a platform channel?
 - MethodChannel/EventChannel to Kotlin/Swift; serialize simple types; version your channel API.
 - **Real-world example:** Biometrics, secure enclave use, OEM-specific sensors.
 
-### Key Takeaway
+### Key takeaway
 
-Channels are **productized APIs**—version and test them.
+> Channels are **productized APIs**—version and test them.
 
 ---
 
@@ -520,9 +527,9 @@ How do you integrate Firebase and use Firebase Authentication?
 - **Trade-offs:** Understand token refresh, MFA, and Play Integrity interplay on Android.
 - **Real-world example:** Email link sign-in with dynamic links (careful with security).
 
-### Key Takeaway
+### Key takeaway
 
-Mobile auth = **client + server rules + abuse prevention**.
+> Mobile auth = **client + server rules + abuse prevention**.
 
 ---
 
@@ -536,9 +543,9 @@ How do you store data locally — SharedPreferences and SQLite?
 - Relational: `sqflite`/`drift` for structured data + migrations.
 - **Real-world example:** Encrypted storage for tokens (prefer platform keystore via plugins).
 
-### Key Takeaway
+### Key takeaway
 
-Pick **schema + migrations** when data grows beyond flags.
+> Pick **schema + migrations** when data grows beyond flags.
 
 ---
 
@@ -551,6 +558,6 @@ What are best practices for clean, maintainable Flutter code?
 - Meaningful names, feature-first folders, separate UI from domain, DRY with judgment, tests for parsers and state reducers.
 - **Real-world example:** `features/checkout/{data,domain,ui}` layering.
 
-### Key Takeaway
+### Key takeaway
 
-**Feature isolation** scales teams.
+> **Feature isolation** scales teams.

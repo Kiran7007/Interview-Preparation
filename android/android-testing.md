@@ -1,5 +1,12 @@
 # Android Testing (Unit, Integration, UI, Compose) — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 Explain the **test pyramid** on mobile.
@@ -11,9 +18,9 @@ Explain the **test pyramid** on mobile.
 - **UI:** Espresso/Compose tests—few, high value; device labs for OEM quirks.
 - **Image:** `assets/test_pyramid.png`
 
-### Key Takeaway
+### Key takeaway
 
-Invert the pyramid only if you enjoy **3AM flakes**.
+> Invert the pyramid only if you enjoy **3AM flakes**.
 
 ---
 
@@ -25,9 +32,9 @@ What does **unit testing** accomplish in CI?
 
 - Guards regressions on every PR; enables refactor confidence; pairs with static analysis.
 
-### Key Takeaway
+### Key takeaway
 
-Unit tests are **change velocity insurance**.
+> Unit tests are **change velocity insurance**.
 
 ---
 
@@ -42,9 +49,9 @@ Unit tests are **change velocity insurance**.
   - Official: https://developer.android.com/training/testing/ui-testing/espresso-testing.html  
   - Mindorks intro: https://medium.com/mindorks/android-testing-part-1-espresso-basics  
 
-### Key Takeaway
+### Key takeaway
 
-Flakiness is usually **missing idling** or **shared mutable state**.
+> Flakiness is usually **missing idling** or **shared mutable state**.
 
 ---
 
@@ -57,9 +64,9 @@ Flakiness is usually **missing idling** or **shared mutable state**.
 - JVM-fast approximations of framework; great for logic near framework without devices.
 - **Link:** http://robolectric.org/  
 
-### Key Takeaway
+### Key takeaway
 
-Know limits vs **true device** behavior.
+> Know limits vs **true device** behavior.
 
 ---
 
@@ -72,9 +79,9 @@ Know limits vs **true device** behavior.
 - Cross-app UI testing; slower; use for flows spanning apps/settings.
 - **Link:** https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html  
 
-### Key Takeaway
+### Key takeaway
 
-Reserve for **true E2E**, not everyday screens.
+> Reserve for **true E2E**, not everyday screens.
 
 ---
 
@@ -87,9 +94,9 @@ Reserve for **true E2E**, not everyday screens.
 - Stub collaborators; verify interactions; Kotlin needs inline mock maker / mockK alternative.
 - **Link:** http://site.mockito.org/  
 
-### Key Takeaway
+### Key takeaway
 
-Mocks document **expected collaborations**.
+> Mocks document **expected collaborations**.
 
 ---
 
@@ -102,9 +109,9 @@ Mocks document **expected collaborations**.
 - JUnit4/5 with AndroidX test runners; rules for temporary folders, instant exec.
 - **Link:** https://devqa.io/junit-5-annotations/  
 
-### Key Takeaway
+### Key takeaway
 
-Prefer **JUnit5** where toolchain allows.
+> Prefer **JUnit5** where toolchain allows.
 
 ---
 
@@ -119,9 +126,9 @@ Prefer **JUnit5** where toolchain allows.
   - https://github.com/facebook/screenshot-tests-for-android  
   - https://facebook.github.io/screenshot-tests-for-android/#getting-started  
 
-### Key Takeaway
+### Key takeaway
 
-Pair with **small golden set** to avoid maintenance hell.
+> Pair with **small golden set** to avoid maintenance hell.
 
 ---
 
@@ -134,9 +141,9 @@ Pair with **small golden set** to avoid maintenance hell.
 - Semantic tree + matchers; synchronization differs; test `Modifier.testTag` discipline.
 - **Guidance:** see Compose testing section in `android-architecture.md`.
 
-### Key Takeaway
+### Key takeaway
 
-Compose rewards **semantic selectors**, not raw view IDs.
+> Compose rewards **semantic selectors**, not raw view IDs.
 
 ---
 
@@ -148,6 +155,6 @@ How do you test **MVP/MVVM/MVI** differently?
 
 - MVP: test presenter with fake view; MVVM: test VM outputs; MVI: test reducers + state transitions deterministically.
 
-### Key Takeaway
+### Key takeaway
 
-Architecture choice changes **what you fake**.
+> Architecture choice changes **what you fake**.

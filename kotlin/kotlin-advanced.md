@@ -1,5 +1,12 @@
 # Kotlin Advanced (Senior Android)
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering level.
@@ -15,9 +22,9 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 
 - https://outcomeschool.com/blog/remember-vs-remembersaveable  
 
-### Key Takeaway
+### Key takeaway
 
-**Saveable for small UI chrome**, **ViewModel for truth**.
+> **Saveable for small UI chrome**, **ViewModel for truth**.
 
 ---
 
@@ -35,9 +42,9 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 
 - https://www.linkedin.com/feed/update/urn:li:activity:6770786744422998017/  
 
-### Key Takeaway
+### Key takeaway
 
-If inner collections exist, think **flatMap**.
+> If inner collections exist, think **flatMap**.
 
 ---
 
@@ -56,9 +63,9 @@ If inner collections exist, think **flatMap**.
 
 - https://outcomeschool.com/blog/stateflow-and-sharedflow  
 
-### Key Takeaway
+### Key takeaway
 
-**StateFlow for render truth**; be careful with “event” streams.
+> **StateFlow for render truth**; be careful with “event” streams.
 
 ---
 
@@ -76,9 +83,9 @@ If inner collections exist, think **flatMap**.
 
 - https://outcomeschool.com/blog/cold-flow-vs-hot-flow  
 
-### Key Takeaway
+### Key takeaway
 
-Cold = **per collector producer**; hot = **broadcast**.
+> Cold = **per collector producer**; hot = **broadcast**.
 
 ---
 
@@ -95,6 +102,6 @@ Cold = **per collector producer**; hot = **broadcast**.
 
 - https://proandroiddev.com/synchronization-and-thread-safety-techniques-in-java-and-kotlin-f63506370e6d  
 
-### Key Takeaway
+### Key takeaway
 
-Prefer **one owner thread** + message passing over scattered locks.
+> Prefer **one owner thread** + message passing over scattered locks.

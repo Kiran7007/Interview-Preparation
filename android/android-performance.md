@@ -1,5 +1,12 @@
 # Android Performance & Battery — Senior
 
+---
+
+> **How to read this file**  
+> Each **topic** is separated by a horizontal rule (`---`). Flow: **Question → Answer** → (optional **Code** / **Useful links**) → **Key takeaway** (in a blockquote).
+
+---
+
 ### Question
 
 What is **ANR** and how do you prevent it as a tech lead?
@@ -11,9 +18,9 @@ What is **ANR** and how do you prevent it as a tech lead?
 - **Trade-offs:** Moving work off main is necessary but watch thread explosion—use structured concurrency + bounded pools.
 - **Real-world example:** JSON parsing on main during login → move to `Dispatchers.Default` + streaming parser.
 
-### Key Takeaway
+### Key takeaway
 
-**Profile main thread** with Android Studio + Perfetto, don’t guess.
+> **Profile main thread** with Android Studio + Perfetto, don’t guess.
 
 ---
 
@@ -27,9 +34,9 @@ How does **RecyclerView** work internally, and what happens in `onBindViewHolder
 - **Trade-offs:** Stable IDs + DiffUtil reduce flicker; heavy work in bind causes jank.
 - **Real-world example:** Image loading cancelled on rebind via request tags.
 
-### Key Takeaway
+### Key takeaway
 
-**Bind should be O(1)** for typical rows.
+> **Bind should be O(1)** for typical rows.
 
 ---
 
@@ -42,9 +49,9 @@ How does **RecyclerView** work internally, and what happens in `onBindViewHolder
 - ViewHolder pattern mandatory in practice; `LayoutManager` + `ItemAnimator`; better extensibility.
 - **Real-world example:** Grid + headers via `ConcatAdapter` vs custom `ListView` hacks.
 
-### Key Takeaway
+### Key takeaway
 
-No new `ListView` code in 2026.
+> No new `ListView` code in 2026.
 
 ---
 
@@ -58,9 +65,9 @@ No new `ListView` code in 2026.
 - **Link:** https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47  
 - Also see Java discussion: https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray  
 
-### Key Takeaway
+### Key takeaway
 
-Measure **size + churn** before micro-optimizing maps.
+> Measure **size + churn** before micro-optimizing maps.
 
 ---
 
@@ -75,9 +82,9 @@ Measure **size + churn** before micro-optimizing maps.
 - **Link:** https://outcomeschool.com/blog/bitmap-pool  
 - **Large bitmaps:** https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53  
 
-### Key Takeaway
+### Key takeaway
 
-**Decode bounds first**, then sample.
+> **Decode bounds first**, then sample.
 
 ---
 
@@ -93,9 +100,9 @@ Measure **size + churn** before micro-optimizing maps.
   - https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662  
   - Build time: https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43  
 
-### Key Takeaway
+### Key takeaway
 
-Size work is **release hygiene**, not one-time.
+> Size work is **release hygiene**, not one-time.
 
 ---
 
@@ -108,9 +115,9 @@ Size work is **release hygiene**, not one-time.
 - Detect accidental disk/network on main in debug; pair with CI lint checks.
 - **Link:** https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997  
 
-### Key Takeaway
+### Key takeaway
 
-StrictMode belongs in **debug + tests**, gated.
+> StrictMode belongs in **debug + tests**, gated.
 
 ---
 
@@ -123,9 +130,9 @@ StrictMode belongs in **debug + tests**, gated.
 - RenderScript deprecated; prefer GPU/NDK or framework APIs for compute.
 - **Link:** https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe  
 
-### Key Takeaway
+### Key takeaway
 
-Know **deprecation** story for legacy maintenance interviews.
+> Know **deprecation** story for legacy maintenance interviews.
 
 ---
 
@@ -138,9 +145,9 @@ Know **deprecation** story for legacy maintenance interviews.
 - Zero-copy / mmap friendly binary vs text JSON; trade readability and tooling.
 - **Link:** https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07  
 
-### Key Takeaway
+### Key takeaway
 
-Binary payloads help **latency + battery** on flaky networks.
+> Binary payloads help **latency + battery** on flaky networks.
 
 ---
 
@@ -155,9 +162,9 @@ Binary payloads help **latency + battery** on flaky networks.
   - https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70  
   - Modern background: https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html  
 
-### Key Takeaway
+### Key takeaway
 
-**Radio tail time** dominates—batch to amortize.
+> **Radio tail time** dominates—batch to amortize.
 
 ---
 
@@ -172,9 +179,9 @@ Binary payloads help **latency + battery** on flaky networks.
 - Detect with LeakCanary + Android Studio Profiler.
 - **Link:** https://www.geeksforgeeks.org/memory-leaks-in-android/  
 
-### Key Takeaway
+### Key takeaway
 
-**Cancel + clear references** at lifecycle boundaries.
+> **Cancel + clear references** at lifecycle boundaries.
 
 ---
 
@@ -187,9 +194,9 @@ Binary payloads help **latency + battery** on flaky networks.
 - Downsampling, reuse, avoid giant in-memory caches, profile heap dumps, watch native memory in image-heavy apps.
 - **Link:** https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application  
 
-### Key Takeaway
+### Key takeaway
 
-OOM is often **bitmap + cache policy**, not “increase heap”.
+> OOM is often **bitmap + cache policy**, not “increase heap”.
 
 ---
 
@@ -202,9 +209,9 @@ OOM is often **bitmap + cache policy**, not “increase heap”.
 - Cooperative memory release when system under pressure; reduces kills.
 - **Link:** https://developer.android.com/topic/performance/memory  
 
-### Key Takeaway
+### Key takeaway
 
-Free **caches**, not correctness state.
+> Free **caches**, not correctness state.
 
 ---
 
@@ -217,9 +224,9 @@ Free **caches**, not correctness state.
 - Understand low-memory killer, crashes, and user expectations—don’t “exit app” artificially.
 - **Link:** https://blog.mindorks.com/reason-of-exit-in-android-application/  
 
-### Key Takeaway
+### Key takeaway
 
-Android **doesn’t have a desktop quit model**.
+> Android **doesn’t have a desktop quit model**.
 
 ---
 
@@ -232,9 +239,9 @@ Android **doesn’t have a desktop quit model**.
 - Perceived performance; keep lightweight.
 - **Link:** https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/  
 
-### Key Takeaway
+### Key takeaway
 
-Skeleton UI must match **final layout** to avoid CLS-like jumps.
+> Skeleton UI must match **final layout** to avoid CLS-like jumps.
 
 ---
 
@@ -247,9 +254,9 @@ Skeleton UI must match **final layout** to avoid CLS-like jumps.
 - Snaps items for carousel UX; watch measurement order.
 - **Link:** https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8  
 
-### Key Takeaway
+### Key takeaway
 
-Test on **RTL + different densities**.
+> Test on **RTL + different densities**.
 
 ---
 
@@ -262,9 +269,9 @@ Test on **RTL + different densities**.
 - `MotionEvent` pointers; gesture detectors.
 - **Link:** https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/  
 
-### Key Takeaway
+### Key takeaway
 
-Handle **pointer index** changes correctly.
+> Handle **pointer index** changes correctly.
 
 ---
 
@@ -283,6 +290,6 @@ Handle **pointer index** changes correctly.
  </set>
 ```
 
-### Key Takeaway
+### Key takeaway
 
-Prefer **physics/spring** for modern motion unless legacy Views.
+> Prefer **physics/spring** for modern motion unless legacy Views.
