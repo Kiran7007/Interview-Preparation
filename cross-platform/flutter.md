@@ -1,9 +1,5 @@
 # Flutter (Cross-platform) — Full Topic Coverage (Senior)
 
-> Every bullet from repository `Flutter.md` is represented below. Duplicate prompts in the source (performance/debug/AnimationController/state) are **merged** into single stronger answers.
-
----
-
 ### Question
 
 What is Flutter?
@@ -235,7 +231,7 @@ How do you create custom animations and use `AnimationController`?
 
 ### Answer
 
-- **Merged from duplicate source bullets:** `AnimationController` (vsynced to `TickerProvider`) drives `Animation<T>` via `Tween`s; listenables rebuild animated widgets; dispose controllers in `dispose()`.
+- `AnimationController` (vsynced to `TickerProvider`) drives `Animation<T>` via `Tween`s; listenables rebuild animated widgets; dispose controllers in `dispose()`.
 - **Trade-offs:** For implicit animations prefer built-ins; controllers for interactive transitions.
 - **Real-world example:** Drag-to-dismiss sheet with spring simulation vs tween.
 
@@ -273,11 +269,11 @@ Mirror Android **OkHttp interceptor** thinking.
 
 ### Question
 
-How do you manage state? (merged duplicate “state management” prompts)
+How do you manage state?
 
 ### Answer
 
-- **From source (combined):** `setState` for local; Provider/Riverpod/BLoC/Redux/MobX for app scale.
+- `setState` for local; Provider/Riverpod/BLoC/Redux/MobX for app scale.
 - **Trade-offs:** BLoC verbosity vs Provider simplicity; pick based on team skill and test needs.
 - **Real-world example:** Riverpod for testable async providers + scoped overrides in tests.
 
@@ -426,7 +422,7 @@ Match animation type to **interaction model**.
 
 ### Question
 
-How do you optimize performance of a Flutter app? (merged duplicates)
+How do you optimize performance of a Flutter app?
 
 ### Answer
 
@@ -441,7 +437,7 @@ How do you optimize performance of a Flutter app? (merged duplicates)
 
 ### Question
 
-How do you debug a Flutter app? What is the Flutter Inspector for? (merged duplicates)
+How do you debug a Flutter app? What is the Flutter Inspector for?
 
 ### Answer
 

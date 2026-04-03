@@ -1,9 +1,5 @@
 # Android SDK & Third-Party Integration — Senior
 
-> Sources: `Android.md` links + `Mock_Interview.md` Firebase/Maps experience + FAANG risk topics (SDK supply chain, CMS).
-
----
-
 ### Question
 
 Integrating **Firebase** end-to-end — what do staff engineers watch?
@@ -29,7 +25,7 @@ Firebase is **fast to ship**, hard to **govern** without rules + reviews.
 ### Answer
 
 - Markers clustering, geofencing, background location policies, billing/API key restriction, snapshot testing for map overlays.
-- **Mock experience:** banking location services, clinician routing, bus tracking.
+- **Example domains:** banking location services, clinician routing, bus tracking.
 
 ### Key Takeaway
 

@@ -1,9 +1,5 @@
 # Android Security & API Hardening — Senior
 
-> Sources: `Android.md` crypto/SSL/root/keystore + `Mock_Interview.md` API security answers + FAANG extensions (tamper, WebView, supply chain).
-
----
-
 ### Question
 
 Why **SSL certificate pinning** — and how does it work?
@@ -15,7 +11,7 @@ Why **SSL certificate pinning** — and how does it work?
 - **Trade-offs:** Breaks if pins misconfigured; need update path (backup pins, remote config).
 - **Real-world example:** Banking apps pinning API gateways; still combine with proper CA trust store updates.
 
-### Useful links (preserved)
+### Useful links
 
 - https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109  
 - https://dzone.com/articles/encryption-and-signing  
@@ -37,7 +33,7 @@ Pinning is **defense in depth**, not a substitute for solid auth.
 
 - **Symmetric:** fast bulk encryption; key distribution problem.
 - **Asymmetric:** key exchange/signing; combine with hybrid schemes (TLS).
-- **Video (preserved):** https://youtu.be/AQDCe585Lnc  
+- **Video:** https://youtu.be/AQDCe585Lnc  
 
 ### Key Takeaway
 
@@ -52,7 +48,7 @@ How do you **encrypt data in Java/Android**?
 ### Answer
 
 - `javax.crypto.Cipher` with correct modes (prefer AEAD like GCM), secure random IVs, never hardcode keys.
-- **Sample commit (preserved):** https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26  
+- **Sample commit:** https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26  
 
 ### Key Takeaway
 

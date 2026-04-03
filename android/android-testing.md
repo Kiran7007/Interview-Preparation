@@ -1,9 +1,5 @@
 # Android Testing (Unit, Integration, UI, Compose) — Senior
 
-> Sources: `UI_Unit_Testing.md` + `Android.md` Espresso/screenshot links + Compose testing from `Jetpack_Compose.md`.
-
----
-
 ### Question
 
 Explain the **test pyramid** on mobile.
@@ -13,7 +9,7 @@ Explain the **test pyramid** on mobile.
 - **Unit:** fast, deterministic—domain + ViewModels with fakes.
 - **Integration:** DAO+DB, Retrofit with MockWebServer, navigation + fragment scenarios.
 - **UI:** Espresso/Compose tests—few, high value; device labs for OEM quirks.
-- **Image (original):** `assets/test_pyramid.png` (see repo `UI_Unit_Testing.md`)
+- **Image:** `assets/test_pyramid.png`
 
 ### Key Takeaway
 
@@ -144,7 +140,7 @@ Compose rewards **semantic selectors**, not raw view IDs.
 
 ---
 
-### Question (behavioral from `Mock_Interview.md`)
+### Question (behavioral)
 
 How do you test **MVP/MVVM/MVI** differently?
 

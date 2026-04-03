@@ -1,9 +1,5 @@
 # Android Release Engineering & CI/CD — Senior
 
-> Sources: `Android.md` (ProGuard/R8, build types, CI links) + `Mock_Interview.md` pipelines.
-
----
-
 ### Question
 
 **ProGuard vs R8 vs DexGuard**
@@ -97,7 +93,7 @@ Native SDKs explode **artifact size**—split thoughtfully.
 
 ### Question
 
-**CI/CD for Android** (preserved links)
+**CI/CD for Android**
 
 ### Answer
 
@@ -112,7 +108,7 @@ Cache **Gradle deps + build cache** aggressively.
 
 ---
 
-### Question (Mock synthesis)
+### Question
 
 **CI/CD benefits & feature branching**
 

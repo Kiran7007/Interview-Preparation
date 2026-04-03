@@ -1,9 +1,5 @@
 # Android Architecture (MVVM, MVP, MVI, Jetpack, DI) — Senior
 
-> Sources: `Android.md` architecture/Dagger/Jetpack sections + `Jetpack_Compose.md` (UI layer) + `Mock_Interview.md` (leadership tie-ins).
-
----
-
 ### Question
 
 Why use **MVP / MVVM / MVI** instead of “god Activities”?
@@ -45,7 +41,7 @@ Why should the **View be an interface in MVP**?
 - **MVP:** Presenter mediates; view passive; good test story.
 - **MVVM:** Data binding / observable state; ViewModel survives config; presenter-less.
 - **MVI:** Single state reducer; great for complex UX, more ceremony.
-- **Useful links / samples (preserved):**
+- **Useful links / samples:**
   - MVP sample: https://github.com/anitaa1990/Inshorts  
   - MVVM sample: https://github.com/anitaa1990/Trailers  
   - MVI: https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec  
@@ -83,7 +79,7 @@ Why **Dependency Injection (Dagger/Hilt/Koin)** on large apps?
 
 ### Useful links
 
-- IoC discussion (from Android.md): https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO  
+- IoC discussion: https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO  
 
 ### Key Takeaway
 
@@ -102,14 +98,14 @@ Explain **Jetpack Architecture Components** and how **Room / LiveData / ViewMode
 - **ViewModel:** UI state + survives config change when scoped correctly.
 - **Lifecycle:** repeatable startup/teardown contracts.
 - **Data/View Binding:** reduces boilerplate; view binding is simpler when you don’t need two-way binding.
-- **Official docs (preserved):**
+- **Official docs:**
   - Architecture: https://developer.android.com/topic/libraries/architecture/  
   - Room: https://developer.android.com/topic/libraries/architecture/room  
   - LiveData: https://developer.android.com/topic/libraries/architecture/livedata  
   - ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel  
   - Lifecycle: https://developer.android.com/topic/libraries/architecture/lifecycle  
   - Data binding: https://developer.android.com/topic/libraries/data-binding/  
-- **Samples (preserved):**
+- **Samples:**
   - Room article: https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24  
   - Room sample: https://github.com/anitaa1990/RoomDb-Sample  
   - LiveData sample: https://github.com/anitaa1990/GameOfThronesTrivia  
@@ -179,7 +175,7 @@ Use **`repeatOnLifecycle`** patterns when collecting flows.
 
 ### Answer
 
-- See detailed list in original Android.md; tie each principle to modules (feature vs core), repository interfaces, and navigation boundaries.
+- Tie each principle to modules (feature vs core), repository interfaces, and navigation boundaries.
 - **Link:** https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/  
 
 ### Key Takeaway
@@ -190,7 +186,7 @@ SOLID is **merge conflict reduction**.
 
 ### Question
 
-**Jetpack Compose** — declarative UI, recomposition, state, navigation, performance, testing (merged & de-duplicated from `Jetpack_Compose.md`)
+**Jetpack Compose** — declarative UI, recomposition, state, navigation, performance, testing
 
 ### Answer
 
@@ -226,7 +222,7 @@ Compose rewards **explicit state ownership** and punishes **hidden side effects*
 - **BindsInstance:** pass runtime values (e.g., `userId`) into builder—use carefully to avoid test pain.
 - **DI pattern vs Service Locator:** prefer DI; service locator is test-hostile global lookup.
 - **Anti-pattern link:** https://stackoverflow.com/a/980616/3424919  
-- Diagram (preserved): see Android.md Dagger section image: `https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7`
+- Diagram: `https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7`
 
 ### Key Takeaway
 

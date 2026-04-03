@@ -1,9 +1,5 @@
 # Android Storage & Data — Senior
 
-> Sources: `Android.md` (SharedPreferences, ContentProvider, Room links, scoped storage) + `Mock_Interview.md` DB security.
-
----
-
 ### Question
 
 `apply()` vs `commit()` in `SharedPreferences`
@@ -32,11 +28,11 @@ What is a **ContentProvider** — when do you still build one?
 - **Trade-offs:** Heavy boilerplate; prefer app-internal Room for private data; providers shine for **secure sharing** and **CursorLoader-era interop** (legacy).
 - **Real-world example:** Sharing patient read-only slices to a partner app under signature permission.
 
-### Useful links (preserved)
+### Useful links
 
 - https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42  
 - Official basics: https://developer.android.com/guide/topics/providers/content-provider-basics  
-- Diagram image (original repo path): `/assets/content-provider-diagram.png`  
+- Diagram image: `/assets/content-provider-diagram.png`  
 
 ### Key Takeaway
 
@@ -74,7 +70,7 @@ Ship **migration tests** with every schema bump.
 
 ---
 
-### Question (Mock synthesis)
+### Question
 
 How do you ensure **DB security & integrity** (health/finance examples)?
 

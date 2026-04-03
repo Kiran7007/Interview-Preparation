@@ -1,9 +1,5 @@
 # Kotlin Basics (Senior Android)
 
-> Source: merged + upgraded from `Kotlin.md` (de-duplicated with `Core_Java.md` where overlap exists).
-
----
-
 ### Question
 
 What are `@JvmStatic`, `@JvmOverloads`, and `@JvmField`—and when do they matter in a mixed Kotlin/Java codebase?

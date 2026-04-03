@@ -1,9 +1,5 @@
 # DSA: Arrays, Sorting & Searching (Senior)
 
-> **Patterns & templates:** Full Kotlin/Java templates and extended catalogs live in [`patterns.md`](./patterns.md) (merged from `Algorithms.md`, `AlgorithmV2.md`, `DSA_Patterns_Cheatsheet.md`, `Data_Structure_Algorithm.md`, `Leetcode.md`).
-
----
-
 ### Question
 
 Why is quicksort preferred over mergesort for sorting **arrays** in practice?
@@ -81,7 +77,7 @@ Explain Big-O, Big-Omega, and how you communicate complexity in interviews.
 ### Useful links
 
 - [Big O cheat sheet (time complexity chart)](https://www.freecodecamp.org/news/big-o-cheat-sheet-time-complexity-chart/)
-- [Complexity table (image in original notes)](https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png)
+- [Complexity table (image)](https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png)
 
 ### Key Takeaway
 
@@ -89,9 +85,9 @@ Always state **what \(n\) is** (users, items, pixels, graph nodes).
 
 ---
 
-## Repository practice index — Arrays (from `Android.md` / `src/arrays`)
+## Practice index — Arrays
 
-These paths are **preserved exactly** from the original `Android.md` (they may point to a `src/` tree in forks of that curriculum):
+These paths reference a `src/` exercise tree (add locally if needed):
 
 - [Find Maximum Sell Profit](/src/arrays/FindMaximumSellProfit.java)
 - [Find Low & High Index of a key from a given array](/src/arrays/LowHighIndex.java)
@@ -122,7 +118,7 @@ These paths are **preserved exactly** from the original `Android.md` (they may p
 - [Rotated Binary Search](/src/search/RotatedBinarySearch.java)
 - [Ternary Search](/src/search/TernarySearch.java)
 
-### Additional curated links (from `Data_Structure_Algorithm.md`)
+### Additional links
 
 - https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm  
 - https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/  

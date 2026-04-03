@@ -1,9 +1,5 @@
 # Kotlin Advanced (Senior Android)
 
-> Focus: concurrency touchpoints, Flow/State hot-cold conceptual bridges, Compose remember APIs (cross-linked with architecture files).
-
----
-
 ### Question
 
 Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering level.

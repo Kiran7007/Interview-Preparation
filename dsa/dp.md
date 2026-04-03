@@ -1,9 +1,5 @@
 # DSA: Dynamic Programming & Backtracking (Senior)
 
-> **Templates:** See [`patterns.md`](./patterns.md) for knapsack-family, interval DP, LIS, string DP, and backtracking templates from `AlgorithmV2.md` + `DSA_Patterns_Cheatsheet.md`.
-
----
-
 ### Question
 
 How do you decide between **top-down memoization** vs **bottom-up DP** in interviews?
@@ -42,7 +38,7 @@ If your state repeats, **memoize**; if not, **prune hard**.
 
 ---
 
-## Repository practice index — Dynamic Programming (from `Android.md`)
+## Practice index — Dynamic Programming
 
 - [Fibonacci Series](/src/dynamicprogramming/FibonacciSeries.java)
 - [Largest sum contiguous subarray](/src/dynamicprogramming/LargestSumSubarray.java)
@@ -51,7 +47,7 @@ If your state repeats, **memoize**; if not, **prune hard**.
 - [Levenshtein distance](/src/dynamicprogramming/LevenshteinDistance.java)
 - [Coin change — number of ways](/src/dynamicprogramming/CoinChangingProblem.java)
 
-## Repository practice index — Backtracking (from `Android.md`)
+## Practice index — Backtracking
 
 - [Solve Boggle](/src/backtracks/Boggle.java)
 - [Parenthesis combinations](/src/backtracks/Parenthesis.java)

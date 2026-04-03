@@ -1,9 +1,5 @@
 # Android Performance & Battery — Senior
 
-> Sources: `Android.md` performance/battery/ANR/RecyclerView/build-time/APK sections + `Mock_Interview.md` performance stories.
-
----
-
 ### Question
 
 What is **ANR** and how do you prevent it as a tech lead?
@@ -39,7 +35,7 @@ How does **RecyclerView** work internally, and what happens in `onBindViewHolder
 
 ### Question
 
-**ListView vs RecyclerView** (merged duplicates)
+**ListView vs RecyclerView**
 
 ### Answer
 
@@ -274,7 +270,7 @@ Handle **pointer index** changes correctly.
 
 ### Question
 
-**Swipe animation XML example** (preserved)
+**Swipe animation XML example**
 
 ### Answer
 

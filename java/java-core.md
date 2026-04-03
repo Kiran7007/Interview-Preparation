@@ -1,19 +1,5 @@
 ﻿# Java Core (Senior Android / Backend-facing Java)
 
-This file preserves **100% of the original** Core_Java.md content (verbatim) under the appendix, and adds **FAANG-grade framing** up front.
-
----
-
-## How to use this file in interviews
-
-- Lead with **contracts**: invariants, failure modes, threading, and API stability.
-- For collections + concurrency: mention **happens-before**, visibility, and iterator semantics (ail-fast vs ail-safe).
-- For Android specifically: connect **serialization cost**, **classloading**, and **reflection** to startup + obfuscation stories.
-
----
-
-## Senior synthesis — high-signal Java topics (cross-linked to appendix)
-
 ### Question
 
 Why does Android steer you away from Java Serializable for performance-critical IPC / state?
@@ -30,9 +16,7 @@ Why does Android steer you away from Java Serializable for performance-critical 
 
 ---
 
-### Appendix A — Verbatim Core_Java.md (repository export)
-
-# Core Java
+## Core Java
 
 
 - **Explain OOP Concept.** <br/>

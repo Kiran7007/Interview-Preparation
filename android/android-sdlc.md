@@ -1,17 +1,13 @@
 # Android SDLC, Leadership & Behavioral (Senior / Staff)
 
-> Sources: merged + upgraded from `Mock_Interview.md` (de-duplicated overlapping architecture/API security/testing/CI questions) + external STAR method link.
-
----
-
 ### Question
 
-Tips & curated resources for interview preparation (preserved links)
+Tips & curated resources for interview preparation
 
 ### Answer
 
 - Use consistent DSA practice + system design drills + behavioral stories with metrics.
-- **Links (all preserved from `Mock_Interview.md`):**
+- **Links:**
   - https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/
   - https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/
   - https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/
@@ -30,7 +26,7 @@ Tips & curated resources for interview preparation (preserved links)
 
 ---
 
-### Question (merged behavioral)
+### Question (behavioral)
 
 Describe a **performance troubleshooting** story on Android.
 
@@ -40,15 +36,13 @@ Describe a **performance troubleshooting** story on Android.
 - **Task:** Identify CPU/mem/network hotspots and reduce ship risk.
 - **Action:** Android Studio profilers, flamegraphs, main-thread audits, caching, async boundaries, R8/shrinkResources, image pipeline tuning.
 - **Result:** Quantify startup, jank frames, APK delta, crash-free rate.
-- **Note:** Original narrative referenced HSBC-scale optimization in `Mock_Interview.md`—replace with your own metrics if you reuse the structure.
-
 ### Key Takeaway
 
 Interviewers want **methodology + numbers**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Error monitoring & logging** for post-mortems
 
@@ -62,7 +56,7 @@ Interviewers want **methodology + numbers**.
 
 ---
 
-### Question (merged)
+### Question
 
 **API security** with sensitive data
 
@@ -76,7 +70,7 @@ Security is **process + architecture**, not one library.
 
 ---
 
-### Question (merged)
+### Question
 
 **Firebase integration** experience (Realtime DB, FCM, Analytics)
 
@@ -90,7 +84,7 @@ Connect Firebase choices to **privacy + cost**.
 
 ---
 
-### Question (merged)
+### Question
 
 Testing **MVP/MVVM/MVI** — strategy differences
 
@@ -104,7 +98,7 @@ Architecture dictates **test doubles**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Tell me about yourself / hobbies / not on resume** (templates)
 
@@ -118,7 +112,7 @@ Architecture dictates **test doubles**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Production incident handling**
 
@@ -132,7 +126,7 @@ Show **calm command** + **customer focus**.
 
 ---
 
-### Question (merged)
+### Question
 
 **MVP/MVVM/MVI project examples** (banking/clinician/bus tracker narratives)
 
@@ -146,7 +140,7 @@ Prepare **3 stories** spanning scale, conflict, and ambiguity.
 
 ---
 
-### Question (merged)
+### Question
 
 **Data security in databases**
 
@@ -160,7 +154,7 @@ Defense in depth across **client + server**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Jetpack (Room, VM, LiveData)** usage story
 
@@ -174,7 +168,7 @@ Tie Jetpack to **business outcomes**.
 
 ---
 
-### Question (merged)
+### Question
 
 **UI + unit testing strategy**
 
@@ -188,7 +182,7 @@ Flake elimination is a **staff-level skill**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Code optimization / APK size** narrative (25% claim in source)
 
@@ -202,7 +196,7 @@ Never fabricate **metrics you can’t defend**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Simple solution to complex problem**
 
@@ -216,7 +210,7 @@ Never fabricate **metrics you can’t defend**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Git collaboration & branching**
 
@@ -230,7 +224,7 @@ Branch strategy serves **release cadence**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Dependency injection frameworks (Dagger/Koin)**
 
@@ -244,7 +238,7 @@ Pick DI for **graph complexity**, not fashion.
 
 ---
 
-### Question (merged)
+### Question
 
 **Google Maps / geo** experience
 
@@ -258,7 +252,7 @@ Location is **policy + UX + tech**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Code optimization impact** (deep narrative)
 
@@ -272,7 +266,7 @@ Always close loop with **before/after**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Code reviews** example
 
@@ -286,7 +280,7 @@ Reviews teach **culture**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Roles & responsibilities**
 
@@ -300,7 +294,7 @@ Align with **job ladder**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Backward compatible API changes**
 
@@ -314,7 +308,7 @@ Compatibility is **distributed systems** discipline.
 
 ---
 
-### Question (merged)
+### Question
 
 **Challenging project** (maps + realtime)
 
@@ -328,7 +322,7 @@ Show **depth over breadth**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Design patterns in practice** (Singleton/Observer/Factory)
 
@@ -342,7 +336,7 @@ Patterns are **tools**, not tattoos.
 
 ---
 
-### Question (merged)
+### Question
 
 **Difficult bug / intermittent crash**
 
@@ -356,7 +350,7 @@ Intermittent == **missing instrumentation**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Staying current with API integration trends**
 
@@ -370,7 +364,7 @@ Continuous learning is **scheduled**, not aspirational.
 
 ---
 
-### Question (merged)
+### Question
 
 **Refactoring definition + legacy refactor story**
 
@@ -384,7 +378,7 @@ Refactor needs **business sponsor**.
 
 ---
 
-### Question (merged)
+### Question
 
 **CI/CD setup** (Gradle + GH Actions/Jenkins + Test Lab + Fastlane)
 
@@ -398,7 +392,7 @@ Pipeline mirrors **product quality**.
 
 ---
 
-### Question (merged)
+### Question
 
 **Concurrent development in CI/CD**
 
@@ -412,7 +406,7 @@ Reduce **integration pain** mechanically.
 
 ---
 
-### Question (merged)
+### Question
 
 **Tools used for CI/CD**
 
@@ -426,7 +420,7 @@ Name **what you measured** with each tool.
 
 ---
 
-### Question (merged)
+### Question
 
 **Code quality in CI/CD**
 

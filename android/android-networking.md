@@ -1,9 +1,5 @@
 # Android Networking (Retrofit, OkHttp, Location, Realtime) — Senior
 
-> Sources: `Android.md` networking stack + outcomeschool link + location/geofence.
-
----
-
 ### Question
 
 **Retrofit vs AsyncTask** — why Retrofit?
@@ -99,7 +95,7 @@ Keep **logging interceptor out of release** or scrub aggressively.
 
 ### Question
 
-**HTTP polling vs WebSocket vs SSE** (preserved link)
+**HTTP polling vs WebSocket vs SSE**
 
 ### Answer
 
@@ -149,7 +145,7 @@ Treat geofences as **hints**, not guarantees.
 ### Answer
 
 - WorkManager for deferrable constraints; exact alarms restricted—use `AlarmManager` only with justification + permissions on newer APIs.
-- **AlarmManager overview:** class doc in Android.md section.
+- **AlarmManager:** see Android platform documentation for scheduling semantics.
 
 ### Key Takeaway
 

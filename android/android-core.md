@@ -1,10 +1,5 @@
 # Android Core Platform (Components, Lifecycle, Concurrency Primitives) — Senior
 
-> **Part A (this file, above the appendix)** is a **merged, upgraded** narrative from the original Android Q&A corpus, with duplicates collapsed across the other `android-*.md` topic files.  
-> **Appendix** contains the **verbatim** export of that legacy Android file so **no bullet is dropped**.
-
----
-
 ### Question
 
 What is the **`Application` class** and how should teams use it safely?
@@ -79,7 +74,7 @@ Explain **`Activity` lifecycle**, **`onCreate` vs `onStart`**, and **`setContent
 
 ### Code Example (if applicable)
 
-Lifecycle diagrams (original assets):
+Lifecycle diagrams:
 
 - `/assets/activity_lifecycle.png`
 
@@ -100,10 +95,10 @@ Lifecycle is a **contract** with the system—don’t fight it with silent work 
 - **Host correlation:** fragment transitions interleave with activity lifecycle—test configuration changes.
 - **Default constructor + args:** system recreates fragments; use `arguments` `Bundle` for params.
 - **Back stack:** `addToBackStack()` for back navigation expectations.
-- **`add` vs `replace`:** `replace` typically tears down replaced fragment views; `add` stacks fragments—back behavior and lifecycle callbacks differ (revisit original diagrams).
+- **`add` vs `replace`:** `replace` typically tears down replaced fragment views; `add` stacks fragments—back behavior and lifecycle callbacks differ (see diagrams linked above).
 - **`DialogFragment`:** lifecycle-aware dialog hosting; survives rotation better than raw `Dialog`.
 
-### Useful links / diagrams (preserved)
+### Useful links / diagrams
 
 - Fragment lifecycle images: `/assets/fragment_lifecycle.png`, `/assets/fragment_lifecycle_2.png`
 - Combined lifecycle diagram: `/assets/activity-fragment-lifecycles.png`
@@ -132,10 +127,6 @@ If back navigation feels random, your **transactions** are inconsistent.
 - **Implicit:** action + category + data—system resolves; declare `<intent-filter>` carefully to avoid exported surface surprises.
 - **PendingIntent:** delegates future execution with original app identity; mind **mutability flags** (Android 12+), request codes, and **immutable** requirements.
 - **Sticky:** historical `sendStickyBroadcast`—largely obsolete/restricted; prefer modern APIs.
-
-### Code Example (if applicable)
-
-Intent filter sample + PendingIntent sample are preserved verbatim in appendix `Android.md`.
 
 ### Key Takeaway
 
@@ -396,7 +387,7 @@ Raising **targetSdk** is a **QA project**, not a one-line change.
 ### Answer
 
 - `View` leaf, `ViewGroup` container; `ConstraintLayout` reduces depth; `FrameLayout` for overlays; `LinearLayout`/`RelativeLayout` legacy trade-offs.
-- Custom view steps (attrs → constructors → measure/layout/draw) preserved in appendix.
+- Custom view steps (attrs → constructors → measure/layout/draw) are covered in the legacy section below.
 - **Links:**
   - ConstraintLayout: https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd  
   - Sample: https://github.com/anitaa1990/ConstraintLayout-Sample  
@@ -482,7 +473,7 @@ Operational hygiene matters in **staff** interviews too.
 
 ### Question
 
-Android **code style** links (preserved)
+Android **code style** links
 
 ### Answer
 
@@ -495,12 +486,7 @@ Consistency enables **scale**.
 
 ---
 
-## Appendix — Verbatim `Android.md` (complete repository export)
-
-The content below is appended in-file for lossless preservation.
-
-
-# Android
+## Android
 
 * **Android project skeleton** [Link](https://github.com/gbajaj/interviewready)
 

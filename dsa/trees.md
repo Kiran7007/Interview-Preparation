@@ -1,9 +1,5 @@
 # DSA: Trees & Heaps (Senior)
 
-> **Full templates:** See [`patterns.md`](./patterns.md) → sections imported from `AlgorithmV2.md` and `DSA_Patterns_Cheatsheet.md` (traversals, BST checks, LCA, diameter, serialization, heaps, trie where applicable).
-
----
-
 ### Question
 
 When do you use **DFS vs BFS** on trees, and what breaks if you pick the wrong one?
@@ -63,7 +59,7 @@ Immutability + sharing beats deep-cloning entire trees.
 
 ---
 
-## Repository practice index — Trees (from `Android.md`)
+## Practice index — Trees
 
 - [InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java)
 - [Convert binary tree to doubly linked list](/src/trees/BinaryTreeToLinkedList.java)
@@ -80,6 +76,6 @@ Immutability + sharing beats deep-cloning entire trees.
 - [Print BST perimeter](/src/trees/PrintTreePerimeter.java)
 - [Serialize / deserialize binary tree](/src/trees/SerializeBinaryTree.java)
 
-### Useful links (from original Android study notes)
+### Useful links
 
 - [Minimum Spanning Tree exercise](/src/graphs/MinimumSpanningTree.java) *(also graph-family; kept for cross-link)*

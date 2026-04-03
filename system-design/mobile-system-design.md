@@ -1,9 +1,5 @@
 # Mobile System Design & OOD (Senior)
 
-> Sources merged: `System_Design.md`, mobile-relevant themes from `Mock_Interview.md`, and FAANG-style mobile extensions (offline, sync, privacy, notifications).
-
----
-
 ### Question
 
 How do you approach **mobile system design** differently from backend system design?
@@ -15,9 +11,9 @@ How do you approach **mobile system design** differently from backend system des
 - **Trade-offs:** Strong consistency vs offline-first; push vs pull; client ML vs server inference; monolith module vs feature modules.
 - **Real-world example:** Designing a healthcare charting app—HIPAA logging, encrypted Room, background sync with WorkManager, conflict resolution, and certificate pinning.
 
-### Useful links (preserved)
+### Useful links
 
-- [System design Q&A PDF (original repo reference)](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/system_design_questions.pdf)
+- [System design Q&A PDF](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/system_design_questions.pdf)
 - [9 Architectural Patterns for Data and Communication Flow](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
 
 ### Key Takeaway

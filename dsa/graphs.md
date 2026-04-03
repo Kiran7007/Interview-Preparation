@@ -1,9 +1,5 @@
 # DSA: Graphs (Senior)
 
-> **Full templates:** See [`patterns.md`](./patterns.md) for DFS/BFS, Union-Find, topological sort, Dijkstra, matrix traversal (`numIslands`), cycle detection (directed), and more (from `AlgorithmV2.md` + `Algorithms.md`).
-
----
-
 ### Question
 
 How do you represent a graph for mobile interview problems—**adjacency list vs matrix**—and when does either fail?
@@ -53,7 +49,7 @@ Compare **Dijkstra**, **Bellman-Ford**, and **0-1 BFS** in one minute.
 - **0-1 BFS:** Edge weights in `{0,1}`; deque trick \(O(V+E)\).
 - **Real-world example:** Latency-cost routing with non-negative weights (maps); risk-adjusted edges with negatives might need Bellman-Ford (rare in Android interviews).
 
-### Useful links (from `Leetcode.md` graph topic lists)
+### Useful links
 
 - [Graphs — curated problem list](https://lnkd.in/gcHRz5-p)
 - [Dijkstra — curated list](https://lnkd.in/gRsxH7Th)
@@ -68,7 +64,7 @@ Compare **Dijkstra**, **Bellman-Ford**, and **0-1 BFS** in one minute.
 
 ---
 
-## Repository practice index — Graphs (from `Android.md`)
+## Practice index — Graphs
 
 - [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
 - [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java)

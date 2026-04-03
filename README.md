@@ -29,7 +29,7 @@
 - [Trees](dsa/trees.md)
 - [Graphs](dsa/graphs.md)
 - [Dynamic Programming](dsa/dp.md)
-- [Patterns & merged sources](dsa/patterns.md)
+- [Patterns](dsa/patterns.md)
 
 ## System design
 
@@ -39,8 +39,6 @@
 
 - [Flutter](cross-platform/flutter.md)
 
-## Other
+## Behavioral
 
-- [Instruction.md](Instruction.md)
-- [assets/](assets/)
 - [STAR method for interviews](https://www.testgorilla.com/blog/star-method-interviews/)

@@ -1,22 +1,12 @@
 ﻿# DSA: Patterns, Cheatsheets & Curated Links (Senior / FAANG)
 
-This file **merges without summarizing** the repository sources: Data_Structure_Algorithm.md, Leetcode.md, Algorithms.md, DSA_Patterns_Cheatsheet.md, and AlgorithmV2.md, plus the curated starter links below.
-
----
-
-## Curated DSA starter links
-
-Below resources are enough if you can be consistent:
+## Starter resources
 
 - [Coding Interview University (jwasham)](https://github.com/jwasham/coding-interview-university/blob/main/README.md)
 - [Big O Cheat Sheet](https://www.bigocheatsheet.com/)
 - [NeetCode practice (all)](https://neetcode.io/practice/practice/allNC)
 - [NeetCode YouTube channel](https://www.youtube.com/@NeetCode/courses)
 - [Striver DSA playlist](https://www.youtube.com/watch?v=0bHoB32fuj0&list=PLgUwDviBIf0oF6QL8m22w1hIDC1vJ_BHz)
-
----
-
-## Merged source: Data_Structure_Algorithm.md
 
 # Data Structure and Algorithm
 
@@ -68,7 +58,6 @@ Below resources are enough if you can be consistent:
 
 ---
 
-## Merged source: Leetcode.md
 
 
 # Leetcode
@@ -105,7 +94,6 @@ Below resources are enough if you can be consistent:
 
 ---
 
-## Merged source: Algorithms.md (Kotlin templates)
 
 
 ## Two Pointer:
@@ -640,7 +628,6 @@ fun dijkstra(graph: Map<Int, List<Edge>>, start: Int): Map<Int, Int> {
 
 ---
 
-## Merged source: DSA_Patterns_Cheatsheet.md
 
 
 # Kotlin Algorithm Patterns - Optimized Code Snippets
@@ -1341,7 +1328,6 @@ The patterns cover essential categories including arrays, strings, dynamic progr
 
 ---
 
-## Merged source: AlgorithmV2.md (full LeetCode pattern catalog)
 
 
 # LeetCode Algorithm Patterns & Templates - Kotlin

@@ -1,9 +1,5 @@
 # Kotlin Coroutines & Flow (Senior Android)
 
-> Sources: `Kotlin.md` + Android concurrency overlap (`Android.md`) de-duplicated.
-
----
-
 ### Question
 
 What is a **`CoroutineScope`** and how should Android apps structure scopes?
