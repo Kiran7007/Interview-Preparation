@@ -2,16 +2,10 @@
 
 ## Android
 
-- [Android Core](android/android-core.md)
-- [Architecture (MVVM / MVP / MVI / Jetpack / Compose)](android/android-architecture.md)
-- [Performance](android/android-performance.md)
-- [Security](android/android-security.md)
-- [Networking](android/android-networking.md)
-- [Storage](android/android-storage.md)
-- [Testing](android/android-testing.md)
-- [SDK Integration](android/android-sdk-integration.md)
-- [Release & CI/CD](android/android-release.md)
-- [SDLC & Leadership / Behavioral](android/android-sdlc.md)
+- [Android Core](android/android-core.md) — lifecycle, components, views, threading, intents, services, IPC, Parcelable, Dagger, DSA stubs
+- [Architecture & Testing](android/android-architecture.md) — MVVM / MVP / MVI / Clean / DI / Compose / SOLID + unit / UI / Espresso / Compose testing
+- [Networking, Security & Data](android/android-networking-security.md) — Retrofit / OkHttp / APIs + Keystore / pinning / auth + Room / SharedPrefs / encryption + BLE
+- [Engineering — Performance, Release & Leadership](android/android-engineering.md) — battery / profiling / jank + CI/CD / Fastlane / signing + SDK integration + SDLC / behavioral
 
 ## Kotlin
 
@@ -42,3 +36,7 @@
 ## Behavioral
 
 - [STAR method for interviews](https://www.testgorilla.com/blog/star-method-interviews/)
+
+## Career & interview prompts
+
+- [Master prompts & intro cheat sheet](career/interview-master-prompts.md)

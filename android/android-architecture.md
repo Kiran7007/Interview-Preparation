@@ -1,4 +1,6 @@
-# Android Architecture (MVVM, MVP, MVI, Jetpack, DI) — Senior
+# Android Architecture, Testing & Patterns — Senior
+
+## Architecture (MVVM, MVP, MVI, Clean, DI, Compose)
 
 ---
 
@@ -54,6 +56,76 @@ The downside is another layer: the interface must describe **user-facing intents
 ### Key takeaway
 
 > **MVVM (+ clear state)** fits most new apps; **MVI** when shared screen state gets hard to reason about.
+
+---
+
+### Question
+
+**Repository pattern** in MVVM — what does “good” look like (and what is a dump class)?
+
+### Answer
+
+A **repository** is the **boundary** between **domain/UI-facing** APIs and **data sources** (network, Room, DataStore). It **chooses** cache vs remote, maps **DTO → domain**, and hides Retrofit/Room types from the **ViewModel**. A **bad** repository is a thin **pass-through** of API responses or **god object** that knows about **Activities**.
+
+**Fintech note:** keep **token refresh** and **raw credentials** in the **data layer**; expose **safe** domain results (success / auth required / network error) to the **ViewModel**—the UI should not see **Bearer** strings.
+
+### Code example
+
+```kotlin
+class AccountRepository(
+    private val api: AccountApi,
+    private val dao: AccountDao,
+) {
+    suspend fun getAccount(): Account =
+        dao.getAccount() ?: api.fetchAccount().also { dao.insert(it) }
+}
+```
+
+### Key takeaway
+
+> Repository = **policy + mapping**, not “where we called Retrofit.”
+
+---
+
+### Question
+
+**MVVM** — common mistakes and **one-time events** (navigation, toast)?
+
+### Answer
+
+**Mistakes:** **fat ViewModels** (parsing JSON, Android APIs), many **uncoordinated** `LiveData`s per screen, using ViewModel as **long-term cache** for everything, holding **`Activity` Context**, leaking **jobs**. Prefer **one `UiState` data class** (or sealed hierarchy) per screen and **`StateFlow`** with **`update { it.copy(...) }`** for UDF.
+
+**One-time events:** **`SharedFlow`**, **`Channel`**, or **event state** consumed once—avoid **`LiveData`** `postValue` hacks for “fire once” navigation; be explicit about **replay** and **collection** in Compose.
+
+### Key takeaway
+
+> MVVM fails from **layer leaks** and **split brain state**—not from the **label** on the slide.
+
+---
+
+### Question
+
+How do you **test** MVVM in the **pyramid** (without duplicating Espresso everywhere)?
+
+### Answer
+
+**Most:** `runTest` + **fake repos** + **`StandardTestDispatcher`** for **ViewModel** and use cases. **Some:** Room **in-memory** or **MockWebServer** integration. **Little:** Espresso/Compose for **critical** journeys. If dependencies are **injected**, tests stay **fast** and **deterministic**.
+
+### Code example
+
+```kotlin
+@Test
+fun loginSuccess() = runTest {
+    val fake = FakeAuthRepository(Result.success(Unit))
+    val vm = LoginViewModel(fake)
+    vm.login("a@b.com", "x")
+    assertTrue(vm.uiState.value.success)
+}
+```
+
+### Key takeaway
+
+> **Injectable graph** = MVVM you can actually **prove** in CI.
 
 ---
 
@@ -327,3 +399,279 @@ Why do people call **Android** (or a classic Android app) **“monolithic”** i
 ### Key takeaway
 
 > **“Monolithic Android”** is usually about **tight platform coupling** or **under-modularized apps**—answer **which layer** you’re discussing.
+
+## Testing (Unit, Integration, UI, Compose)
+
+---
+
+### Question
+
+Explain the **test pyramid** on mobile.
+
+### Answer
+
+Most tests should be **fast unit tests** (pure logic, ViewModels with fakes). Fewer **integration tests** hit real **Room**, **Retrofit + MockWebServer**, or navigation. **UI tests** (Espresso / Compose) are the smallest top—slow and flaky if overused—save them for **critical flows** and run on **labs** for OEM quirks.
+
+Diagram: `assets/test_pyramid.png`
+
+### Key takeaway
+
+> A **top-heavy** pyramid means **slow CI** and **flaky nights**.
+
+---
+
+### Question
+
+What does **unit testing** accomplish in CI?
+
+### Answer
+
+Unit tests run on **every PR** and catch **regressions** in logic before merge. They also make **refactors** safer because you have a **safety net** when behavior is specified.
+
+### Key takeaway
+
+> Unit tests are **cheap insurance** for change.
+
+---
+
+### Question
+
+**Espresso** architecture — how does it stay in sync without `Thread.sleep()`?
+
+### Answer
+
+Espresso is **white-box** instrumentation: tests run **in-process** with the app. Before **ViewActions** and **ViewAssertions**, it waits until the **main looper** is **idle** and built-in hooks (legacy **AsyncTask**, **Loader** idling, etc.) say the framework is quiet—so you do not poll or sleep. That is why it is **fast** when async is visible to the main thread; **custom** async (Retrofit, Rx, coroutines on other threads, WorkManager) is **not** waited for automatically.
+
+**Flow:** `onView(matcher)` → wait for **idle** → `perform` / `check`.
+
+### Code example
+
+```kotlin
+onView(withId(R.id.login_button)).perform(click())
+onView(withText("Welcome")).check(matches(isDisplayed()))
+```
+
+### Useful links
+
+- https://developer.android.com/training/testing/ui-testing/espresso-testing.html  
+- https://medium.com/mindorks/android-testing-part-1-espresso-basics  
+
+### Key takeaway
+
+> Espresso = **idle main thread + registered idling**—flakes mean **your work finished off-book**.
+
+---
+
+### Question
+
+**ViewMatchers**, **ViewActions**, and ambiguous matches — what breaks?
+
+### Answer
+
+**Matchers** find views (`withId`, `withText`, `isDisplayed`, `withContentDescription`); **actions** interact (`click`, `typeText`, `scrollTo`); **assertions** validate (`matches(...)`). Combine **`allOf`**, **`withParent`**, or hierarchy constraints when **several** views match—otherwise Espresso throws **`AmbiguousViewMatcherException`**. Prefer **ids** and **content descriptions** over **volatile copy** when you can.
+
+### Key takeaway
+
+> Never “fix” ambiguity with **sleep**—**narrow the matcher**.
+
+---
+
+### Question
+
+**Custom `IdlingResource`** — when do you need it, and when is it overkill?
+
+### Answer
+
+Use it when UI updates depend on work Espresso **does not** track: **OkHttp/Retrofit**, **coroutines** off main, **RxJava**, **handlers** on other threads. **`CountingIdlingResource`** (increment while busy, decrement when done) is the usual pattern—**register** in test setup and **unregister** after.
+
+**Smell:** idling around **every** coroutine—couples tests to implementation and slows CI. Often better to inject a **fake repository** that returns immediately and assert **rendered state**, reserving idling for **true** integration boundaries.
+
+### Code example
+
+```kotlin
+val idle = CountingIdlingResource("api")
+IdlingRegistry.getInstance().register(idle)
+idle.increment()
+// trigger work; in production code: decrement when UI is updated / request completes
+```
+
+### Key takeaway
+
+> **IdlingResource** answers “is the app still busy?”—prefer **fakes** when you only need **deterministic** UI.
+
+---
+
+### Question
+
+**MVVM** — what belongs in **Espresso** vs **ViewModel unit tests**?
+
+### Answer
+
+**Unit-test** the **ViewModel** (and use cases) with **fakes**: state transitions, validation, error mapping. **Espresso** checks **what users see**: correct screen, errors, navigation—drive state via **Hilt test modules**, **`ActivityScenario`**, or **test-only** `ViewModel` factories. Avoid **mocking LiveData** “internals”; use a **real** observable with **controlled** emissions from fakes.
+
+### Key takeaway
+
+> **Logic** on the JVM; **pixels and flows** on device—with **injected** doubles, not **production** APIs.
+
+---
+
+### Question
+
+**Mocking HTTP** for UI tests — recommended approach?
+
+### Answer
+
+**MockWebServer** enqueues **status codes**, **JSON bodies**, and **delays** so you exercise success, slow network, and errors **deterministically**. Keep fixtures in **`androidTest`** resources; never depend on **staging** availability for merge gates.
+
+### Key takeaway
+
+> UI tests should not need **Wi‑Fi** or **backend uptime**.
+
+---
+
+### Question
+
+**Espresso in CI** — how do you keep runs reliable?
+
+### Answer
+
+Turn **animations off** (`adb shell settings put global window_animation_scale 0` etc. on the runner), use **stable** system images (**Gradle Managed Devices**, **Firebase Test Lab**), **shard** heavy suites, and run **full** `connectedCheck` **nightly** if PR time is tight. Capture **logcat** / screenshots on failure.
+
+### Key takeaway
+
+> **Animations + real network + shared state** = flaky pipelines—remove them **by policy**.
+
+---
+
+### Question
+
+Common **Espresso** failures and anti-patterns?
+
+### Answer
+
+**Top causes:** missing sync for **real** async, **animations** on, **`Thread.sleep`**, **RecyclerView** binding races, **ambiguous** matchers, tests that **depend on order**. Replace sleeps with **idling**, **fakes**, or **architecture** fixes.
+
+### Key takeaway
+
+> **`Thread.sleep` in a UI test** is a **code-review fail** unless you document an impossible alternative (rare).
+
+---
+
+### Question
+
+**Robolectric**
+
+### Answer
+
+**Robolectric** runs Android framework–ish code on the **JVM** quickly. Great for logic that sits **near** Android APIs without needing a device. It is still an **approximation**—know when you need a **real device** or emulator.
+
+### Useful links
+
+- http://robolectric.org/  
+
+### Key takeaway
+
+> Robolectric is **fast**, not **identical** to every device behavior.
+
+---
+
+### Question
+
+**UI Automator**
+
+### Answer
+
+**UI Automator** drives UI **across apps** and **system screens** (settings, permissions). It is **slower** than Espresso—use for **true end-to-end** flows, not every screen.
+
+### Useful links
+
+- https://developer.android.com/training/testing/ui-testing/uiautomator-testing.html  
+
+### Key takeaway
+
+> Save UI Automator for **cross-app** journeys, not daily feature tests.
+
+---
+
+### Question
+
+**Mockito** — why?
+
+### Answer
+
+**Mockito** builds **test doubles** so you can **stub** dependencies and **verify** interactions. On **Kotlin**, you may need the **inline mock maker** or prefer **MockK** for some patterns.
+
+### Useful links
+
+- http://site.mockito.org/  
+
+### Key takeaway
+
+> Mocks show **what you expect collaborators to do**—they document design.
+
+---
+
+### Question
+
+**JUnit** on Android
+
+### Answer
+
+Use **JUnit 4 or 5** with AndroidX test **runners** and **rules** (temp files, instant apps where relevant). Pick **JUnit 5** when your toolchain supports it cleanly.
+
+### Useful links
+
+- https://devqa.io/junit-5-annotations/  
+
+### Key takeaway
+
+> Prefer **JUnit 5** when your build and plugins allow it.
+
+---
+
+### Question
+
+**Screenshot testing**
+
+### Answer
+
+**Screenshot tests** catch **visual** regressions in CI. You need **stable fonts, locale, and timing** so images are comparable. Keep the **golden set small** or maintenance hurts.
+
+### Useful links
+
+- https://github.com/facebook/screenshot-tests-for-android  
+- https://facebook.github.io/screenshot-tests-for-android/#getting-started  
+
+### Key takeaway
+
+> A **small, high-value** golden set beats screenshotting everything.
+
+---
+
+### Question
+
+**Compose testing** — how is it different from Espresso?
+
+### Answer
+
+Compose tests use a **semantic tree** (roles, text, **`testTag`**) instead of **View IDs**. Synchronization differs from Espresso—follow **Compose testing** guidance (see `android-architecture.md`).
+
+### Key takeaway
+
+> Compose favors **semantic matchers**, not fragile **view hierarchy** IDs.
+
+---
+
+### Question (behavioral)
+
+How do you test **MVP/MVVM/MVI** differently?
+
+### Answer
+
+- **MVP:** Fake the **view interface**; drive the **presenter**.
+- **MVVM:** Assert **ViewModel outputs** (state, events) with fakes for repositories.
+- **MVI:** Test **reducers** and **state transitions** as **pure functions** where possible.
+
+### Key takeaway
+
+> Architecture changes **what you fake** and **what you assert**.

@@ -105,14 +105,35 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 
 ### Question
 
-How do **`inline`** functions help with **higher-order functions** in terms of **memory** and **performance**?
+**`inline`**, **`noinline`**, **`crossinline`**, and **`reified`**—what changes at compile time, and when do you use each?
 
 ### Answer
 
-- **In plain words:** When you pass a **lambda** to a normal function, Kotlin often allocates a **Function object** (and may capture variables in a **closure**). **`inline`** copies the function **body** into call sites so many of those allocations and **virtual calls** disappear.
-- **How it works:** The compiler **inlines** both the `inline` function and typically the **lambda** body at compile time (unless marked `noinline`). **`reified`** type parameters are only possible with **`inline`** because there is no erased call-site class.
-- **What to watch for:** **`inline`** **increases bytecode size** if used on large functions or very hot **many-call-site** APIs; use on **small** utilities (`let`, `use`, `measureTimeMillis` pattern). Don’t `inline` everything “because performance.”
-- **Example:** `inline fun <T> T.applyIf(condition: Boolean, block: T.() -> Unit): T` on hot UI paths vs non-inline equivalent allocating `Function1` each time.
+- **`inline`:** The compiler **copies** the function body (and usually each lambda parameter) into **call sites**. That cuts **FunctionN** allocations and call overhead for **higher-order** helpers—why **`forEach`**, **`let`**, **`measureTimeMillis`**, and much of **Compose** lean on it. Trade-off: **larger bytecode/DEX** if the body is big or called everywhere—keep `inline` APIs **small**.
+- **`noinline`:** On a specific lambda parameter of an `inline` function, **do not** inline that lambda—needed when you **store** the lambda (field, list) or pass it to a **non-inline** API that needs a **real** function object.
+- **`crossinline`:** Forbids **non-local `return`** from a lambda that might execute **later** (e.g. inside `Runnable { }` or another thread). Without it, `return` inside the lambda could **return from the enclosing function**; `crossinline` forces only **local** returns—common for **scheduling** / **callbacks**.
+- **`reified`:** Only on **`inline`** functions: the **actual type** is known at each call site, so you can use **`T::class`**, **`is T`**, etc., where normal generics are **erased**. Typical pattern: JSON decode helper, `startActivity` extras, small DSLs—still mind **reflection** cost and **ProGuard** keep rules if you use `Class` names.
+
+**Non-local return (interview trap):** Inside an `inline` lambda passed to an `inline` function, plain **`return`** returns from the **outer** function. That is powerful but surprising; **`crossinline`** blocks it when the lambda is not executed inline.
+
+### Code example
+
+```kotlin
+inline fun <reified T> Gson.fromJsonReified(json: String): T =
+    fromJson(json, T::class.java)
+
+inline fun schedule(crossinline block: () -> Unit) {
+    Handler(Looper.getMainLooper()).post { block() }
+}
+
+inline fun both(
+    crossinline a: () -> Unit,
+    noinline b: () -> Unit,
+) {
+    a()
+    listOf(b).forEach { it() }
+}
+```
 
 ### Useful links
 
@@ -120,4 +141,4 @@ How do **`inline`** functions help with **higher-order functions** in terms of *
 
 ### Key takeaway
 
-> **`inline` + lambdas** avoids **Function allocations** and enables **`reified`**—pay attention to **DEX size**.
+> **`inline`** cuts lambda overhead and unlocks **`reified`**; **`noinline`** keeps a real function value; **`crossinline`** blocks **non-local return** when the lambda escapes.

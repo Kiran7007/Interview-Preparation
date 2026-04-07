@@ -94,6 +94,36 @@ Difference between `==` and `===` in Kotlin?
 
 ### Question
 
+**Null-safety and type operators**—`?.`, `?:`, `!!`, smart cast, `as` / `as?`, and `::` (how do you use them safely on Android)?
+
+### Answer
+
+- **`?.` (safe call):** Runs the call only if the receiver is non-null; type becomes nullable result—default for **API/JSON** fields.
+- **`?:` (Elvis):** Right-hand side when the left is **null**—use for **defaults** (`name ?: "Guest"`), not to hide bugs.
+- **`!!` (not-null assertion):** Crashes with **NPE** if null—avoid in production UI; prefer **early return**, **`requireNotNull`**, or **sealed** error states.
+- **`is` / smart cast:** After **`x is String`**, the compiler treats **`x`** as **`String`** in the right scope—cleaner than repeated casts.
+- **`as`:** **Unsafe** cast—throws **`ClassCastException`** if wrong; use when you are **sure** (e.g. after **`is`** in another branch you should not need it).
+- **`as?`:** **Safe** cast—wrong type yields **null**; pair with **`?:`** or **`?.`** for recovery.
+- **`::` (callable reference):** **`::println`**, **`User::from`**—higher-order APIs, **reflection**-heavy paths need care on **R8** (keep rules).
+
+**Android angle:** Nullable **Intent** extras, **ViewBinding** before init, and **Parcelable** edges are where **`?.`/`?:`** shine; **`!!`** is a **code-review red flag** unless immediately preceded by a **null check** the compiler cannot see.
+
+### Code example
+
+```kotlin
+val len = name?.length ?: 0
+val s = any as? String ?: return
+items.forEach(::processItem)
+```
+
+### Key takeaway
+
+> Prefer **`?.` / `as?` / smart casts**; treat **`!!`** as **last resort** with a comment why it is safe.
+
+---
+
+### Question
+
 What is `forEach` in Kotlin and when should you avoid it?
 
 ### Answer
