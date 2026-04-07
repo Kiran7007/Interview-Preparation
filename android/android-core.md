@@ -80,7 +80,7 @@ Explain **`Activity` lifecycle**, **`onCreate` vs `onStart`**, and **`setContent
 
 Lifecycle diagrams:
 
-- `/assets/activity_lifecycle.png`
+ <img src="/assets/activity_lifecycle.png" width="350">
 
 ### Key takeaway
 
@@ -104,8 +104,10 @@ Lifecycle diagrams:
 
 ### Useful links / diagrams
 
-- Fragment lifecycle images: `/assets/fragment_lifecycle.png`, `/assets/fragment_lifecycle_2.png`
-- Combined lifecycle diagram: `/assets/activity-fragment-lifecycles.png`
+- Fragment lifecycle images:
+- <img src="/assets/fragment_lifecycle.png" width="350"> <img src="/assets/fragment_lifecycle_2.png" width="350"></br>
+- Combined lifecycle diagram:
+- <img src="/assets/activity-fragment-lifecycles.png" width="350">
 - Back stack diagrams:
   - https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png
   - https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png

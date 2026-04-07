@@ -49,8 +49,6 @@ The downside is another layer: the interface must describe **user-facing intents
 
 ### Useful links
 
-- MVP sample: https://github.com/anitaa1990/Inshorts  
-- MVVM sample: https://github.com/anitaa1990/Trailers  
 - MVI: https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec  
 
 ### Key takeaway
