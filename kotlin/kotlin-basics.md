@@ -202,3 +202,24 @@ Why are **Kotlin collection operators** (`map`, `filter`, `flatMap`) both loved 
 ### Key takeaway
 
 > **Measure** hot paths; default to clarity in cold paths.
+
+---
+
+### Question
+
+What is a Kotlin **`value class`** (`value class` / `@JvmInline`) and when do you use it on Android?
+
+### Answer
+
+- **In plain words:** A **value class** wraps one stored value (or a small fixed set in future Kotlin versions) but aims to give it a **distinct type** at compile time without always allocating a wrapper object on the JVM (`@JvmInline` = underlying value is used at runtime where possible).
+- **How it works:** The compiler generates a **thin wrapper** with **no identity** semantics like a normal class; you get **type safety** (e.g. `UserId` vs `String`) and can add **methods** without paying for a full object in many cases.
+- **What to watch for:** JVM rules: single **read-only** `val` backing property for `@JvmInline`; **no universal** “free” allocation guarantees in every ABI corner (reflection, generics, arrays can box). Not a replacement for **domain modeling** when you need **identity** or many fields.
+- **Example:** `@JvmInline value class UserId(val raw: String)` in public APIs instead of passing bare strings.
+
+### Useful links
+
+- https://kotlinlang.org/docs/inline-classes.html  
+
+### Key takeaway
+
+> Use **value classes** for **cheap, typed wrappers**—know **JVM boxing** edges.

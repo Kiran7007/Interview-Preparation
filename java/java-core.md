@@ -16,6 +16,175 @@ Why does Android steer you away from Java Serializable for performance-critical 
 
 ---
 
+## JVM, collections & GC (senior interview deep-dives)
+
+### Question
+
+How does **`HashSet`** work internally on the JVM?
+
+### Answer
+
+- **In plain words:** `HashSet` is usually **backed by a `HashMap`**. The **set element** is the **map key**; the **value** is a **dummy** placeholder (a shared `Object` in OpenJDK). **Uniqueness** follows **map key** rules: **`hashCode()`** bucket + **`equals()`** for collisions.
+- **How it works:** **Add** → map **`put(key, PRESENT)`**; **contains** → **`containsKey`**. Iteration order is **not** insertion order (unless **`LinkedHashSet`**).
+- **What to watch for:** **Mutable** keys already in the set **break** the invariant if `hashCode` changes. **`null`** is allowed **once** in `HashSet` (one `null` key in backing map).
+- **Example:** Wrong: add `mutable` DTO without stable `equals`/`hashCode` → mysterious duplicates/missing lookups.
+
+### Key takeaway
+
+> **`HashSet` ≈ `HashMap` keys only**—stable **`equals`/`hashCode`** are mandatory.
+
+---
+
+### Question
+
+How does **`ArrayList`** grow when you keep adding elements?
+
+### Answer
+
+- **In plain words:** It keeps an **internal `Object[]`**. When **full**, it allocates a **larger array** and **copies** elements (**amortized** O(1) per add in typical analysis).
+- **How it works:** **Default capacity** is **10** if you use the no-arg constructor (lazy allocation in some JDK versions until first add). Growth is **~1.5×** (newCapacity = oldCapacity + (oldCapacity >> 1)) in OpenJDK—**implementation detail**, not JLS-guaranteed.
+- **What to watch for:** If you know **final size**, use **`ArrayList(initialCapacity)`** or **`ensureCapacity`** to avoid repeated **copy** churn on hot paths.
+- **Example:** Parsing **100k** rows into list → construct with **`ArrayList(100_000)`**.
+
+### Key takeaway
+
+> Growth is **array replace + copy**—**presize** when you know **N**.
+
+---
+
+### Question
+
+**`String` vs `StringBuffer`** (and where does **`StringBuilder`** fit)?
+
+### Answer
+
+- **In plain words:** **`String`** is **immutable**: “changes” create **new** objects. **`StringBuffer`** is **mutable** and **synchronized** (thread-safe, slower). **`StringBuilder`** is **mutable** and **not** synchronized—usual choice **inside** a single thread.
+- **How it works:** Concatenation in loops on **`String`** builds many **intermediate** strings → **GC pressure**. **`StringBuilder`** appends into one **buffer** with **resize** like `ArrayList` of `char`/`byte` (encoding-dependent in modern JDK).
+- **What to watch for:** Don’t use **`StringBuffer`** unless you truly share across threads; prefer **`StringBuilder`** or **`join`/formatters**.
+- **Example:** Build SQL/debug blob in a **tight loop** → **`StringBuilder`**.
+
+### Key takeaway
+
+> **`String`** for **values**, **`StringBuilder`** for **single-thread assembly**, **`StringBuffer`** rarely.
+
+---
+
+### Question
+
+How does **`ConcurrentHashMap`** differ from a **`HashMap`** wrapped with **`synchronizedMap`**?
+
+### Answer
+
+- **In plain words:** **`Collections.synchronizedMap`** uses **one lock** for **most** operations—simple but **coarse** contention. **`ConcurrentHashMap`** allows **high concurrency** with **finer-grained** locking / **CAS** (details **vary by JDK**).
+- **How it works:** Readers and writers coordinate without locking the **entire** table in typical cases; **compound** actions (`putIfAbsent`, `compute`) are **atomic** for a **single** key.
+- **What to watch for:** Still not a magic bullet for **multi-key** invariants—**check-then-act** across keys needs **extra** design (`ConcurrentHashMap` won’t fix that). **`null` keys/values** are **not** allowed (unlike `HashMap`).
+- **Example:** **Shared** in-memory **cache** map updated from **many** threads.
+
+### Key takeaway
+
+> **`ConcurrentHashMap`** = **scalable concurrent map**; still design **atomicity** at **business** level.
+
+---
+
+### Question
+
+**When is my old `List` (or any object) eligible for garbage collection?** How does the **GC** “know”?
+
+### Answer
+
+- **In plain words:** The GC doesn’t “know” your **intent**—it traces **strong reachability** from **GC roots** (running thread stacks, static fields, JNI roots, etc.). If your **list** (and its elements, if only reachable through it) is **not strongly reachable**, it can be collected.
+- **How it works:** **Generational** collectors may **promote** long-lived objects to an **old** generation, but **eligibility** is still **unreachable from roots**. **`WeakReference`/`SoftReference`** change reachability rules for their **referents**.
+- **What to watch for:** **Leaks** = **accidental** strong references (static, **anonymous inner** holding **Activity**, **listeners**). Clearing a field **`list = null`** only matters if that was the **last** strong ref.
+- **Example:** Activity **finishes** but **`static`** holds the **adapter’s list** referencing **Views** → **not** collectable.
+
+### Key takeaway
+
+> GC collects what **cannot be reached** from **roots**—**break strong refs** to reclaim.
+
+---
+
+### Question
+
+**`equals` + `hashCode` contract**—why does it matter for **`HashMap`** / **`HashSet`**?
+
+### Answer
+
+- **In plain words:** Equal objects (**`equals` true**) **must** have the **same** `hashCode` so buckets stay consistent. If you break it, **get/put** “lose” entries or duplicate logically-equal keys.
+- **How it works:** **`put`** uses **`hashCode`** to pick a **bin**, then **`equals`** to disambiguate **collisions**. Changing a key **after insert** mutates **`hashCode`** → **lost** entry classic bug.
+- **What to watch for:** **Data classes** help but **inheritance** + **equals** is tricky; prefer **composition** or **value types** for map keys.
+- **Example:** Use **`userId: String`** or **`UUID`** as key, not **`User`** with **mutable** fields.
+
+### Key takeaway
+
+> **Equal → same hash**; **immutable** keys for **hash** collections.
+
+---
+
+### Question
+
+**`volatile` vs `AtomicInteger`**—when do you use which?
+
+### Answer
+
+- **In plain words:** **`volatile`** gives **visibility** (happens-before) for **single** reads/writes of a variable—**not** atomic **`read-modify-write`** (e.g. `count++`). **`AtomicInteger`** (and friends) provides **CAS**-based **atomic** updates.
+- **How it works:** **`volatile`** stops **CPU cache** surprises for that field; **`AtomicInteger.addAndGet`** is **one** atomic op from the caller’s perspective.
+- **What to watch for:** **`volatile` + non-atomic compound logic** still races; for **counters** shared across threads, use **`Atomic*`** or **synchronization**.
+- **Example:** **Flag** `volatile boolean running` for **shutdown** signal; **request counter** → **`LongAdder`/`AtomicLong`**.
+
+### Key takeaway
+
+> **`volatile` = visibility**; **`Atomic*`** = **atomic read-modify-write**.
+
+---
+
+### Question
+
+**WeakReference vs SoftReference vs PhantomReference** (Android/JVM interviews)
+
+### Answer
+
+- **In plain words:** **`WeakReference`**: GC **may** clear referent when **only weakly** reachable—good for **caches** that should **not** keep memory alive. **`SoftReference`**: cleared **under memory pressure**—**softer** cache. **`PhantomReference`**: enqueued **after** finalization for **post-mortem** bookkeeping (rare in app code).
+- **What to watch for:** **Weak** refs don’t replace **lifecycle** discipline; **Soft** cache behavior is **JVM-dependent**. **`Context`** in **`WeakReference`** is still a **smell** if you rely on it for **UI** correctness.
+- **Example:** **`WeakReference<View>`** in image callbacks—still **cancel** work on **detach**.
+
+### Key takeaway
+
+> **Weak/soft** tweak **reachability** for **caches**—they don’t fix **lifecycle** bugs.
+
+---
+
+### Question
+
+Why can’t you pass a normal **object reference** to another **Android process**?
+
+### Answer
+
+- **In plain words:** Each process has its **own heap** and **address space**. A **pointer** in process A is **meaningless** in process B. IPC copies **data** (`Parcelable`, `Bundle`, `AIDL`, `content://` streams)—not **live object graphs**.
+- **What to watch for:** **Singletons** are **not** shared across processes; **`android:process`** duplicates **Application** instances.
+- **Example:** Pass **`Bitmap`** via **`Parcelable`** (or URI + shared storage) across process boundaries—not a **reference**.
+
+### Key takeaway
+
+> **IPC = marshal data**, not **share heap pointers**.
+
+---
+
+### Question
+
+**Double-checked locking** for a singleton—what must you do for it to be safe?
+
+### Answer
+
+- **In plain words:** First check **without** lock for speed; second check **inside** **`synchronized`** to avoid **two** instances. The **`instance` field must be `volatile`** (or other safe publication) so **partially constructed** objects aren’t visible.
+- **What to watch for:** **Broken DCL** without **`volatile`** was a classic bug on older memory models. On Android/Kotlin prefer **DI-scoped** singletons.
+- **Example:** `getInstance()` lazy singleton in **legacy** Java SDK glue.
+
+### Key takeaway
+
+> **DCL needs `volatile`** (or holder idiom)—prefer **DI** for app singletons.
+
+---
+
 ## Core Java
 
 ### Question

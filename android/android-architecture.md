@@ -312,3 +312,20 @@ On Android, **prefer DI scopes** (singleton in the graph) instead of hand-rolled
 ### Key takeaway
 
 > Prefer **scoped singletons from DI** over static **`getInstance()`** everywhere.
+
+---
+
+### Question
+
+Why do people call **Android** (or a classic Android app) **“monolithic”** in system-design or staff interviews?
+
+### Answer
+
+- **In plain words:** **Platform sense:** Android is often described as a **monolithic stack**—**Linux kernel + HAL + framework + system services** shipped as one **coherent platform**, not a microkernel where every driver is a tiny isolated service. **App sense:** a **single-module APK**, one **Gradle project**, and **Activities** holding **too much logic** is called a **monolithic app** (hard to scale teams, test, or ship incrementally).
+- **How it works:** The **framework** couples **UI, lifecycle, IPC, permissions** in one world; teams fight **monolith pain** with **feature modules**, **Clean layers**, **multi-module Gradle**, **dynamic features**, and **stricter boundaries**.
+- **What to watch for:** Interviewers may mean **either** OS architecture **or** app modularity—**clarify** which “monolith” they mean before answering.
+- **Example:** Move from **god Activities** to **modules per feature** + **shared core**; keep **IPC boundaries** explicit (`AIDL`, **content providers**, **app links**).
+
+### Key takeaway
+
+> **“Monolithic Android”** is usually about **tight platform coupling** or **under-modularized apps**—answer **which layer** you’re discussing.

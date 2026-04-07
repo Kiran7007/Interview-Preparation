@@ -100,3 +100,24 @@ Explain **`remember` vs `rememberSaveable`** in Compose at a staff-engineering l
 ### Key takeaway
 
 > Prefer **one owner thread** + message passing over scattered locks.
+
+---
+
+### Question
+
+How do **`inline`** functions help with **higher-order functions** in terms of **memory** and **performance**?
+
+### Answer
+
+- **In plain words:** When you pass a **lambda** to a normal function, Kotlin often allocates a **Function object** (and may capture variables in a **closure**). **`inline`** copies the function **body** into call sites so many of those allocations and **virtual calls** disappear.
+- **How it works:** The compiler **inlines** both the `inline` function and typically the **lambda** body at compile time (unless marked `noinline`). **`reified`** type parameters are only possible with **`inline`** because there is no erased call-site class.
+- **What to watch for:** **`inline`** **increases bytecode size** if used on large functions or very hot **many-call-site** APIs; use on **small** utilities (`let`, `use`, `measureTimeMillis` pattern). Don’t `inline` everything “because performance.”
+- **Example:** `inline fun <T> T.applyIf(condition: Boolean, block: T.() -> Unit): T` on hot UI paths vs non-inline equivalent allocating `Function1` each time.
+
+### Useful links
+
+- https://kotlinlang.org/docs/inline-functions.html  
+
+### Key takeaway
+
+> **`inline` + lambdas** avoids **Function allocations** and enables **`reified`**—pay attention to **DEX size**.
