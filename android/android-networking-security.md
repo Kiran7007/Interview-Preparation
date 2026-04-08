@@ -1214,3 +1214,379 @@ Scenario: **OTA/DFU** fails mid-transfer on many phones — what goes wrong?
 ### Key takeaway (overall)
 
 > Senior BLE is **half protocol + queue discipline**, **half Android lifecycle + radio reality**—speak with **debug** stories and **metrics**.
+
+---
+
+## Real-World Scenario Interview Questions
+
+---
+
+### Question
+
+**Scenario: API Layer Instability — Retries, Failures, Token Expiry**
+You are on a fintech app with millions of daily transactions. Users report: random API failures, some requests succeed on retry, occasional logouts. Monitoring shows: HTTP 401 and 500 spikes, duplicate API calls, token refresh logic recently changed. Constraints: no duplicate financial transactions, backend has rate limits, network is unstable (Tier-2/3 cities). **How would you design and fix this?**
+
+### Answer
+
+Treat this as a **network reliability + distributed consistency** problem — not a simple "add retry" fix, especially with financial data.
+
+**1. Categorize Failures First** _(don't mix causes)_
+- **Client-side:** timeouts, retry storms, duplication bugs
+- **Auth:** 401 → token expiry, refresh race condition
+- **Server-side:** 500 errors, rate limit responses (429)
+- Separating these prevents one fix masking another problem
+
+**2. Fix Token Refresh — Single-Flight Pattern** _(root cause of 401 storms)_
+- Multiple requests fail with 401 simultaneously → each independently triggers token refresh → **race condition** → multiple refresh calls → all fail or produce duplicate tokens
+- **Fix:** One active refresh request at a time; others suspend and wait for the result
+
+```kotlin
+class TokenAuthenticator(private val tokenRepo: TokenRepository) : Authenticator {
+    private val refreshMutex = Mutex()
+
+    override fun authenticate(route: Route?, response: Response): Request? {
+        return runBlocking {
+            refreshMutex.withLock {
+                // Check if another coroutine already refreshed
+                val currentToken = tokenRepo.getToken()
+                if (currentToken != response.request.header("Authorization")) {
+                    return@withLock response.request.newBuilder()
+                        .header("Authorization", "Bearer $currentToken").build()
+                }
+                val newToken = tokenRepo.refreshToken() ?: return@withLock null
+                response.request.newBuilder()
+                    .header("Authorization", "Bearer $newToken").build()
+            }
+        }
+    }
+}
+```
+
+**3. Prevent Duplicate Financial Transactions — Idempotency Keys**
+- Generate a **UUID per transaction request** on the client side before the call
+- Include it as a header: `X-Idempotency-Key: <uuid>`
+- Server deduplicates: if same key received again → return cached result, do not re-process
+- Even on network retry, the transaction processes exactly once
+
+**4. Retry Strategy — Not All APIs Are Equal**
+- **GET requests and safe POSTs:** retry with exponential backoff
+- **Financial mutation APIs:** only retry with idempotency key; never blind retry
+- Retry config: `maxRetries = 3`, backoff = 2^attempt seconds, jitter to spread load
+- Stop retry if: 4xx (except 401/408/429) → likely client error, not transient
+
+**5. OkHttp Network Layer Hardening**
+```kotlin
+OkHttpClient.Builder()
+    .connectTimeout(10, TimeUnit.SECONDS)
+    .readTimeout(30, TimeUnit.SECONDS)
+    .writeTimeout(15, TimeUnit.SECONDS)
+    .addInterceptor(LoggingInterceptor())     // redacted in production
+    .addInterceptor(RetryInterceptor(max = 3))
+    .authenticator(TokenAuthenticator(tokenRepo))
+    .build()
+```
+
+**6. Rate Limit Awareness**
+- On 429 response: read `Retry-After` header, back off that long before retrying
+- Queue pending requests in memory during rate-limit window
+- Exponential backoff prevents retry storms that amplify rate limit problems
+
+**7. Offline Request Queue** _(for poor connectivity markets)_
+- Queue mutation requests locally in Room with status `PENDING`
+- WorkManager job retries with network constraint — sends when connected
+- Mark transaction as `SYNCING` in UI while queued
+
+**8. Observability**
+- Structured logging per request: `requestId`, `attemptNumber`, `statusCode`, `durationMs`
+- Track metrics: retry rate · 401 frequency · duplicate request detection · token refresh cadence
+- Alert if retry rate exceeds 5% of requests — early warning of upstream issues
+
+**9. Validation**
+- Simulate: 401 mid-session · network drop · concurrent requests all expiring at once
+- Verify: no duplicate charges in transaction log · correct token refresh exactly once
+- Load test: 1000 concurrent requests all expiring → single refresh, clean recovery
+
+### Key takeaway
+
+> Fintech API reliability = **idempotency + single-flight auth + controlled retry**. Every financial mutation must be safe to retry without side effects.
+
+---
+
+### Question
+
+**Scenario: Offline-First Sync Failure — Message Duplication and Data Loss**
+Building a chat/messaging feature (~10M DAU, WhatsApp-style). Users report: messages duplicated, some missing after network recovery, order inconsistent across devices. App uses offline mode, Room for local storage, WorkManager for sync, eventually-consistent backend. Constraints: no message loss, no duplicates, reliable on poor networks. **How would you fix?**
+
+### Answer
+
+Treat this as a **distributed data consistency problem**, not a mobile bug. Offline-first with eventual consistency requires explicit guarantees at every layer.
+
+**1. Map the Full Message Lifecycle** _(find the failure points)_
+```
+User sends → insert to Room (status=PENDING) → WorkManager sync job picks up → POST to server → server responds → update Room (status=SENT) → UI observes Room
+```
+Failure points: retry without idempotency · multiple workers running · server duplicate ACK · merge logic ignoring server IDs
+
+**2. Root Cause Analysis**
+- **Duplicates:** No idempotency key → retry sends same message twice → server creates two entries → both sync back
+- **Data loss:** Sync worker killed mid-flight → status never updated to SENT → message orphaned
+- **Wrong order:** Client using local creation time for ordering, but server reorders on its clock
+- **Race condition:** Two sync workers running simultaneously → both pick up same PENDING messages
+
+**3. Introduce Idempotency — UUID per Message**
+```kotlin
+data class Message(
+    @PrimaryKey val clientId: String = UUID.randomUUID().toString(), // generated on client
+    val content: String,
+    val status: MessageStatus = MessageStatus.PENDING,
+    val localTimestamp: Long = System.currentTimeMillis(),
+    val serverTimestamp: Long? = null,
+    val serverId: String? = null
+)
+```
+- Server: if `clientId` already exists → return existing message, do not insert again
+- Client: use `clientId` to match server response and update local record
+
+**4. Single Source of Truth — Room as SSOT**
+- UI **only** reads from Room (`@Query` / `Flow<List<Message>>`)
+- Sync layer **only** writes to Room after server confirmation
+- Never update UI directly from network response — always go through Room
+
+**5. Sync Queue with WorkManager — Single Worker Guarantee**
+```kotlin
+WorkManager.getInstance(context).enqueueUniqueWork(
+    "message_sync",
+    ExistingWorkPolicy.KEEP,  // KEEP = don't start new if one is already running
+    OneTimeWorkRequestBuilder<MessageSyncWorker>().build()
+)
+```
+- `KEEP` policy ensures only one worker processes the queue at a time
+- Worker queries all `PENDING` messages, sends sequentially or in controlled batches
+- On partial failure: only update successfully sent messages; leave others PENDING for next run
+
+**6. Conflict Resolution**
+```kotlin
+// After server confirms:
+dao.updateMessage(
+    clientId = msg.clientId,
+    serverId = serverResponse.id,
+    serverTimestamp = serverResponse.timestamp,
+    status = MessageStatus.SENT
+)
+```
+- Ordering: display by `serverTimestamp` (final) with `localTimestamp` as fallback until server confirms
+- Deduplication: on server response, match by `clientId`; never insert if already exists
+
+**7. Retry Strategy**
+- Exponential backoff with jitter: `delay = min(2^attempt * 1000, 30000) + random(0..1000)` ms
+- Only retry `PENDING` messages (not already-`SENT` ones)
+- Cap retry attempts: after N failures, mark as `FAILED` and surface to user
+
+**8. Edge Cases**
+- **App killed during sync:** WorkManager auto-reschedules; `PENDING` messages remain safely in Room
+- **Network flicker:** `KEEP` policy prevents duplicate workers from racing on reconnect
+- **Partial batch success:** iterate response array; update each message independently
+
+**9. Validation**
+- Test: kill app mid-sync → reopen → all pending messages eventually delivered, zero duplicates
+- Simulate: network drop after server receives but before client gets ACK → retry with same `clientId` → server deduplicates
+- Verify: message order correct when messages sent across two devices simultaneously
+
+### Key takeaway
+
+> Offline-first = **idempotency keys + WorkManager KEEP policy + Room as SSOT + server-timestamp ordering**. All four needed — any one missing breaks guarantees.
+
+---
+
+### Question
+
+**Scenario: API Layer Overload — Thundering Herd Problem**
+News app with millions of users. At 9 AM daily, all users open the app simultaneously → backend overloaded, requests fail, app shows errors or blank screens. Observations: no client-side caching, all users hit API at the same instant, retry logic amplifies the load. **How would you fix?**
+
+### Answer
+
+Treat this as a **distributed load management** problem — client and server must both participate in the solution.
+
+**1. Root Cause — Classic Thundering Herd**
+- Millions of clients wake simultaneously (alarm clock pattern, notification opens app)
+- No local cache → all must hit the API
+- Failed requests → immediate retry → load amplified by 2–3×
+- Server collapses → 504s → more retries → full cascade
+
+**2. Client-Side Cache — Show Something Immediately**
+```kotlin
+// Repository: cache-first strategy
+suspend fun getFeed(): Flow<List<Article>> = flow {
+    // 1. Emit cached data immediately
+    val cached = dao.getArticles()
+    if (cached.isNotEmpty()) emit(cached)
+
+    // 2. Refresh if stale (TTL check)
+    if (isCacheStale()) {
+        val fresh = api.getFeed()
+        dao.replaceAll(fresh)
+        emit(fresh)
+    }
+}
+```
+- **TTL policy:** Feed data valid for 5–10 minutes (most users open within same news cycle)
+- Cache hit → user sees content instantly; API call happens in background silently
+- Cache miss → show skeleton UI + fetch, not blank screen
+
+**3. Stagger Client Requests — Spread the Load**
+```kotlin
+// Add random jitter before making the API call
+val jitterMs = Random.nextLong(0L, 30_000L) // up to 30 seconds random delay
+delay(jitterMs)
+api.getFeed()
+```
+- Random delay 0–30 seconds spreads 1M simultaneous opens into a 30-second rolling window
+- Reduces peak load to ~1/30th of the spike
+
+**4. Exponential Backoff with Jitter on Retry** _(stop amplifying failures)_
+```kotlin
+val delay = min(2.0.pow(attempt).toLong() * 1000L, 60_000L) + Random.nextLong(0L, 1000L)
+delay(delay)
+```
+- Never retry immediately on failure — that turns 100 errors into 300 requests/second
+- Max backoff: 60 seconds; after 3 attempts show user a retry button
+
+**5. HTTP Cache Headers — OkHttp Layer**
+```kotlin
+// OkHttp: honor Cache-Control from server
+val cacheDir = File(context.cacheDir, "http_cache")
+val cache = Cache(cacheDir, 50L * 1024 * 1024) // 50 MB
+OkHttpClient.Builder().cache(cache).build()
+```
+- Backend sets `Cache-Control: max-age=300` → OkHttp serves from disk for 5 minutes without hitting server at all
+
+**6. Backend Coordination** _(tell backend team)_
+- **CDN caching** for read-heavy feed endpoints: edge nodes absorb the spike
+- **Server-side rate limiting** with graceful `429 + Retry-After` instead of 500 collapse
+- **Client versioning:** push config update to stagger cold-start fetch times across client versions
+
+**7. Smart Delta Fetch**
+- Include `If-Modified-Since` or `ETag` header → server returns `304 Not Modified` if nothing changed → near-zero bandwidth and backend processing cost
+
+**8. Validation**
+- Load test: simulate 10,000 simultaneous cold opens → measure API error rate with and without jitter/cache
+- Monitor: p99 API latency, error rate, cache hit ratio
+- Verify: user sees content within 200ms on cache hit; graceful degradation on API failure
+
+### Key takeaway
+
+> Thundering herd = **cache first + staggered start + exponential backoff with jitter**. Client-side cache and jitter alone can eliminate 90% of the problem before server-side changes.
+
+---
+
+### Question
+
+**How do you securely store sensitive data in an Android app?**
+
+### Answer
+
+Never store sensitive data (passwords, tokens, keys) in plain text.
+
+| Data Type | Correct Storage | Wrong Storage |
+|-----------|----------------|---------------|
+| Auth tokens | `EncryptedSharedPreferences` | `SharedPreferences` (plain) |
+| Cryptographic keys | Android Keystore | Hardcoded strings / assets |
+| Structured sensitive data | Encrypted Room (SQLCipher) | Plain Room / SQLite |
+| API keys | Server-side; `BuildConfig` for non-secret config | `strings.xml`, source code |
+
+**`EncryptedSharedPreferences` setup:**
+```kotlin
+val masterKey = MasterKey.Builder(context)
+    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
+val prefs = EncryptedSharedPreferences.create(
+    context, "secure_prefs", masterKey,
+    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+)
+```
+
+**Android Keystore:** generates and stores keys inside secure hardware (TEE/SE). Keys never leave the hardware in plaintext — even a root-level attacker cannot extract them.
+
+**What to avoid:**
+- Internal/external storage files for secrets (accessible to root and USB debugging)
+- `Log.d` printing tokens (scraped from logcat)
+- Sending credentials in URL query params (server logs capture them)
+
+### Key takeaway
+
+> Sensitive data storage = **Keystore for keys, EncryptedSharedPreferences for tokens, SQLCipher for structured data**. The rule: never plaintext, never in source code.
+
+---
+
+### Question
+
+**What is certificate pinning and when do you use it?**
+
+### Answer
+
+**Certificate pinning** hardcodes your server's public key (or certificate hash) in the app so it only trusts *your* server, ignoring any CA-signed certificate that doesn't match.
+
+**Without pinning:** A compromised CA or MITM proxy (even Burp Suite in corporate networks) can present a valid-looking certificate → your app accepts it → traffic decrypted.
+
+**With pinning:** Even a valid CA-signed certificate from an attacker is rejected if the public key doesn't match the pinned value.
+
+```kotlin
+// OkHttp CertificatePinner
+val pinner = CertificatePinner.Builder()
+    .add("api.yourapp.com", "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
+    .add("api.yourapp.com", "sha256/BBBBBBBBB...") // backup pin
+    .build()
+OkHttpClient.Builder().certificatePinner(pinner).build()
+```
+
+**Trade-offs to discuss in interviews:**
+- **Pro:** Strong MITM protection in hostile networks
+- **Con:** Certificate rotation requires app update or remote config for new pins; breaking change if not managed carefully
+- **When to use:** Financial apps, healthcare, apps processing PII — when MITM is a real threat model
+- **Alternative:** Network Security Config (`res/xml/network_security_config.xml`) for simpler pinning without code changes
+
+### Key takeaway
+
+> Pin the **public key hash** (not full cert) with a **backup pin** and a **rotation plan** — pinning without rotation is a future outage waiting to happen.
+
+---
+
+### Question
+
+**How do you protect API keys and prevent reverse engineering?**
+
+### Answer
+
+**API Key Protection — layers of defense:**
+1. **Don't hardcode in source** — never in `strings.xml`, Kotlin constants, or git-committed config
+2. **`BuildConfig` + Gradle** — inject from environment variables in CI; not in source control
+3. **Server-side proxying** — app calls your backend; backend holds the real third-party key
+4. **NDK (native code)** — harder to reverse than JVM bytecode, not impossible
+
+**Prevent Reverse Engineering:**
+- **ProGuard / R8** — obfuscates class/method names, removes dead code, shrinks APK
+- **R8 full mode** — more aggressive than ProGuard; enabled in release builds by default in modern AGP
+- **Tamper detection** — verify APK signature at runtime; detect rooted devices (SafetyNet → Play Integrity API)
+- **Root detection** — use Play Integrity API; don't implement basic `su` file checks alone (trivially bypassed)
+
+```kotlin
+// build.gradle release block
+buildTypes {
+    release {
+        isMinifyEnabled = true
+        isShrinkResources = true
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+}
+```
+
+**What ProGuard/R8 does NOT protect:**
+- Logic that is still present in bytecode (just renamed)
+- Plaintext strings, URLs, keys embedded in code
+- SSL traffic before reaching your server
+
+### Key takeaway
+
+> API key security = **never in source + server proxying + obfuscation**. R8 is obfuscation, not encryption — pair it with key management and Play Integrity for defense-in-depth.
+
+---

@@ -5112,3 +5112,267 @@ Usecases of HTTP Polling and WebSocket
 ### Key takeaway
 
 > Bookmark **Usecases of HTTP Polling and WebSocket**, read the linked reference, and be ready to explain trade-offs with one example.
+
+---
+
+## Real-World Scenario Interview Questions
+
+---
+
+### Question
+
+**Scenario: Crash Spike Due to Lifecycle Issues — Fragment + Coroutines**
+Modular app, multiple teams. After a recent release: crash rate increased significantly. Common crash: `IllegalStateException: Fragment not attached to a context`. Occurs during navigation or screen rotation. App uses Fragments, Coroutines, and ViewBinding. Recent changes: async API calls added inside Fragments, navigation refactored. **How would you debug and fix?**
+
+### Answer
+
+Treat this as a **lifecycle misalignment problem** between async work and the Fragment lifecycle — not a threading bug.
+
+**1. Understand the Crash Pattern**
+- When does it occur? → navigation (Fragment detaches) or screen rotation (Fragment destroyed + recreated)
+- Which thread triggers it? → main thread, after async work completes
+- What triggers the crash? → UI update (e.g. `binding.textView.text = result`) runs after Fragment is detached
+- Conclusion: a coroutine was launched, survived the Fragment, and tried to access the destroyed view
+
+**2. Root Cause — Coroutine Outlives the Fragment View**
+```kotlin
+// WRONG: lifecycleScope tied to Fragment — but Fragment.lifecycle ≠ Fragment view lifecycle
+lifecycleScope.launch {
+    val result = api.fetchData()       // runs in background
+    binding.title.text = result.name   // Fragment may be gone by here → CRASH
+}
+```
+`lifecycleScope` is tied to the **Fragment's lifecycle** (until `onDestroy`) — but the **view** is destroyed earlier in `onDestroyView`. Using `binding` after `onDestroyView` = crash.
+
+**3. Fix — Use `viewLifecycleOwner.lifecycleScope`**
+```kotlin
+// CORRECT: scope is tied to the view's lifecycle (cancelled on onDestroyView)
+viewLifecycleOwner.lifecycleScope.launch {
+    val result = api.fetchData()
+    binding.title.text = result.name  // safe: cancelled before binding is invalid
+}
+```
+`viewLifecycleOwner.lifecycleScope` is cancelled in `onDestroyView` → coroutine never reaches the `binding` access after view teardown.
+
+**4. Fix for Flow Collection — `repeatOnLifecycle`**
+```kotlin
+// CORRECT: automatically pauses/resumes with lifecycle; cancelled on DESTROYED
+viewLifecycleOwner.lifecycleScope.launch {
+    repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.uiState.collect { state ->
+            binding.title.text = state.title  // only runs when STARTED, never after STOPPED
+        }
+    }
+}
+```
+- `STARTED` → collection active (screen visible)
+- `STOPPED` → collection suspended (app backgrounded, no wasted work)
+- `DESTROYED` → scope cancelled, `binding` never accessed
+
+**5. Defensive Context Checks** _(belt-and-suspenders for legacy code)_
+```kotlin
+// Only use context if still attached
+if (!isAdded || context == null) return
+requireContext()  // throws if not attached — prefer this over nullable context
+```
+
+**6. Cancel Jobs Explicitly When Needed**
+```kotlin
+private var syncJob: Job? = null
+
+override fun onStart() {
+    super.onStart()
+    syncJob = viewLifecycleOwner.lifecycleScope.launch { /* work */ }
+}
+
+override fun onStop() {
+    super.onStop()
+    syncJob?.cancel()
+}
+```
+
+**7. Navigation Safety — Don't Navigate After Destroy**
+```kotlin
+// Guard navigation actions
+if (isAdded && findNavController().currentDestination?.id == R.id.thisFragment) {
+    findNavController().navigate(R.id.action_to_next)
+}
+```
+
+**8. Architectural Fix — Move Logic to ViewModel**
+The real fix: don't put API calls in Fragment at all.
+- **ViewModel** holds `viewModelScope` (tied to ViewModel lifetime, survives rotation)
+- **Fragment** observes `StateFlow` / `LiveData` — never triggers async work directly
+- Fragment only maps state → UI; no business logic, no API calls
+
+```kotlin
+// ViewModel (survives rotation)
+fun loadData() {
+    viewModelScope.launch {
+        _uiState.value = UiState.Loading
+        _uiState.value = try {
+            UiState.Success(repo.fetchData())
+        } catch (e: Exception) {
+            UiState.Error(e.message)
+        }
+    }
+}
+
+// Fragment (lifecycle-safe observation)
+viewLifecycleOwner.lifecycleScope.launch {
+    repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.uiState.collect { render(it) }
+    }
+}
+```
+
+**9. Validation**
+- Test rapid back-press during API call in progress → no crash
+- Rotate screen during loading state → state preserved, no crash
+- Put app in background while coroutine running → no UI access, no crash, resumes correctly on foreground
+
+### Key takeaway
+
+> Fragment crashes from async = **use `viewLifecycleOwner.lifecycleScope` + `repeatOnLifecycle`**, never raw `lifecycleScope` for UI updates. Better yet: move all async work to ViewModel and observe from Fragment.
+
+---
+
+### Question
+
+**What are Android Launch Modes and when do you use each?**
+
+### Answer
+
+Launch modes control how Activities are created and placed in the back stack when started.
+
+| Mode | Back Stack Behaviour | Use Case |
+|------|---------------------|----------|
+| **standard** (default) | New instance always created, even if same Activity exists | Chat thread screen (each conversation is a separate instance) |
+| **singleTop** | Reuses top Activity via `onNewIntent()`; creates new if not on top | Push notification → opens email detail; already on top? Update in place |
+| **singleTask** | Only one instance per task; clears all above it; calls `onNewIntent()` | Login / Splash screen — going back to login should clear everything above |
+| **singleInstance** | Own separate task; no other Activities share that task | Video call PiP (Zoom/Meet) — must run independently of app navigation |
+
+**Stack examples:**
+
+`standard`: Stack A→B→C, launch B → A→B→C→**B** (new instance)
+
+`singleTop`: Stack A→B→C, launch C → A→B→C (reuses C, calls `onNewIntent`), launch B → A→B→C→**B** (B wasn't on top)
+
+`singleTask`: Stack A→B→C→D, launch B → A→**B** (C and D cleared, B gets `onNewIntent`)
+
+`singleInstance`: Stack A→B→C, launch D (singleInstance) → Task 1: A→B→C, Task 2: **D** (separate task)
+
+**How to set:**
+```xml
+<activity android:name=".LoginActivity" android:launchMode="singleTask"/>
+```
+Or at runtime:
+```kotlin
+intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+```
+
+### Key takeaway
+
+> 95% of Activities use `standard`. Reach for `singleTop` for notification entry points, `singleTask` for auth/splash flows, `singleInstance` for PiP or cross-app re-entry points.
+
+---
+
+### Question
+
+**What are WorkManager Work States and how do you observe them?**
+
+### Answer
+
+Every `WorkRequest` goes through states that you can observe and react to:
+
+| State | Meaning | Action |
+|-------|---------|--------|
+| **ENQUEUED** | Added to queue; waiting for constraints (Wi-Fi, charging, etc.) to be met | Show "pending" indicator |
+| **RUNNING** | Currently executing on a background thread | Show progress spinner |
+| **SUCCEEDED** | Completed successfully; result data available | Show success + consume `outputData` |
+| **FAILED** | Failed permanently (no auto-retry unless `setBackoffCriteria` set) | Show error; offer manual retry |
+| **BLOCKED** | Waiting on chained prerequisite work to finish | Wait for upstream work |
+| **CANCELLED** | Manually cancelled via `cancelWorkById()` / `cancelAllWorkByTag()` | Clear any pending UI state |
+
+**Observe state in real time:**
+```kotlin
+WorkManager.getInstance(context)
+    .getWorkInfoByIdLiveData(workRequest.id)
+    .observe(viewLifecycleOwner) { workInfo ->
+        when (workInfo?.state) {
+            WorkInfo.State.RUNNING -> showProgress()
+            WorkInfo.State.SUCCEEDED -> showSuccess(workInfo.outputData)
+            WorkInfo.State.FAILED -> showError()
+            else -> {}
+        }
+    }
+```
+
+**With Flow (modern approach):**
+```kotlin
+WorkManager.getInstance(context)
+    .getWorkInfoByIdFlow(workRequest.id)
+    .collect { workInfo -> /* react to state */ }
+```
+
+**Key points:**
+- `SUCCEEDED` / `FAILED` / `CANCELLED` are **terminal states** — no further transitions
+- For `PeriodicWorkRequest`, a successful run resets back to `ENQUEUED` for the next period
+- Minimum periodic interval: **15 minutes** (battery optimisation)
+
+### Key takeaway
+
+> Observe `WorkInfo.State` via `LiveData` or `Flow` to reflect background task progress in the UI. Terminal states (SUCCEEDED, FAILED, CANCELLED) will not change — clean up observers when terminal state reached.
+
+---
+
+### Question
+
+**What is BroadcastReceiver and how does it work with system events?**
+
+### Answer
+
+**BroadcastReceiver** is an Android component that listens for system-wide or app-specific broadcast messages (Intents). It lets your app respond to events even when it is not running in the foreground.
+
+**System events it can listen to:**
+- `ACTION_BOOT_COMPLETED` — device finished booting
+- `ACTION_BATTERY_LOW` — battery below threshold
+- `CONNECTIVITY_ACTION` — network state changed (deprecated for background; use `NetworkCallback` instead)
+- `ACTION_POWER_CONNECTED/DISCONNECTED` — charger state
+
+**Registration options:**
+```kotlin
+// 1. Static (in Manifest) — wakes app even when not running (restricted in Android 8+)
+<receiver android:name=".BootReceiver" android:exported="false">
+    <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+    </intent-filter>
+</receiver>
+
+// 2. Dynamic (in code) — only active while component is alive
+val receiver = NetworkChangeReceiver()
+registerReceiver(receiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+// must unregister in onStop/onDestroy
+unregisterReceiver(receiver)
+```
+
+**Background restrictions (Android 8+):** Most implicit broadcasts can no longer be received by statically registered receivers. Use explicit broadcasts, `JobScheduler`, or `WorkManager` instead.
+
+**BroadcastReceiver has a 10-second execution time limit** — offload any real work to a Service or WorkManager immediately.
+
+```kotlin
+class BootReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            // Schedule WorkManager jobs, reschedule alarms, etc.
+            WorkManager.getInstance(context).enqueue(...)
+        }
+    }
+}
+```
+
+### Key takeaway
+
+> BroadcastReceiver = **event listener with a 10-second budget**. Register dynamically for connectivity; use Manifest declaration only for events that must wake the app (boot, alarms). Offload all real work immediately to WorkManager.
+
+---
