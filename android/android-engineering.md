@@ -1510,3 +1510,304 @@ Use **your** **Situation / Task / Action / Result**; **replace** LLM placeholder
 > One **true** story beats five **polished** fictions.
 
 ---
+
+## Real-World Scenario Interview Questions
+
+---
+
+### Question
+
+**Scenario: Memory Leak Causing Gradual App Slowdown**
+You are working on a large-scale social media app (~20M MAU). Users report: app becomes slow after 15–20 minutes, scrolling lags, eventually OOM-killed. Monitoring shows: memory grows continuously, GC frequency very high, issue prominent on feed screen. Recent changes: new feed redesign (RecyclerView), image loading optimizations, singleton analytics manager added. **How would you investigate and fix end-to-end?**
+
+### Answer
+
+Treat this as a **progressive memory leak** (lifecycle mismanagement), not an immediate crash — degradation correlates with user interaction over time.
+
+**1. Confirm Leak vs Expected Growth**
+- Memory grows linearly without release → leak
+- Memory grows then stabilizes → expected caching behavior (not a bug)
+- Tools: **Android Studio Memory Profiler**, heap dumps at intervals, **LeakCanary** (auto-detection)
+- If objects are retained after screen destruction → confirms leak
+
+**2. Identify Leak Source via Heap Analysis**
+- Capture heap dump → analyze **dominator tree** (which objects retain memory) and **reference chain** (why GC can't collect them)
+- Typical suspects here: RecyclerView Adapter holding Activity/Fragment reference · ViewHolder retaining heavy objects · Singleton analytics manager holding `Context` · Image loader caching incorrectly
+
+**3. Investigate RecyclerView Layer** _(issue prominent on feed screen)_
+- Is adapter holding a strong reference to `Context`?
+- Are listeners cleared in `onViewRecycled()`?
+- Does ViewHolder store any long-lived references?
+- Are new objects being created inside `onBindViewHolder()` on every scroll pass?
+
+**4. Analyze Singleton / Shared Components** _(analytics manager is the prime suspect)_
+- Is it storing Activity context instead of Application context?
+- Is it holding references to views, callbacks, or lifecycle owners?
+- **Fix:** Replace Activity context with `applicationContext`; never store UI references in a singleton
+
+**5. Image Loading & Caching Layer**
+- Are images cleared properly on view recycle?
+- Is image loading lifecycle-aware (e.g. Glide tied to Fragment lifecycle)?
+- Validate cache size and eviction policy — unbounded cache = leak
+
+**6. GC Pressure Optimization** _(high GC frequency = excessive allocations)_
+- Reduce object creation inside the scroll path
+- Reuse objects where possible (object pools for frequent allocations)
+- Avoid unnecessary boxing/unboxing
+
+**7. Fix Strategy Summary**
+- Remove strong references causing leaks
+- Enforce proper lifecycle cleanup (`onViewRecycled`, `onDestroyView`)
+- Optimize adapter and ViewHolder — no Context refs, no listeners left attached
+- Fix singleton misuse — Application context, no UI refs
+- Tune image caching — bounded, lifecycle-aware
+
+**8. Validation**
+- Compare heap dumps before and after fix
+- Memory stabilizes over extended session
+- GC frequency drops measurably
+- Run long-session soak test (30–60 min on real device)
+
+**9. Long-Term Prevention**
+- LeakCanary integrated in all debug builds (CI gates on new leaks)
+- Code review checklist: "Does this hold a Context longer than its scope?"
+- Architectural boundary rule: no UI references in data layer components
+
+### Key takeaway
+
+> Memory leaks are **systemic lifecycle mismanagement** — fix at the architectural level, not one-off patches. LeakCanary in CI is your canary in the coal mine.
+
+---
+
+### Question
+
+**Scenario: Battery Drain Due to Background Work**
+You are working on a fitness tracking app. Users report significant battery drain; the app appears at the top of battery usage. The app uses location tracking, background sync, and periodic API polling. **How would you diagnose and fix?**
+
+### Answer
+
+Treat this as a **resource efficiency + background execution policy** problem, not a single bug.
+
+**1. Measure Before Changing Anything**
+- **Battery Historian** — visualize wake locks, alarms, wakeups over time
+- **Android Profiler (CPU / Network)** — identify which code is running and when
+- Identify: CPU wake-up frequency · network calls per hour · wake lock duration
+
+**2. Identify Problematic Components**
+- Frequent location updates (high accuracy at short intervals drains most)
+- Continuous foreground service running even when not needed
+- Aggressive periodic polling (pulling data every minute when push notifications could serve)
+
+**3. Fix Strategy**
+
+**a. Replace Services with WorkManager for deferrable tasks**
+- WorkManager respects Doze, App Standby, and battery constraints
+- Use `Constraints.Builder()` — run only on Wi-Fi, when charging, etc.
+- Only use Foreground Service when **active user-facing** work is happening (e.g. live workout tracking)
+
+**b. Optimize Location Updates**
+- Switch from `PRIORITY_HIGH_ACCURACY` → `PRIORITY_BALANCED_POWER_ACCURACY` when precision not critical
+- Reduce update interval; use geofencing for region-based triggers instead of continuous polling
+- Use `FusedLocationProviderClient` (not raw GPS)
+
+**c. Eliminate Polling — Use Push**
+- Replace periodic API polling with FCM push notifications
+- Batch network calls — consolidate multiple small requests into one scheduled job
+- Use `WorkManager` periodic work (min 15 min interval) instead of `AlarmManager` for non-critical sync
+
+**d. Respect Doze Mode**
+- Do not use `WAKE_LOCK` unless absolutely necessary
+- Use `setAndAllowWhileIdle()` only for critical alarms
+- Never keep CPU awake for background work that can be deferred
+
+**4. Validation**
+- Measure battery stats before/after using Battery Historian
+- Run 8-hour real-device soak test; compare mAh consumed
+- Confirm app dropped from top battery consumers list
+
+### Key takeaway
+
+> Battery drain = **misusing background execution**. Align with Android's power management system — WorkManager, bounded location, and push over poll.
+
+---
+
+### Question
+
+**Scenario: Slow Build Time in Multi-Module Project**
+Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local build ~10–12 minutes. Small changes trigger full rebuilds. Developers are losing productivity. **How would you optimize?**
+
+### Answer
+
+Treat this as a **build system scalability problem**, not just "add more RAM to the CI box."
+
+**1. Measure Build Bottlenecks First** _(data beats guessing)_
+- Run `./gradlew build --scan` → get a **Gradle Build Scan** URL
+- Identify: slowest tasks · which tasks are not incremental · cache miss rate
+- Check if CI and local share any remote cache (often they don't)
+
+**2. Identify Root Causes**
+- Poor module boundaries → one change invalidates many modules
+- Too many inter-module `implementation` dependencies → wide invalidation graph
+- `KAPT` annotation processing → slow, non-incremental by nature
+- Non-incremental tasks that run every time (e.g. custom Gradle tasks doing file I/O)
+
+**3. Modularization Strategy**
+- Feature-based module structure: `:feature:login`, `:feature:dashboard`, `:core:network`
+- Reduce coupling: features should depend on `:core` interfaces, not each other
+- Eliminate circular dependencies (use `./gradlew :module:dependencies` to audit)
+
+**4. Incremental Build Optimization**
+- Ensure `kapt.incremental.apt=true` in `gradle.properties`
+- Avoid modifying shared/core modules frequently — changes ripple everywhere
+- Enable `org.gradle.caching=true` in `gradle.properties`
+
+**5. Replace KAPT with KSP**
+- KAPT compiles Java stubs → slow and non-incremental
+- KSP (Kotlin Symbol Processing) is 2× faster for supported libraries (Room, Hilt, Moshi)
+- Migrate one library at a time; most major libs support KSP now
+
+**6. Enable Build Cache**
+```properties
+# gradle.properties
+org.gradle.caching=true
+org.gradle.parallel=true
+org.gradle.configureondemand=true
+```
+- Set up a **remote build cache** (Gradle Enterprise / self-hosted) so CI and developers share cached outputs
+
+**7. Parallel Execution & Workers**
+- `org.gradle.parallel=true` — build independent modules simultaneously
+- Increase daemon heap: `org.gradle.jvmargs=-Xmx4g -XX:+UseParallelGC`
+
+**8. Dependency Optimization**
+- Audit with `./gradlew :app:dependencies` — remove unused transitive deps
+- Avoid pulling in large libraries (e.g. full Guava) when you use 3 methods
+
+**9. CI-Specific Optimization**
+- Enable remote build cache (CI writes; developers read)
+- Affected module detection — only run tests for changed modules (Gradle's `--affected` or custom scripts)
+- Run full test suite nightly; PR builds run only affected-module tests
+
+### Key takeaway
+
+> Slow builds = **poor modular boundaries + missing incremental/caching config**. Fix both: architecture (module graph) and tooling (KSP, cache, parallel). Measure with Build Scan before every change.
+
+---
+
+### Question
+
+**Scenario: Large List Data Loading Causing OOM**
+Marketplace app. Users report crashes when scrolling large product lists. Observations: entire dataset loaded at once, images are high-resolution, no pagination. **How would you fix?**
+
+### Answer
+
+Treat this as a **memory management + data loading strategy** problem — you must never load unbounded data into memory.
+
+**1. Identify Root Causes**
+- Entire dataset in memory → linear memory growth → OOM
+- High-res images decoded at original size → single image can be 10–20 MB in RAM
+- No lazy loading → RecyclerView has nothing to throw away
+
+**2. Introduce Pagination with Paging 3**
+```kotlin
+// PagingSource example
+class ProductPagingSource(private val api: ProductApi) : PagingSource<Int, Product>() {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
+        val page = params.key ?: 1
+        return try {
+            val response = api.getProducts(page, params.loadSize)
+            LoadResult.Page(response.items, prevKey = if (page == 1) null else page - 1, nextKey = page + 1)
+        } catch (e: Exception) { LoadResult.Error(e) }
+    }
+}
+```
+- Load data in pages (e.g. 20 items at a time)
+- Paging 3 handles: loading states · retry · Room integration · LazyColumn/RecyclerView adapter
+
+**3. Optimize Images**
+- Never decode at original resolution for a thumbnail — use `inSampleSize` or image loaders
+- Use Coil/Glide with explicit `size()` constraint matching the view dimensions
+- Use WebP or AVIF format — same quality, 30–50% smaller than JPEG/PNG
+- Implement placeholder + loading states so UI stays responsive
+
+**4. RecyclerView Optimization**
+- `setHasStableIds(true)` if IDs are stable — improves DiffUtil efficiency
+- Use `DiffUtil.ItemCallback` for surgical updates (no `notifyDataSetChanged()`)
+- Avoid creating new objects in `onBindViewHolder` — allocate in `onCreateViewHolder`
+
+**5. Memory Cache Strategy**
+- Use disk cache + bounded in-memory cache (Glide/Coil do this by default)
+- Set explicit max memory cache size relative to available heap
+- Clear cache on `onTrimMemory(TRIM_MEMORY_RUNNING_CRITICAL)`
+
+**6. Validation**
+- Profile with Android Studio Memory Profiler during scroll
+- Confirm heap stays bounded (does not grow with list size)
+- Test with 10,000-item dataset on a low-end device (2 GB RAM)
+
+### Key takeaway
+
+> OOM in lists = **unbounded data + unbounded images**. Paging 3 for data, downsized image loading, and bounded caches for memory — control flow at every layer.
+
+---
+
+### Question
+
+**What is CI/CD in Android development and why does it matter?**
+
+### Answer
+
+**CI (Continuous Integration):** Every code push to the shared repo automatically triggers a build and test run. Catches regressions before they reach other developers.
+
+**CD (Continuous Delivery):** Once code passes CI, it is automatically packaged (APK/AAB) and distributed to test environments (e.g. Firebase App Distribution, internal Play track).
+
+**Continuous Deployment:** Automatically publishes to production (Google Play) after all quality checks pass — rare in mobile due to review cycles.
+
+**Why it matters:**
+- Faster feedback loops — broken builds caught in minutes, not at code review
+- Consistent builds — no "it works on my machine"; scripted and version-controlled
+- Reduced manual work — no manual test runs, APK generation, or Play uploads
+- Early bug detection — tests run on every PR, not just before release
+
+**Common Android CI/CD stack:**
+
+| Tool | Role |
+|------|------|
+| **GitHub Actions / Bitrise / CircleCI** | Build orchestration |
+| **Fastlane** | Sign, build flavors, upload to Play/TestFlight |
+| **Firebase App Distribution** | Beta distribution |
+| **Gradle Build Scan** | Build performance analysis |
+| **Detekt / Ktlint** | Static analysis quality gates |
+
+### Key takeaway
+
+> CI/CD is not optional on team projects — it is the **safety net that makes refactoring and feature flags safe to ship**.
+
+---
+
+### Question
+
+**What is Gradle and how does project-level vs module-level `build.gradle` differ?**
+
+### Answer
+
+**Gradle** is Android's build system: compiles Kotlin/Java, packages resources, runs ProGuard/R8, and resolves dependencies. Defined via `build.gradle` (Groovy) or `build.gradle.kts` (Kotlin DSL).
+
+| | `build.gradle` (Project-level) | `build.gradle` (Module-level) |
+|--|-------------------------------|-------------------------------|
+| **Scope** | Entire project | Specific app or library module |
+| **Contains** | Plugin classpath, repo URLs, Gradle version | `compileSdk`, `dependencies`, build types, product flavors |
+| **Changes affect** | All modules | Only this module |
+
+**Build Variants = Build Type + Product Flavor**
+- **Build types:** `debug` (debuggable, no shrink) · `release` (minified, signed)
+- **Product flavors:** `free` / `paid` · `staging` / `production`
+- **Variant:** `freeDebug`, `paidRelease`
+
+Use flavors for: different API base URLs · feature flags · white-label apps.
+
+### Key takeaway
+
+> Project-level = global plumbing; module-level = feature-specific wiring. Build variants = the matrix of every shipping artifact your pipeline must validate.
+
+---

@@ -48,7 +48,7 @@ COVERAGE (rotate across the interview):
 - CI/CD: Gradle flavors, signing, Jenkins/GitHub Actions, quality gates.
 - Leadership: code review, mentoring, incident response, crash spikes, cross-team communication, technical debt.
 - SDLC/Agile: Scrum, milestones, documentation, risk/assessment, continuous improvement.
-- Regulatory (if relevant): design controls, traceability, risk management, IEC 62304 vocabulary at least at “familiar” level.
+- Regulatory (if relevant): design controls, traceability, risk management, IEC 62304 vocabulary at least at "familiar" level.
 
 START with: "Explain the difference between val and var in Kotlin, then go deeper: reference immutability vs object mutability and thread-safety implications in Android."
 
