@@ -982,10 +982,10 @@ What is the difference between START_NOT_STICKY, START_STICKY AND START_REDELIVE
 **START_NOT_STICKY:** <br>
       If the system kills the service after onStartCommand() returns, do not recreate the service unless there are pending intents to deliver. This is the safest option to avoid running your service when not necessary and when your application can simply restart any unfinished jobs.
 
-      **START_STICKY:** <br>
+**START_STICKY:** <br>
       If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand(), but do not redeliver the last intent. Instead, the system calls onStartCommand() with a null intent unless there are pending intents to start the service. In that case, those intents are delivered. This is suitable for media players (or similar services) that are not executing commands but are running indefinitely and waiting for a job.
 
-      **START_REDELIVER_INTENT:** <br>
+**START_REDELIVER_INTENT:** <br>
       If the system kills the service after onStartCommand() returns, recreate the service and call onStartCommand() with the last intent that was delivered to the service. Any pending intents are delivered in turn. This is *suitable for services that are actively performing a job that should be immediately resumed, such as downloading a file.*
 
 
@@ -1863,13 +1863,13 @@ What is a Job Scheduling?
 ### Answer
 
 * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
-     * The JobScheduler supports batch scheduling of jobs. The Android system can combine jobs so that battery consumption is reduced. JobManager makes handling uploads easier as it handles automatically the unreliability of the network. It also survives application restarts. 
-     * Scenarios:
-       * Tasks that should be done once the device is connect to a power supply
-       * Tasks that require network access or a Wi-Fi connection.
-       * Task that are not critical or user facing
-       * Tasks that should be running on a regular basis as batch where the timing is not critical
-       * [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
+* The JobScheduler supports batch scheduling of jobs. The Android system can combine jobs so that battery consumption is reduced. JobManager makes handling uploads easier as it handles automatically the unreliability of the network. It also survives application restarts. 
+* Scenarios:
+* Tasks that should be done once the device is connect to a power supply
+* Tasks that require network access or a Wi-Fi connection.
+* Task that are not critical or user facing
+* Tasks that should be running on a regular basis as batch where the timing is not critical
+* [Reference](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks) </br>
 
 
 ### Useful links
@@ -1954,7 +1954,7 @@ What is Workmanager?
 ### Answer
 
 *  https://flexiple.com/android/android-workmanager-tutorial-getting-started
-    *  https://blog.mindorks.com/integrating-work-manager-in-android
+ *  https://blog.mindorks.com/integrating-work-manager-in-android
 
 
 ### Useful links
@@ -2545,23 +2545,23 @@ What are Android Runtime (ART) and Dalvik?
 
 Android Runtime (ART) and Dalvik are both execution environments for running Android applications, but they have some key differences:<br>
 
-      **Dalvik:** It was the default runtime environment used by Android devices up until version 4.4 KitKat. Dalvik utilizes a Just-In-Time (JIT) compiler, which means it compiles the code at runtime, as needed. This approach is efficient in terms of memory usage because only the parts of the code that are needed are compiled.<br>
-      **ART:** Introduced as an experimental feature in KitKat and later becoming the default runtime in Android 5.0 Lollipop, ART uses an Ahead-Of-Time (AOT) compiler. With AOT, the entire application code is compiled during installation, which improves app performance, especially startup times, because the code is already compiled to native instructions that the device’s CPU can execute directly.<br>
+ **Dalvik:** It was the default runtime environment used by Android devices up until version 4.4 KitKat. Dalvik utilizes a Just-In-Time (JIT) compiler, which means it compiles the code at runtime, as needed. This approach is efficient in terms of memory usage because only the parts of the code that are needed are compiled.<br>
+ **ART:** Introduced as an experimental feature in KitKat and later becoming the default runtime in Android 5.0 Lollipop, ART uses an Ahead-Of-Time (AOT) compiler. With AOT, the entire application code is compiled during installation, which improves app performance, especially startup times, because the code is already compiled to native instructions that the device’s CPU can execute directly.<br>
 
       Here are some of the features and differences between ART and Dalvik:
-      **Compilation Approach**:
+ **Compilation Approach**:
         - **Dalvik** compiles only the necessary parts of the code at runtime (JIT).
         - **ART** compiles the entire application code at install time (AOT).<br>
 
-      **Performance**:
+ **Performance**:
         - **Dalvik** may experience lag during execution as it compiles code on the fly.
         - **ART** provides faster execution of applications due to pre-compilation.<br>
 
-      **Storage and Booting Time**:
+ **Storage and Booting Time**:
         - **Dalvik** has a smaller memory footprint and boots faster compared to ART.
         - **ART** requires more storage space because it compiles the entire code during installation.<br>
 
-      **Battery Performance and Garbage Collection**:
+ **Battery Performance and Garbage Collection**:
         - **ART** improves battery performance and has better garbage collection capabilities, leading to improved memory management<br>
 
       Both ART and Dalvik are compatible with running DEX (Dalvik Executable) bytecode, which is the format Android apps are compiled into. This means apps developed for Dalvik should generally work when running with ART, although some techniques that work on Dalvik do not work on ART.
@@ -2581,9 +2581,9 @@ What is a BuildType in Gradle? And what can you use it for?
 ### Answer
 
 * Build types define properties that Gradle uses when building and packaging your Android app.
-     * A build type defines how a module is built, for example whether ProGuard is run.
-     * A product flavor defines what is built, such as which resources are included in the build.
-     * Gradle creates a build variant for every possible combination of your project’s product flavors and build types.</br>
+* A build type defines how a module is built, for example whether ProGuard is run.
+* A product flavor defines what is built, such as which resources are included in the build.
+* Gradle creates a build variant for every possible combination of your project’s product flavors and build types.</br>
 
 
 ### Key takeaway
@@ -2601,11 +2601,11 @@ Are you familiar with ProGuard/DexGuard/R8 Minification?
 
 ProGuard, DexGuard, and R8 are tools used in Android development to optimize and protect the application code. Here’s a brief overview of each:<br>
 
-     **ProGuard:** It is an open-source tool that shrinks, optimizes, and obfuscates Java code. It removes unused code and resources, making the APK smaller. ProGuard also makes the code more difficult to reverse-engineer by renaming classes, fields, and methods with non-descriptive names.<br>
+**ProGuard:** It is an open-source tool that shrinks, optimizes, and obfuscates Java code. It removes unused code and resources, making the APK smaller. ProGuard also makes the code more difficult to reverse-engineer by renaming classes, fields, and methods with non-descriptive names.<br>
 
-     **DexGuard:**: A commercial tool that offers more advanced protection features than ProGuard. It provides stronger encryption and obfuscation techniques, and it can also protect against static and dynamic analysis, making it harder for attackers to tamper with or reverse-engineer the application.<br>
+**DexGuard:**: A commercial tool that offers more advanced protection features than ProGuard. It provides stronger encryption and obfuscation techniques, and it can also protect against static and dynamic analysis, making it harder for attackers to tamper with or reverse-engineer the application.<br>
 
-     **R8:** The latest official code shrinker and minifier from Google, which is integrated into Android Studio. R8 combines shrinking, desugaring, dexing, and obfuscation into one step. It’s designed to be backward-compatible with ProGuard, meaning it can use ProGuard configuration files. R8 improves build times and results in smaller APK sizes compared to ProGuard.
+**R8:** The latest official code shrinker and minifier from Google, which is integrated into Android Studio. R8 combines shrinking, desugaring, dexing, and obfuscation into one step. It’s designed to be backward-compatible with ProGuard, meaning it can use ProGuard configuration files. R8 improves build times and results in smaller APK sizes compared to ProGuard.
 
 
 ### Key takeaway
@@ -2628,7 +2628,7 @@ What is the difference between a process and a thread?
           - Managed by the Android system, which may shut down processes to conserve resources.
           - Each process is isolated from others, ensuring that one process does not interfere with another.<br>
 
-      **Thread**:
+ **Thread**:
           - The smallest unit of execution within a process.
           - The main thread handles UI and event dispatching.
           - Additional threads can be created for background work.
@@ -2682,8 +2682,8 @@ Explain the build process in Android:
 ### Answer
 
 * First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
-    * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex. 
-    * The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.</br>
+ * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex. 
+ * The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.</br>
 
 
 ### Key takeaway
@@ -2700,9 +2700,9 @@ What is Manifest file and R.java file in Android?
 ### Answer
 
 * **Manifest**: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
-      * **R.Java**: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. </br>
+ * **R.Java**: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. </br>
 
-   * **How does the activity respond when the user rotates the screen?** </br>
+* **How does the activity respond when the user rotates the screen?** </br>
      When the screen is rotated, the current instance of activity is destroyed a new instance of the Activity is created in the new orientation. The onRestart() method is invoked first when a screen is rotated. The other lifecycle methods get invoked in the similar flow as they were when the activity was first created.</br>
 
 
@@ -2736,7 +2736,7 @@ What’s the difference between FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_CLEAR
 ### Answer
 
 * **FLAG_ACTIVITY_CLEAR_TASK** is used to clear all the activities from the task including any existing instances of the class invoked. The Activity launched by intent becomes the new root of the otherwise empty task list. This flag has to be used in conjunction with FLAG_ ACTIVITY_NEW_TASK.</br>
-    * **FLAG_ACTIVITY_CLEAR_TOP** on the other hand, if set and if an old instance of this Activity exists in the task list then barring that all the other activities are removed and that old activity becomes the root of the task list. Else if there’s no instance of that activity then a new instance of it is made the root of the task list. Using FLAG_ACTIVITY_NEW_TASK in conjunction is a good practice, though not necessary.</br>
+ * **FLAG_ACTIVITY_CLEAR_TOP** on the other hand, if set and if an old instance of this Activity exists in the task list then barring that all the other activities are removed and that old activity becomes the root of the task list. Else if there’s no instance of that activity then a new instance of it is made the root of the task list. Using FLAG_ACTIVITY_NEW_TASK in conjunction is a good practice, though not necessary.</br>
 
 
 ### Key takeaway
@@ -2753,7 +2753,7 @@ Describe content providers
 ### Answer
 
 * A ContentProvider provides data from one application to another, when requested. It manages access to a structured set of data.  It provides mechanisms for defining data security. ContentProvider is the standard interface that connects data in one process with code running in another process.</br>  
-    * When you want to access data in a **ContentProvider**, you must instead use the ContentResolver object in your application’s Context to communicate with the provider as a client. The provider object receives data requests from clients, performs the requested action, and returns the results.</br>
+ * When you want to access data in a **ContentProvider**, you must instead use the ContentResolver object in your application’s Context to communicate with the provider as a client. The provider object receives data requests from clients, performs the requested action, and returns the results.</br>
 
 
 ### Key takeaway
@@ -2770,7 +2770,7 @@ Access data using Content Provider:
 ### Answer
 
 * Start by making sure your Android application has the necessary read access permissions. Then, get access to the ContentResolver object by calling getContentResolver() on the Context object, and retrieving the data by constructing a query using ContentResolver.query().</br>
-    * The ContentResolver.query() method returns a Cursor, so you can retrieve data from each column using Cursor methods.</br>
+ * The ContentResolver.query() method returns a Cursor, so you can retrieve data from each column using Cursor methods.</br>
 
 
 ### Key takeaway
@@ -2787,7 +2787,7 @@ What is the onTrimMemory() method?
 ### Answer
 
 * ```onTrimMemory()```: Called when the operating system has determined that it is a good time for a process to trim unneeded memory from its process. This will happen for example when it goes in the background and there is not enough memory to keep as many background processes running as desired.
-     * Android can reclaim memory for from your app in several ways or kill your app entirely if necessary to free up memory for critical tasks. To help balance the system memory and avoid the system's need to kill your app process, you can implement the ```ComponentCallbacks2``` interface in your Activity classes. The provided onTrimMemory() callback method allows your app to listen for memory related events when your app is in either the foreground or the background, and then release objects in response to app lifecycle or system events that indicate the system needs to reclaim memory. [Reference](https://developer.android.com/topic/performance/memory)</br>
+* Android can reclaim memory for from your app in several ways or kill your app entirely if necessary to free up memory for critical tasks. To help balance the system memory and avoid the system's need to kill your app process, you can implement the ```ComponentCallbacks2``` interface in your Activity classes. The provided onTrimMemory() callback method allows your app to listen for memory related events when your app is in either the foreground or the background, and then release objects in response to app lifecycle or system events that indicate the system needs to reclaim memory. [Reference](https://developer.android.com/topic/performance/memory)</br>
 
 
 ### Useful links
@@ -2808,10 +2808,10 @@ What is an intent?
 
 ### Answer
 
-* Intents are messages that can be used to pass information to the various components of android. For instance, launch an activity, open a webview etc.</br>
-    * Two types of intents-</br> 
-      * Implicit: Implicit intent is when you call system default intent like send email, send SMS, dial number.</br>
-      * Explicit: Explicit intent is when you call an application activity from another activity of the same application.</br>
+Intents are messages that can be used to pass information to the various components of android. For instance, launch an activity, open a webview etc.</br>
+* Two types of intents-</br> 
+* Implicit: Implicit intent is when you call system default intent like send email, send SMS, dial number.</br>
+* Explicit: Explicit intent is when you call an application activity from another activity of the same application.</br>
 
 
 ### Key takeaway
@@ -2828,8 +2828,8 @@ What is a Sticky Intent?
 ### Answer
 
 * Sticky Intents allows communication between a function and a service. 
-    * ```sendStickyBroadcast()``` performs a sendBroadcast(Intent) known as sticky, i.e. the Intent you are sending stays around after the broadcast is complete, so that others can quickly retrieve that data through the return value of ```registerReceiver(BroadcastReceiver, IntentFilter)```.
-    * For example, if you take an intent for ACTION_BATTERY_CHANGED to get battery change events: When you call registerReceiver() for that action — even with a null BroadcastReceiver — you **get the Intent that was last Broadcast for that action**. Hence, you can use this to find the state of the battery without necessarily registering for all future state changes in the battery.</br>
+ * ```sendStickyBroadcast()``` performs a sendBroadcast(Intent) known as sticky, i.e. the Intent you are sending stays around after the broadcast is complete, so that others can quickly retrieve that data through the return value of ```registerReceiver(BroadcastReceiver, IntentFilter)```.
+ * For example, if you take an intent for ACTION_BATTERY_CHANGED to get battery change events: When you call registerReceiver() for that action — even with a null BroadcastReceiver — you **get the Intent that was last Broadcast for that action**. Hence, you can use this to find the state of the battery without necessarily registering for all future state changes in the battery.</br>
 
 
 ### Key takeaway
@@ -2878,15 +2878,15 @@ Describe fragment lifecycle
 ### Answer
 
 * ```onAttach()``` : The fragment instance is associated with an activity instance.The fragment and the activity is not fully initialized. Typically you get in this method a reference to the activity which uses the fragment for further initialization work.
-    * ```onCreate()``` : The system calls this method when creating the fragment. You should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
-    * ```onCreateView()``` : The system calls this callback when it’s time for the fragment to draw its user interface for the first time. To draw a UI for your fragment, you must return a View component from this method that is the root of your fragment’s layout. You can return null if the fragment does not provide a UI.
-    * ```onActivityCreated()``` : The onActivityCreated() is called after the onCreateView() method when the host activity is created. Activity and fragment instance have been created as well as the view hierarchy of the activity. At this point, view can be accessed with the findViewById() method. example. In this method you can instantiate objects which require a Context object
-    * ```onStart()``` : The onStart() method is called once the fragment gets visible.
-    * ```onResume()``` : Fragment becomes active.
-    * ```onPause()``` : The system calls this method as the first indication that the user is leaving the fragment. This is usually where you should commit any changes that should be persisted beyond the current user session.
-    * ```onStop()``` : Fragment going to be stopped by calling onStop()
-    * ```onDestroyView()``` : Fragment view will destroy after call this method
-    * ```onDestroy()``` :called to do final clean up of the fragment’s state but Not guaranteed to be called by the Android platform.</br>
+ * ```onCreate()``` : The system calls this method when creating the fragment. You should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
+ * ```onCreateView()``` : The system calls this callback when it’s time for the fragment to draw its user interface for the first time. To draw a UI for your fragment, you must return a View component from this method that is the root of your fragment’s layout. You can return null if the fragment does not provide a UI.
+ * ```onActivityCreated()``` : The onActivityCreated() is called after the onCreateView() method when the host activity is created. Activity and fragment instance have been created as well as the view hierarchy of the activity. At this point, view can be accessed with the findViewById() method. example. In this method you can instantiate objects which require a Context object
+ * ```onStart()``` : The onStart() method is called once the fragment gets visible.
+ * ```onResume()``` : Fragment becomes active.
+ * ```onPause()``` : The system calls this method as the first indication that the user is leaving the fragment. This is usually where you should commit any changes that should be persisted beyond the current user session.
+ * ```onStop()``` : Fragment going to be stopped by calling onStop()
+ * ```onDestroyView()``` : Fragment view will destroy after call this method
+ * ```onDestroy()``` :called to do final clean up of the fragment’s state but Not guaranteed to be called by the Android platform.</br>
 
 
 ### Key takeaway
@@ -3003,7 +3003,7 @@ What are Loaders in Android?
 ### Answer
 
 * Loader API was introduced in API level 11 and is used to load data from a data source to display in an activity or fragment. Loaders persist and cache results across configuration changes to prevent duplicate queries.
-     * [Sample Implementation](https://medium.com/mindorks/a-journey-to-the-world-of-mvp-and-loaders-part-2-e176200e5866) </br>
+* [Sample Implementation](https://medium.com/mindorks/a-journey-to-the-world-of-mvp-and-loaders-part-2-e176200e5866) </br>
 
 
 ### Useful links
@@ -3041,7 +3041,7 @@ Difference between RelativeLayout and LinearLayout?
 ### Answer
 
 * **Linear Layout** - Arranges elements either vertically or horizontally. i.e. in a row or column. 
-     * **Relative Layout** - Arranges elements relative to parent or other elements.</br>
+* **Relative Layout** - Arranges elements relative to parent or other elements.</br>
 
 
 ### Key takeaway
@@ -3058,8 +3058,8 @@ What is ConstraintLayout?
 ### Answer
 
 * It allows you to create large and complex layouts with a flat view hierarchy (no nested view groups). It's similar to RelativeLayout in that all views are laid out according to relationships between sibling views and the parent layout, but it's more flexible than RelativeLayout and easier to use with Android Studio's Layout Editor.
-     * [Sample Implementation](https://github.com/anitaa1990/ConstraintLayout-Sample) 
-     * You can read more about how to implement a simple app with ConstraintLayout [here](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a), by yours truly :)</br>
+* [Sample Implementation](https://github.com/anitaa1990/ConstraintLayout-Sample) 
+* You can read more about how to implement a simple app with ConstraintLayout [here](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a), by yours truly :)</br>
 
 
 ### Useful links
@@ -3083,7 +3083,7 @@ When might you use a FrameLayout?
 ### Answer
 
 * Frame Layouts are designed to contain a single item, making them an efficient choice when you need to display a single View.
-     * If you add multiple Views to a FrameLayout then it’ll stack them one above the other, so FrameLayouts are also useful if you need overlapping Views, for example if you’re implementing an overlay or a HUD element.</br>
+* If you add multiple Views to a FrameLayout then it’ll stack them one above the other, so FrameLayouts are also useful if you need overlapping Views, for example if you’re implementing an overlay or a HUD element.</br>
 
 
 ### Key takeaway
@@ -3116,12 +3116,12 @@ How to support different screen sizes?
 ### Answer
 
 * Create a flexible layout - The best way to create a responsive layout for different screen sizes is to use ConstraintLayout as the base layout in your UI. ConstraintLayout allows you to specify the position and size for each view according to spatial relationships with other views in the layout. This way, all the views can move and stretch together as the screen size changes.
-     * Create stretchable nine-patch bitmaps
-     * Avoid hard-coded layout sizes - Use wrap_content or match_parent. Create alternative layouts - The app should provide alternative layouts to optimize the UI design for certain screen sizes. For eg: different UI for tablets
-     * Use the smallest width qualifier.  For example, you can create a layout named main_activity that's optimized for handsets and tablets by creating different versions of the file in directories as follows:			
-        * res/layout/main_activity.xml           # For handsets (smaller than 600dp available width)						
-        * res/layout-sw600dp/main_activity.xml   # For 7” tablets (600dp wide and bigger). 
-        * The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation, so it's a simple way to specify the overall screen size available for your layout.</br>
+* Create stretchable nine-patch bitmaps
+* Avoid hard-coded layout sizes - Use wrap_content or match_parent. Create alternative layouts - The app should provide alternative layouts to optimize the UI design for certain screen sizes. For eg: different UI for tablets
+* Use the smallest width qualifier.  For example, you can create a layout named main_activity that's optimized for handsets and tablets by creating different versions of the file in directories as follows:			
+* res/layout/main_activity.xml           # For handsets (smaller than 600dp available width)						
+* res/layout-sw600dp/main_activity.xml   # For 7” tablets (600dp wide and bigger). 
+* The smallest width qualifier specifies the smallest of the screen's two sides, regardless of the device's current orientation, so it's a simple way to specify the overall screen size available for your layout.</br>
 
 
 ### Key takeaway
@@ -3138,11 +3138,11 @@ Outline the process of creating custom Views:
 ### Answer
 
 * Create a class that Subclass a view
-     * Create a res/values/attrs.xml file and declare the attributes you want to use with your custom View.
-     * In your View class, add a constructor method, instantiate the Paint object, and retrieve your custom attributes.
-     * Override either onSizeChanged() or onMeasure().
-     * Draw your View by overriding onDraw().
-     * [Sample Implementation](https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548) </br>
+* Create a res/values/attrs.xml file and declare the attributes you want to use with your custom View.
+* In your View class, add a constructor method, instantiate the Paint object, and retrieve your custom attributes.
+* Override either onSizeChanged() or onMeasure().
+* Draw your View by overriding onDraw().
+* [Sample Implementation](https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548) </br>
 
 
 ### Useful links
@@ -3164,8 +3164,8 @@ Briefly describe some ways that you can optimize View usage
 ### Answer
 
 * Checking for excessive overdraw: install your app on an Android device, and then enable the "Debug GPU Overview" option.
-     * Flattening your view hierarchy: inspect your view hierarchy using Android Studio’s ‘Hierarchy Viewer’ tool.
-     * Measuring how long it takes each View to complete the measure, layout, and draw phases. You can also use Hierarchy Viewer to identify any parts of the rendering pipeline that you need to optimize.</br>
+* Flattening your view hierarchy: inspect your view hierarchy using Android Studio’s ‘Hierarchy Viewer’ tool.
+* Measuring how long it takes each View to complete the measure, layout, and draw phases. You can also use Hierarchy Viewer to identify any parts of the rendering pipeline that you need to optimize.</br>
 
 
 ### Key takeaway
@@ -3222,10 +3222,10 @@ What are the permission protection levels in Android?
 
 ### Answer
 
-     * **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
-     * **Dangerous** - A higher-risk permission. Any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.
-     * **Signature** - A permission that the system grants only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.
-     * **SignatureOrSystem** - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.</br>
+* **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
+* **Dangerous** - A higher-risk permission. Any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.
+* **Signature** - A permission that the system grants only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.
+* **SignatureOrSystem** - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.</br>
 
 
 ### Key takeaway
@@ -3356,11 +3356,11 @@ How does RecyclerView work?
 
 ### Answer
 
-  * Let's start with some background on RecyclerView which is needed to understand ```onBindViewHolder()``` method inside RecyclerView.</br>
-    * RecyclerView is designed to display long lists (or grids) of items. Say you want to display 100 rows of something. A simple approach would be to just create 100 views, one for each row and lay all of them out. But that would be wasteful because at any point of time, only 10 or so items could fit on screen and the remaining items would be off screen. So RecyclerView instead creates only the 10 or so views that are on screen. This way you get 10x better speed and memory usage. 
-    * **But what happens when you start scrolling and need to start showing next views?**
-    * Again a simple approach would be to create a new view for each new row that you need to show. But this way by the time you reach the end of the list you will have created 100 views and your memory usage would be the same as in the first approach. And creating views takes time, so your scrolling most probably wouldn't be smooth. This is why RecyclerView takes advantage of the fact that as you scroll, **new rows come on screen also old rows disappear off screen**. Instead of creating new view for each new row, an old view is recycled and reused by binding new data to it.
-       * This happens inside the ```onBindViewHolder()``` method. Initially you will get new unused view holders and you have to fill them with data you want to display. But as you scroll you will start getting view holders that were used for rows that went off screen and you have to replace old data that they held with new data.</br>
+* Let's start with some background on RecyclerView which is needed to understand ```onBindViewHolder()``` method inside RecyclerView.</br>
+ * RecyclerView is designed to display long lists (or grids) of items. Say you want to display 100 rows of something. A simple approach would be to just create 100 views, one for each row and lay all of them out. But that would be wasteful because at any point of time, only 10 or so items could fit on screen and the remaining items would be off screen. So RecyclerView instead creates only the 10 or so views that are on screen. This way you get 10x better speed and memory usage. 
+ * **But what happens when you start scrolling and need to start showing next views?**
+ * Again a simple approach would be to create a new view for each new row that you need to show. But this way by the time you reach the end of the list you will have created 100 views and your memory usage would be the same as in the first approach. And creating views takes time, so your scrolling most probably wouldn't be smooth. This is why RecyclerView takes advantage of the fact that as you scroll, **new rows come on screen also old rows disappear off screen**. Instead of creating new view for each new row, an old view is recycled and reused by binding new data to it.
+* This happens inside the ```onBindViewHolder()``` method. Initially you will get new unused view holders and you have to fill them with data you want to display. But as you scroll you will start getting view holders that were used for rows that went off screen and you have to replace old data that they held with new data.</br>
 
 
 ### Key takeaway
@@ -3376,10 +3376,10 @@ How does RecyclerView differ from ListView?
 
 ### Answer
 
-   * **ViewHolder Pattern**:  Recyclerview implements the ViewHolders pattern whereas it is not mandatory in a ListView. A RecyclerView recycles and reuses cells when scrolling. 
-     * **What is a ViewHolder Pattern?** - A ViewHolder object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In ListView, the code might call ```findViewById()``` frequently during the scrolling of ListView, which can slow down performance. Even when the Adapter returns an inflated view for recycling, you still need to look up the elements and update them. A way around repeated use of ```findViewById()``` is to use the "view holder" design pattern.
-     * **LayoutManager**: In a ListView, the only type of view available is the vertical ListView.  A RecyclerView decouples list from its container so we can put list items easily at run time in the different containers (linearLayout, gridLayout) by setting LayoutManager.
-     * **Item Animator**: ListViews are lacking in support of good animations, but the RecyclerView brings a whole new dimension to it.</br>
+* **ViewHolder Pattern**:  Recyclerview implements the ViewHolders pattern whereas it is not mandatory in a ListView. A RecyclerView recycles and reuses cells when scrolling. 
+* **What is a ViewHolder Pattern?** - A ViewHolder object stores each of the component views inside the tag field of the Layout, so you can immediately access them without the need to look them up repeatedly. In ListView, the code might call ```findViewById()``` frequently during the scrolling of ListView, which can slow down performance. Even when the Adapter returns an inflated view for recycling, you still need to look up the elements and update them. A way around repeated use of ```findViewById()``` is to use the "view holder" design pattern.
+* **LayoutManager**: In a ListView, the only type of view available is the vertical ListView.  A RecyclerView decouples list from its container so we can put list items easily at run time in the different containers (linearLayout, gridLayout) by setting LayoutManager.
+* **Item Animator**: ListViews are lacking in support of good animations, but the RecyclerView brings a whole new dimension to it.</br>
 
 
 ### Key takeaway
@@ -3446,8 +3446,8 @@ Arraymap/SparseArray vs HashMap in Android?
 
 ### Answer
 
-   * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
-     * [Article 2 on the subject](https://medium.com/@mohom.r/optimising-android-app-performance-with-arraymap-9296f4a1f9eb) </br>
+* [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
+* [Article 2 on the subject](https://medium.com/@mohom.r/optimising-android-app-performance-with-arraymap-9296f4a1f9eb) </br>
 
 
 ### Useful links
@@ -3469,10 +3469,10 @@ How to reduce apk size?
 
 ### Answer
 
-   * Enable proguard in your project by adding following lines to your release build type.
-     * Enable shrinkResources.
-     * Strip down all the unused locale resources by adding required resources name in “resConfigs”.
-     * Convert all the images to the webp or vector drawables.
+* Enable proguard in your project by adding following lines to your release build type.
+* Enable shrinkResources.
+* Strip down all the unused locale resources by adding required resources name in “resConfigs”.
+* Convert all the images to the webp or vector drawables.
      </br>
 
 
@@ -3516,26 +3516,26 @@ Android Architecture Components?
 ### Answer
 
     A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)</br>
-      **Room**:
+ **Room**:
       - [Official documentation](https://developer.android.com/topic/libraries/architecture/room)
       - [Article on how to implement Room Db](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)
       - [Sample  implementation](https://github.com/anitaa1990/RoomDb-Sample)
       - [Securing a Room Database With Passcode-Based Encryption](https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e)</br>
 
-    **Live Data**:
+ **Live Data**:
       - [Official documentation](https://developer.android.com/topic/libraries/architecture/livedata)
       - [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)</br>
 
-    **ViewModel**:
+ **ViewModel**:
       - [Official documentation](https://developer.android.com/topic/libraries/architecture/viewmodel)
       - [Sample  implementation](https://github.com/anitaa1990/GameOfThronesTrivia)</br>
 
-    **Data Binding & View Binding**:
+ **Data Binding & View Binding**:
       - [Official documentation](https://developer.android.com/topic/libraries/data-binding/)
       - [Sample  implementation](https://github.com/anitaa1990/DataBindingExample)
       - [Data Binding vs View Binding](https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding)</br>
 
-    **Lifecycles**:
+ **Lifecycles**:
       - [Official documentation](https://developer.android.com/topic/libraries/architecture/lifecycle)</br>
 
 
@@ -3627,10 +3627,10 @@ Difference between MVC & MVP & MVVM?
 
 ### Answer
 
-  * **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
-     * **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
-     * **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)
-     * **MVI**: [Link](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
+* **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
+* **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts) 
+* **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)
+* **MVI**: [Link](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
 
 
 ### Useful links
@@ -3706,8 +3706,8 @@ What is Screenshot testing
 
 ### Answer
 
-   *  https://github.com/facebook/screenshot-tests-for-android
-     *  https://facebook.github.io/screenshot-tests-for-android/#getting-started
+*  https://github.com/facebook/screenshot-tests-for-android
+*  https://facebook.github.io/screenshot-tests-for-android/#getting-started
 
 
 ### Useful links
@@ -4238,8 +4238,8 @@ CICD for Android
 
 ### Answer
 
-  * [Using Workflow](https://blog.mindorks.com/github-actions-for-android/)
-    * [Using Jenkins and Docker](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/
+* [Using Workflow](https://blog.mindorks.com/github-actions-for-android/)
+ * [Using Jenkins and Docker](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/
 
   ### Android Battery Related
 
@@ -4503,18 +4503,18 @@ Arrays
 
 ### Answer
 
-  * [Find Maximum Sell Profit](/src/arrays/FindMaximumSellProfit.java)
-    * [Find Low & High Index of a key from a given array](/src/arrays/LowHighIndex.java)
-    * [Merge Overlapping Intervals](/src/arrays/MergeOverlappingIntervals.java)
-    * [Move all zeros in an array to the Left or Right](/src/arrays/MoveZeroesToLeft.java)
-    * [Rotate an array](/src/arrays/RotateArray.java)
-    * [Find the smallest common number in a given array](/src/arrays/SmallestCommonNumber.java)
-    * [Find the sum of two elements in a given array](/src/arrays/SumOfTwoValues.java)
-    * [Find the minimum distance between two numbers in an array](/src/arrays/MinimumDistanceBetweenTwoNumbers.java)
-    * [Find the maximum difference between the values in an array such that the largest values always comes after the smallest value](/src/arrays/FindMaxDifference.java)
-    * [Find second largest element in an array](/src/arrays/FindSecondLargestElement.java)
-    * [Find the 3 numbers in an array that produce the max product](/src/arrays/FindMaxProduct.java)
-    * [Find missing number from an array](/src/arrays/FindMissingNumber.java)  
+* [Find Maximum Sell Profit](/src/arrays/FindMaximumSellProfit.java)
+* [Find Low & High Index of a key from a given array](/src/arrays/LowHighIndex.java)
+* [Merge Overlapping Intervals](/src/arrays/MergeOverlappingIntervals.java)
+* [Move all zeros in an array to the Left or Right](/src/arrays/MoveZeroesToLeft.java)
+* [Rotate an array](/src/arrays/RotateArray.java)
+* [Find the smallest common number in a given array](/src/arrays/SmallestCommonNumber.java)
+* [Find the sum of two elements in a given array](/src/arrays/SumOfTwoValues.java)
+* [Find the minimum distance between two numbers in an array](/src/arrays/MinimumDistanceBetweenTwoNumbers.java)
+* [Find the maximum difference between the values in an array such that the largest values always comes after the smallest value](/src/arrays/FindMaxDifference.java)
+* [Find second largest element in an array](/src/arrays/FindSecondLargestElement.java)
+* [Find the 3 numbers in an array that produce the max product](/src/arrays/FindMaxProduct.java)
+* [Find missing number from an array](/src/arrays/FindMissingNumber.java)  
     </br>
 
 
@@ -4531,12 +4531,12 @@ Dynamic Programming
 
 ### Answer
 
-   * [Fibonacci Series](/src/dynamicprogramming/FibonacciSeries.java)
-     * [Given an array, find the contiguous subarray with the largest sum](/src/dynamicprogramming/LargestSumSubarray.java)
-     * [Find the maximum sum of a subsequence such that no consecutive elements are part of the subsequence](/src/dynamicprogramming/MaxSumSubsequenceOfNonadjacentElements.java)
-     * [Given a score "n", find the total number of ways score "n" can be reached](/src/dynamicprogramming/GameScoring.java)
-     * [Compute Levenshtein distance between two strings](/src/dynamicprogramming/LevenshteinDistance.java)
-     * [Given coin denominations and the total amount, find out the number​ of ways to make the change](/src/dynamicprogramming/CoinChangingProblem.java)   
+* [Fibonacci Series](/src/dynamicprogramming/FibonacciSeries.java)
+* [Given an array, find the contiguous subarray with the largest sum](/src/dynamicprogramming/LargestSumSubarray.java)
+* [Find the maximum sum of a subsequence such that no consecutive elements are part of the subsequence](/src/dynamicprogramming/MaxSumSubsequenceOfNonadjacentElements.java)
+* [Given a score "n", find the total number of ways score "n" can be reached](/src/dynamicprogramming/GameScoring.java)
+* [Compute Levenshtein distance between two strings](/src/dynamicprogramming/LevenshteinDistance.java)
+* [Given coin denominations and the total amount, find out the number​ of ways to make the change](/src/dynamicprogramming/CoinChangingProblem.java)   
      </br>
 
 
@@ -4553,8 +4553,8 @@ Queues
 
 ### Answer
 
-   * [Find the Maximum in a Sliding Window](/src/queue/Dequeue.java)
-     * [Implement a queue using stack](/src/queue/QueuesUsingStack.java)
+* [Find the Maximum in a Sliding Window](/src/queue/Dequeue.java)
+* [Implement a queue using stack](/src/queue/QueuesUsingStack.java)
      </br>
 
 
@@ -4571,22 +4571,22 @@ LinkedList
 
 ### Answer
 
-   * [Reverse a Linked List](/src/linkedlist/ReverseLinkedList.java)
-     * [Remove duplicates from a Linked List](/src/linkedlist/RemoveDuplicates.java)
-     * [Delete Node of a given key from a Linked List](/src/linkedlist/DeleteNodeWithKey.java)   
-     * [Find the Middle Node of a Linked List](/src/linkedlist/FindMiddleNode.java)
-     * [Find the Nth Node of a Linked List](/src/linkedlist/FindNthNode.java)
-     * [Check if a Linked List is cyclic](/src/linkedlist/CheckIfContainsCycle.java)
-     * [Insertion Sort of a Linked List](/src/linkedlist/InsertSortLinkedList.java)
-     * [Intersection Point of Two Lists](/src/linkedlist/IntersectionPoints.java)
-     * [Nth from last node](/src/linkedlist/NthFromLastNode.java)
-     * [Swap Nth Node with Head](/src/linkedlist/SwapNthNodeWithHead.java)
-     * [Merge Two Sorted Linked Lists](/src/linkedlist/MergeLinkedList.java)
-     * [Sorting LinkedList using merge sort](/src/linkedlist/MergeSortList.java)
-     * [Reverse nodes at even indices](/src/linkedlist/ReverseEvenNodes.java)
-     * [Rotate linked list by n](/src/linkedlist/RotateLinkedList.java)
-     * [Reverse every 'k' elements in a linked list](/src/linkedlist/ReversekElements.java)
-     * [Add the head pointers of two linked lists](/src/linkedlist/AddTwoIntegers.java)   
+* [Reverse a Linked List](/src/linkedlist/ReverseLinkedList.java)
+* [Remove duplicates from a Linked List](/src/linkedlist/RemoveDuplicates.java)
+* [Delete Node of a given key from a Linked List](/src/linkedlist/DeleteNodeWithKey.java)   
+* [Find the Middle Node of a Linked List](/src/linkedlist/FindMiddleNode.java)
+* [Find the Nth Node of a Linked List](/src/linkedlist/FindNthNode.java)
+* [Check if a Linked List is cyclic](/src/linkedlist/CheckIfContainsCycle.java)
+* [Insertion Sort of a Linked List](/src/linkedlist/InsertSortLinkedList.java)
+* [Intersection Point of Two Lists](/src/linkedlist/IntersectionPoints.java)
+* [Nth from last node](/src/linkedlist/NthFromLastNode.java)
+* [Swap Nth Node with Head](/src/linkedlist/SwapNthNodeWithHead.java)
+* [Merge Two Sorted Linked Lists](/src/linkedlist/MergeLinkedList.java)
+* [Sorting LinkedList using merge sort](/src/linkedlist/MergeSortList.java)
+* [Reverse nodes at even indices](/src/linkedlist/ReverseEvenNodes.java)
+* [Rotate linked list by n](/src/linkedlist/RotateLinkedList.java)
+* [Reverse every 'k' elements in a linked list](/src/linkedlist/ReversekElements.java)
+* [Add the head pointers of two linked lists](/src/linkedlist/AddTwoIntegers.java)   
      </br>
 
 
@@ -4603,11 +4603,11 @@ Stacks
 
 ### Answer
 
-   * [Evaluate an expression](/src/stacks/EvaluationExpression.java)
-     * [Implement a stack using queues](/src/stacks/StacksUsingQueues.java)
-     * [Check if paranthesis are equal](/src/stacks/EqualDelimiters.java)
-     * [Tower of Hanoi](/src/stacks/TowerOfHanoi.java)
-     * [ReverseAStack](/src/stacks/ReverseStack.java)
+* [Evaluate an expression](/src/stacks/EvaluationExpression.java)
+* [Implement a stack using queues](/src/stacks/StacksUsingQueues.java)
+* [Check if paranthesis are equal](/src/stacks/EqualDelimiters.java)
+* [Tower of Hanoi](/src/stacks/TowerOfHanoi.java)
+* [ReverseAStack](/src/stacks/ReverseStack.java)
      </br>
 
 
@@ -4624,10 +4624,10 @@ Back Tracking
 
 ### Answer
 
-   * [Solve Boggle](/src/backtracks/Boggle.java)
-     * [Print paranthesis combination for a given value](/src/backtracks/Parenthesis.java)
-     * [Solve N queen problem](/src/backtracks/NQueenProblem.java)
-     * [find all the subsets of the given array that sum up to the number K](/src/backtracks/KSumSubsets.java)
+* [Solve Boggle](/src/backtracks/Boggle.java)
+* [Print paranthesis combination for a given value](/src/backtracks/Parenthesis.java)
+* [Solve N queen problem](/src/backtracks/NQueenProblem.java)
+* [find all the subsets of the given array that sum up to the number K](/src/backtracks/KSumSubsets.java)
      </br>
 
 
@@ -4644,9 +4644,9 @@ Graphs
 
 ### Answer
 
-   * [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
-     * [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java)
-     * [Form circular chain by given list of words](/src/graphs/WordChaining.java)   
+* [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
+* [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java)
+* [Form circular chain by given list of words](/src/graphs/WordChaining.java)   
      </br>
 
 
@@ -4663,20 +4663,20 @@ Trees
 
 ### Answer
 
-   * [Implements an InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java)
-     * [Convert a binary tree to a doubly linked list](/src/trees/BinaryTreeToLinkedList.java)
-     * [Connect a sibling pointer of a binary tree to next node in the same level](/src/trees/ConnectAllSiblings.java)
-     * [Given a binary tree, connect its siblings at each level](/src/trees/ConnectSiblings.java)
-     * [Delete any subtrees whose nodes sum up to zero](/src/trees/DeleteZeroSumSubTrees.java)
-     * [Given roots of two binary trees, determine if these trees are identical](/src/trees/IdenticalBinaryTree.java)
-     * [Find the Inorder successor of a node in binary Search Tree](/src/trees/InOrderSuccessor.java)
-     * [Algorithm to traverse the tree inorder](/src/trees/InOrderTraversal.java)
-     * [Check if a given tree is a binary search tree](/src/trees/IsBST.java)
-     * [Display node values at each level in a binary tree](/src/trees/LevelOrderTraversal.java)
-     * [Swap the 'left' and 'right' children for each node in a binary tree](/src/trees/MirrorBinaryTreeNodes.java)
-     * [Find nth highest node in a Binary Search Tree](/src/trees/NthHighestBST.java)
-     * [Print nodes forming the boundary of a Binary Search Tree](/src/trees/PrintTreePerimeter.java)
-     * [Serialize binary tree to a file and then deserialize back to tree](/src/trees/SerializeBinaryTree.java)   
+* [Implements an InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java)
+* [Convert a binary tree to a doubly linked list](/src/trees/BinaryTreeToLinkedList.java)
+* [Connect a sibling pointer of a binary tree to next node in the same level](/src/trees/ConnectAllSiblings.java)
+* [Given a binary tree, connect its siblings at each level](/src/trees/ConnectSiblings.java)
+* [Delete any subtrees whose nodes sum up to zero](/src/trees/DeleteZeroSumSubTrees.java)
+* [Given roots of two binary trees, determine if these trees are identical](/src/trees/IdenticalBinaryTree.java)
+* [Find the Inorder successor of a node in binary Search Tree](/src/trees/InOrderSuccessor.java)
+* [Algorithm to traverse the tree inorder](/src/trees/InOrderTraversal.java)
+* [Check if a given tree is a binary search tree](/src/trees/IsBST.java)
+* [Display node values at each level in a binary tree](/src/trees/LevelOrderTraversal.java)
+* [Swap the 'left' and 'right' children for each node in a binary tree](/src/trees/MirrorBinaryTreeNodes.java)
+* [Find nth highest node in a Binary Search Tree](/src/trees/NthHighestBST.java)
+* [Print nodes forming the boundary of a Binary Search Tree](/src/trees/PrintTreePerimeter.java)
+* [Serialize binary tree to a file and then deserialize back to tree](/src/trees/SerializeBinaryTree.java)   
      </br>
 
 
@@ -4693,15 +4693,15 @@ Strings
 
 ### Answer
 
-   * [Reverse String](/src/strings/ReverseString.java)
-     * [Palindrone String](/src/strings/PalindroneStrings.java)
-     * [Regular Expression](/src/strings/RegularExpression.java)
-     * [Remove Duplicates](/src/strings/RemoveDuplicates.java)
-     * [Remove White Spaces](/src/strings/RemoveWhiteSpaces.java)
-     * [Remove a String](/src/strings/ReverseString.java)
-     * [String Segmentation](/src/strings/StringSegmentation.java)
-     * [Find next highest permutation of a given string](/src/strings/NextHighestPermutation.java)
-     * [Check if two strings are anagrams](/src/strings/CheckIfAnagram.java)   
+* [Reverse String](/src/strings/ReverseString.java)
+* [Palindrone String](/src/strings/PalindroneStrings.java)
+* [Regular Expression](/src/strings/RegularExpression.java)
+* [Remove Duplicates](/src/strings/RemoveDuplicates.java)
+* [Remove White Spaces](/src/strings/RemoveWhiteSpaces.java)
+* [Remove a String](/src/strings/ReverseString.java)
+* [String Segmentation](/src/strings/StringSegmentation.java)
+* [Find next highest permutation of a given string](/src/strings/NextHighestPermutation.java)
+* [Check if two strings are anagrams](/src/strings/CheckIfAnagram.java)   
      </br>
 
 
@@ -4718,24 +4718,24 @@ Integers
 
 ### Answer
 
-   * [Reverse Integer](/src/math/ReverseInteger.java)
-     * [Find sum of digits of an integer](/src/math/FindSumOfInteger.java)   
-     * [Find Next highest Number from a Integer](/src/math/NextHighestNumber.java)
-     * [Check if it is an Armstrong number](/src/math/CheckIfArmstrongNumber.java)
-     * [Find the factorial of a number](/src/math/FindFactorial.java)
-     * [Print all prime numbers upto the given number](/src/math/PrintPrimeNumbers.java)
-     * [Find all the prime factors of a given integer](/src/math/FindPrimeFactors.java)
-     * [Check if a given number is binary](/src/math/CheckIfBinary.java)
-     * [Find kth permutation](/src/math/KthPermutation.java)
-     * [Integer Division](/src/math/IntegerDivision.java)
-     * [Find Pythagorean Triplets](/src/math/FindPythagoreanTriplets.java)
-     * [Print all possible sum combinations using positive integers](/src/math/SumCombinations.java)
-     * [Find Missing Number](/src/math/FindMissingNumber.java)   
-     * [Find all subsets of a given set of integers](/src/math/IntegerSubsets.java)
-     * [Given an input string, determine if it makes a valid number](/src/math/NumberValidity.java)
-     * [Calculate 'x' raised to the power 'n'](/src/math/PowerOfNumber.java)
-     * [Calculate square root of a number](/src/math/CalculateRoot.java)
-     * [Minimum Number of Platforms Required for a Railway/Bus Station](/src/math/MinimumPlatforms.java)   
+* [Reverse Integer](/src/math/ReverseInteger.java)
+* [Find sum of digits of an integer](/src/math/FindSumOfInteger.java)   
+* [Find Next highest Number from a Integer](/src/math/NextHighestNumber.java)
+* [Check if it is an Armstrong number](/src/math/CheckIfArmstrongNumber.java)
+* [Find the factorial of a number](/src/math/FindFactorial.java)
+* [Print all prime numbers upto the given number](/src/math/PrintPrimeNumbers.java)
+* [Find all the prime factors of a given integer](/src/math/FindPrimeFactors.java)
+* [Check if a given number is binary](/src/math/CheckIfBinary.java)
+* [Find kth permutation](/src/math/KthPermutation.java)
+* [Integer Division](/src/math/IntegerDivision.java)
+* [Find Pythagorean Triplets](/src/math/FindPythagoreanTriplets.java)
+* [Print all possible sum combinations using positive integers](/src/math/SumCombinations.java)
+* [Find Missing Number](/src/math/FindMissingNumber.java)   
+* [Find all subsets of a given set of integers](/src/math/IntegerSubsets.java)
+* [Given an input string, determine if it makes a valid number](/src/math/NumberValidity.java)
+* [Calculate 'x' raised to the power 'n'](/src/math/PowerOfNumber.java)
+* [Calculate square root of a number](/src/math/CalculateRoot.java)
+* [Minimum Number of Platforms Required for a Railway/Bus Station](/src/math/MinimumPlatforms.java)   
      </br>
 
 
@@ -4753,10 +4753,10 @@ Miscellaneous
 ### Answer
 
 * [Find three integers in the array with sum equal to the given value](/src/misc/SumOfThreeValues.java)
-  * [Find position of a given key in 2D matrix](/src/misc/SearchMatrix.java)
-  * [Determine the host byte order of any system](/src/misc/HostByteOrder.java)
-  * [Find the point that requires the least total distance covered by all the ​people to meet at that point](/src/misc/ClosestMeetingPoint.java)
-  * [Given a two dimensional array, if any element in it is zero make its whole row and column zero](/src/misc/SumOfThreeValues.java)
+* [Find position of a given key in 2D matrix](/src/misc/SearchMatrix.java)
+* [Determine the host byte order of any system](/src/misc/HostByteOrder.java)
+* [Find the point that requires the least total distance covered by all the ​people to meet at that point](/src/misc/ClosestMeetingPoint.java)
+* [Given a two dimensional array, if any element in it is zero make its whole row and column zero](/src/misc/SumOfThreeValues.java)
      </br>
 
 
@@ -4927,11 +4927,8 @@ Launch modes control how Activities are created and placed in the back stack whe
 **Stack examples:**
 
 `standard`: Stack A→B→C, launch B → A→B→C→**B** (new instance)
-
 `singleTop`: Stack A→B→C, launch C → A→B→C (reuses C, calls `onNewIntent`), launch B → A→B→C→**B** (B wasn't on top)
-
 `singleTask`: Stack A→B→C→D, launch B → A→**B** (C and D cleared, B gets `onNewIntent`)
-
 `singleInstance`: Stack A→B→C, launch D (singleInstance) → Task 1: A→B→C, Task 2: **D** (separate task)
 
 **How to set:**
