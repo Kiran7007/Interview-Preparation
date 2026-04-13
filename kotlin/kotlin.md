@@ -8,7 +8,7 @@ What are `@JvmStatic`, `@JvmOverloads`, and `@JvmField`—and when do they matte
 
 ### Answer
 
-** Kotlin generates instance methods and accessors by default; Java callers sometimes need static facades, overload bridges, or direct field access for frameworks (e.g., DI, serialization glue, Android callbacks).
+Kotlin generates instance methods and accessors by default; Java callers sometimes need static facades, overload bridges, or direct field access for frameworks (e.g., DI, serialization glue, Android callbacks).
 - **How it works:** `@JvmStatic` exposes static methods from `companion object`; `@JvmOverloads` generates overload stubs for default parameters; `@JvmField` exposes a field without accessors.
 - **What to watch for:** `@JvmField` breaks encapsulation; `@JvmOverloads` can explode generated methods for large parameter lists; static interop can hide lifecycle context—prefer Kotlin-only modules when possible.
 - **Example:** Dagger/annotation processors expecting Java static creators; legacy Java UI calling Kotlin utilities.
@@ -42,7 +42,7 @@ What is **destructuring** in Kotlin and where is it unsafe?
 
 ### Answer
 
-** Destructuring maps component functions `componentN()` for data-like types, letting you unpack values in one step.
+Destructuring maps component functions `componentN()` for data-like types, letting you unpack values in one step.
 - **How it works:** Compiler expands `val (a,b) = x` into `component1/2` calls.
 - **What to watch for:** Breaks silently if field order changes in non-data classes; avoid on wide tuples—name fields explicitly for stable APIs.
 - **Example:** Unpacking network DTO pairs in UI state mappers.
@@ -128,7 +128,7 @@ What is `forEach` in Kotlin and when should you avoid it?
 
 ### Answer
 
-** Higher-order iteration with inline contracts; readable for simple actions.
+Higher-order iteration with inline contracts; readable for simple actions.
 - **What to watch for:** Non-express `return` (unless labeled); can hide performance costs in hot paths vs indexed `for`.
 - **Example:** Logging during debug; avoid in tight animation loops.
 
@@ -144,7 +144,7 @@ What are **lambdas** and how do they relate to SAM conversion on Android?
 
 ### Answer
 
-** Lambdas are function values; Kotlin supports SAM conversion for Java single-abstract-method interfaces (listeners).
+Lambdas are function values; Kotlin supports SAM conversion for Java single-abstract-method interfaces (listeners).
 - **What to watch for:** Capturing lambdas retain references → memory leaks if they capture `Activity` views; use `WeakReference` patterns only as last resort—fix lifecycle instead.
 - **Example:** `setOnClickListener { }` SAM to `View.OnClickListener`.
 
