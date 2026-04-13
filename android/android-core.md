@@ -3775,9 +3775,9 @@ How to reduce your app size?
 ### Answer
 
     1. setting minifyEnabled to true
-      2. setting shrinkResources to true
-      3. using bundle instead of apk in developer console
-      4. converting the images to vector drawables.
+    2. setting shrinkResources to true
+    3. using bundle instead of apk in developer console
+    4. converting the images to vector drawables.
 
 
 ### Key takeaway
@@ -3985,10 +3985,10 @@ Why Do You Need SSL Certificate Pinning? How it works?
 ### Answer
 
     - https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109
-      - https://dzone.com/articles/encryption-and-signing
-      - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
-      - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
-      - https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e
+    - https://dzone.com/articles/encryption-and-signing
+    - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
+    - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
+    - https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e
 
 
 ### Useful links
@@ -4264,10 +4264,10 @@ How do you reduce battery consumption?
 ### Answer
 
     1. Never poll the server for updates.
-      2. Sync only when required. Ideally, sync when phone is on Wi-Fi and plugged in.
-      3. Defer your work using WorkManager.
-      4. Compress your data
-      5. Defer non immediate requests until the phone is plugged in or wifi is turned on. The Wi-Fi radio uses significantly less battery than the mobile radio.
+    2. Sync only when required. Ideally, sync when phone is on Wi-Fi and plugged in.
+    3. Defer your work using WorkManager.
+    4. Compress your data
+    5. Defer non immediate requests until the phone is plugged in or wifi is turned on. The Wi-Fi radio uses significantly less battery than the mobile radio.
 
 
 ### Key takeaway
@@ -4284,8 +4284,8 @@ How do you improve battery while fetching location for an app?
 ### Answer
 
     1. By changing Accuracy -> we can use setPriority() to PRIORITY_LOW_POWER
-      2. By changing Frequency of fetching location -> we can use setInterval() to specify the time interval
-      3. By increasing latency -> After our call, we can wait for longer time - we can use setMaxWaitTime() to set large timeout.
+    2. By changing Frequency of fetching location -> we can use setInterval() to specify the time interval
+    3. By increasing latency -> After our call, we can wait for longer time - we can use setMaxWaitTime() to set large timeout.
 
   ### Dagger 2 Related Questions:
 
