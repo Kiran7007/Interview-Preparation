@@ -1,10 +1,4 @@
-﻿# Kotlin (Senior Android) — merged
-
-Combined from `kotlin-basics.md`, `kotlin-advanced.md`, and `kotlin-coroutines-flow.md`.
-
----
-
-# Kotlin Basics (Senior Android)
+﻿# Kotlin (Senior Android)
 
 ---
 
@@ -259,13 +253,6 @@ What is a Kotlin **`value class`** (`value class` / `@JvmInline`) and when do yo
 ### Key takeaway
 
 > Use **value classes** for **cheap, typed wrappers**—know **JVM boxing** edges.
-
-
----
-
-# Kotlin Advanced (Senior Android)
-
----
 
 ### Question
 
