@@ -8,7 +8,7 @@ What are `@JvmStatic`, `@JvmOverloads`, and `@JvmField`—and when do they matte
 
 ### Answer
 
-- **In plain words:** Kotlin generates instance methods and accessors by default; Java callers sometimes need static facades, overload bridges, or direct field access for frameworks (e.g., DI, serialization glue, Android callbacks).
+** Kotlin generates instance methods and accessors by default; Java callers sometimes need static facades, overload bridges, or direct field access for frameworks (e.g., DI, serialization glue, Android callbacks).
 - **How it works:** `@JvmStatic` exposes static methods from `companion object`; `@JvmOverloads` generates overload stubs for default parameters; `@JvmField` exposes a field without accessors.
 - **What to watch for:** `@JvmField` breaks encapsulation; `@JvmOverloads` can explode generated methods for large parameter lists; static interop can hide lifecycle context—prefer Kotlin-only modules when possible.
 - **Example:** Dagger/annotation processors expecting Java static creators; legacy Java UI calling Kotlin utilities.
@@ -42,7 +42,7 @@ What is **destructuring** in Kotlin and where is it unsafe?
 
 ### Answer
 
-- **In plain words:** Destructuring maps component functions `componentN()` for data-like types, letting you unpack values in one step.
+** Destructuring maps component functions `componentN()` for data-like types, letting you unpack values in one step.
 - **How it works:** Compiler expands `val (a,b) = x` into `component1/2` calls.
 - **What to watch for:** Breaks silently if field order changes in non-data classes; avoid on wide tuples—name fields explicitly for stable APIs.
 - **Example:** Unpacking network DTO pairs in UI state mappers.
@@ -128,7 +128,7 @@ What is `forEach` in Kotlin and when should you avoid it?
 
 ### Answer
 
-- **In plain words:** Higher-order iteration with inline contracts; readable for simple actions.
+** Higher-order iteration with inline contracts; readable for simple actions.
 - **What to watch for:** Non-express `return` (unless labeled); can hide performance costs in hot paths vs indexed `for`.
 - **Example:** Logging during debug; avoid in tight animation loops.
 
@@ -144,7 +144,7 @@ What are **lambdas** and how do they relate to SAM conversion on Android?
 
 ### Answer
 
-- **In plain words:** Lambdas are function values; Kotlin supports SAM conversion for Java single-abstract-method interfaces (listeners).
+** Lambdas are function values; Kotlin supports SAM conversion for Java single-abstract-method interfaces (listeners).
 - **What to watch for:** Capturing lambdas retain references → memory leaks if they capture `Activity` views; use `WeakReference` patterns only as last resort—fix lifecycle instead.
 - **Example:** `setOnClickListener { }` SAM to `View.OnClickListener`.
 
@@ -160,7 +160,7 @@ What is a **companion object** and how does it differ from Java `static`?
 
 ### Answer
 
-- **In plain words:** A singleton object scoped to the class; can implement interfaces; Kotlin uses it instead of static blocks.
+** A singleton object scoped to the class; can implement interfaces; Kotlin uses it instead of static blocks.
 - **What to watch for:** Still an object—can hold state; misuse becomes hidden global state.
 - **Example:** Factory methods + constants colocated with class.
 
@@ -180,7 +180,7 @@ What does the **`open`** keyword mean in Kotlin—and why is it the default oppo
 
 ### Answer
 
-- **In plain words:** Kotlin classes/members are **final by default** for safe reasoning and performance; `open` opts into inheritance.
+** Kotlin classes/members are **final by default** for safe reasoning and performance; `open` opts into inheritance.
 - **What to watch for:** Frameworks needing inheritance (some test doubles) require `open` or all-open plugins.
 - **Example:** Base `UiModel` sealed/open only where extension is intentional.
 
@@ -200,7 +200,7 @@ Where do **bitwise and bit-shift** operations show up in Android engineering?
 
 ### Answer
 
-- **In plain words:** Flags in `PendingIntent`, `Intent`, `MotionEvent`, `View` visibility/state, packed protobuf fields, image channel masks.
+** Flags in `PendingIntent`, `Intent`, `MotionEvent`, `View` visibility/state, packed protobuf fields, image channel masks.
 - **What to watch for:** Readability suffers—centralize flag math in named functions and tests.
 - **Example:** Combining `PendingIntent` mutability flags correctly for Android 12+.
 
@@ -220,7 +220,7 @@ Why are **Kotlin collection operators** (`map`, `filter`, `flatMap`) both loved 
 
 ### Answer
 
-- **In plain words:** Expressive chain transforms; each step may allocate intermediate collections.
+** Expressive chain transforms; each step may allocate intermediate collections.
 - **What to watch for:** Use sequences for large pipelines; choose `buildList` for imperative clarity.
 - **Example:** Mapping DTO → domain in repository with `map` is fine; repeated mega-chains on hot paths → sequence.
 
@@ -241,7 +241,7 @@ What is a Kotlin **`value class`** (`value class` / `@JvmInline`) and when do yo
 
 ### Answer
 
-- **In plain words:** A **value class** wraps one stored value (or a small fixed set in future Kotlin versions) but aims to give it a **distinct type** at compile time without always allocating a wrapper object on the JVM (`@JvmInline` = underlying value is used at runtime where possible).
+** A **value class** wraps one stored value (or a small fixed set in future Kotlin versions) but aims to give it a **distinct type** at compile time without always allocating a wrapper object on the JVM (`@JvmInline` = underlying value is used at runtime where possible).
 - **How it works:** The compiler generates a **thin wrapper** with **no identity** semantics like a normal class; you get **type safety** (e.g. `UserId` vs `String`) and can add **methods** without paying for a full object in many cases.
 - **What to watch for:** JVM rules: single **read-only** `val` backing property for `@JvmInline`; **no universal** “free” allocation guarantees in every ABI corner (reflection, generics, arrays can box). Not a replacement for **domain modeling** when you need **identity** or many fields.
 - **Example:** `@JvmInline value class UserId(val raw: String)` in public APIs instead of passing bare strings.
@@ -408,7 +408,7 @@ What is a **`CoroutineScope`** and how should Android apps structure scopes?
 
 ### Answer
 
-- **In plain words:** A scope ties coroutines to a lifecycle boundary via a `Job` + context; cancellation cascades to children.
+** A scope ties coroutines to a lifecycle boundary via a `Job` + context; cancellation cascades to children.
 - **How it works:** `SupervisorJob` vs plain `Job` changes failure propagation—supervisor avoids one child cancelling siblings.
 - **What to watch for:** Global `CoroutineScope(Dispatchers.IO)` is an anti-pattern for feature work; prefer `viewModelScope`, `lifecycleScope`, or explicit scopes in use cases.
 - **Example:** `viewModelScope` for network tied to VM; `lifecycleScope` for UI effects that must stop when UI disappears.
@@ -425,7 +425,7 @@ What is **`Flow`** and how does it relate to coroutines?
 
 ### Answer
 
-- **In plain words:** Async stream type built on suspension; supports operators similar to reactive streams with structured concurrency.
+** Async stream type built on suspension; supports operators similar to reactive streams with structured concurrency.
 - **How it works:** Collectors drive cold flows; hot flows use `SharedFlow`/`StateFlow`.
 - **What to watch for:** Backpressure differs from Rx; combine `flowOn`, `catch`, `retryWhen` carefully to avoid hiding failures.
 - **Example:** Expose `Flow<PagingData<Item>>` from repository; collect in UI with lifecycle repeat-on-lifecycle.
@@ -458,7 +458,7 @@ What is a **`suspend` function**—what can and can’t you do?
 
 ### Answer
 
-- **In plain words:** A function that may suspend without blocking a thread; continuation-based.
+** A function that may suspend without blocking a thread; continuation-based.
 - **What to watch for:** Don’t call blocking APIs without `withContext`; don’t perform heavy work on `Main`.
 - **Example:** Retrofit suspend endpoints + repository mapping.
 
@@ -478,7 +478,7 @@ What is **`runBlocking`**—why is it disliked in Android app code?
 
 ### Answer
 
-- **In plain words:** Blocks the calling thread to wait for coroutines inside—useful in tests/main-safe CLI, disastrous on UI thread.
+** Blocks the calling thread to wait for coroutines inside—useful in tests/main-safe CLI, disastrous on UI thread.
 - **What to watch for:** Can cause ANRs; prefer structured tests with `runTest`.
 - **Example:** OK in `@Test`, not OK in `Activity.onCreate`.
 
@@ -514,7 +514,7 @@ How does a coroutine **switch threads** (e.g. from Main to IO and back)?
 
 ### Answer
 
-- **In plain words:** The runtime **suspends** your function, stores progress in a **continuation**, and **schedules** the next segment on another **dispatcher**’s thread pool (or the main looper). No magic “moving” of stack—**resume** runs on the new thread.
+** The runtime **suspends** your function, stores progress in a **continuation**, and **schedules** the next segment on another **dispatcher**’s thread pool (or the main looper). No magic “moving” of stack—**resume** runs on the new thread.
 - **How it works:** `withContext(Dispatchers.IO) { ... }` **dispatches** the block; when done, it **resumes** the caller on the **original** context (unless you chain more `withContext`). `launch(Main) { … }` posts work to the **main** handler.
 - **What to watch for:** **Suspend** does not imply a background thread—only **`withContext` / flow operators / custom dispatchers** move work. Blocking calls on **Main** still cause **ANRs**.
 - **Example:** Repository `withContext(Dispatchers.IO)` around disk/HTTP; UI updates on **Main**.
@@ -531,7 +531,7 @@ How does a coroutine **switch threads** (e.g. from Main to IO and back)?
 
 ### Answer
 
-- **In plain words:** The exception is **stored** in the **`Deferred`**. Calling **`await()` rethrows** it. If nothing catches it, it behaves like an **uncaught exception in that coroutine context**—often propagated to the **parent `Job`** and your **`CoroutineExceptionHandler`** (if any), or can surface as a **crash** on Android if you launched on **GlobalScope** / wrong scope without a handler.
+** The exception is **stored** in the **`Deferred`**. Calling **`await()` rethrows** it. If nothing catches it, it behaves like an **uncaught exception in that coroutine context**—often propagated to the **parent `Job`** and your **`CoroutineExceptionHandler`** (if any), or can surface as a **crash** on Android if you launched on **GlobalScope** / wrong scope without a handler.
 - **How it works:** Under **`coroutineScope`**, a failed child typically **fails the scope** after you observe the failure (e.g. at `await()`). **`supervisorScope`** changes propagation—siblings keep running; you handle failures **per child**.
 - **What to watch for:** **`async` + forgotten `await`**: `coroutineScope` still **waits for children**; an **unhandled** failed `async` can still **complete the scope exceptionally** when the child finishes. Don’t fire-and-forget **`async`** unless you **handle** the `Deferred`.
 - **Example:** Wrap **`await()`** in **`try/catch`**, or use **`runCatching { d.await() }`**, or **`supervisorScope` + individual** handling.
@@ -557,7 +557,7 @@ Why are coroutines considered **lightweight** compared to OS threads?
 
 ### Answer
 
-- **In plain words:** A thread **always** consumes a large **stack** (≈ MB class) and kernel bookkeeping. Many coroutines **time-share** a small pool of threads; when one **suspends**, the thread does other work.
+** A thread **always** consumes a large **stack** (≈ MB class) and kernel bookkeeping. Many coroutines **time-share** a small pool of threads; when one **suspends**, the thread does other work.
 - **How it works:** Suspend points compile to a **state machine**; **thousands** of concurrent **logical** tasks can map to **few** threads without blocking them on I/O.
 - **What to watch for:** **Lightweight ≠ free**—massive fan-out still costs **memory** (continuations, channels) and **CPU**; **blocking** APIs negate the benefit unless moved to a **blocking** dispatcher with limits.
 - **Example:** 5k concurrent **network** waits on **few IO** threads vs 5k **platform threads** (usually impractical).
@@ -574,7 +574,7 @@ Do coroutines live on the **heap** or the **stack**?
 
 ### Answer
 
-- **In plain words:** The **continuation** objects (state machine instances, closures) live on the **heap**, like other objects. The **thread** that runs your code still uses its normal **call stack** for the **current** activation frames while executing.
+** The **continuation** objects (state machine instances, closures) live on the **heap**, like other objects. The **thread** that runs your code still uses its normal **call stack** for the **current** activation frames while executing.
 - **How it works:** After **suspend**, locals are stored in the **continuation** on the heap; **resume** reconstructs execution on **whichever** thread the dispatcher uses.
 - **What to watch for:** Interview trick: “coroutine has no stack of its own”—**logical** stack is **continuation chain** on heap; **physical** stack is the **worker thread’s**.
 - **Example:** Deep **recursive** suspend without **tail** transformation can still **deepen** logical state—prefer **iteration** or **trampolining** for huge depth.
@@ -591,7 +591,7 @@ Do coroutines live on the **heap** or the **stack**?
 
 ### Answer
 
-- **In plain words:** **Structured concurrency** ties child coroutines to a **parent scope** so **cancellation** and **errors** propagate predictably (no stray background work). **`ConcurrentHashMap`** is a **thread-safe** hash map for **concurrent reads/writes** without locking the **whole** table like `Collections.synchronizedMap` often does.
+** **Structured concurrency** ties child coroutines to a **parent scope** so **cancellation** and **errors** propagate predictably (no stray background work). **`ConcurrentHashMap`** is a **thread-safe** hash map for **concurrent reads/writes** without locking the **whole** table like `Collections.synchronizedMap` often does.
 - **How it works:** Scopes (`coroutineScope`, `supervisorScope`, `viewModelScope`) own **Jobs**; **`ConcurrentHashMap`** uses **striped / node-level** CAS and careful publication rules (JDK version–specific details).
 - **What to watch for:** Don’t confuse them—**concurrency structure** vs **shared mutable map**. In coroutine code, still prefer **single-threaded** contexts or **`Mutex`** for complex invariants; **`ConcurrentHashMap`** doesn’t fix **check-then-act** races across keys without **atomic** compound ops.
 - **Example:** **ViewModel** scope cancels repo work on clear; **cache** map keyed by id with **`ConcurrentHashMap`** for thread-safe **get/put** from multiple threads.
