@@ -1,83 +1,83 @@
-site_name: Kiran's Interview Notes
-site_description: Senior Android engineer and technical-lead interview preparation notes.
-
-site_dir: site
+site_name: Kiran's Interview Preparation
+site_description: Android, Kotlin and Software Engineering Interview Preparation
 
 theme:
   name: material
-  language: en
+
   font:
     text: Inter
     code: JetBrains Mono
-  icon:
-    logo: material/android
+
   features:
     - navigation.sections
     - navigation.expand
     - navigation.top
-    - navigation.footer
-    - navigation.indexes
     - search.suggest
     - search.highlight
-    - search.share
     - content.code.copy
-    - content.code.annotate
     - content.tabs.link
-    - toc.follow
+
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: indigo
-      accent: teal
+      accent: indigo
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
+
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
-      accent: teal
+      accent: indigo
       toggle:
         icon: material/weather-night
         name: Switch to light mode
 
-plugins:
-  - search:
-      lang: en
-
 markdown_extensions:
-  - abbr
   - admonition
+  - tables
   - attr_list
   - md_in_html
-  - tables
+
   - toc:
       permalink: true
-      toc_depth: 1
-  - pymdownx.details
+
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.keys
+
   - pymdownx.superfences
+
   - pymdownx.tabbed:
       alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
+
+nav:
+  - Home: index.md
+
+  - Android:
+      - Android: android.md
+
+  - Kotlin:
+      - Kotlin: kotlin.md
+
+  - Coroutines:
+      - Coroutines: coroutines.md
+
+  - Flow:
+      - Flow: flow.md
+
+  - Jetpack Compose:
+      - Compose: compose.md
+
+  - Architecture:
+      - Architecture: architecture.md
+
+  - Testing:
+      - Testing: testing.md
+
+  - System Design:
+      - System Design: system-design.md
 
 extra_css:
   - stylesheets/extra.css
-
-extra_javascript:
-  - javascripts/study-guide.js
-
-nav:
-  - Android:
-      - Android Interview Notes: android.md
-  - Kotlin: kotlin.md
-  - Java: java.md
-  - Data Structures & Algorithms: dsa.md
-  - System Design: system-design.md
-  - Cross-platform: cross-platform.md
-  - Career: career.md
