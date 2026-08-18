@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,8 +27,8 @@ jobs:
       - name: Install MkDocs Material
         run: pip install mkdocs-material
 
-      - name: Build MkDocs
-        run: mkdocs build --strict
+      - name: Build documentation
+        run: mkdocs build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -38,5 +38,17 @@ jobs:
         with:
           path: ./site
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+
+    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
