@@ -1,10 +1,16 @@
 /*
- * Legacy notes use a repeated "Question" / "Answer" heading pair. Convert
- * that machine-like pattern into a study-friendly card at render time, while
- * keeping every Markdown file easy to edit as plain text.
+ * Keep prompt headings visually consistent across the notes. Legacy files use
+ * level-two prompt headings; a few hand-edited pages use level-three prompts.
  */
 document.addEventListener("DOMContentLoaded", () => {
   const normalize = (value) => value.replace(/\s+/g, " ").trim().toLowerCase();
+  const isSupportingLabel = (value) => [
+    "answer",
+    "code example",
+    "useful links",
+    "useful links / diagrams",
+    "key takeaway",
+  ].includes(value);
 
   document.querySelectorAll(".md-content h3").forEach((heading) => {
     const label = normalize(heading.textContent);
@@ -38,6 +44,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (label === "key takeaway") {
       heading.classList.add("study-takeaway-label");
+    }
+  });
+
+  // Hand-edited pages use the prompt as a level-three heading.
+  document.querySelectorAll(".md-content h3").forEach((heading) => {
+    const label = normalize(heading.textContent);
+    if (
+      !heading.classList.length &&
+      !isSupportingLabel(label) &&
+      label.length > 12
+    ) {
+      heading.classList.add("study-question");
+    }
+  });
+
+  // In the standardized files, a prompt is an H2 followed by its answer;
+  // category headings are followed by a divider or another heading instead.
+  document.querySelectorAll(".md-content h2").forEach((heading) => {
+    const next = heading.nextElementSibling;
+    const text = heading.textContent.trim();
+    const looksLikePrompt = /\?$|^(what|why|how|when|where|which|who|explain|compare|describe|difference)\b|\b(vs\.?|scenario)\b/i.test(text);
+    if (looksLikePrompt && next && next.tagName !== "HR") {
+      heading.classList.add("study-question");
     }
   });
 });

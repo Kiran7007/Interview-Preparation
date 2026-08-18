@@ -2,11 +2,7 @@
 
 ---
 
-### Question
-
-How do you decide between **top-down memoization** vs **bottom-up DP** in interviews?
-
-### Answer
+## How do you decide between **top-down memoization** vs **bottom-up DP** in interviews?
 
 - **In plain words:** Same math, different engineering. Top-down mirrors recursive structure + pruning; bottom-up often gives tighter constant factors and easier space rolling.
 - **How it works:** Memoization stores `dp[state]` on first visit; tabulation fills in topological order of states.
@@ -17,24 +13,18 @@ How do you decide between **top-down memoization** vs **bottom-up DP** in interv
 
 See `patterns.md` → DP sections in `DSA_Patterns_Cheatsheet.md` + `AlgorithmV2.md` (intervals, strings, LIS, etc.).
 
-### Key takeaway
 
 > State = **`(index, constraint, parity, …)`** — define it explicitly first.
 
 ---
 
-### Question
-
-What’s the difference between **backtracking** and **DP**—when can you not memoize?
-
-### Answer
+## What’s the difference between **backtracking** and **DP**—when can you not memoize?
 
 - **In plain words:** Backtracking explores combinatorial choices; DP applies when subproblems **overlap** and optimal substructure holds. Pure permutation generation often doesn’t benefit from memo without extra state.
 - **How it works:** Backtracking = DFS + prune; DP adds memo/table when repeated substates appear.
 - **What to watch for:** DP memory vs time; backtracking can explode if pruning is weak.
 - **Example:** Sudoku/CSP-style search vs counting distinct paths in a grid with obstacles.
 
-### Key takeaway
 
 > If your state repeats, **memoize**; if not, **prune hard**.
 

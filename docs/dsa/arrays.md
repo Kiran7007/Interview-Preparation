@@ -2,11 +2,7 @@
 
 ---
 
-### Question
-
-Why is quicksort preferred over mergesort for sorting **arrays** in practice?
-
-### Answer
+## Why is quicksort preferred over mergesort for sorting **arrays** in practice?
 
 - **In plain words:** Quicksort is in-place for arrays (partitioning swaps within the array) and has excellent cache behavior on contiguous memory. Mergesort needs \(O(n)\) auxiliary space for merging, which increases memory traffic and allocator pressure.
 - **How it works:** Quicksort chooses a pivot, partitions into `< pivot` and `> pivot`, recurses. Mergesort divides halves, merges sorted subarrays.
@@ -17,17 +13,12 @@ Why is quicksort preferred over mergesort for sorting **arrays** in practice?
 
 See `patterns.md` → sorting implementations (quicksort/mergesort) in `DSA_Patterns_Cheatsheet.md` section.
 
-### Key takeaway
 
 > Pick mergesort when **stability** or **predictable worst case** matters; pick quicksort when **in-place + arrays + throughput** matters.
 
 ---
 
-### Question
-
-Why is mergesort often preferred over quicksort for **linked lists**?
-
-### Answer
+## Why is mergesort often preferred over quicksort for **linked lists**?
 
 - **In plain words:** Linked lists support \(O(1)\) insertion in the middle after you’ve found the split point; mergesort’s merge step can splice nodes without allocating a separate array buffer like array mergesort often does.
 - **How it works:** Merge two sorted lists by pointer rewiring; divide list via slow/fast pointers.
@@ -38,17 +29,12 @@ Why is mergesort often preferred over quicksort for **linked lists**?
 
 See `patterns.md` → linked list merge / reversal templates.
 
-### Key takeaway
 
 > **Structure matters:** array algorithms ≠ list algorithms even for the same Big-O class.
 
 ---
 
-### Question
-
-Why is binary search usually preferred over ternary search for interview + production arrays?
-
-### Answer
+## Why is binary search usually preferred over ternary search for interview + production arrays?
 
 - **In plain words:** Each ternary split reduces the range by a factor of 3 but performs **more comparisons per step** than binary (which splits by 2). Constants dominate for typical \(n\).
 - **How it works:** Binary search maintains `lo/hi`, compares mid once per iteration.
@@ -59,17 +45,12 @@ Why is binary search usually preferred over ternary search for interview + produ
 
 See `patterns.md` → binary search & rotated array variants.
 
-### Key takeaway
 
 > **Fewer comparisons per elimination step** usually wins on arrays.
 
 ---
 
-### Question
-
-Explain Big-O, Big-Omega, and how you communicate complexity in interviews.
-
-### Answer
+## Explain Big-O, Big-Omega, and how you communicate complexity in interviews.
 
 - **In plain words:** Big-O is an upper bound on growth; Big-Omega is a lower bound; Big-Theta is tight bound when both match. Interviewers care about **worst-case** unless they specify amortized/average.
 - **How it works:** Count nested loops, recurrence relations (master theorem), or aggregate analysis for amortized (e.g., union-find).
@@ -81,7 +62,6 @@ Explain Big-O, Big-Omega, and how you communicate complexity in interviews.
 - [Big O cheat sheet (time complexity chart)](https://www.freecodecamp.org/news/big-o-cheat-sheet-time-complexity-chart/)
 - [Complexity table (image)](https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png)
 
-### Key takeaway
 
 > Always state **what \(n\) is** (users, items, pixels, graph nodes).
 
@@ -131,11 +111,7 @@ These paths reference a `src/` exercise tree (add locally if needed):
 
 ---
 
-### Question (FAANG-style follow-up)
-
-How do you choose between **prefix sums**, **difference array**, and **sliding window** for range queries on arrays?
-
-### Answer
+## How do you choose between **prefix sums**, **difference array**, and **sliding window** for range queries on arrays?
 
 - **Prefix sums:** Static array, many `sum(l..r)` queries after \(O(n)\) preprocess.
 - **Difference array:** Many range increments then finalize with prefix sum (scheduling, offline updates).
@@ -143,6 +119,5 @@ How do you choose between **prefix sums**, **difference array**, and **sliding w
 - **What to watch for:** Mutability + query mix determines structure; don’t pay \(O(n)\) per query if queries are hot.
 - **Example:** Analytics histogram buckets for session lengths (window), or precomputing cumulative spend for fraud rules (prefix).
 
-### Key takeaway
 
 > **Query vs update pattern** picks the tool.

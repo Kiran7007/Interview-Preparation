@@ -13,6 +13,10 @@
   max-width: 58rem;
 }
 
+.md-content {
+  counter-reset: interview-question;
+}
+
 .md-typeset h1 {
   font-weight: 750;
   letter-spacing: -0.035em;
@@ -32,6 +36,7 @@
 
 /* Question cards turn long Q&A banks into clear stopping points for study. */
 .md-typeset .study-question {
+  counter-increment: interview-question;
   position: relative;
   margin: 2.6rem 0 1rem;
   padding: 1.1rem 1.2rem 1rem;
@@ -44,11 +49,16 @@
   line-height: 1.45;
 }
 
+.md-typeset h2.study-question {
+  margin-top: 2.8rem;
+  font-size: 1.16rem;
+}
+
 .md-typeset .study-question::before {
   display: block;
   margin-bottom: 0.42rem;
   color: var(--md-primary-fg-color);
-  content: "INTERVIEW PROMPT";
+  content: "QUESTION " counter(interview-question, decimal-leading-zero);
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.1em;

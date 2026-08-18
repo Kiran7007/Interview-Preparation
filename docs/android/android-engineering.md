@@ -4,11 +4,7 @@
 
 ---
 
-### Question
-
-What is **ANR** and how do you prevent it as a tech lead?
-
-### Answer
+## What is **ANR** and how do you prevent it as a tech lead?
 
 **ANR** means “Application Not Responding.” The system shows a dialog when your app stops responding for too long—about **5 seconds** on the main thread while the user is interacting. Broadcast receivers and services have their own time limits too.
 
@@ -16,17 +12,12 @@ The main thread draws the UI and handles touches. If it is busy parsing JSON, do
 
 What to do: move slow work off the main thread (background threads, coroutines with the right dispatcher), keep the UI path fast, and use profiling (Android Studio, Perfetto) instead of guessing.
 
-### Key takeaway
 
 > **Profile the main thread** with Android Studio or Perfetto—don’t guess where time goes.
 
 ---
 
-### Question
-
-How does **RecyclerView** work internally, and what happens in `onBindViewHolder`?
-
-### Answer
+## How does **RecyclerView** work internally, and what happens in `onBindViewHolder`?
 
 `RecyclerView` keeps a **small pool** of row views instead of creating one for every item in a huge list. When you scroll, rows that move off screen are **recycled**: their views are reused for new data.
 
@@ -34,33 +25,23 @@ How does **RecyclerView** work internally, and what happens in `onBindViewHolder
 
 Using stable IDs and `DiffUtil` helps update lists smoothly without flicker. For images, cancel or tag requests when a row is rebound so the wrong image does not flash.
 
-### Key takeaway
 
 > **`onBindViewHolder` should stay cheap** for a typical row—no heavy I/O or decoding there.
 
 ---
 
-### Question
-
-**ListView vs RecyclerView**
-
-### Answer
+## **ListView vs RecyclerView**
 
 `ListView` is the older list widget. **`RecyclerView` replaces it** for almost everything: it has pluggable layout (`LayoutManager`), item animations, better support for different row types, and a clearer recycling story.
 
 In practice you use the **ViewHolder pattern** with `RecyclerView`; `ListView` could do something similar but the ecosystem and tooling all point to `RecyclerView` (including things like `ConcatAdapter` for headers and grids).
 
-### Key takeaway
 
 > Don’t start new features on **`ListView`**—use **`RecyclerView`**.
 
 ---
 
-### Question
-
-**ArrayMap / SparseArray vs HashMap** on Android
-
-### Answer
+## **ArrayMap / SparseArray vs HashMap** on Android
 
 `ArrayMap` and `SparseArray` are Android collections tuned for **small maps** with fewer allocations than `HashMap`. That can mean less garbage collection pressure when you create and drop maps often.
 
@@ -71,17 +52,12 @@ If the map grows **large**, the classic `HashMap` often wins on lookup and struc
 - https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47  
 - https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray  
 
-### Key takeaway
 
 > **Measure** size and allocation churn before micro-optimizing map types.
 
 ---
 
-### Question
-
-**Bitmap loading**, large images, and **bitmap pooling**
-
-### Answer
+## **Bitmap loading**, large images, and **bitmap pooling**
 
 Large bitmaps blow the heap if you decode them at full resolution. Use **`inJustDecodeBounds`** first to read dimensions, then set **`inSampleSize`** (or use `ImageDecoder`, Coil, Glide) so the decoded bitmap matches the **on-screen size**.
 
@@ -92,17 +68,12 @@ Large bitmaps blow the heap if you decode them at full resolution. Use **`inJust
 - https://outcomeschool.com/blog/bitmap-pool  
 - https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53  
 
-### Key takeaway
 
 > **Read image size first**, then **downsample** to what the UI actually needs.
 
 ---
 
-### Question
-
-**APK / app size reduction** and **build time** improvements
-
-### Answer
+## **APK / app size reduction** and **build time** improvements
 
 Smaller APKs download faster and use less storage. Common levers: **R8/ProGuard** (shrink code), **`shrinkResources`**, limit languages with **`resConfigs`**, use **WebP** or vectors where it helps, **dynamic feature modules** for rarely used pieces, and remove dead code. **APK Analyzer** shows what actually ships.
 
@@ -114,17 +85,12 @@ Faster builds: Gradle **build cache**, fewer modules touching every change, sens
 - https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662  
 - https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43  
 
-### Key takeaway
 
 > App size and build speed are **ongoing hygiene**, not one-off tasks.
 
 ---
 
-### Question
-
-**StrictMode** — how do you use it without annoying everyone?
-
-### Answer
+## **StrictMode** — how do you use it without annoying everyone?
 
 StrictMode warns (or crashes in debug) when you accidentally do **disk or network I/O on the main thread**, or leak **SQLite cursors** and **closable** objects. It is a **development** tool to catch mistakes early.
 
@@ -134,17 +100,12 @@ Turn it on for **debug builds** (and tests), not for production users. Pair it w
 
 - https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997  
 
-### Key takeaway
 
 > Use StrictMode in **debug and CI**, not as a hammer on real users.
 
 ---
 
-### Question
-
-**RenderScript vs NDK** (legacy note)
-
-### Answer
+## **RenderScript vs NDK** (legacy note)
 
 RenderScript was meant for heavy parallel work on the GPU/CPU. It is **deprecated**; new code should use other options (NDK, GPU APIs, or higher-level libraries) depending on the problem.
 
@@ -152,17 +113,12 @@ RenderScript was meant for heavy parallel work on the GPU/CPU. It is **deprecate
 
 - https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe  
 
-### Key takeaway
 
 > Know the **deprecation story** if you maintain older apps that still mention RenderScript.
 
 ---
 
-### Question
-
-**FlatBuffers vs JSON**
-
-### Answer
+## **FlatBuffers vs JSON**
 
 **JSON** is text: easy to read and debug, but parsing allocates and copies a lot. **FlatBuffers** is a binary layout that can be read with **minimal parsing** (useful with memory-mapped files and tight latency).
 
@@ -172,17 +128,12 @@ You trade **human readability and tooling** for **speed and battery** on the wir
 
 - https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07  
 
-### Key takeaway
 
 > Binary formats help **latency and battery** on slow or flaky networks when you own both ends.
 
 ---
 
-### Question
-
-**Battery optimization** — engineering checklist
-
-### Answer
+## **Battery optimization** — engineering checklist
 
 Radios (mobile data, Wi‑Fi) cost battery even after a small request because of **tail time**—the modem stays awake. **Batch** network work, avoid tight polling, and use **WorkManager** for deferrable jobs. Compress payloads when it helps.
 
@@ -193,17 +144,12 @@ For **location**, balance accuracy, interval, and max wait—higher accuracy and
 - https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70  
 - https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html  
 
-### Key takeaway
 
 > **Batching network work** usually beats many tiny requests for battery.
 
 ---
 
-### Question
-
-**Memory leaks** — create, avoid, detect
-
-### Answer
+## **Memory leaks** — create, avoid, detect
 
 A leak keeps objects alive when they should be collected—often by holding a **`Context`** (especially an **Activity**) in a static field, a long-lived **listener**, a **Handler** tied to the Activity, or a thread that outlives the screen.
 
@@ -215,17 +161,12 @@ A leak keeps objects alive when they should be collected—often by holding a **
 
 - https://www.geeksforgeeks.org/memory-leaks-in-android/  
 
-### Key takeaway
 
 > **Cancel work and drop references** when screens go away—especially for Activities and Fragments.
 
 ---
 
-### Question
-
-**OOM** mitigation
-
-### Answer
+## **OOM** mitigation
 
 **OutOfMemoryError** often comes from **bitmaps** and **unbounded caches**—not from “the heap number is too small.” Downsample images, cap cache size, and **evict** on memory pressure.
 
@@ -235,17 +176,12 @@ Profile with **heap dumps** when OOMs happen in production-like conditions. Nati
 
 - https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application  
 
-### Key takeaway
 
 > OOM is usually **images and cache policy**, not “just increase the heap.”
 
 ---
 
-### Question
-
-**onTrimMemory** — why implement it?
-
-### Answer
+## **onTrimMemory** — why implement it?
 
 The system calls **`onTrimMemory`** (and related callbacks) when memory is tight. It is your chance to **drop caches** (thumbnails, parsed JSON, extra bitmaps) so the process is less likely to be killed.
 
@@ -255,17 +191,12 @@ Do **not** throw away data you need for correctness—only **recreatable** cache
 
 - https://developer.android.com/topic/performance/memory  
 
-### Key takeaway
 
 > Trim **caches**, not essential user data or app state you cannot rebuild.
 
 ---
 
-### Question
-
-**Why apps exit** — process death vs finish
-
-### Answer
+## **Why apps exit** — process death vs finish
 
 Android does not work like desktop “Quit.” The system may **kill your process** in the background under memory pressure. The user may also swipe the app away from recents, which behaves differently by version.
 
@@ -275,17 +206,12 @@ Crashes and **low-memory killer** are normal topics in interviews—**do not rel
 
 - https://blog.mindorks.com/reason-of-exit-in-android-application/  
 
-### Key takeaway
 
 > There is **no reliable desktop-style “exit app”** model—design for **process death** and restoration.
 
 ---
 
-### Question
-
-**Shimmer placeholders**
-
-### Answer
+## **Shimmer placeholders**
 
 **Shimmer** (or skeleton placeholders) improves **perceived** performance: the user sees structure while content loads. Keep animations **light** so they do not steal GPU or CPU from real work.
 
@@ -293,17 +219,12 @@ Crashes and **low-memory killer** are normal topics in interviews—**do not rel
 
 - https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/  
 
-### Key takeaway
 
 > Skeleton UI should **match the final layout** so content does not jump when it arrives.
 
 ---
 
-### Question
-
-**SnapHelper** in RecyclerView
-
-### Answer
+## **SnapHelper** in RecyclerView
 
 **SnapHelper** snaps the list so an item lines up (carousel, pager-like rows). You attach it to the `RecyclerView` and pick **linear** or **pager** behavior.
 
@@ -313,17 +234,12 @@ Watch **measurement order** and test on **RTL** and different **screen densities
 
 - https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8  
 
-### Key takeaway
 
 > Test **RTL and density**—snap math is easy to get wrong on edge layouts.
 
 ---
 
-### Question
-
-**Multi-touch**
-
-### Answer
+## **Multi-touch**
 
 Touch events carry **multiple pointers** (fingers). **`MotionEvent`** reports indices and IDs; pointer **indices** can change when fingers lift, so use **`getPointerId`** for tracking across events. **`GestureDetector`** helps with common patterns.
 
@@ -331,17 +247,12 @@ Touch events carry **multiple pointers** (fingers). **`MotionEvent`** reports in
 
 - https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/  
 
-### Key takeaway
 
 > Track **pointer IDs**, not only indices—they are not the same across events.
 
 ---
 
-### Question
-
-**Swipe animation XML example**
-
-### Answer
+## **Swipe animation XML example**
 
 This **translate** animation slides content in from the left over **700 ms** (legacy `View` animation XML).
 
@@ -356,33 +267,23 @@ This **translate** animation slides content in from the left over **700 ms** (le
  </set>
 ```
 
-### Key takeaway
 
 > For modern motion, prefer **physics or spring-based** animations when you can; XML tweens are fine for simple legacy Views.
 
 ---
 
-### Question
-
-**Cold vs warm vs hot start** — how do you optimize **startup** with evidence?
-
-### Answer
+## **Cold vs warm vs hot start** — how do you optimize **startup** with evidence?
 
 **Cold:** process not running—**Zygote**, **`Application`**, **`ContentProvider` init**, first **Activity/Compose** frame. **Warm:** process lives, new **Activity**. **Hot:** resume from back stack. **Measure separately** (**Startup Profiler**, **Macrobenchmark**, **Play vitals** / **Firebase Performance**) because fixes differ.
 
 **Levers:** **App Startup** library with explicit **dependencies**, **lazy** SDK init, move **I/O** to **background** dispatchers, remove dead **`ContentProvider`**, defer **non-critical** work until **after first frame** (`registerActivityLifecycleCallbacks` / `IdleHandler` patterns)—**do not** confuse “post to main `Handler`” with **off-main** work. Verify with **before/after traces** and **benchmark** CI.
 
-### Key takeaway
 
 > **Profile TTID/TTFCP** first—**`onCreate()`** piles up **fast**.
 
 ---
 
-### Question
-
-**Main-thread blocking** and **jank** — how do you find and fix them?
-
-### Answer
+## **Main-thread blocking** and **jank** — how do you find and fix them?
 
 **Jank** = missed **frame deadline** (~**16.7 ms** @ 60 Hz, ~**8 ms** @ 120 Hz). **Tools:** **CPU** / **System Trace (Perfetto)**, **Frame Timeline**, **Layout Inspector**, **StrictMode** in **debug** (see earlier card). Hunt **disk**, **network**, **JSON/XML parse**, **Room** on **main**, **synchronized** contention.
 
@@ -400,87 +301,57 @@ fun TxRow(tx: Tx) {
 }
 ```
 
-### Key takeaway
 
 > **Measure** the main thread—Compose jank is often **recomposition**, not **drawing**.
 
 ---
 
-### Question
-
-**Large lists** — **RecyclerView** vs **Compose `LazyColumn`** at senior depth?
-
-### Answer
+## **Large lists** — **RecyclerView** vs **Compose `LazyColumn`** at senior depth?
 
 **RecyclerView:** **`ListAdapter` + `DiffUtil`**, **stable IDs**, **light** `onBind`, **Coil/Glide** with **request** lifecycle, **Paging 3**. **Compose:** **`items(..., key = { it.id })`**, **stable** parameter types (`@Stable` / **immutable** models), **`derivedStateOf`** for derived list state, **avoid** capturing **unstable** lambdas. Neither is “free”—**wrong state** makes Compose **worse** than a tuned **RV**.
 
-### Key takeaway
 
 > **Keys + stable models + diffing**—same physics, different **API**.
 
 ---
 
-### Question
-
-**Network and database** work — what shows up in **profiling**?
-
-### Answer
+## **Network and database** work — what shows up in **profiling**?
 
 Split **RTT** vs **parse** vs **DB insert** in **CPU trace**. Fixes: **pagination**, **batch** writes, **indexes** on **filter columns**, **background** parse, **Room** `@Transaction` where appropriate, **avoid** N+1 queries. UI reads **observe** DB **Flow** on **main** but **queries** run on **Room’s** executors—still watch **main-thread** `allowMainThreadQueries` abuse.
 
-### Key takeaway
 
 > **Scroll stutter** is often **JSON + DB** on the **wrong** dispatcher or **unbounded** queries.
 
 ---
 
-### Question
-
-Which **profiling tools** do you use **day to day** vs **deep dives**?
-
-### Answer
+## Which **profiling tools** do you use **day to day** vs **deep dives**?
 
 **Daily:** **Android Studio Profiler** (CPU/memory), **Layout Inspector**, **logcat** / **FrameMetrics**. **Deep:** **Perfetto**, **Startup Profiler**, **Macrobenchmark** (startup/scroll), **LeakCanary** in **debug**, **Play Console vitals** (ANR, **excessive wakeups**) in **production**. **StrictMode** stays **non-release**.
 
-### Key takeaway
 
 > Staff answers name **traces** and **metrics**, not only “we profile sometimes.”
 
 ---
 
-### Question (behavioral)
-
-**STAR** — performance or **ANR** incident?
-
-### Answer
+## **STAR** — performance or **ANR** incident?
 
 Use **real** **Situation/Task/Action/Result** with **tools** (**trace**, **heap dump**, **fix**, **verification**). Replace **fabricated** percentages with **what you measured** or **qualitative** outcome unless you own the **number**.
 
-### Key takeaway
 
 > Tie stories to **artifacts** (trace file, **PR**, **dashboard**).
 
 ---
 
-### Question
-
-**Doze** and **App Standby** — how do they affect your **features**?
-
-### Answer
+## **Doze** and **App Standby** — how do they affect your **features**?
 
 **Doze** (device **idle**, screen **off**, often **unplugged**): defers **network**, **jobs**, **alarms** except **maintenance windows**. **App Standby** buckets (**Active → … → Restricted**) tighten **per-app** **background** work. **FGS**, **high-priority FCM**, and **user-visible** flows get **exceptions**—everything else should assume **delay**.
 
-### Key takeaway
 
 > Design **deferrable** work—**fight the OS** and users **uninstall**.
 
 ---
 
-### Question
-
-**WorkManager** vs **foreground service** vs **AlarmManager** — pick rules?
-
-### Answer
+## **WorkManager** vs **foreground service** vs **AlarmManager** — pick rules?
 
 | Need | Tool |
 |------|------|
@@ -504,35 +375,24 @@ val work = OneTimeWorkRequestBuilder<SyncWorker>()
 WorkManager.getInstance(context).enqueueUniqueWork("sync", ExistingWorkPolicy.KEEP, work)
 ```
 
-### Key takeaway
 
 > **WorkManager** = **batch-friendly**; **FGS** = **user expects** it running; **Alarm** = **time-critical**.
 
 ---
 
-### Question
-
-**Push (FCM)** and **location/sensors** — battery mistakes?
-
-### Answer
+## **Push (FCM)** and **location/sensors** — battery mistakes?
 
 **FCM:** treat **high priority** as **expensive** (wakeups)—use for **user-visible** events; **collapse keys**; avoid **waking** for **pure analytics**. **Location:** lowest **acceptable** **accuracy/interval**, **stop** updates in **onPause** when possible, **fused** provider, **geofence** over **tight polling**. **Sensors:** **unregister** listeners; **batch** when API allows.
 
-### Key takeaway
 
 > Every **high-priority push** and **GPS fix** is **battery spend**—budget it.
 
 ---
 
-### Question
-
-**Battery anti-patterns** you see in **production**?
-
-### Answer
+## **Battery anti-patterns** you see in **production**?
 
 **Tight polling**, **infinite retry** without **backoff**, **multiple SDKs** duplicating **sync**, **wake locks** left on, **implicit** **broadcast** **receivers**, **FGS** **abuse**, **WorkManager** **15-minute** spam. **Audit SDKs** with **Play vitals** / **Battery Historian**; **batch** **network**; **respect** **Doze**.
 
-### Key takeaway
 
 > Much drain is **integration**, not your **for-loop**—**inventory SDKs** like **prod code**.
 
@@ -542,43 +402,29 @@ WorkManager.getInstance(context).enqueueUniqueWork("sync", ExistingWorkPolicy.KE
 
 ---
 
-### Question
-
-**ProGuard vs R8 vs DexGuard**
-
-### Answer
+## **ProGuard vs R8 vs DexGuard**
 
 **ProGuard** was the classic **shrink + obfuscate** toolchain. **R8** is the default now: it **shrinks**, **obfuscates**, and ties into **desugaring** with generally **faster** builds. **DexGuard** adds **commercial hardening** (extra obfuscation, tamper resistance)—buy it when your **threat model** justifies cost.
 
 **Example:** Turn on **R8 full mode** in release and maintain **keep rules** for **reflection** (Retrofit models, Gson types, etc.).
 
-### Key takeaway
 
 > Shrinking **breaks reflection**—**ProGuard/R8 rules** are part of your source tree.
 
 ---
 
-### Question
-
-**Build types vs product flavors vs build variants**
-
-### Answer
+## **Build types vs product flavors vs build variants**
 
 - **Build type:** **debug** vs **release** (minify, signing, debuggable).
 - **Product flavor:** different **products** (free/pro, region) along **dimensions**.
 - **Variant:** one **flavor** × one **build type** (e.g. `prodRelease`).
 
-### Key takeaway
 
 > Many variants multiply **CI time**—delete what you do not ship.
 
 ---
 
-### Question
-
-**Gradle `implementation` vs `api`**
-
-### Answer
+## **Gradle `implementation` vs `api`**
 
 **`implementation`** hides **transitive types** from **consumers** of your library → **faster compiles**. **`api`** **exports** those types → consumers see them on their classpath.
 
@@ -586,45 +432,30 @@ WorkManager.getInstance(context).enqueueUniqueWork("sync", ExistingWorkPolicy.KE
 
 - https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa  
 
-### Key takeaway
 
 > In libraries, default to **`implementation`** unless you intentionally expose types.
 
 ---
 
-### Question
-
-**Gradle wrapper** purpose
-
-### Answer
+## **Gradle wrapper** purpose
 
 The **wrapper** (`gradlew` + properties) pins the **Gradle version** so **CI** and every developer use the **same** build tool.
 
-### Key takeaway
 
 > **Commit the wrapper**—do not rely on “whatever Gradle is installed.”
 
 ---
 
-### Question
-
-**AAPT2 / build pipeline** (high level)
-
-### Answer
+## **AAPT2 / build pipeline** (high level)
 
 **Resources** compile to **binary tables**; **Java/Kotlin** compiles to **DEX** via **D8/R8**; everything packs into **APK/AAB**. Incremental steps exist so small edits do not rebuild the world.
 
-### Key takeaway
 
 > Know enough to read **resource merge** and **AAPT** error output.
 
 ---
 
-### Question
-
-**ABI splits / ABI filters**
-
-### Answer
+## **ABI splits / ABI filters**
 
 **Native** `.so` files are **per CPU architecture**. **App Bundles** let Play deliver **split APKs** per ABI. Understand **which ABIs** you support—dropping **x86** in dev builds can speed iteration.
 
@@ -632,17 +463,12 @@ The **wrapper** (`gradlew` + properties) pins the **Gradle version** so **CI** a
 
 - https://developer.android.com/ndk/guides/abis  
 
-### Key takeaway
 
 > Native SDKs inflate **download size**—split and filter with intent.
 
 ---
 
-### Question
-
-**CI/CD for Android**
-
-### Answer
+## **CI/CD for Android**
 
 Typical pieces: **GitHub Actions**, **Jenkins + Docker**, **Bitrise**, **Gradle caching**, **secure signing**, **Play internal tracks**, and **automated tests** (including **Firebase Test Lab**).
 
@@ -651,45 +477,30 @@ Typical pieces: **GitHub Actions**, **Jenkins + Docker**, **Bitrise**, **Gradle 
 - https://blog.mindorks.com/github-actions-for-android/  
 - https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/  
 
-### Key takeaway
 
 > Cache **dependencies** and **build cache**—Android CI is I/O heavy.
 
 ---
 
-### Question
-
-**CI/CD benefits & feature branching**
-
-### Answer
+## **CI/CD benefits & feature branching**
 
 Automation gives **faster releases**, **consistent quality gates**, and **smaller rollout risk**. **Trunk-based** development with **feature flags** usually scales better than long-lived branches.
 
-### Key takeaway
 
 > **Short-lived branches + flags** beat months-long **integration branches**.
 
 ---
 
-### Question
-
-**Signing, Play App Signing, key rotation**
-
-### Answer
+## **Signing, Play App Signing, key rotation**
 
 Use **Play App Signing** so Google holds the **app signing key** and you manage an **upload key**. Document **recovery** if an upload key is lost.
 
-### Key takeaway
 
 > Losing **signing keys** is a **business continuity** problem—treat it seriously.
 
 ---
 
-### Question
-
-How do you add **automated review gates** to CI/CD (lint, analysis, tests, coverage)—and where does an **LLM** fit without blocking merges on hallucinations?
-
-### Answer
+## How do you add **automated review gates** to CI/CD (lint, analysis, tests, coverage)—and where does an **LLM** fit without blocking merges on hallucinations?
 
 **Gates (typical order, fail fast):** formatting (**ktlint** / **Spotless**), **Android Lint** + **Detekt**, **unit tests**, **coverage floor** (**JaCoCo** `jacocoTestCoverageVerification`), optional **instrumentation** on a **schedule** or **nightly** if full **`connectedCheck`** is too slow for every PR. **Static analysis** (**SonarQube** / **SonarCloud**, **CodeQL**) catches smells and security patterns **deterministically**. **Dependency** scanners (**OWASP Dependency-Check**, **Snyk**, **Dependabot**) belong in the same “hard gate” family as your policy allows.
 
@@ -697,31 +508,21 @@ How do you add **automated review gates** to CI/CD (lint, analysis, tests, cover
 
 **LLM-assisted review:** Treat it as a **soft** layer after deterministic checks pass. Feed a **trimmed diff**, **title/description**, and **short team rules** (e.g. “no business logic in Composables”). Ask for **severity**, **actionable** bullets, and **missing tests**—post as **PR comments**. **Do not** fail the build solely on LLM output (noise, **hallucinations**, **secrets** in diffs—**redact** before sending). Cap **tokens** (skip generated files, limit lines), run **on PR** not every push, and use a **cheaper** model for huge diffs if cost matters.
 
-### Key takeaway
 
 > **Lint + tests + SCA** = **hard gates**; **LLM** = **extra reviewer voice**, not the **merge** decision by itself.
 
 ---
 
-### Question
-
-**End-to-end release** from merge to Play — what are the control points?
-
-### Answer
+## **End-to-end release** from merge to Play — what are the control points?
 
 **Merge** to protected branch → **CI** (lint, unit tests, optional instrumentation) → **versionCode** / **versionName** policy → **build variant** (flavor + type) → **sign** release **AAB** → archive **`mapping.txt`** / **native symbols** → **upload** (internal → closed → production) with **release notes** → **monitor** Crashlytics / ANR → **staged rollout** with **pause** plan. **Determinism:** pinned deps, same **JDK/AGP** on CI, no **manual** “works on my laptop” releases for prod.
 
-### Key takeaway
 
 > Interviewers listen for **artifact integrity**, **symbol upload**, and **blast-radius** control.
 
 ---
 
-### Question
-
-**Keystores in CI** — how do mature teams avoid leaking signing material?
-
-### Answer
+## **Keystores in CI** — how do mature teams avoid leaking signing material?
 
 Prefer **Play App Signing**: Google holds **app signing key**; your **upload key** lives in **CI secrets** (Vault, GitHub Actions secrets, etc.), injected as **env vars** or **ephemeral** files—**never** commit. **Rotate** upload key on compromise without breaking installed apps. **Least privilege:** only release jobs can decrypt.
 
@@ -738,17 +539,12 @@ signingConfigs {
 }
 ```
 
-### Key takeaway
 
 > **Upload key** in secrets; **app signing key** with Play—know **what leaks** vs what **revokes**.
 
 ---
 
-### Question
-
-**buildTypes** vs **productFlavors** — how do you avoid a variant explosion?
-
-### Answer
+## **buildTypes** vs **productFlavors** — how do you avoid a variant explosion?
 
 **buildTypes** = *how* built (**debug**, **release**, maybe **staging** with different minify/logging). **productFlavors** = *what* product (**dev** / **qa** / **prod** API, branding). **Dimensions** combine into variants (`devDebug`, `prodRelease`)—keep **matrix** small; use **remote config** for switches that do not need a separate APK.
 
@@ -769,31 +565,21 @@ android {
 }
 ```
 
-### Key takeaway
 
 > Flavors for **environment/product**; build types for **build behavior**—don’t multiply both without reason.
 
 ---
 
-### Question
-
-**Environment config** (`buildConfigField`, resources) vs **secrets** — what is safe to embed?
-
-### Answer
+## **Environment config** (`buildConfigField`, resources) vs **secrets** — what is safe to embed?
 
 **Non-secret** endpoints and feature flags can go in **`buildConfigField`** or **flavor resources**, often fed by **CI env**. **Assume APK is extracted**: **API keys** should be **restricted** (package + signing cert), **rate-limited** server-side, and **never** the sole security control. **Fintech:** **mTLS**, **request signing**, **device binding**—not “hidden” base URLs.
 
-### Key takeaway
 
 > **Obfuscation ≠ secrecy**—backend must **assume** the client is **hostile**.
 
 ---
 
-### Question
-
-**Fastlane** (or equivalent) — what do you automate for Android?
-
-### Answer
+## **Fastlane** (or equivalent) — what do you automate for Android?
 
 **Fastlane** wraps **Gradle** (`bundleProdRelease`), **upload_to_play_store** (track, rollout %, AAB path), **metadata**, and **Slack/Teams** notifications. **Maturity signals:** separate **lanes** per track, **manual approval** for production, **rollback** playbook. Same ideas map to **pure** Gradle + **Play Developer API** in CI without Fastlane.
 
@@ -809,35 +595,24 @@ lane :internal do
 end
 ```
 
-### Key takeaway
 
 > **Repeatable lane** + **staged rollout** beats **hand-upload** Friday night.
 
 ---
 
-### Question
-
-**Play Store rollout** — how do you limit blast radius?
-
-### Answer
+## **Play Store rollout** — how do you limit blast radius?
 
 **Internal/closed** first; **production** with **percentage rollout** (e.g. 5% → 20% → 100%); watch **crash-free users** and **ANR**; **halt** rollout on thresholds. Upload **mapping** file with release. **AAB** (not side-loaded APK) for Play distribution.
 
-### Key takeaway
 
 > **Staged %** + **metrics** = production **judgment**, not hope.
 
 ---
 
-### Question (deep follow-up)
-
-Can two builds from the **same commit** differ? Should they?
-
-### Answer
+## Can two builds from the **same commit** differ? Should they?
 
 **Reproducible builds** aim for **bit-identical** or **functionally identical** artifacts: pinned **dependencies**, documented **JDK**, avoid **non-deterministic** steps in release (timestamp in `BuildConfig` if you care). **Practical:** same **inputs** → same **AAB** except where Play injects **signing**. Teams that need **supply-chain** proof track **hashes** and **SBOM**.
 
-### Key takeaway
 
 > Staff answers mention **pinning** and **traceability**, not “Gradle magic.”
 
@@ -847,11 +622,7 @@ Can two builds from the **same commit** differ? Should they?
 
 ---
 
-### Question
-
-Integrating **Firebase** end-to-end — what do staff engineers watch?
-
-### Answer
+## Integrating **Firebase** end-to-end — what do staff engineers watch?
 
 - **Realtime Database vs Firestore:** different **consistency**, **offline**, and **security rules** ergonomics—pick for your **query patterns** and scale.
 - **FCM:** **token** rotation, avoid **topic** abuse, know **background delivery** changes by Android version.
@@ -860,59 +631,39 @@ Integrating **Firebase** end-to-end — what do staff engineers watch?
 
 **Example:** Regulated apps combine **auth**, **messaging**, and **analytics** with **compliance** reviews—not “drop in SDK and forget.”
 
-### Key takeaway
 
 > Firebase is **fast to adopt** and **easy to mis-govern** without rules, reviews, and ownership.
 
 ---
 
-### Question
-
-**Google Maps** & geo features at scale
-
-### Answer
+## **Google Maps** & geo features at scale
 
 Plan for **marker clustering**, **geofencing**, **background location** policy, **billing**, and **API key restriction** (by app signing + package). Snapshot or **visual** tests help **map overlays** not drift.
 
-### Key takeaway
 
 > **Lock down API keys** and **respect Play policy**—non-negotiable for maps at scale.
 
 ---
 
-### Question (FAANG)
-
-**Third-party SDK risk management**
-
-### Answer
+## **Third-party SDK risk management**
 
 Review **vendor security**, audit **data leaving the device**, measure **startup cost** of SDK init, watch **transitive permissions**, add **feature-flag kill switches**, and track an **SBOM**-style inventory of what you ship.
 
-### Key takeaway
 
 > Every SDK is **risk and bytes**—budget it like headcount.
 
 ---
 
-### Question (FAANG)
-
-**CMS-driven mobile UI** — architecture?
-
-### Answer
+## **CMS-driven mobile UI** — architecture?
 
 Treat server payloads as **untrusted**: **version** your schema, ship **fallback** bundles, **sign** or **validate** payloads, support **incremental sync**, and guard **A/B** experiments. **Cache** templates for **offline**.
 
-### Key takeaway
 
 > CMS JSON is **input**—validate, version, and fail safe.
 
 ---
 
-### Question
-
-**Headless CMS** (AEM, Contentful, Sanity, etc.) on Android — **content-driven** architecture?
-
-### Answer
+## **Headless CMS** (AEM, Contentful, Sanity, etc.) on Android — **content-driven** architecture?
 
 **Headless** = content **authoring** separate from **presentation**; mobile consumes **JSON/GraphQL**. Flow: **fetch** payload → **map** to **domain** models (never bind **raw** JSON in UI) → **render** by **component type** using a **registry** (`"carousel"` → `CarouselRenderer`). **Business rules** stay in the **app**; CMS supplies **copy**, **ordering**, **visibility**—not **payment** logic.
 
@@ -924,107 +675,71 @@ Treat server payloads as **untrusted**: **version** your schema, ship **fallback
 
 **Performance:** **prefetch** home/marketing, **compress**, **lazy** heavy blocks, **CDN** + **OkHttp** cache where safe; in **Compose**, stable **keys** and **avoid** recomposing whole trees on every CMS tick.
 
-### Key takeaway
 
 > CMS controls **content**, not **money or auth**; **registry + versioning + safe fallbacks** keep ships boring.
 
 ---
 
-### Question
-
-**Play Billing / IAP** (add-on)
-
-### Answer
+## **Play Billing / IAP** (add-on)
 
 **Acknowledge** purchases, make the **backend idempotent**, run **fraud checks**, and use **server notifications**—never trust the client as the only source of truth for money.
 
-### Key takeaway
 
 > **Server validation** owns the business truth for purchases.
 
 ---
 
-### Question
-
-**SDK initialization** — when do you run it, and what must not live in `Application.onCreate()`?
-
-### Answer
+## **SDK initialization** — when do you run it, and what must not live in `Application.onCreate()`?
 
 **Bucket SDKs:** (1) **crash/telemetry** you need from second one—init **early** but keep work **light**; (2) **feature** SDKs (maps, payments)—**lazy** init on first screen that needs them; (3) **analytics/marketing**—often **after** first frame or **after consent**. Use **App Startup** with explicit dependencies, **background** threads where safe, and **feature flags** to **disable** a bad SDK without shipping.
 
 **Main-thread block** in init shows up in **startup traces** / **StrictMode**—profile and defer.
 
-### Key takeaway
 
 > **Default lazy**; **eager** only when the product truly needs it **before** first paint.
 
 ---
 
-### Question
-
-How do you measure and **limit** third-party SDK **performance** cost?
-
-### Answer
+## How do you measure and **limit** third-party SDK **performance** cost?
 
 **Startup** tracing (Android Studio, **Macrobenchmark**), **Systrace/Perfetto**, **memory** profiler, **network** inspector. Mitigate with **lazy** load, **turn off** unused SDK modules, **strip** verbose logging in **release**, and **BOM**/pinned versions so updates are **reviewed**, not accidental.
 
-### Key takeaway
 
 > If you cannot **measure** SDK cost, you cannot defend it in a **staff** review.
 
 ---
 
-### Question
-
-**Privacy / consent** and third-party SDKs — practical checklist?
-
-### Answer
+## **Privacy / consent** and third-party SDKs — practical checklist?
 
 Treat each SDK as a **data processor**: read **what** it collects, **gate** init behind **consent** where law/product requires, disable **automatic** collection APIs when offered (**e.g.** `setAnalyticsCollectionEnabled`), prefer **server-side** aggregation for sensitive metrics, and **document** flows for **Play** / **audit**.
 
-### Key takeaway
 
 > **Consent + config flags** beat “vendor default ON.”
 
 ---
 
-### Question
-
-**Version management** — BOMs, conflicts, and release discipline?
-
-### Answer
+## **Version management** — BOMs, conflicts, and release discipline?
 
 Centralize versions (**Gradle Version Catalog**, **Firebase BOM**). Read **changelogs** before bumps; **pin** hotfix branches; resolve **transitive** conflicts with **`constraints`**, **`exclude`**, or **isolation** (separate module / dynamic feature) when two vendors fight. Never **auto-upgrade** all SDKs the week before **freeze**.
 
-### Key takeaway
 
 > **One catalog** + **reviewed bumps** beats **mystery classpath**.
 
 ---
 
-### Question
-
-**Failure isolation** and **SDK removal** — how do staff teams treat churn?
-
-### Answer
+## **Failure isolation** and **SDK removal** — how do staff teams treat churn?
 
 **Wrap** vendor APIs behind **your** interfaces; **try/catch** or **Result** at boundaries; **feature-flag** kill switch; **timeouts** on network SDKs. **Removing** an SDK: stop **new** usage, **dual-run** metrics if swapping analytics, delete **permissions** / **manifest** mergers / **init** code, verify **ProGuard** rules.
 
-### Key takeaway
 
 > **Adapter + flag** = you can **survive** Tuesday’s bad SDK release.
 
 ---
 
-### Question (behavioral template)
-
-**STAR** — SDK caused **compliance** or **instability** risk?
-
-### Answer
+## **STAR** — SDK caused **compliance** or **instability** risk?
 
 Use **STAR** with **real** numbers you own: **Situation** (what shipped / what alarm fired), **Task** (your ownership), **Action** (consent gating, vendor ticket, abstraction, rollback), **Result** (metric or audit outcome). Do **not** invent **RBI/PhonePe** specifics—speak to **your** regulatory context.
 
-### Key takeaway
 
 > Interviewers want **process + measurable** outcome, not **vendor blame** alone.
 
@@ -1034,11 +749,7 @@ Use **STAR** with **real** numbers you own: **Situation** (what shipped / what a
 
 ---
 
-### Question
-
-Tips & curated resources for interview preparation
-
-### Answer
+## Tips & curated resources for interview preparation
 
 Mix **consistent DSA practice**, **system design** drills, and **behavioral** stories with **real numbers** (latency saved, crash rate, team size). Use the links below as **starting points**, not a checklist to cram in one night.
 
@@ -1056,456 +767,295 @@ Mix **consistent DSA practice**, **system design** drills, and **behavioral** st
 - https://blog.sp3.in/dsa
 - STAR method: https://www.testgorilla.com/blog/star-method-interviews/
 
-### Key takeaway
 
 > **STAR + metrics** beat a list of adjectives about how “passionate” you are.
 
 ---
 
-### Question (behavioral)
-
-Describe a **performance troubleshooting** story on Android.
-
-### Answer
+## Describe a **performance troubleshooting** story on Android.
 
 Use **STAR**: **Situation** (slow app, big APK, bad reviews). **Task** (find hotspots without guessing). **Action** (Android Studio CPU/memory/network profilers, main-thread audit, caching, async boundaries, R8/shrinkResources, image pipeline). **Result** (startup ms, jank frames, APK size, crash-free rate—**real numbers**).
 
-### Key takeaway
 
 > Interviewers want **how you thought** and **what improved**, with **numbers**.
 
 ---
 
-### Question
-
-**Error monitoring & logging** for post-mortems
-
-### Answer
+## **Error monitoring & logging** for post-mortems
 
 Use **structured logs** where they help, **Crashlytics** (or similar) for crashes and **non-fatals**, **breadcrumbs** around risky flows, **remote flags** to tune logging, and **PII scrubbing**. Dashboards should answer **“what broke for whom?”** not dump noise.
 
-### Key takeaway
 
 > Logs and dashboards should drive **action**, not scroll fatigue.
 
 ---
 
-### Question
-
-**API security** with sensitive data
-
-### Answer
+## **API security** with sensitive data
 
 Cover **TLS**, **pinning** if needed, **token lifecycle**, **least privilege** scopes, **encryption at rest** on device, **OWASP Mobile** awareness, **key rotation**, and **abuse detection** on the server.
 
-### Key takeaway
 
 > Security is **process + design**, not one library you drop in once.
 
 ---
 
-### Question
-
-**Firebase integration** experience (Realtime DB, FCM, Analytics)
-
-### Answer
+## **Firebase integration** experience (Realtime DB, FCM, Analytics)
 
 Be ready to talk about **data modeling**, **indexes**, **security rules**, **notification** segments, **analytics** event design, **Crashlytics** triage, and **Remote Config** experiments—and how each choice affects **privacy** and **cost**.
 
-### Key takeaway
 
 > Tie Firebase decisions to **privacy, cost, and reliability**, not “we use Firebase.”
 
 ---
 
-### Question
-
-Testing **MVP/MVVM/MVI** — strategy differences
-
-### Answer
+## Testing **MVP/MVVM/MVI** — strategy differences
 
 **MVP:** test the **presenter** with a fake **view**. **MVVM:** test **ViewModel outputs** and fakes for repos. **MVI:** test **pure reducers** and **snapshots** of state where it helps.
 
-### Key takeaway
 
 > Your architecture picks **what you mock** and **what you assert**.
 
 ---
 
-### Question
-
-**Tell me about yourself / hobbies / not on resume** (templates)
-
-### Answer
+## **Tell me about yourself / hobbies / not on resume** (templates)
 
 Keep a **tight spine**: domains, tech, scale, impact. Add **one human detail** if asked—avoid **rambling** or unrelated life story unless they invite it.
 
-### Key takeaway
 
 > Aim for about **two minutes**, clear structure.
 
 ---
 
-### Question
-
-**Production incident handling**
-
-### Answer
+## **Production incident handling**
 
 Show **calm steps**: assess **user impact**, **mitigate** fast, **communicate**, then **root cause** and **prevention** (flags, tests, runbooks). **Blameless** postmortems build trust.
 
-### Key takeaway
 
 > They want **customer focus** and **clear communication**, not panic.
 
 ---
 
-### Question
-
-**MVP/MVVM/MVI project examples** (banking/clinician/bus tracker narratives)
-
-### Answer
+## **MVP/MVVM/MVI project examples** (banking/clinician/bus tracker narratives)
 
 Prepare **a few real projects** with **different metrics** (latency, MAU, compliance, offline). Avoid repeating the **same story** with different buzzwords.
 
-### Key takeaway
 
 > Have **three solid stories**: scale, conflict, ambiguity.
 
 ---
 
-### Question
-
-**Data security in databases**
-
-### Answer
+## **Data security in databases**
 
 Discuss **encryption**, **integrity**, **authenticated APIs**, **backup** protection, and **least privilege** access—on **client and server**.
 
-### Key takeaway
 
 > Defense in depth across **device + backend**.
 
 ---
 
-### Question
-
-**Jetpack (Room, VM, LiveData)** usage story
-
-### Answer
+## **Jetpack (Room, VM, LiveData)** usage story
 
 Connect Jetpack to **outcomes**: offline cache, **safe migrations**, **lifecycle-aware** UI, fewer **over-fetch** bugs.
 
-### Key takeaway
 
 > Frame Jetpack as **business value**, not a feature list.
 
 ---
 
-### Question
-
-**UI + unit testing strategy**
-
-### Answer
+## **UI + unit testing strategy**
 
 **Pyramid** shape, **deterministic CI**, **screenshots** for a small golden UI set, **MockWebServer** for APIs, **TDD** where it pays back.
 
-### Key takeaway
 
 > **Killing flakes** is a senior skill—not “rerun until green.”
 
 ---
 
-### Question
-
-**Code optimization / APK size** narrative (25% claim in source)
-
-### Answer
+## **Code optimization / APK size** narrative (25% claim in source)
 
 Use **numbers you can defend**. Mention **R8**, **resource shrink**, **dynamic delivery**, and **profiling**—never invent **25%** without a real measurement.
 
-### Key takeaway
 
 > Do not quote **metrics** you cannot explain under follow-up questions.
 
 ---
 
-### Question
-
-**Simple solution to complex problem**
-
-### Answer
+## **Simple solution to complex problem**
 
 Tell a story where you **reframed** the problem—e.g. **query + cache** instead of a **big rewrite**—and **measured** the win.
 
-### Key takeaway
 
 > **Simple** beats **clever** when it meets the requirement.
 
 ---
 
-### Question
-
-**Git collaboration & branching**
-
-### Answer
+## **Git collaboration & branching**
 
 Compare **trunk-based** vs **GitFlow** honestly; mention **PR** quality gates, **CODEOWNERS**, **protected** branches.
 
-### Key takeaway
 
 > Branching should match **release cadence** and **team size**.
 
 ---
 
-### Question
-
-**Dependency injection frameworks (Dagger/Koin)**
-
-### Answer
+## **Dependency injection frameworks (Dagger/Koin)**
 
 **Dagger/Hilt:** compile-time graph, catches errors early. **Koin:** runtime, lighter setup. Pick for **graph size**, **build time**, and **test** needs—not fashion.
 
-### Key takeaway
 
 > Choose DI for **complexity you actually have**.
 
 ---
 
-### Question
-
-**Google Maps / geo** experience
-
-### Answer
+## **Google Maps / geo** experience
 
 Balance **accuracy vs battery**, handle **geofence** imperfection, clear **privacy** prompts, and **enterprise** billing/API limits.
 
-### Key takeaway
 
 > Location is **policy + UX + engineering** together.
 
 ---
 
-### Question
-
-**Code optimization impact** (deep narrative)
-
-### Answer
+## **Code optimization impact** (deep narrative)
 
 Walk through **profilers**, **structural** fixes, **data structures**, **caching**, and how you **measured before/after**.
 
-### Key takeaway
 
 > Always close with **before/after** evidence.
 
 ---
 
-### Question
-
-**Code reviews** example
-
-### Answer
+## **Code reviews** example
 
 Share a review where you caught a **security** or **correctness** issue **constructively** and followed up after merge.
 
-### Key takeaway
 
 > Reviews shape **team culture**, not only code.
 
 ---
 
-### Question
-
-**Roles & responsibilities**
-
-### Answer
+## **Roles & responsibilities**
 
 Align your story with **scope**, **leadership**, **cross-functional** work, and **quality ownership** at your level.
 
-### Key takeaway
 
 > Match examples to the **job level** you are interviewing for.
 
 ---
 
-### Question
-
-**Backward compatible API changes**
-
-### Answer
+## **Backward compatible API changes**
 
 Prefer **additive** changes, **versioning**, **contract tests**, and patterns like **dual read/write** during migrations.
 
-### Key takeaway
 
 > Compatibility is **distributed systems** discipline, even for mobile clients.
 
 ---
 
-### Question
-
-**Challenging project** (maps + realtime)
-
-### Answer
+## **Challenging project** (maps + realtime)
 
 Highlight **concurrency**, **consistency**, **offline**, and **performance** trade-offs you navigated.
 
-### Key takeaway
 
 > Depth on **one** hard problem beats ten shallow ones.
 
 ---
 
-### Question
-
-**Design patterns in practice** (Singleton/Observer/Factory)
-
-### Answer
+## **Design patterns in practice** (Singleton/Observer/Factory)
 
 Name patterns you **actually used** and **why**—including **downsides** (singletons and tests, overuse of observers).
 
-### Key takeaway
 
 > Patterns are **tools**, not tattoos.
 
 ---
 
-### Question
-
-**Difficult bug / intermittent crash**
-
-### Answer
+## **Difficult bug / intermittent crash**
 
 **Crashlytics** breadcrumbs, **repro** harness, **fix root cause** vs papering over with retries only.
 
-### Key takeaway
 
 > Intermittent bugs usually mean **missing signals**—add instrumentation.
 
 ---
 
-### Question
-
-**Staying current with API integration trends**
-
-### Answer
+## **Staying current with API integration trends**
 
 **RFCs**, **conferences**, **secure coding** practice, **internal guilds**—learning should be **scheduled**, not vague “I read sometimes.”
 
-### Key takeaway
 
 > Show **habits**, not a one-time course list.
 
 ---
 
-### Question
-
-**Refactoring definition + legacy refactor story**
-
-### Answer
+## **Refactoring definition + legacy refactor story**
 
 Refactoring changes **structure** without changing **behavior**—done in **small steps** with **tests** and **stakeholder** communication.
 
-### Key takeaway
 
 > Big refactors need a **business sponsor** and a **plan**.
 
 
 ---
 
-### Question
-
-**SDLC** as a **Tech Lead** — where do you actually spend ownership time?
-
-### Answer
+## **SDLC** as a **Tech Lead** — where do you actually spend ownership time?
 
 Treat SDLC as **risk reduction**, not a poster: **discovery** (NFRs: security, perf, scale—push back on vague scope); **design** (contracts, diagrams, trade-offs); **build** (standards, branching, **quality gates**); **test** (meaningful coverage, not vanity %); **release** (flags, rollout %, rollback); **run** (debt and incidents on the **backlog**). When requirements **shift**, re-scope **explicitly**—time, risk, phased delivery—no silent creep.
 
-### Key takeaway
 
 > Leads **surface uncertainty early**; they do not pretend the plan is frozen.
 
 ---
 
-### Question
-
-**Agile** in practice — how do you keep ceremonies from becoming theater?
-
-### Answer
+## **Agile** in practice — how do you keep ceremonies from becoming theater?
 
 Optimize for **outcomes**: planning uses **capacity + risk**, stories carry **acceptance criteria** and **tech notes**, blockers surface **without blame**. Standups coordinate **unblocking**, not status to the lead. **Metrics that matter:** defect **escape**, **cycle time**, **predictability**, **burnout** signals—**velocity** alone is noise without **quality**.
 
-### Key takeaway
 
 > Good Agile is **feedback and delivery**, not **ticket velocity** worship.
 
 ---
 
-### Question
-
-**Technical debt** — how do you prioritize without stopping the roadmap?
-
-### Answer
+## **Technical debt** — how do you prioritize without stopping the roadmap?
 
 Make debt **visible** and **classified**: **blocking** (fix now), **risky** (scheduled), **cosmetic** (only when touching the file). Tie asks to **business** language: slower delivery, **crash** / **security** exposure, **onboarding** cost. **Product** funds debt when it is **cost/risk**, not “I dislike this package.”
 
-### Key takeaway
 
 > **Debt is a portfolio**—trade-offs documented beat heroic weekend rewrites.
 
 ---
 
-### Question
-
-**Mentoring** — how does it differ for junior / mid / senior?
-
-### Answer
+## **Mentoring** — how does it differ for junior / mid / senior?
 
 **Junior:** small tasks, **pairing**, frequent feedback, fundamentals. **Mid:** **feature ownership**, design discussions, **trade-off** coaching. **Senior:** **system** scope, cross-team **initiatives**, decision **accountability**. Success = team needs you **less** for the same class of problem. **Underperformance:** diagnose (**skill vs clarity vs motivation**), written expectations, support window, **escalate** early if flat—compassionate and **fair**.
 
-### Key takeaway
 
 > Mentorship is **scaling people**, not **being the hero**.
 
 ---
 
-### Question
-
-**Cross-team** delivery — backend / QA / product blocked you. What do you do?
-
-### Answer
+## **Cross-team** delivery — backend / QA / product blocked you. What do you do?
 
 **Early** alignment on **API contracts** and **mocks**; shared **ownership** of incidents, not blame ping-pong. If blocked: escalate with **context + options** (phased ship, temporary stub, scope cut)—not raw complaints. **Fintech/compliance:** release **checklists** (logging, monitoring, audit trail) as **gates**, not last-night panic.
 
-### Key takeaway
 
 > Leads **unblock** with **options** and **written** alignment.
 
 ---
 
-### Question
-
-**Code reviews** — when a **senior** disagrees with your comment?
-
-### Answer
+## **Code reviews** — when a **senior** disagrees with your comment?
 
 Welcome **debate** on **merits**; if their **risk** argument wins, **merge** and move on. If residual risk stays, **document** the decision (ADR / comment). **Authority ≠ correctness**—but **shipping** with known risk must be **explicit**.
 
-### Key takeaway
 
 > Reviews are **risk conversation**, not **ego**.
 
 ---
 
-### Question (behavioral)
-
-**STAR** for **leadership** — what must be **real**?
-
-### Answer
+## **STAR** for **leadership** — what must be **real**?
 
 Use **your** **Situation / Task / Action / Result**; **replace** LLM placeholders (“**zero** critical issues”, “**90%**”) with **numbers you own** or **honest qualitative** outcomes. Interviewers probe **depth**—fabricated metrics **fail**.
 
-### Key takeaway
 
 > One **true** story beats five **polished** fictions.
 
@@ -1515,12 +1065,9 @@ Use **your** **Situation / Task / Action / Result**; **replace** LLM placeholder
 
 ---
 
-### Question
+## **Scenario: Memory Leak Causing Gradual App Slowdown**
 
-**Scenario: Memory Leak Causing Gradual App Slowdown**
 You are working on a large-scale social media app (~20M MAU). Users report: app becomes slow after 15–20 minutes, scrolling lags, eventually OOM-killed. Monitoring shows: memory grows continuously, GC frequency very high, issue prominent on feed screen. Recent changes: new feed redesign (RecyclerView), image loading optimizations, singleton analytics manager added. **How would you investigate and fix end-to-end?**
-
-### Answer
 
 Treat this as a **progressive memory leak** (lifecycle mismanagement), not an immediate crash — degradation correlates with user interaction over time.
 
@@ -1573,18 +1120,14 @@ Treat this as a **progressive memory leak** (lifecycle mismanagement), not an im
 - Code review checklist: "Does this hold a Context longer than its scope?"
 - Architectural boundary rule: no UI references in data layer components
 
-### Key takeaway
 
 > Memory leaks are **systemic lifecycle mismanagement** — fix at the architectural level, not one-off patches. LeakCanary in CI is your canary in the coal mine.
 
 ---
 
-### Question
+## **Scenario: Battery Drain Due to Background Work**
 
-**Scenario: Battery Drain Due to Background Work**
 You are working on a fitness tracking app. Users report significant battery drain; the app appears at the top of battery usage. The app uses location tracking, background sync, and periodic API polling. **How would you diagnose and fix?**
-
-### Answer
 
 Treat this as a **resource efficiency + background execution policy** problem, not a single bug.
 
@@ -1625,18 +1168,14 @@ Treat this as a **resource efficiency + background execution policy** problem, n
 - Run 8-hour real-device soak test; compare mAh consumed
 - Confirm app dropped from top battery consumers list
 
-### Key takeaway
 
 > Battery drain = **misusing background execution**. Align with Android's power management system — WorkManager, bounded location, and push over poll.
 
 ---
 
-### Question
+## **Scenario: Slow Build Time in Multi-Module Project**
 
-**Scenario: Slow Build Time in Multi-Module Project**
 Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local build ~10–12 minutes. Small changes trigger full rebuilds. Developers are losing productivity. **How would you optimize?**
-
-### Answer
 
 Treat this as a **build system scalability problem**, not just "add more RAM to the CI box."
 
@@ -1688,18 +1227,14 @@ org.gradle.configureondemand=true
 - Affected module detection — only run tests for changed modules (Gradle's `--affected` or custom scripts)
 - Run full test suite nightly; PR builds run only affected-module tests
 
-### Key takeaway
 
 > Slow builds = **poor modular boundaries + missing incremental/caching config**. Fix both: architecture (module graph) and tooling (KSP, cache, parallel). Measure with Build Scan before every change.
 
 ---
 
-### Question
+## **Scenario: Large List Data Loading Causing OOM**
 
-**Scenario: Large List Data Loading Causing OOM**
 Marketplace app. Users report crashes when scrolling large product lists. Observations: entire dataset loaded at once, images are high-resolution, no pagination. **How would you fix?**
-
-### Answer
 
 Treat this as a **memory management + data loading strategy** problem — you must never load unbounded data into memory.
 
@@ -1745,17 +1280,12 @@ class ProductPagingSource(private val api: ProductApi) : PagingSource<Int, Produ
 - Confirm heap stays bounded (does not grow with list size)
 - Test with 10,000-item dataset on a low-end device (2 GB RAM)
 
-### Key takeaway
 
 > OOM in lists = **unbounded data + unbounded images**. Paging 3 for data, downsized image loading, and bounded caches for memory — control flow at every layer.
 
 ---
 
-### Question
-
-**What is CI/CD in Android development and why does it matter?**
-
-### Answer
+## **What is CI/CD in Android development and why does it matter?**
 
 **CI (Continuous Integration):** Every code push to the shared repo automatically triggers a build and test run. Catches regressions before they reach other developers.
 
@@ -1779,17 +1309,12 @@ class ProductPagingSource(private val api: ProductApi) : PagingSource<Int, Produ
 | **Gradle Build Scan** | Build performance analysis |
 | **Detekt / Ktlint** | Static analysis quality gates |
 
-### Key takeaway
 
 > CI/CD is not optional on team projects — it is the **safety net that makes refactoring and feature flags safe to ship**.
 
 ---
 
-### Question
-
-**What is Gradle and how does project-level vs module-level `build.gradle` differ?**
-
-### Answer
+## **What is Gradle and how does project-level vs module-level `build.gradle` differ?**
 
 **Gradle** is Android's build system: compiles Kotlin/Java, packages resources, runs ProGuard/R8, and resolves dependencies. Defined via `build.gradle` (Groovy) or `build.gradle.kts` (Kotlin DSL).
 
@@ -1806,7 +1331,6 @@ class ProductPagingSource(private val api: ProductApi) : PagingSource<Int, Produ
 
 Use flavors for: different API base URLs · feature flags · white-label apps.
 
-### Key takeaway
 
 > Project-level = global plumbing; module-level = feature-specific wiring. Build variants = the matrix of every shipping artifact your pipeline must validate.
 

@@ -1,6 +1,6 @@
 # Real-World Scenario-Based Interview Questions
 
-### 1. Scenario: Memory Leak Causing Gradual App Slowdown
+## 1. Scenario: Memory Leak Causing Gradual App Slowdown
 
 You are working on a large-scale social media app (~20M MAU).
 Users are reporting that:
@@ -101,7 +101,7 @@ This issue is not just a bug but a systemic lifecycle mismanagement problem, and
 
 ---
 
-### 2. Scenario: API Layer Instability (Retries, Failures, Token Expiry)
+## 2. Scenario: API Layer Instability (Retries, Failures, Token Expiry)
 
 You are working on a fintech app with millions of daily transactions.
 Users report:
@@ -197,7 +197,7 @@ This is not just an API bug — it’s a distributed system reliability issue, r
 
 ---
 
-### 3. Scenario: Offline-First Sync Failure (Message Duplication & Data Loss)
+## 3. Scenario: Offline-First Sync Failure (Message Duplication & Data Loss)
 
 You are building a chat/messaging feature for a large app (~10M DAU), similar to WhatsApp.
 Users report:
@@ -295,7 +295,7 @@ This is fundamentally a data consistency and synchronization problem, and the co
 
 ---
 
-### 4. Scenario: Crash Spike Due to Lifecycle Issues (Fragment + Coroutines)
+## 4. Scenario: Crash Spike Due to Lifecycle Issues (Fragment + Coroutines)
 
 You are working on a modular app with multiple teams contributing.
 After a recent release:
@@ -386,7 +386,7 @@ This issue arises from mixing asynchronous work with lifecycle-unaware component
 
 ---
 
-### 5. Scenario: Slow Build Time in Multi-Module Project
+## 5. Scenario: Slow Build Time in Multi-Module Project
 
 You are working on a large Android codebase:
 - 50+ modules
@@ -452,7 +452,7 @@ Build time issues are usually due to poor modular boundaries and lack of increme
 
 ---
 
-### 6. Scenario: Battery Drain Due to Background Work
+## 6. Scenario: Battery Drain Due to Background Work
 
 You are working on a fitness tracking app.
 Users report:
@@ -512,7 +512,7 @@ Battery drain issues come from misuse of background execution, and the solution 
 
 ---
 
-### 7. Scenario: Jetpack Compose Performance Issue (Excessive Recompositions)
+## 7. Scenario: Jetpack Compose Performance Issue (Excessive Recompositions)
 
 You are working on a modern Android app fully built using Jetpack Compose.
 Users report:
@@ -597,7 +597,7 @@ Compose performance issues are not UI problems — they are state architecture p
 
 ---
 
-### 8. Scenario: API Layer Overload (Thundering Herd Problem)
+## 8. Scenario: API Layer Overload (Thundering Herd Problem)
 
 You are working on a news app with millions of users.
 At 9 AM daily:
@@ -660,7 +660,7 @@ This is not just a mobile issue — it’s a distributed load balancing problem,
 
 ---
 
-### 9. Scenario: Deep Link Handling Breaking Navigation
+## 9. Scenario: Deep Link Handling Breaking Navigation
 
 You are working on an e-commerce app.
 Users report:
@@ -712,7 +712,7 @@ Deep linking is not just routing — it’s about reconstructing app state corre
 
 ---
 
-### 10. Scenario: Large List Data Loading Causing OOM
+## 10. Scenario: Large List Data Loading Causing OOM
 
 You are building a marketplace app.
 Users report:
@@ -764,7 +764,7 @@ OOM issues are typically due to unbounded data loading, and the solution is cont
 
 ## 1. Android Core Concepts
 
-### Q:1) What are the core building blocks of an Android application?
+## Q:1) What are the core building blocks of an Android application?
 Android apps are built using several essential components provided by the Android framework. These components work together to handle UI, background tasks, user interactions, and data sharing.
 
 #### Core Building Blocks of an Android Application:
@@ -796,7 +796,7 @@ Android apps are built using several essential components provided by the Androi
 
 ---
 
-### Q:2) What is the intent?
+## Q:2) What is the intent?
 Intent is a messaging object used to request an action from another app component (activity, service, or broadcast receiver). It allows communication between components and even across different applications.
 
 There are two types of intents in Android:
@@ -823,7 +823,7 @@ startActivity(intent)
 
 ---
 
-### Q:3) What is the Android Application Lifecycle?
+## Q:3) What is the Android Application Lifecycle?
 The Android Application Lifecycle is the process your entire app goes through — from the moment it starts running to the moment it's closed or killed by the system.
 This lifecycle is managed by the Application class.
 
@@ -849,7 +849,7 @@ This lifecycle is managed by the Application class.
 
 ---
 
-### Q:4) What is the Scenario in which only onDestroy is called for an activity without onPause() and onStop()?
+## Q:4) What is the Scenario in which only onDestroy is called for an activity without onPause() and onStop()?
 If `finish()` is called in the `onCreate` method of an activity, the system will invoke `onDestroy()` method directly.
 
 Commonly used in:
@@ -859,7 +859,7 @@ Commonly used in:
 
 ---
 
-### Q:26) What are Intent Filters?
+## Q:26) What are Intent Filters?
 - Intent Filters are used to tell Android which intents an activity, service, or broadcast receiver can handle.
 - They are defined in the `AndroidManifest.xml` file.
 - The system uses intent filters to decide which component should respond to a specific intent.
@@ -871,7 +871,7 @@ Commonly used in:
 
 ---
 
-### Q:27) What is a BroadcastReceiver in Android?
+## Q:27) What is a BroadcastReceiver in Android?
 - A BroadcastReceiver is a component in Android that listens for system-wide or app-specific broadcast messages (called Intents).
 - It helps your app respond to events, even if your app is not currently open.
 - You can use it to listen to system events like:
@@ -884,7 +884,7 @@ Commonly used in:
 
 ---
 
-### Q:28) What are Loaders in Android?
+## Q:28) What are Loaders in Android?
 - Loaders are used to load data in the background from a data source (like a database or content provider).
 - They were introduced in API level 11 (Android 3.0).
 - Loaders help to avoid running long tasks on the main thread (which can freeze the UI).
@@ -894,7 +894,7 @@ Commonly used in:
 
 ---
 
-### Q:29) What are Launch Modes in Android ?
+## Q:29) What are Launch Modes in Android ?
 In Android, launch modes decide how activities are created and managed in the back stack when you open or reopen them.
 
 - **Standard (Default)**
@@ -923,7 +923,7 @@ In Android, launch modes decide how activities are created and managed in the ba
 
 ---
 
-### Q:30) What is ConstraintLayout?
+## Q:30) What is ConstraintLayout?
 - ConstraintLayout is a layout in Android that lets you design complex UIs without nesting multiple layouts.
 - It helps to create flat and efficient layouts, which means better performance.
 - Similar to RelativeLayout, but more powerful and flexible.
@@ -937,7 +937,7 @@ In Android, launch modes decide how activities are created and managed in the ba
 
 ---
 
-### Q:66) What is PeriodicWorkRequest and when to use it?
+## Q:66) What is PeriodicWorkRequest and when to use it?
 - A PeriodicWorkRequest is used in WorkManager to run background tasks repeatedly at a fixed time interval.
 - It’s ideal for work that needs to happen regularly, even if the app is closed or the device restarts.
 
@@ -955,7 +955,7 @@ You should use PeriodicWorkRequest for tasks like:
 
 ---
 
-### Q:67) What are the different states of Work in WorkManager?
+## Q:67) What are the different states of Work in WorkManager?
 - In WorkManager, every task (WorkRequest) can be in one of several states.
 - These states help you track progress, handle retries, or debug issues in background work.
 
@@ -985,7 +985,7 @@ You should use PeriodicWorkRequest for tasks like:
 
 ---
 
-### Q:68) What are Constraints in WorkManager and how to use them?
+## Q:68) What are Constraints in WorkManager and how to use them?
 Constraints control when the work should run.
 Example: Only run when the device is charging and connected to the network.
 
@@ -993,7 +993,7 @@ Example: Only run when the device is charging and connected to the network.
 
 ## 2. OOPS Concepts
 
-### Q:1) What is a Class and Object in Android?
+## Q:1) What is a Class and Object in Android?
 
 #### Class
 - A class is like a blueprint or template for creating objects.
@@ -1014,7 +1014,7 @@ Example: Only run when the device is charging and connected to the network.
 
 ---
 
-### Q:2) What are Primary and Secondary Constructors in Kotlin?
+## Q:2) What are Primary and Secondary Constructors in Kotlin?
 
 #### Primary Constructor
 - The main constructor of a class.
@@ -1042,7 +1042,7 @@ Example: Only run when the device is charging and connected to the network.
 
 ---
 
-### Q:3) Explain Inheritance in Android with an Example
+## Q:3) Explain Inheritance in Android with an Example
 - Inheritance is an OOP concept where one class (child/subclass) inherits properties and behaviors of another class (parent/superclass).
 - Helps reuse code, reduce duplication, and create hierarchical relationships.
 
@@ -1054,14 +1054,14 @@ Example: Only run when the device is charging and connected to the network.
 
 ---
 
-### Q4: What is Polymorphism in Android?
+## Q4: What is Polymorphism in Android?
 - Polymorphism is an OOP concept that allows an object to take many forms.
 
 ---
 
 ## 3. Kotlin Concepts
 
-### Q:1) What are the main features of Kotlin?
+## Q:1) What are the main features of Kotlin?
 - **Concise:** Less boilerplate than Java
 - **Null Safety:** Built-in null checks
 - **Extension Functions:** Add functions to existing classes
@@ -1073,7 +1073,7 @@ Example: Only run when the device is charging and connected to the network.
 
 ---
 
-### Q:2) What is the difference between val, var, and const in Kotlin?
+## Q:2) What is the difference between val, var, and const in Kotlin?
 In Kotlin, `val` and `var` are used to declare variables, but they behave differently:
 
 1. **var (Variable)**
@@ -1099,7 +1099,7 @@ age = 31
 
 ---
 
-### Q:3) What are null safety features in Kotlin?
+## Q:3) What are null safety features in Kotlin?
 Kotlin eliminates `NullPointerException` (NPE) by making all types non-nullable by default.
 
 #### Types:
@@ -1114,7 +1114,7 @@ Kotlin eliminates `NullPointerException` (NPE) by making all types non-nullable 
 
 ---
 
-### Q:4) What is a data class in Kotlin?
+## Q:4) What is a data class in Kotlin?
 A data class is a special class made specifically for storing data. It automatically gives you useful methods like:
 - `toString()` – so you can print the object easily
 - `equals()` and `hashCode()` – to compare objects or use in HashMap/Set
@@ -1130,14 +1130,14 @@ data class User(val name: String, val age: Int)
 
 ## 4. Android Architecture
 
-### Q:1) What is Android Architecture?
+## Q:1) What is Android Architecture?
 - It defines a way to structure code into layers.
 - Helps separate UI, data, and business logic.
 - Makes the code easy to maintain, test, and scale.
 
 ---
 
-### Q:2) What is MVVM Architecture?
+## Q:2) What is MVVM Architecture?
 - MVVM stands for Model-View-ViewModel.
 - **Model:** Manages data (e.g., from API or database).
 - **View:** UI layer (Activity, Fragment, or Compose).
@@ -1146,7 +1146,7 @@ data class User(val name: String, val age: Int)
 
 ---
 
-### Q:3) What is ViewModel?
+## Q:3) What is ViewModel?
 - Part of Android Architecture Components.
 - Stores UI-related data across configuration changes.
 - Provides data to the View using LiveData or StateFlow.
@@ -1154,26 +1154,26 @@ data class User(val name: String, val age: Int)
 
 ---
 
-### Q:4) What is LiveData?
+## Q:4) What is LiveData?
 - Lifecycle-aware observable data holder.
 - UI observes LiveData to get automatic updates.
 - Prevents memory leaks as it only updates when the UI is active.
 
 ---
 
-### Q:5) What is the difference between LiveData and StateFlow?
+## Q:5) What is the difference between LiveData and StateFlow?
 - LiveData is lifecycle-aware, works well with XML-based UIs.
 - StateFlow is not lifecycle-aware, works better with Kotlin Coroutines and Jetpack Compose.
 - StateFlow is a part of Kotlin Flow and used for modern reactive UIs.
 
 ---
 
-### Q:6) What is Repository in MVVM?
+## Q:6) What is Repository in MVVM?
 The Repository is responsible for fetching data. It abstracts the data sources (API, Room database, Firebase, etc.) from the ViewModel. This separation makes it easy to manage and test data logic.
 
 ---
 
-### Q:7) What are UseCases in Clean Architecture?
+## Q:7) What are UseCases in Clean Architecture?
 - A UseCase contains a single specific business logic (e.g., GetUserDetails).
 - Keeps the ViewModel clean by handling complex logic inside it.
 - Lies in the domain layer in Clean Architecture.
@@ -1181,7 +1181,7 @@ The Repository is responsible for fetching data. It abstracts the data sources (
 
 ---
 
-### Q:8) What is Clean Architecture?
+## Q:8) What is Clean Architecture?
 - Divides app into three layers:
   - **Presentation:** ViewModel, UI
   - **Domain:** Business logic (UseCases)
@@ -1191,7 +1191,7 @@ The Repository is responsible for fetching data. It abstracts the data sources (
 
 ---
 
-### Q:9) What is Room in Android Architecture?
+## Q:9) What is Room in Android Architecture?
 - Room is a library that provides an easy way to use SQLite.
 
 ```kotlin
@@ -1203,7 +1203,7 @@ data class User(
 
 ---
 
-### Q:78) How to update only specific fields in Room?
+## Q:78) How to update only specific fields in Room?
 You can write a custom `@Query` to update only one or two fields:
 
 ```kotlin
@@ -1214,7 +1214,7 @@ Avoid using `@Update` if partial update is needed.
 
 ---
 
-### Q:79) Explain SOLID Principles in Android with examples
+## Q:79) Explain SOLID Principles in Android with examples
 - SOLID is a set of five design principles that help in writing clean, scalable, and easy-to-maintain code.
 - Each letter in SOLID stands for one principle:
   1. **S** – Single Responsibility
@@ -1255,7 +1255,7 @@ Let’s say you have a User Profile Screen:
 
 ---
 
-### Q:80) How does Dagger Hilt facilitate the application of the Dependency Inversion Principle in Android?
+## Q:80) How does Dagger Hilt facilitate the application of the Dependency Inversion Principle in Android?
 - Dagger Hilt automatically injects dependencies instead of manually creating them.
 - It allows your classes (like ViewModels) to depend on interfaces instead of concrete classes.
 - *Example:* Define an interface `UserRepository`. Bind `UserRepositoryImpl` using `@Binds` in a module. Hilt provides the implementation automatically wherever needed.
@@ -1264,7 +1264,7 @@ Let’s say you have a User Profile Screen:
 
 ## 5. Jetpack Compose
 
-### Q:1) What is Jetpack Compose?
+## Q:1) What is Jetpack Compose?
 Jetpack Compose is Android’s modern UI toolkit that lets you build UI using Kotlin code instead of XML.
 - It’s declarative, meaning you describe what the UI should look like, and the system updates it automatically when the data changes.
 - It replaces traditional XML + View-based UI system.
@@ -1272,7 +1272,7 @@ Jetpack Compose is Android’s modern UI toolkit that lets you build UI using Ko
 
 ---
 
-### Q:2) What is a Composable function?
+## Q:2) What is a Composable function?
 A Composable is a special Kotlin function marked with `@Composable` that describes part of the UI.
 
 *Example:*
@@ -1286,7 +1286,7 @@ You can call one composable inside another to build complex UIs.
 
 ---
 
-### Q:3) What is recomposition in Jetpack Compose?
+## Q:3) What is recomposition in Jetpack Compose?
 Recomposition is when Compose redraws parts of the UI because data/state has changed.
 - Only the part of the UI where data changed is recomposed.
 - Compose optimizes this to avoid redrawing everything.
@@ -1295,7 +1295,7 @@ Recomposition is when Compose redraws parts of the UI because data/state has cha
 
 ---
 
-### Q:4) What is State in Compose?
+## Q:4) What is State in Compose?
 State holds data that changes over time and triggers recomposition.
 You can use `remember` and `mutableStateOf`:
 ```kotlin
@@ -1305,7 +1305,7 @@ When `count.value` changes, any UI that depends on it will update automatically.
 
 ---
 
-### Q:5) What is remember and rememberSaveable?
+## Q:5) What is remember and rememberSaveable?
 - `remember` stores state during recomposition but resets on configuration changes (like rotation).
 - `rememberSaveable` stores state across recomposition and configuration changes using Bundle.
 
@@ -1313,7 +1313,7 @@ Use `rememberSaveable` for things like text input or selection state that should
 
 ---
 
-### Q:6) What is Modifier in Jetpack Compose?
+## Q:6) What is Modifier in Jetpack Compose?
 Modifier is used to modify or decorate a composable — like setting padding, background, size, click behavior, etc.
 
 *Example:*
@@ -1329,7 +1329,7 @@ Modifiers are chained and read from left to right.
 
 ---
 
-### Q:7) What is a Scaffold in Jetpack Compose?
+## Q:7) What is a Scaffold in Jetpack Compose?
 Scaffold is a layout component that provides basic structure like:
 - TopBar
 - BottomBar
@@ -1350,7 +1350,7 @@ Useful for material design layouts.
 
 ---
 
-### Q:8) What is SideEffect in Jetpack Compose?
+## Q:8) What is SideEffect in Jetpack Compose?
 - In Jetpack Compose, a SideEffect is any operation that affects something outside of the Compose UI tree.
 - Compose functions are pure by default, meaning they should not change anything outside themselves.
 - SideEffect lets you perform actions that interact with external systems safely during recomposition.
@@ -1369,14 +1369,14 @@ Useful for material design layouts.
 
 ## 6. Unit Testing
 
-### Q:1) What is Unit Testing in Android?
+## Q:1) What is Unit Testing in Android?
 Unit testing is the practice of testing individual components or functions in isolation to ensure they behave correctly.
 - In Android, we typically use JUnit for unit testing.
 - Unit tests run on the JVM and are fast because they don't require a device/emulator.
 
 ---
 
-### Q:2) What is the difference between Unit Tests and Instrumentation Tests in Android?
+## Q:2) What is the difference between Unit Tests and Instrumentation Tests in Android?
 
 | Unit Test | Instrumentation Test |
 | :--- | :--- |
@@ -1387,7 +1387,7 @@ Unit testing is the practice of testing individual components or functions in is
 
 ---
 
-### Q:3) Which tools/libraries are used for Unit Testing in Android?
+## Q:3) Which tools/libraries are used for Unit Testing in Android?
 - **JUnit** – Base library for writing tests.
 - **Mockito / MockK** – For mocking dependencies.
 - **Truth / AssertJ / Hamcrest** – Assertion libraries.
@@ -1397,7 +1397,7 @@ Unit testing is the practice of testing individual components or functions in is
 
 ---
 
-### Q:4) How do you test ViewModel in Android?
+## Q:4) How do you test ViewModel in Android?
 - ViewModels are easy to test because they don’t depend on Android Framework.
 - You can write plain JUnit tests and verify outputs by observing LiveData or StateFlow.
 
@@ -1405,7 +1405,7 @@ Unit testing is the practice of testing individual components or functions in is
 
 ## 7. Android Security
 
-### Q:1) How can you securely store sensitive data in an Android app?
+## Q:1) How can you securely store sensitive data in an Android app?
 You should never store sensitive data (like passwords or tokens) in plain text. Instead:
 - Use EncryptedSharedPreferences for small data like tokens.
 - Use Android Keystore to store cryptographic keys securely.
@@ -1413,7 +1413,7 @@ You should never store sensitive data (like passwords or tokens) in plain text. 
 
 ---
 
-### Q:2) What is Android Keystore and why is it used?
+## Q:2) What is Android Keystore and why is it used?
 Android Keystore is a secure container that helps store cryptographic keys. These keys can be used for encryption, decryption, or signing without exposing them directly to the app.
 It ensures that:
 - Keys cannot be extracted.
@@ -1422,7 +1422,7 @@ It ensures that:
 
 ---
 
-### Q:3) What are common security risks in Android apps?
+## Q:3) What are common security risks in Android apps?
 Some common risks:
 - Storing data in plain text.
 - Using HTTP instead of HTTPS.
@@ -1432,7 +1432,7 @@ Some common risks:
 
 ---
 
-### Q:4) How can you protect your API keys in Android?
+## Q:4) How can you protect your API keys in Android?
 - Don’t hardcode keys in code or strings.xml.
 - Use BuildConfig with Gradle to store API keys.
 - Store keys on the server and use token-based auth.
@@ -1440,7 +1440,7 @@ Some common risks:
 
 ---
 
-### Q:5) How can you prevent reverse engineering of your APK?
+## Q:5) How can you prevent reverse engineering of your APK?
 - Use ProGuard or R8 to obfuscate the code.
 - Remove unused code and classes.
 - Avoid storing logic or secrets in the app.
@@ -1449,7 +1449,7 @@ Some common risks:
 
 ---
 
-### Q:6) What is the use of ProGuard/R8 in Android?
+## Q:6) What is the use of ProGuard/R8 in Android?
 ProGuard (now replaced by R8) is a tool that:
 - Minifies code (removes unused code).
 - Obfuscates names (changes class/method names to random characters).
@@ -1457,7 +1457,7 @@ ProGuard (now replaced by R8) is a tool that:
 
 ---
 
-### Q:7) How can you secure communication between app and server?
+## Q:7) How can you secure communication between app and server?
 - Always use HTTPS (SSL/TLS) to encrypt data in transit.
 - Use certificate pinning to verify the server.
 - Avoid logging sensitive data (e.g., tokens or passwords).
@@ -1465,7 +1465,7 @@ ProGuard (now replaced by R8) is a tool that:
 
 ---
 
-### Q:8) What is certificate pinning?
+## Q:8) What is certificate pinning?
 Certificate pinning is a technique where you hardcode your server’s public certificate or key in the app. It ensures:
 - The app only trusts your server.
 
@@ -1473,7 +1473,7 @@ Certificate pinning is a technique where you hardcode your server’s public cer
 
 ## 8. Scenario Based Questions
 
-### Q:1) How do you handle configuration changes (like screen rotation) in Android without losing data?
+## Q:1) How do you handle configuration changes (like screen rotation) in Android without losing data?
 ViewModel stores UI-related data across configuration changes.
 When screen rotates:
 - Activity/Fragment is destroyed and recreated.
@@ -1484,7 +1484,7 @@ When screen rotates:
 
 ---
 
-### Q:2) You have two API calls that must run in parallel and update UI when both complete. How do you implement this?
+## Q:2) You have two API calls that must run in parallel and update UI when both complete. How do you implement this?
 Use Kotlin Coroutines with `async` and `await`.
 
 ```kotlin
@@ -1500,7 +1500,7 @@ This way, both calls run in parallel and UI updates after both are done.
 
 ---
 
-### Q:3) You need to fetch data from both the local Room database and network. How do you design this?
+## Q:3) You need to fetch data from both the local Room database and network. How do you design this?
 Use Repository with a fallback logic:
 1. First try Room DB (cached data).
 2. If data is old/missing, fetch from API.
@@ -1512,7 +1512,7 @@ This ensures:
 
 ---
 
-### Q:4) A user opens an app with no internet. How do you show offline data?
+## Q:4) A user opens an app with no internet. How do you show offline data?
 Use Room as the local cache.
 - Repository checks connectivity.
 - If offline, fetch from Room.
@@ -1522,7 +1522,7 @@ Show “You’re offline” toast/snackbar while loading cached data.
 
 ---
 
-### Q:5) In MVVM, who should handle click events and why?
+## Q:5) In MVVM, who should handle click events and why?
 The ViewModel should handle logic, not the Activity/Fragment.
 - UI calls `viewModel.onLoginClicked()`
 - ViewModel checks input, performs API call
@@ -1532,7 +1532,7 @@ Keeps code testable and follows separation of concerns.
 
 ---
 
-### Q:6) In Jetpack Compose, how do you preserve scroll position when the user navigates back?
+## Q:6) In Jetpack Compose, how do you preserve scroll position when the user navigates back?
 Use `rememberLazyListState()` in Composable:
 
 ```kotlin
@@ -1544,7 +1544,7 @@ LazyColumn(state = listState) { ... }
 
 ## 9. DevOps in Android
 
-### Q:1) What is CI/CD in Android?
+## Q:1) What is CI/CD in Android?
 CI/CD in Android development refers to Continuous Integration and Continuous Delivery/Deployment, a set of practices that automate the building, testing, and delivery of Android applications.
 
 - **Continuous Integration (CI)** means that developers regularly push code to a shared repository (like GitHub), and every push automatically triggers a build and test. This helps catch errors early.
@@ -1555,7 +1555,7 @@ CI/CD improves team collaboration, reduces manual errors, and speeds up release 
 
 ---
 
-### Q:2) Why is CI/CD important in Android development?
+## Q:2) Why is CI/CD important in Android development?
 CI/CD helps in:
 - Faster development cycles by automating build and testing.
 - Early bug detection due to frequent code integration and automated tests.
@@ -1565,7 +1565,7 @@ CI/CD helps in:
 
 ---
 
-### Q:3) Which tools are commonly used for CI/CD in Android?
+## Q:3) Which tools are commonly used for CI/CD in Android?
 Some commonly used CI/CD tools are:
 - **GitHub Actions** – Integrated with GitHub, good for open-source and personal projects.
 - **Bitrise** – Android and iOS friendly, no setup needed, GUI-based.
@@ -1574,7 +1574,7 @@ Some commonly used CI/CD tools are:
 
 ## 10. Gradle Concepts & Issues
 
-### Q:1) What is Gradle in Android?
+## Q:1) What is Gradle in Android?
 - Gradle is the build system used in Android.
 - It automates compiling code, packaging APKs, and managing dependencies.
 - Think of it as a recipe that tells Android Studio how to build your app.
@@ -1582,7 +1582,7 @@ Some commonly used CI/CD tools are:
 
 ---
 
-### Q:2) What is the difference between Project-level and Module-level build.gradle?
+## Q:2) What is the difference between Project-level and Module-level build.gradle?
 
 #### Project-level build.gradle
 - Applies to the entire project.
@@ -1603,6 +1603,6 @@ Some commonly used CI/CD tools are:
 
 ---
 
-### Q:3) What are Build Variants and Product Flavors?
+## Q:3) What are Build Variants and Product Flavors?
 - **Build Variants:** Combination of build type (debug/release) + flavor. Example: `freeDebug`, `paidRelease`.
 

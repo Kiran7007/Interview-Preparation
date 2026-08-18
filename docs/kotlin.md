@@ -1,4 +1,4 @@
-﻿# Kotlin (Senior Android)
+# Kotlin (Senior Android)
 
 ---
 

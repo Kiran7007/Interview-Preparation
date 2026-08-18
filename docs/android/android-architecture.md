@@ -1,7 +1,7 @@
 # Android Architecture
 ---
 
-### Why use **MVP / MVVM / MVI** instead of “god Activities”?
+## Why use **MVP / MVVM / MVI** instead of “god Activities”?
 When all logic lives inside huge **Activities**, tests are painful, reviews are noisy, and teams step on each other. Splitting **UI**, **presentation logic**, and **data** makes changes safer and lets you **unit test** without spinning up the full framework.
 
 The cost is more **files and wiring**—and **MVI** can feel heavy on small screens. Pick a style that matches team size and how complex the screen state really is.
@@ -10,19 +10,19 @@ The cost is more **files and wiring**—and **MVI** can feel heavy on small scre
 
 ---
 
-### What is the **role of Presenter in MVP** and **advantage of MVVM over MVP**?
+## What is the **role of Presenter in MVP** and **advantage of MVVM over MVP**?
 In **MVP**, the **presenter** handles user actions, talks to the model, and tells the **view interface** what to render. Some teams also put **navigation** decisions there.
 
 **MVVM** usually means the **ViewModel does not hold a reference to the view**, which **reduces leak risk** and fits **LiveData/Flow** observation. Rotation is easier when state lives in a **scoped ViewModel** instead of a presenter that must reattach.
 ---
 
-### Why **Dependency Injection (Dagger/Hilt/Koin)** on large apps?
+## Why **Dependency Injection (Dagger/Hilt/Koin)** on large apps?
 Large apps need **clear ownership** of dependencies: who creates **Retrofit**, who gets a **user-scoped** object, what lives for one **Activity** vs the whole app. **DI** (Dagger/Hilt compile-time, Koin runtime) wires that graph instead of `new` everywhere.
 
 **Trade-off:** compile-time graphs catch mistakes early but need **build time**; runtime DI is flexible but errors may appear **at runtime**.
 ---
 
-### Explain **Jetpack Architecture Components** and how **Room / LiveData / ViewModel / Lifecycle / Data Binding** fit together.
+## Explain **Jetpack Architecture Components** and how **Room / LiveData / ViewModel / Lifecycle / Data Binding** fit together.
 - Architecture: https://developer.android.com/topic/libraries/architecture/  
 - Room: https://developer.android.com/topic/libraries/architecture/room  
 - LiveData: https://developer.android.com/topic/libraries/architecture/livedata  
@@ -37,7 +37,7 @@ Large apps need **clear ownership** of dependencies: who creates **Retrofit**, w
 - Data binding vs view binding: https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding  
 ---
 
-### How does **ViewModel** work internally (high level) and why not put `Context` in it?
+## How does **ViewModel** work internally (high level) and why not put `Context` in it?
 A **ViewModel** is stored in a **ViewModelStore** tied to a lifecycle owner (Activity, Fragment, or navigation back stack entry). It is **cleared** when that scope is **finished for good**—not on every **rotation**.
 
 Putting an **Activity `Context`** in a ViewModel is risky: the ViewModel can **outlive** the Activity configuration, which **leaks** the old Activity. Use **`Application`** context only for truly app-wide things, and prefer **Hilt/AndroidEntryPoint** patterns over stashing contexts.
@@ -46,7 +46,7 @@ Putting an **Activity `Context`** in a ViewModel is risky: the ViewModel can **o
 
 ---
 
-### **LiveData vs ObservableField** and **`setValue` vs `postValue`**
+## **LiveData vs ObservableField** and **`setValue` vs `postValue`**
 
 **ObservableField** comes from the **data binding** era; it still works but is less **lifecycle-aware** than **LiveData**.
 
@@ -59,7 +59,7 @@ Putting an **Activity `Context`** in a ViewModel is risky: the ViewModel can **o
 - https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80  
 ---
 
-### **StateFlow vs LiveData** (and when either is wrong)
+## **StateFlow vs LiveData** (and when either is wrong)
 **StateFlow** is Kotlin-first and works naturally with **coroutines**; it **always has a current value**. You must **collect** it with lifecycle in mind (`repeatOnLifecycle`, etc.) so you do not leak or run work when the screen is off.
 
 **LiveData** is **lifecycle-aware** out of the box and is still useful for **Java** interop.
@@ -70,7 +70,7 @@ When collecting **Flow**, use **`repeatOnLifecycle`** (or equivalent) so work st
 
 ---
 
-### **Jetpack Compose** — declarative UI, recomposition, state, navigation, performance, testing
+## **Jetpack Compose** — declarative UI, recomposition, state, navigation, performance, testing
 - **Compose** builds UI from **`@Composable`** functions that describe the screen from **state**. When state changes, Compose **recomposes** (re-runs) the affected parts of the tree—not the whole app.
 - **State:** `remember` / `rememberSaveable` for local UI; **ViewModel + StateFlow** for screen truth. Keep **business rules** out of composables when possible.
 - **Modifiers:** Ordered chains describe layout, clicks, semantics—order matters.
@@ -83,7 +83,7 @@ When collecting **Flow**, use **`repeatOnLifecycle`** (or equivalent) so work st
 - **Testing:** Compose test APIs and **semantics** (prefer **`testTag`** discipline).
 ---
 
-### **Dagger 2** annotations: `@Component`, `@Module`, `@Provides`, `@Binds`, `@Inject`, `@Scope`, `@Qualifier/@Named`, `@BindsInstance`
+## **Dagger 2** annotations: `@Component`, `@Module`, `@Provides`, `@Binds`, `@Inject`, `@Scope`, `@Qualifier/@Named`, `@BindsInstance`
 - **`@Component`:** Root of the object graph; Dagger generates **`DaggerYourComponent`**.
 - **`@Module`:** Methods that **provide** or **bind** dependencies. **`@Binds`** for interfaces (implementation class), **`@Provides`** for construction you control.
 - **`@Inject`:** Marks **constructor / field / method** injection sites.
@@ -92,7 +92,7 @@ When collecting **Flow**, use **`repeatOnLifecycle`** (or equivalent) so work st
 - **`@BindsInstance`:** Pass **runtime values** (e.g. `userId`) into the builder—powerful but easy to make **tests** painful if overused.
 ---
 
-### **Factory vs Abstract Factory** (and when neither belongs in Android UI)
+## **Factory vs Abstract Factory** (and when neither belongs in Android UI)
 A **factory** creates **one kind of object**. An **abstract factory** creates **families** of related objects (think UI toolkits).
 
 On Android you more often use **DI** or simple builders than textbook factories inside every Fragment—save factories for **SDK boundaries** and **test doubles**.
@@ -102,22 +102,20 @@ On Android you more often use **DI** or simple builders than textbook factories 
 - https://www.baeldung.com/kotlin/builder-pattern  
 ---
 
-###  Explain the **test pyramid** on mobile.
+##  Explain the **test pyramid** on mobile.
 Most tests should be **fast unit tests** (pure logic, ViewModels with fakes). Fewer **integration tests** hit real **Room**, **Retrofit + MockWebServer**, or navigation. **UI tests** (Espresso / Compose) are the smallest top—slow and flaky if overused—save them for **critical flows** and run on **labs** for OEM quirks.
 
 Diagram: `assets/test_pyramid.png`
 ---
 
-### Common **Espresso** failures and anti-patterns?
+## Common **Espresso** failures and anti-patterns?
 **Top causes:** missing sync for **real** async, **animations** on, **`Thread.sleep`**, **RecyclerView** binding races, **ambiguous** matchers, tests that **depend on order**. Replace sleeps with **idling**, **fakes**, or **architecture** fixes.
-
-- Key takeaway
 
 > **`Thread.sleep` in a UI test** is a **code-review fail** unless you document an impossible alternative (rare).
 
 ---
 
-### **Screenshot testing**
+## **Screenshot testing**
 **Screenshot tests** catch **visual** regressions in CI. You need **stable fonts, locale, and timing** so images are comparable. Keep the **golden set small** or maintenance hurts.
 
 - Useful links
@@ -125,10 +123,9 @@ Diagram: `assets/test_pyramid.png`
 - https://facebook.github.io/screenshot-tests-for-android/#getting-started  
 ---
 
-### **Compose testing** — how is it different from Espresso?
+## **Compose testing** — how is it different from Espresso?
 Compose tests use a **semantic tree** (roles, text, **`testTag`**) instead of **View IDs**. Synchronization differs from Espresso—follow **Compose testing** guidance (see `android-architecture.md`).
 
-- Key takeaway
 > Compose favors **semantic matchers**, not fragile **view hierarchy** IDs.
 
 ---
@@ -137,7 +134,7 @@ Compose tests use a **semantic tree** (roles, text, **`testTag`**) instead of **
 
 ---
 
-### Jetpack Compose Performance Issue — Excessive Recompositions**
+## Jetpack Compose Performance Issue — Excessive Recompositions**
 Modern app fully built in Jetpack Compose. Users report: UI feels laggy during interactions, animations stutter, CPU spikes during scrolling. Recomposition count is very high; even small state updates trigger full-screen recomposition. Recent changes: shared UI state in ViewModel, large data objects passed to composables, multiple `collectAsState()` calls added. **How would you debug and fix?**
 
 Treat this as a **state architecture problem**, not a UI rendering problem. Compose performance is directly tied to how state is structured and consumed.
@@ -158,7 +155,7 @@ Treat this as a **state architecture problem**, not a UI rendering problem. Comp
 | Missing `remember` | Expensive object re-created every recomposition |
 | Lambdas recreated in composable body | Child composables never skip even with same params |
 
-### 3. Fix State Design**
+### 3. Fix State Design
 
 **a. Hoist and Scope State — Don't Put Everything in One Place**
 ```kotlin
@@ -233,13 +230,11 @@ LazyColumn {
 - FPS: scrolling should hit 60 fps consistently (no frames > 16ms in Profiler)
 - CPU trace: composition phase time should reduce
 
-### Key takeaway
-
 > Compose recomposition problems = **state not scoped tightly enough + unstable parameters + single giant state object**. Fix: break state, annotate stability, combine flows in ViewModel, use `derivedStateOf` for derived reads.
 
 ---
 
-### **Scenario: Deep Link Handling Breaking Navigation**
+## **Scenario: Deep Link Handling Breaking Navigation**
 E-commerce app. Users report: deep links open the wrong screen, app crashes when opened via link, back navigation behaves incorrectly. App uses Navigation Component, multiple entry points (home, product, offer pages), some deep links have query params. **How would you fix?**
 Treat this as a **navigation state reconstruction problem**. Deep links bypass normal user flow — the app must reconstruct a correct, coherent back stack from a cold or warm start.
 
@@ -335,7 +330,7 @@ viewLifecycleOwner.lifecycleScope.launch {
 ```
 ---
 
-### **What are SOLID principles and how do they apply in Android?**
+## **What are SOLID principles and how do they apply in Android?**
 
 | Principle | Rule | Android Example |
 |-----------|------|-----------------|
@@ -351,8 +346,6 @@ viewLifecycleOwner.lifecycleScope.launch {
 - **LSP:** Swap `LocalUserRepository` with `RemoteUserRepository` in tests — ViewModel doesn't notice.
 - **ISP:** `ProfileViewModel` injects only `ProfileRepository`, not a giant `AppRepository`.
 - **DIP:** `@HiltViewModel class ProfileViewModel @Inject constructor(val repo: UserRepository)` — bound to interface via Hilt module.
-
-### Key takeaway
 
 > SOLID on Android = **testable boundaries** and **zero merge conflicts** between teams. DIP + Hilt is the most impactful pair: swap implementations without touching callers.
 

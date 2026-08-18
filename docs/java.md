@@ -1,4 +1,4 @@
-﻿# Java Core (Senior Android / Backend-facing Java)
+# Java Core (Senior Android / Backend-facing Java)
 
 ## Why does Android steer you away from Java Serializable for performance-critical IPC / state?
 
