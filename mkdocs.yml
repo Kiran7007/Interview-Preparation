@@ -1,0 +1,98 @@
+site_name: Kiran's Interview Notes
+site_description: Senior Android engineer and technical-lead interview preparation notes.
+
+site_dir: site
+
+theme:
+  name: material
+  language: en
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    logo: material/android
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+plugins:
+  - search:
+      lang: en
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 2
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/study-guide.js
+
+nav:
+  - Home: index.md
+  - Android:
+      - Core: android/android-core.md
+      - Architecture & Testing: android/android-architecture.md
+      - Networking, Security & Data: android/android-networking-security.md
+      - Engineering & Leadership: android/android-engineering.md
+      - Real-World Scenarios: android/real-world-scenarios.md
+  - Kotlin:
+      - Kotlin Interview Notes: kotlin/kotlin.md
+  - Java:
+      - Java Core: java/java-core.md
+  - Data Structures & Algorithms:
+      - Arrays, Sorting & Searching: dsa/arrays.md
+      - Trees: dsa/trees.md
+      - Graphs: dsa/graphs.md
+      - Dynamic Programming: dsa/dp.md
+      - Patterns: dsa/patterns.md
+  - System Design:
+      - Mobile System Design: system-design/mobile-system-design.md
+  - Cross-platform:
+      - Flutter: cross-platform/flutter.md
+  - Career:
+      - Interview Master Prompts: career/interview-master-prompts.md

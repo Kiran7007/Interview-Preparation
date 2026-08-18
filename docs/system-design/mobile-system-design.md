@@ -15,7 +15,7 @@ How do you approach **mobile system design** differently from backend system des
 
 ### Useful links
 
-- [System design Q&A PDF](https://github.com/Kiran7007/Interview-Preparation/blob/main/assets/system_design_questions.pdf)
+- [System design Q&A PDF](../assets/system_design_questions.pdf)
 - [9 Architectural Patterns for Data and Communication Flow](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
 
 ### Key takeaway

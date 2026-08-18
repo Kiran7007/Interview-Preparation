@@ -3754,22 +3754,6 @@ SOLID unites all the best practices of software development over the years to de
 
 ### Question
 
-What is Reflection?
-
-### Answer
-
-Reflection is an API that is used to examine or modify the behaviour of methods, classes and interfaces at runtime. The required classes for reflection are present in java.lang.reflect package.
-
-
-### Key takeaway
-
-> Reflection is an API that is used to examine or modify the behaviour of methods, classes and interfaces at runtime.
-
-
----
-
-### Question
-
 How to reduce your app size?
 
 ### Answer
@@ -4303,33 +4287,22 @@ What is Dependency Injection Pattern?
 
 ### Answer
 
+Dependency injection means a class receives the collaborators it needs instead of constructing them itself. This keeps creation policy outside business logic, making dependencies explicit, replaceable, and easy to fake in tests.
+
+- **Use it for:** repositories, API clients, dispatchers, analytics, and other services whose implementation can vary by environment.
+- **Trade-off:** excessive abstraction can make a small feature harder to follow; introduce an interface where substitutability or testability genuinely matters.
+- **Android example:** provide a repository and `CoroutineDispatcher` to a `ViewModel` through Hilt, then replace both in a JVM test.
+
+### Further reading
+
 <img src="https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7" width="400">
-
-
-### Useful links
 
 - https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7
 
 
 ### Key takeaway
 
-> Bookmark **What is Dependency Injection Pattern**, read the linked reference, and be ready to explain trade-offs with one example.
-
-
----
-
-### Question
-
-What is Dependency Injection Pattern?
-
-### Answer
-
-Dependency Injection pattern is where if our object requires other object, it will be passed to our object instead of us having to create that object. This other object is called as dependency.
-
-
-### Key takeaway
-
-> Dependency Injection pattern is where if our object requires other object, it will be passed to our object instead of us having to create that object.
+> Inject collaborators at the boundary; keep the class focused on its own job.
 
 
 ---

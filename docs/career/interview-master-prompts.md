@@ -110,7 +110,7 @@ All Android topics now live in **4 files** (merged from 11):
 | [android-networking-security.md](../android/android-networking-security.md) | Retrofit / OkHttp / APIs + Keystore / pinning / auth / encryption + Room / SharedPrefs / storage + BLE |
 | [android-engineering.md](../android/android-engineering.md) | Performance / battery / profiling + Release / CI-CD / Fastlane + SDK integration + SDLC / leadership / behavioral |
 
-Kotlin: [kotlin-basics.md](../kotlin/kotlin-basics.md), [kotlin-advanced.md](../kotlin/kotlin-advanced.md), [kotlin-coroutines-flow.md](../kotlin/kotlin-coroutines-flow.md)  
+Kotlin: [kotlin.md](../kotlin/kotlin.md) — language fundamentals, advanced Kotlin, coroutines, and Flow
 
 ## Dedup policy
 

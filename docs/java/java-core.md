@@ -670,27 +670,6 @@ What is serialization? How do you implement it?
 
 ### Question
 
-What is reflection?
-
-### Answer
-
-- **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
-
-
-### Useful links
-
-- http://tutorials.jenkov.com/java-reflection/index.html
-
-
-### Key takeaway
-
-> Bookmark **What is reflection**, read the linked reference, and be ready to explain trade-offs with one example.
-
-
----
-
-### Question
-
 What is Transient Keyword?
 
 ### Answer

@@ -1,0 +1,106 @@
+/* Keep long-form interview answers comfortable to scan without changing the
+   Markdown source material. */
+:root {
+  --md-text-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --md-code-font: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+
+.md-content {
+  line-height: 1.72;
+}
+
+.md-content__inner {
+  max-width: 58rem;
+}
+
+.md-typeset h1 {
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+.md-typeset h2 {
+  margin-top: 2.4em;
+  font-weight: 700;
+}
+
+/* Repeated question/answer headings are the core learning unit in these notes. */
+.md-typeset h3 {
+  margin-top: 1.8em;
+  color: var(--md-primary-fg-color);
+  font-size: 1.05em;
+}
+
+/* Question cards turn long Q&A banks into clear stopping points for study. */
+.md-typeset .study-question {
+  position: relative;
+  margin: 2.6rem 0 1rem;
+  padding: 1.1rem 1.2rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--md-primary-fg-color) 28%, transparent);
+  border-left: 0.3rem solid var(--md-primary-fg-color);
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--md-primary-fg-color) 7%, transparent);
+  color: var(--md-default-fg-color);
+  font-size: 1.14rem;
+  line-height: 1.45;
+}
+
+.md-typeset .study-question::before {
+  display: block;
+  margin-bottom: 0.42rem;
+  color: var(--md-primary-fg-color);
+  content: "INTERVIEW PROMPT";
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+/* The answer follows the prompt naturally; repeating an "Answer" heading
+   hundreds of times adds visual noise without adding information. */
+.md-typeset .study-answer-label {
+  display: none;
+}
+
+.md-typeset .study-supporting-heading {
+  margin-top: 1.45rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.md-typeset .study-takeaway-label {
+  margin: 1.35rem 0 0.35rem;
+  color: var(--md-accent-fg-color);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.md-typeset .study-takeaway-label + blockquote {
+  margin-top: 0;
+  padding: 0.7rem 0.9rem;
+  border-inline-start-color: var(--md-accent-fg-color);
+  border-radius: 0 0.25rem 0.25rem 0;
+  background: color-mix(in srgb, var(--md-accent-fg-color) 8%, transparent);
+}
+
+.md-typeset code {
+  font-size: 0.84em;
+}
+
+.md-typeset pre > code {
+  font-size: 0.78em;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 0.35rem;
+}
+
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 14.5rem;
+  }
+}
