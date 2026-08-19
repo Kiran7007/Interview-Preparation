@@ -1,9 +1,6 @@
 # Kotlin
 ---
 
-## Kotlin Fundamentals
-
-
 ## What is `val` vs `var` in Kotlin?
 
 -   `val` means the reference cannot be reassigned.

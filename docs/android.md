@@ -1,11 +1,6 @@
 # Android
 ---
 
-<!-- Source: docs/android/android-core.md -->
-## Android Architecture and Data
-
----
-
 ## What is MVVM?
 
 -   MVVM separates UI from presentation state and business/data logic.
