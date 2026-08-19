@@ -1,4 +1,4 @@
-# Data Structures & Algorithms
+# DSA
 
 > Consolidated from the DSA topic notes. Each original file is retained below as a section.
 
@@ -74,6 +74,7 @@ See `patterns.md` → binary search & rotated array variants.
 
 ---
 
+- [Learn more](https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png)
 ### Practice index — Arrays
 
 These paths reference a `src/` exercise tree (add locally if needed):
@@ -109,12 +110,12 @@ These paths reference a `src/` exercise tree (add locally if needed):
 
 #### Additional links
 
-- https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm  
-- https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/  
-- https://amitshekhar.me/blog/android-developer-should-know-these-data-structures-for-next-interview  
-- https://afteracademy.com/tech-interview/ds-algo-concepts/  
-- https://afteracademy.com/blogs/  
-- https://www.linkedin.com/feed/update/urn:li:activity:7211903578356035584/
+- [Learn more](https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm)  
+- [Learn more](https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/)  
+- [Learn more](https://amitshekhar.me/blog/android-developer-should-know-these-data-structures-for-next-interview)  
+- [Learn more](https://afteracademy.com/tech-interview/ds-algo-concepts/)  
+- [Learn more](https://afteracademy.com/blogs/)  
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7211903578356035584/)
 
 ---
 
@@ -259,6 +260,7 @@ See `patterns.md` → `countComponents`, `bfs`, `dfs`, `numIslands` (matrix), `U
 
 ---
 
+- [Learn more](https://lnkd.in/gRpJ6qxN)
 ### Practice index — Graphs
 
 - [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
@@ -326,6 +328,7 @@ See `patterns.md` → DP sections in `DSA_Patterns_Cheatsheet.md` + `AlgorithmV2
 ---
 
 <!-- Source: docs/dsa/patterns.md -->
+- [Learn more](https://lnkd.in/gersVnrz)
 ## DSA: Patterns, Cheatsheets & Curated Links (Senior / FAANG)
 
 ---
@@ -340,7 +343,7 @@ See `patterns.md` → DP sections in `DSA_Patterns_Cheatsheet.md` + `AlgorithmV2
 
 ---
 
-# Data Structure and Algorithm
+## Data Structure and Algorithm
 
 * **Sorting** </br>
    * [BubbleSort](/src/sort/BubbleSort.java)
@@ -366,7 +369,7 @@ See `patterns.md` → DP sections in `DSA_Patterns_Cheatsheet.md` + `AlgorithmV2
     When dividing an array by k ( 2(binary) or 3(ternary)), it reduces the array size to 1/k. But it increases the no of comparisons by k.
    
 * **Runtime Complexity Table:** </br></br>
-   <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png"></a></br>
+    <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/4.png" target="_blank"><img src="https://raw.githubusercontent.com/anitaa1990/Android-Cheat-sheet/master/media/4.png"></a></br>
 
 
 * **Explain Big O Notation?** [Link](https://www.freecodecamp.org/news/big-o-cheat-sheet-time-complexity-chart/)</br>
@@ -378,15 +381,15 @@ See `patterns.md` → DP sections in `DSA_Patterns_Cheatsheet.md` + `AlgorithmV2
    The Big Omega Notation is used to describe the best case running time for a given algorithm.</br>
    
 * **Difference between stacks & queues?** </br>
-  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png"></a></br>
+    <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/3.png" target="_blank"><img src="https://raw.githubusercontent.com/anitaa1990/Android-Cheat-sheet/master/media/3.png"></a></br>
 
 * **Data Structure and Algorithms** </br>
-  * https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm
-  * https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/
-  * https://amitshekhar.me/blog/android-developer-should-know-these-data-structures-for-next-interview
-  * https://afteracademy.com/tech-interview/ds-algo-concepts/
-  * https://afteracademy.com/blogs/
-  * https://www.linkedin.com/feed/update/urn:li:activity:7211903578356035584/
+  * [Learn more](https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm)
+  * [Learn more](https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/)
+  * [Learn more](https://amitshekhar.me/blog/android-developer-should-know-these-data-structures-for-next-interview)
+  * [Learn more](https://afteracademy.com/tech-interview/ds-algo-concepts/)
+  * [Learn more](https://afteracademy.com/blogs/)
+  * [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7211903578356035584/)
 
 ---
 
@@ -667,7 +670,7 @@ fun detectCycle(head: ListNode?): ListNode? {
 
 ---
 
-# Merge Two Lists
+## Linked List Patterns
 ```kotlin
 fun mergeTwoLinkLists(l1: ListNode?, l2: ListNode?): ListNode? {
     val dummy = ListNode(0)
@@ -962,7 +965,7 @@ fun dijkstra(graph: Map<Int, List<Edge>>, start: Int): Map<Int, Int> {
 
 
 
-# Kotlin Algorithm Patterns - Optimized Code Snippets
+## Kotlin Algorithm Patterns
 
 A comprehensive collection of the most common algorithms and data structures implemented in Kotlin with optimal time and space complexity.
 
@@ -1662,7 +1665,7 @@ The patterns cover essential categories including arrays, strings, dynamic progr
 
 
 
-# LeetCode Algorithm Patterns & Templates - Kotlin
+## LeetCode Algorithm Patterns
 
 ### 1. Arrays (5 Patterns)
 

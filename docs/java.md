@@ -1,4 +1,4 @@
-# Java Core (Senior Android / Backend-facing Java)
+# Java
 
 ## Why does Android steer you away from Java Serializable for performance-critical IPC / state?
 
@@ -153,6 +153,7 @@
 
 ---
 
+- [Learn more](https://en)
 ## What is an Object?
 
 - **In plain words:**
@@ -243,7 +244,7 @@ class Employee {
 
 ### Useful links
 
-- https://www.geeksforgeeks.org/functional-interfaces-java/
+- [Learn more](https://www.geeksforgeeks.org/functional-interfaces-java/)
 
 
 
@@ -252,6 +253,7 @@ class Employee {
 
 ---
 
+- [Learn more](https://www.geeksforgeeks.org/functional-interfaces-java/)
 ## What is Comparator Interface
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -259,7 +261,7 @@ class Employee {
 
 ### Useful links
 
-- https://www.geeksforgeeks.org/comparator-interface-java/
+- [Learn more](https://www.geeksforgeeks.org/comparator-interface-java/)
 
 
 
@@ -268,6 +270,7 @@ class Employee {
 
 ---
 
+- [Learn more](https://www.geeksforgeeks.org/comparator-interface-java/)
 ## Java 8 Changes in Interface
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -275,7 +278,7 @@ class Employee {
 
 ### Useful links
 
-- https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
+- [Learn more](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 
 
 
@@ -284,6 +287,7 @@ class Employee {
 
 ---
 
+- [Learn more](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 ## Can Interfaces to be extended?
 
 - **In plain words:**
@@ -525,7 +529,7 @@ class Employee {
 
 ### Useful links
 
-- https://www.geeksforgeeks.org/transient-keyword-java/
+- [Learn more](https://www.geeksforgeeks.org/transient-keyword-java/)
 
 
 
@@ -534,6 +538,7 @@ class Employee {
 
 ---
 
+- [Learn more](https://www.geeksforgeeks.org/transient-keyword-java/)
 ## Why is Java said to be platform independent?
 
 - **In plain words:**
@@ -611,7 +616,7 @@ class Employee {
 
 ### Useful links
 
-- http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
+- [Learn more](http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html)
 
 
 
@@ -620,6 +625,7 @@ class Employee {
 
 ---
 
+- [Learn more](http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html)
 ## What are the Java 8 Interface changes?
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -627,7 +633,7 @@ class Employee {
 
 ### Useful links
 
-- https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/
+- [Learn more](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 
 
 
@@ -636,6 +642,7 @@ class Employee {
 
 ---
 
+- [Learn more](https://beginnersbook.com/2017/10/java-8-interface-changes-default-method-and-static-method/)
 ## What is Function Interface?
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -643,7 +650,7 @@ class Employee {
 
 ### Useful links
 
-- https://www.geeksforgeeks.org/functional-interfaces-java/
+- [Learn more](https://www.geeksforgeeks.org/functional-interfaces-java/)
 
 
 
@@ -652,6 +659,7 @@ class Employee {
 
 ---
 
+- [Learn more](https://www.geeksforgeeks.org/functional-interfaces-java/)
 ## Why is the main method static in java?
 
 - **In plain words:**
@@ -763,12 +771,12 @@ public class Hello {
 
 - **In plain words:**
 
-  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png"></a></br>
+  <a href="https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png" target="_blank"><img src="https://raw.githubusercontent.com/anitaa1990/Android-Cheat-sheet/master/media/2.png"></a></br>
 
 
 ### Useful links
 
-- https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png
+- [Learn more](https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png)
 
 
 
@@ -777,6 +785,7 @@ public class Hello {
 
 ---
 
+- [Learn more](https://github.com/anitaa1990/Android-Cheat-sheet/blob/master/media/2.png)
 ## Difference between == and .equals() method in Java?
 
 - **In plain words:**
@@ -926,6 +935,7 @@ public class Hello {
 
 ---
 
+- [Learn more](https://www.geeksforgeeks.org/g-fact-47/)
 ## Overriding for static method, possible?
 
 - **In plain words:**
@@ -976,7 +986,7 @@ public class Hello {
 
 ### Useful links
 
-- https://blog.mindorks.com/threadpoolexecutor-in-android-8e9d22330ee3
+- [Learn more](https://blog.mindorks.com/threadpoolexecutor-in-android-8e9d22330ee3)
 
 
 
@@ -985,6 +995,7 @@ public class Hello {
 
 ---
 
+- [Learn more](https://blog.mindorks.com/threadpoolexecutor-in-android-8e9d22330ee3)
 ## Fail-fast & Fail-Safe?
 
 - **In plain words:**
@@ -1004,6 +1015,7 @@ public class Hello {
 
 ---
 
+- [Learn more](http://javarevisited.blogspot.com/2011/10/java-iterator-tutorial-example-list.html)
 ## What does the keyword synchronized mean?
 
 - **In plain words:**
@@ -1298,6 +1310,7 @@ public class Main {
 
 ---
 
+- [Learn more](http://tutorials.jenkov.com/java/annotations.html)
 ## What is a deadlock in Java
 
 - **In plain words:**
@@ -1365,7 +1378,7 @@ public class Main {
 
 ### Useful links
 
-- https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47
+- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
 
 
 
@@ -1374,6 +1387,7 @@ public class Main {
 
 ---
 
+- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
 ## Explain Looper, Handler and HandlerThread.
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -1381,7 +1395,7 @@ public class Main {
 
 ### Useful links
 
-- https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a
+- [Learn more](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
 
 
 
@@ -1390,6 +1404,7 @@ public class Main {
 
 ---
 
+- [Learn more](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
 ## Difference between Enumeration and Iterators?
 
 - **In plain words:**
@@ -1414,7 +1429,7 @@ public class Main {
 
 ### Useful links
 
-- https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray
+- [Learn more](https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray)
 
 
 
@@ -1423,6 +1438,7 @@ public class Main {
 
 ---
 
+- [Learn more](https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray)
 ## Generics in Java
 
 - **In plain words:**
@@ -1466,7 +1482,7 @@ String s = list.get(0);
 
 ### Useful links
 
-- https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8
+- [Learn more](https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8)
 
 
 
@@ -1475,6 +1491,7 @@ String s = list.get(0);
 
 ---
 
+- [Learn more](https://blog.mindorks.com/understanding-types-of-observables-in-rxjava-6c3a2d0819c8)
 ## Rx-Java Scheduler what, when, how?
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -1482,7 +1499,7 @@ String s = list.get(0);
 
 ### Useful links
 
-- https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add
+- [Learn more](https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add)
 
 
 
@@ -1491,6 +1508,7 @@ String s = list.get(0);
 
 ---
 
+- [Learn more](https://medium.com/android-news/rxjava-schedulers-what-when-and-how-to-use-it-6cfc27293add)
 ## RxJava Subject - Publish, Replay, Behavior, and Async
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -1498,7 +1516,7 @@ String s = list.get(0);
 
 ### Useful links
 
-- https://amitshekhar.me/blog/rxjava-subject-publish-replay-behavior-async
+- [Learn more](https://amitshekhar.me/blog/rxjava-subject-publish-replay-behavior-async)
 
 
 
@@ -1507,6 +1525,7 @@ String s = list.get(0);
 
 ---
 
+- [Learn more](https://amitshekhar.me/blog/rxjava-subject-publish-replay-behavior-async)
 ## Executor Service
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -1514,7 +1533,7 @@ String s = list.get(0);
 
 ### Useful links
 
-- https://www.javatpoint.com/java-executorservice
+- [Learn more](https://www.javatpoint.com/java-executorservice)
 
 
 
@@ -1523,6 +1542,7 @@ String s = list.get(0);
 
 ---
 
+- [Learn more](https://www.javatpoint.com/java-executorservice)
 ## What is an Observable in RXJava2?
 
 - **In plain words:**
@@ -1643,17 +1663,17 @@ stringObservable.subscribe(stringObserver);
 
 - **In plain words:**
 
-  - https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial
-     - https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
+  - [Learn more](https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial)
+     - [Learn more](https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin)
 
       <img src="https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09" alt="Lamp" width="600"> </br>
 
 
 ### Useful links
 
-- https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial
-- https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin
-- https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09
+- [Learn more](https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial)
+- [Learn more](https://blog.mindorks.com/mastering-design-patterns-in-android-with-kotlin)
+- [Learn more](https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09)
 
 
 
@@ -1662,6 +1682,7 @@ stringObservable.subscribe(stringObserver);
 
 ---
 
+- [Learn more](https://github.com/Kiran7007/Interview-Question/assets/18071333/4ca96de4-8701-41e6-ab58-10536aab7d09)
 ## What is the difference between factory and abstract factory design pattern?
 
 - **In plain words:**
@@ -1671,7 +1692,7 @@ stringObservable.subscribe(stringObserver);
 
 ### Useful links
 
-- https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java
+- [Learn more](https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java)
 
 
 
@@ -1680,6 +1701,7 @@ stringObservable.subscribe(stringObserver);
 
 ---
 
+- [Learn more](https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java)
 ## What is Creational Design Patterns?
 
 - **In plain words:** Use the links below as the primary source; rehearse a short spoken summary.
@@ -1687,7 +1709,7 @@ stringObservable.subscribe(stringObserver);
 
 ### Useful links
 
-- https://www.baeldung.com/kotlin/builder-pattern
+- [Learn more](https://www.baeldung.com/kotlin/builder-pattern)
 
 
 
@@ -1696,6 +1718,7 @@ stringObservable.subscribe(stringObserver);
 
 ---
 
+- [Learn more](https://www.baeldung.com/kotlin/builder-pattern)
 ## What are the drawbacks of using singleton design pattern?
 
 - **In plain words:**

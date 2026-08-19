@@ -1,6 +1,8 @@
-# Mobile System Design & OOD (Senior)
+# System Design
 
 ---
+
+## Mobile System Design Fundamentals
 
 ## How do you approach **mobile system design** differently from backend system design?
 
@@ -15,10 +17,11 @@
 - [9 Architectural Patterns for Data and Communication Flow](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
 
 
-> **Constraints-first architecture** wins interviews.
+> **Interview answer:** **Constraints-first architecture** wins interviews.
 
 ---
 
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
 ## Walk me through **SOLID** and how it shows up in Android codebases.
 
 - **S:** One reason to change per class (don’t mix navigation + analytics + JSON parsing in one god-object).
@@ -30,17 +33,18 @@
 
 ### Useful links
 
-- SOLID: https://lnkd.in/dafK6TzQ  
-- DRY: https://lnkd.in/dreUT7_h  
-- KISS: https://lnkd.in/d-nFYfdR  
-- YAGNI: https://lnkd.in/dHzEi__Y  
+- [SOLID:](https://lnkd.in/dafK6TzQ)  
+- [DRY:](https://lnkd.in/dreUT7_h)  
+- [KISS:](https://lnkd.in/d-nFYfdR)  
+- [YAGNI:](https://lnkd.in/dHzEi__Y)  
 - [SOLID in Android (Kotlin examples)](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 
 
-> SOLID is how you keep **large apps mergeable**.
+> **Interview answer:** SOLID is how you keep **large apps mergeable**.
 
 ---
 
+- [Learn more](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 ## Name core **design patterns** you’d use on mobile and anti-patterns you avoid.
 
 - **Patterns:** Singleton (DI scope, not static god), Factory (create ViewModels w/ assisted injection), Adapter (UI + legacy APIs), Observer (Flow/LiveData), Strategy (payment/auth providers).
@@ -49,16 +53,19 @@
 
 ### Useful links
 
-- Singleton: https://lnkd.in/dB5aDUXr  
-- Factory: https://lnkd.in/dvZtfe-k  
-- Adapter: https://lnkd.in/dKQpsTfe  
-- Observer: https://lnkd.in/dByc-whP  
-- Strategy: https://lnkd.in/d9dz8ER7  
+- [Singleton:](https://lnkd.in/dB5aDUXr)  
+- [Factory:](https://lnkd.in/dvZtfe-k)  
+- [Adapter:](https://lnkd.in/dKQpsTfe)  
+- [Observer:](https://lnkd.in/dByc-whP)  
+- [Strategy:](https://lnkd.in/d9dz8ER7)  
 
 
-> Patterns are **dependency boundaries**, not trivia.
+> **Interview answer:** Patterns are **dependency boundaries**, not trivia.
 
 ---
+
+- [Learn more](https://lnkd.in/d9dz8ER7)
+## Architecture, APIs, and Performance
 
 ## How do you document **class, sequence, and deployment** views for a mobile feature?
 
@@ -68,15 +75,16 @@
 
 ### Useful links
 
-- Class diagrams: https://lnkd.in/d8_8rYCp  
-- Sequence diagrams: https://lnkd.in/duPf_cJ2  
-- Interfaces: https://lnkd.in/d8NzSRgG  
+- [Class diagrams:](https://lnkd.in/d8_8rYCp)  
+- [Sequence diagrams:](https://lnkd.in/duPf_cJ2)  
+- [Interfaces:](https://lnkd.in/d8NzSRgG)  
 
 
-> Interviewers reward **clear diagrams** + explicit failure paths.
+> **Interview answer:** Interviewers reward **clear diagrams** + explicit failure paths.
 
 ---
 
+- [Learn more](https://lnkd.in/d8NzSRgG)
 ## What’s your **API design** checklist for mobile clients?
 
 - Versioning + backward compatibility (feature flags, nullable fields).
@@ -87,15 +95,16 @@
 
 ### Useful links
 
-- RESTful API: https://lnkd.in/dqDrkbDS  
-- Pagination: https://lnkd.in/dJfwFqmd  
-- Authentication: https://lnkd.in/dQ94BgzQ  
+- [RESTful API:](https://lnkd.in/dqDrkbDS)  
+- [Pagination:](https://lnkd.in/dJfwFqmd)  
+- [Authentication:](https://lnkd.in/dQ94BgzQ)  
 
 
-> Mobile clients **retry aggressively**—design APIs for that reality.
+> **Interview answer:** Mobile clients **retry aggressively**—design APIs for that reality.
 
 ---
 
+- [Learn more](https://lnkd.in/dQ94BgzQ)
 ## How do you discuss **scalability & performance** credibly as a mobile tech lead?
 
 - Client-side: caching layers (memory/disk), image pipelines, DB indexes, pagination, background scheduling, startup profiling.
@@ -104,14 +113,17 @@
 
 ### Useful links
 
-- Caching: https://lnkd.in/deMQvEJ9  
-- Load balancing: https://lnkd.in/dkeYMX74  
-- Lazy loading: https://lnkd.in/dvcdY_RX  
+- [Caching:](https://lnkd.in/deMQvEJ9)  
+- [Load balancing:](https://lnkd.in/dkeYMX74)  
+- [Lazy loading:](https://lnkd.in/dvcdY_RX)  
 
 
-> Show you can **partner with backend**—not blame it.
+> **Interview answer:** Show you can **partner with backend**—not blame it.
 
 ---
+
+- [Learn more](https://lnkd.in/dvcdY_RX)
+## Reliability, Data, and Operations
 
 ## Design **offline-first sync** for a notes app with multi-device edits.
 
@@ -122,7 +134,7 @@
 - **Testing:** property tests for merge, integration tests for retry storms.
 
 
-> State **conflict policy** explicitly—don’t hand-wave.
+> **Interview answer:** State **conflict policy** explicitly—don’t hand-wave.
 
 ---
 
@@ -134,14 +146,15 @@
 
 ### Useful links
 
-- Exception handling: https://lnkd.in/dkUHDGBu  
-- Logging strategies: https://lnkd.in/dvikcadQ  
+- [Exception handling:](https://lnkd.in/dkUHDGBu)  
+- [Logging strategies:](https://lnkd.in/dvikcadQ)  
 
 
-> **PII discipline** is part of system design.
+> **Interview answer:** **PII discipline** is part of system design.
 
 ---
 
+- [Learn more](https://lnkd.in/dvikcadQ)
 ## Concurrency on mobile—what do staff engineers emphasize?
 
 - Main-thread discipline; structured concurrency; cancellation; backpressure for streams.
@@ -149,15 +162,16 @@
 
 ### Useful links
 
-- Thread safety: https://lnkd.in/dNe6FpfS  
-- Locks: https://lnkd.in/dN2YdpvU  
-- Atomic operations: https://lnkd.in/dcfZF9Jb  
+- [Thread safety:](https://lnkd.in/dNe6FpfS)  
+- [Locks:](https://lnkd.in/dN2YdpvU)  
+- [Atomic operations:](https://lnkd.in/dcfZF9Jb)  
 
 
-> **Cancellation + backpressure** separate senior answers from junior ones.
+> **Interview answer:** **Cancellation + backpressure** separate senior answers from junior ones.
 
 ---
 
+- [Learn more](https://lnkd.in/dcfZF9Jb)
 ## **Database design** on device vs server—what changes?
 
 - On-device: normalize vs denormalize for read patterns; migrations; FTS for search; page-size tuning.
@@ -165,9 +179,10 @@
 
 ### Useful links
 
-- ER diagrams: https://lnkd.in/d6xygCrb  
-- Normalization: https://lnkd.in/dz7MCVaj  
-- Relationships: https://lnkd.in/da3YTaJN  
+- [ER diagrams:](https://lnkd.in/d6xygCrb)  
+- [Normalization:](https://lnkd.in/dz7MCVaj)  
+- [Relationships:](https://lnkd.in/da3YTaJN)  
 
 
-> Optimize for **read latency** the UI actually needs.
+> **Interview answer:** Optimize for **read latency** the UI actually needs.
+- [Learn more](https://lnkd.in/da3YTaJN)

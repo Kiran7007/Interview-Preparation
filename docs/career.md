@@ -1,10 +1,12 @@
-# Interview practice — master prompts (technical mock + meta)
+# Career
 
 Use this file for **self-introduction framing**, **copy-paste LLM prompts**, and **interview simulation rules**. Keep **verifiable facts** (company names, metrics, dates) accurate—replace placeholders below with **your** real resume bullets.
 
 ---
 
-## Personal / intro cheat sheet (fill in, then speak aloud)
+## Career Preparation
+
+### Personal / intro cheat sheet (fill in, then speak aloud)
 
 **One-liner (who you are):** _[e.g. Senior Android engineer focused on scalable apps, healthcare/fintech experience, Jetpack Compose.]_
 
@@ -20,7 +22,9 @@ Use this file for **self-introduction framing**, **copy-paste LLM prompts**, and
 
 ---
 
-## Single-string master prompt — FAANG depth + Android + Kotlin + lead + BLE + compliance
+## Interview Prompts
+
+### Single-string master prompt — FAANG depth + Android + Kotlin + lead + BLE + compliance
 
 Copy everything between the lines into a new chat:
 
@@ -57,7 +61,7 @@ Optional second arc: "Design a healthcare app that collects real-time data over 
 
 ---
 
-## Topic-specific prompts (shorter)
+### Topic-specific prompts (shorter)
 
 **Android security + API security + local storage (deep Q&A sheet):**  
 Ask the model to produce 8–12 Q&A pairs each on: Keystore, EncryptedSharedPreferences, secure token storage, pinning, ProGuard, secure logout, Room/SQLCipher, cache vs sensitive data.
@@ -79,7 +83,9 @@ Compose state hoisting, LazyColumn at scale, coroutine test of ViewModel + State
 
 ---
 
-## Behavioral / lead prompts (STAR)
+## Behavioral and Resume Practice
+
+### Behavioral / lead prompts (STAR)
 
 Ask the LLM:
 
@@ -89,7 +95,7 @@ Give me 6 behavioral questions for a Senior Android Tech Lead. For each, I will 
 
 ---
 
-## Resume review prompt (generic)
+### Resume review prompt (generic)
 
 ```
 You are a hiring manager. Review the following resume text for a Senior Android role. List strengths, red flags, and 10 likely deep interview questions tied to the claims. Do not invent experience—only reference what I paste below.
@@ -99,7 +105,7 @@ PASTE RESUME TEXT HERE
 
 ---
 
-## Related technical notes in this repo
+## Related Technical Notes
 
 All Android topics now live in **4 files** (merged from 11):
 
@@ -112,7 +118,7 @@ All Android topics now live in **4 files** (merged from 11):
 
 Kotlin: [kotlin.md](kotlin.md) — language fundamentals, advanced Kotlin, coroutines, and Flow
 
-## Dedup policy
+## Study Rules
 
 **We do not duplicate** content across files. When studying a PDF or course, **map each heading** to the matching `.md` section and add **only** gaps—prefer extending an existing **Question / Answer** entry instead of creating a parallel document. Use the table above to find the right file.
 

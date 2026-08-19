@@ -1,11 +1,2248 @@
-### Android Interview Notes
-
-> Consolidated from the Android topic notes. Review and refine this single source of truth.
-
+# Android
 ---
 
 <!-- Source: docs/android/android-core.md -->
-### Android Core
+## Android Architecture and Data
+
+---
+
+## What is MVVM?
+
+-   MVVM separates UI from presentation state and business/data logic.
+-   View observes state from ViewModel.
+-   ViewModel survives configuration changes.
+-   Repository abstracts data access.
+
+``` text
+Compose/XML
+    ↓
+ViewModel
+    ↓
+UseCase
+    ↓
+Repository
+    ↓
+API / Database
+```
+
+A ViewModel should expose UI-friendly state rather than exposing
+implementation details of the repository.
+
+---
+
+## What is Clean Architecture?
+
+-   Clean Architecture separates responsibilities into layers.
+-   It improves testability and maintainability.
+-   It should be used according to project complexity, not as a rule for
+    creating unnecessary classes.
+
+``` text
+UI
+ ↓
+ViewModel
+ ↓
+UseCase
+ ↓
+Repository
+ ↓
+Data Sources
+```
+
+For a small feature, several layers may be unnecessary. For a large
+banking application, clear boundaries become more valuable.
+
+---
+
+## What is the Repository pattern?
+
+-   A Repository hides where data comes from.
+-   It can coordinate API, database, cache, and other sources.
+
+``` kotlin
+interface UserRepository {
+    fun observeUser(): Flow<User>
+}
+```
+
+The ViewModel does not need to know whether data came from Room, REST,
+GraphQL, or memory.
+
+---
+
+## What is a UseCase?
+
+-   A UseCase represents a business operation.
+-   It keeps business rules out of the ViewModel.
+
+``` kotlin
+class TransferMoneyUseCase(
+    private val repository: PaymentRepository
+) {
+    suspend operator fun invoke(
+        from: String,
+        to: String,
+        amount: Long
+    ) = repository.transfer(from, to, amount)
+}
+```
+
+Do not create a UseCase for every trivial getter just to follow a
+pattern.
+
+---
+
+## How would you design a banking account dashboard?
+
+``` text
+Compose/XML
+    ↓
+ViewModel
+    ↓
+UseCase
+    ↓
+Repository
+   ↙    ↘
+Room    API
+```
+
+-   UI observes immutable StateFlow.
+-   Repository coordinates local and remote data.
+-   Room can act as the local source of truth.
+-   API refreshes local data.
+-   Sensitive data is minimized and protected.
+-   Errors are represented explicitly.
+-   Tests cover business logic, integration, and critical UI flows.
+
+---
+
+## How would you implement offline-first behavior?
+
+-   Read cached data first.
+-   Display it immediately.
+-   Refresh from the network.
+-   Save successful data locally.
+-   Let the UI observe the local source of truth.
+
+``` text
+API
+ ↓
+Room
+ ↓
+UI
+```
+
+If refresh fails but cached data exists, keep showing cached data and
+expose a refresh error.
+
+Do not cache sensitive financial data unless there is a clear
+requirement.
+
+---
+
+## How should API errors be handled?
+
+Different errors should have different behavior.
+
+``` text
+401 → authentication problem
+403 → authorization problem
+404 → resource missing
+429 → rate limit
+5xx → server problem
+timeout → network problem
+```
+
+For an initial load with no cache, show an error and retry.
+
+For a refresh with cached data, keep existing data and show a
+non-blocking error.
+
+---
+
+## What happens when an API request times out?
+
+-   The client does not necessarily know whether the server processed
+    the request.
+-   Retrying blindly can duplicate operations.
+-   This is especially dangerous for payments.
+
+For financial transactions, use an idempotency key or transaction
+identifier.
+
+``` text
+Client → Payment(idempotencyKey=ABC)
+        ↓
+Server processes payment
+        ↓
+Network timeout
+        ↓
+Client retries with same key
+        ↓
+Server recognizes duplicate
+```
+
+This prevents accidental duplicate processing when supported by the
+backend design.
+
+---
+
+## Networking and Security
+
+## What is REST?
+
+-   REST commonly exposes resources through HTTP.
+-   HTTP methods communicate intent.
+
+``` text
+GET    /accounts/123
+POST   /payments
+PUT    /profile/123
+PATCH  /profile/123
+DELETE /saved-payee/123
+```
+
+REST is simple and widely supported.
+
+---
+
+## What is GraphQL?
+
+-   GraphQL allows clients to request the fields they need.
+-   It can reduce over-fetching and under-fetching.
+-   It requires more consideration around caching, query complexity, and
+    error handling.
+
+``` graphql
+query {
+    account(id: "123") {
+        id
+        balance
+        transactions {
+            id
+            amount
+        }
+    }
+}
+```
+
+---
+
+## What is an HTTP interceptor?
+
+-   An interceptor can inspect or modify requests and responses.
+-   Common uses include headers, authentication, logging, and metrics.
+
+``` text
+Request
+  ↓
+Interceptor
+  ↓
+Network
+  ↓
+Response
+```
+
+Never log authorization headers, tokens, or sensitive customer
+information.
+
+---
+
+## How should authentication tokens be stored?
+
+-   Avoid plain SharedPreferences for sensitive credentials.
+-   Minimize what is stored.
+-   Use Android Keystore-backed mechanisms and approved secure storage
+    approaches.
+-   Clear sensitive state when required during logout.
+-   Never log tokens.
+
+``` text
+Login
+ ↓
+Authentication server
+ ↓
+Access token
+ ↓
+Secure storage
+ ↓
+API request
+```
+
+The exact storage approach should follow the application's security
+requirements and organizational standards.
+
+---
+
+## What is the difference between 401 and 403?
+
+-   `401 Unauthorized` generally means authentication is missing or
+    invalid.
+-   `403 Forbidden` means the caller is authenticated but not allowed to
+    perform the operation.
+
+``` text
+401 → "Who are you?"
+403 → "I know who you are, but you cannot do this."
+```
+
+---
+
+## What is certificate pinning?
+
+-   TLS normally validates the server certificate chain.
+-   Certificate pinning adds an additional check against an expected
+    certificate or public key.
+
+``` text
+App
+ ↓
+TLS validation
+ ↓
+Pinned certificate/public key check
+ ↓
+Server
+```
+
+It can reduce certain MITM risks.
+
+The trade-off is operational complexity during certificate rotation. It
+should be used according to the threat model and security policy.
+
+---
+
+## What is OWASP MASVS?
+
+-   OWASP MASVS is a security standard for mobile applications.
+-   It covers areas such as secure storage, authentication, network
+    communication, cryptography, platform interaction, and resilience.
+
+For an Android banking application, use it as a security checklist
+rather than treating security as a final testing step.
+
+---
+
+## What is secure networking?
+
+-   Use HTTPS/TLS.
+-   Validate certificates correctly.
+-   Never disable hostname or certificate validation.
+-   Avoid sensitive information in URLs when possible.
+-   Protect authentication credentials.
+-   Do not log secrets or PII.
+
+``` text
+App
+ ↓ HTTPS/TLS
+API
+```
+
+---
+
+## How do you protect secrets?
+
+Never commit secrets to Git.
+
+Avoid:
+
+``` kotlin
+const val API_SECRET = "real-secret"
+```
+
+Prefer secure CI/CD secret management and server-side handling where
+possible.
+
+Remember that anything shipped inside an APK should generally be
+considered potentially discoverable.
+
+---
+
+## Compose and UI
+
+## What is MVVM state management?
+
+A ViewModel can expose a single immutable UI state.
+
+``` kotlin
+data class ScreenState(
+    val isLoading: Boolean = false,
+    val data: Account? = null,
+    val error: String? = null
+)
+```
+
+Then:
+
+``` kotlin
+private val _state = MutableStateFlow(ScreenState())
+val state = _state.asStateFlow()
+```
+
+This gives the UI one predictable state source.
+
+---
+
+## What is state hoisting in Compose?
+
+-   State hoisting means moving state to the caller.
+-   The composable receives state and callbacks.
+
+``` kotlin
+@Composable
+fun UserCard(
+    user: User,
+    onClick: () -> Unit
+) {
+    // UI only
+}
+```
+
+Benefits:
+
+-   Reusable
+-   Easier to test
+-   Easier to preview
+-   Easier to control from ViewModel
+
+---
+
+## What causes recomposition in Compose?
+
+-   Compose tracks state read by composables.
+-   When observed state changes, affected composables can recompose.
+
+``` kotlin
+var count by remember {
+    mutableStateOf(0)
+}
+
+Text("$count")
+```
+
+When `count` changes, the UI reading `count` is eligible for
+recomposition.
+
+Recomposition does not mean the entire application is redrawn.
+
+---
+
+## What is `remember`?
+
+-   `remember` keeps a value across recompositions.
+-   It does not normally survive process death.
+
+``` kotlin
+val state = remember {
+    mutableStateOf("")
+}
+```
+
+Use it for UI-local state.
+
+---
+
+## What is `rememberSaveable`?
+
+-   It can restore suitable state across configuration changes and
+    saved-state restoration.
+-   It is useful for small UI state such as text input or selected tabs.
+
+``` kotlin
+var query by rememberSaveable {
+    mutableStateOf("")
+}
+```
+
+Do not use it as a replacement for ViewModel state for complex business
+state.
+
+---
+
+## What is `LaunchedEffect`?
+
+-   `LaunchedEffect` starts a coroutine tied to the composition.
+-   It is useful for lifecycle-aware side effects initiated by entering
+    composition or changing a key.
+
+``` kotlin
+LaunchedEffect(userId) {
+    viewModel.loadUser(userId)
+}
+```
+
+When the key changes, the previous effect is cancelled and a new one
+starts.
+
+---
+
+## What is the XML equivalent of `LaunchedEffect`?
+
+There is no exact one-to-one equivalent.
+
+For XML/View-based screens, use lifecycle-aware mechanisms such as:
+
+``` kotlin
+lifecycleScope.launch {
+    repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.state.collect { state ->
+            render(state)
+        }
+    }
+}
+```
+
+For one-time initialization, use lifecycle methods such as
+`onViewCreated` when appropriate.
+
+---
+
+## What is `DisposableEffect`?
+
+-   It is used when an effect needs cleanup.
+
+``` kotlin
+DisposableEffect(Unit) {
+    registerListener()
+
+    onDispose {
+        unregisterListener()
+    }
+}
+```
+
+Use it for listeners, observers, or other resources that need explicit
+cleanup.
+
+---
+
+## What is `derivedStateOf`?
+
+-   It creates state derived from other state.
+-   It can prevent unnecessary recompositions when the derived result
+    has not changed.
+
+``` kotlin
+val showButton by remember {
+    derivedStateOf {
+        listState.firstVisibleItemIndex > 0
+    }
+}
+```
+
+Use it when derived state changes less frequently than its inputs.
+
+---
+
+## Why are keys important in LazyColumn?
+
+-   Keys help Compose identify items across updates.
+-   Without stable keys, Compose may associate state with the wrong item
+    when list positions change.
+
+``` kotlin
+LazyColumn {
+    items(
+        users,
+        key = { it.id }
+    ) { user ->
+        UserRow(user)
+    }
+}
+```
+
+Stable unique keys are especially important when rows have remembered
+state or animations.
+
+---
+
+## How do you optimize Compose performance?
+
+Check:
+
+-   Unnecessary recomposition
+-   Unstable parameters
+-   Large composables
+-   Expensive work during composition
+-   Missing LazyColumn keys
+-   Incorrect state ownership
+-   Unnecessary object creation
+
+Profile before optimizing.
+
+Useful tools include Layout Inspector, CPU profiling, Macrobenchmark,
+and production metrics.
+
+---
+
+## What are stable and unstable types in Compose?
+
+-   Compose uses stability information to reason about whether
+    parameters are likely to change.
+-   Stable parameters can help Compose skip unnecessary recomposition.
+-   Mutable or poorly designed types can make stability harder to
+    determine.
+
+Prefer immutable UI models where possible.
+
+``` kotlin
+data class UserUiModel(
+    val id: String,
+    val name: String
+)
+```
+
+The goal is not to add annotations blindly. The data model should
+actually satisfy the stability contract.
+
+---
+
+## What is `collectAsStateWithLifecycle()`?
+
+-   It collects a Flow from Compose while respecting the lifecycle.
+-   It avoids unnecessary collection while the UI is not active.
+
+``` kotlin
+val state by viewModel.state
+    .collectAsStateWithLifecycle()
+```
+
+It is generally preferred over manually collecting a Flow directly from
+composition.
+
+---
+
+## How do you make a Compose screen accessible?
+
+Use:
+
+-   Meaningful semantics
+-   Content descriptions where needed
+-   Correct roles
+-   Adequate touch targets
+-   Good contrast
+-   Font scaling support
+-   Proper focus order
+-   TalkBack validation
+
+``` kotlin
+Modifier.semantics {
+    contentDescription = "Account balance"
+}
+```
+
+Do not add content descriptions to elements where the visible text
+already provides the correct semantics.
+
+---
+
+## How do you build responsive Android UI?
+
+-   Avoid hardcoded dimensions where possible.
+-   Support different screen sizes and orientations.
+-   Use adaptive layouts and window size information.
+-   Design for phones, tablets, foldables, and landscape.
+
+``` text
+Phone
+  ↓
+Single-column layout
+
+Tablet
+  ↓
+Multi-pane layout
+```
+
+For XML, use resource qualifiers where appropriate.
+
+---
+
+## Platform Components and Lifecycle
+
+## What is the Activity lifecycle?
+
+Important callbacks include:
+
+``` text
+onCreate
+ ↓
+onStart
+ ↓
+onResume
+ ↓
+onPause
+ ↓
+onStop
+ ↓
+onDestroy
+```
+
+`onCreate` is used for initialization.
+
+`onStart` means visible.
+
+`onResume` means the Activity is in the foreground and interactive.
+
+`onStop` means it is no longer visible.
+
+---
+
+## What happens during configuration change?
+
+For example, during rotation:
+
+``` text
+Activity
+ ↓
+destroyed
+ ↓
+recreated
+```
+
+The ViewModel normally survives the configuration change.
+
+UI state should be stored in the appropriate place:
+
+``` text
+remember          → recomposition
+rememberSaveable  → saved UI state
+ViewModel         → screen/business state
+SavedStateHandle  → state that should survive process recreation where supported
+```
+
+---
+
+## What is process death?
+
+-   Android can kill the application process when resources are needed.
+-   A ViewModel does not survive process death.
+-   Important state must be restored through saved-state mechanisms or
+    recreated from persistent storage.
+
+Do not assume ViewModel means permanent state.
+
+---
+
+## What is the difference between Activity context and Application context?
+
+-   Activity context is tied to an Activity lifecycle.
+-   Application context lives as long as the application process.
+
+Do not store an Activity context in a long-lived singleton because it
+can cause a memory leak.
+
+Use Application context for application-wide dependencies when
+appropriate.
+
+---
+
+## Background Work and UI Performance
+
+## What is WorkManager?
+
+-   WorkManager is used for deferrable, persistent background work.
+-   It is useful when work should survive app restarts.
+
+``` kotlin
+WorkManager
+    ↓
+Sync database
+Upload logs
+Periodic refresh
+```
+
+Do not use it for immediate UI-bound work.
+
+---
+
+## Service vs WorkManager?
+
+-   Service is for specific foreground/background service use cases.
+-   WorkManager is for persistent deferrable work.
+-   Foreground services require appropriate Android restrictions and
+    user-visible notifications.
+
+Choose based on the actual background execution requirement.
+
+---
+
+## What is RecyclerView optimization?
+
+Important practices include:
+
+-   Use `ListAdapter` and `DiffUtil`.
+-   Use stable item identity.
+-   Avoid heavy work in `onBindViewHolder`.
+-   Avoid unnecessary nested layouts.
+-   Load images efficiently.
+-   Do not perform database/network work on the main thread.
+
+``` kotlin
+submitList(newUsers)
+```
+
+`DiffUtil` calculates changes instead of blindly refreshing everything.
+
+---
+
+## Dependency Injection and Testing
+
+## What is dependency injection?
+
+-   Dependency Injection means an object receives dependencies instead
+    of constructing them internally.
+-   It improves testing and separation of concerns.
+
+``` kotlin
+class UserViewModel(
+    private val repository: UserRepository
+)
+```
+
+The ViewModel does not create `UserRepository()` itself.
+
+---
+
+## What are Hilt scopes?
+
+Common scopes include:
+
+``` text
+SingletonComponent
+ActivityRetainedComponent
+ViewModelComponent
+ActivityComponent
+FragmentComponent
+```
+
+The scope should match the required lifetime.
+
+A dependency that is only needed by one ViewModel should not
+automatically become a global singleton.
+
+---
+
+## What is unit testing?
+
+-   Unit tests verify small pieces of logic.
+-   They are usually fast and run on the JVM.
+
+Good candidates:
+
+``` text
+ViewModel
+UseCase
+Mapper
+Validator
+Business rules
+```
+
+Example:
+
+``` kotlin
+@Test
+fun `invalid amount returns error`() {
+    // arrange
+    // act
+    // assert
+}
+```
+
+---
+
+## What is an instrumentation test?
+
+-   It runs with Android framework/device support.
+-   It is useful for integration with Android components, databases, and
+    other platform behavior.
+
+``` text
+Test
+ ↓
+Emulator/device
+ ↓
+Android framework
+```
+
+---
+
+## What is a UI test?
+
+-   UI tests verify user-visible behavior.
+-   Compose provides testing APIs based on semantics.
+
+``` kotlin
+composeTestRule
+    .onNodeWithText("Pay")
+    .performClick()
+```
+
+Test important user journeys rather than every internal implementation
+detail.
+
+---
+
+## What is the difference between a mock and a fake?
+
+-   Mock simulates behavior and often verifies interactions.
+-   Fake is a simplified working implementation.
+
+``` kotlin
+class FakeUserRepository : UserRepository {
+    override suspend fun getUser() = User("1", "Kiran")
+}
+```
+
+Fakes can make tests less coupled to implementation details.
+
+---
+
+## How do you test coroutines?
+
+Use `runTest` and test dispatchers.
+
+``` kotlin
+@Test
+fun `load user updates state`() = runTest {
+    viewModel.loadUser()
+
+    // assert state
+}
+```
+
+Avoid real delays and real background dispatchers in deterministic unit
+tests.
+
+---
+
+## How do you test Flow and StateFlow?
+
+Use a Flow testing library such as Turbine where appropriate.
+
+``` kotlin
+viewModel.state.test {
+    assertEquals(Loading, awaitItem())
+    assertEquals(Success(user), awaitItem())
+}
+```
+
+Test important state transitions rather than internal implementation
+details.
+
+---
+
+## Why should Dispatchers be injectable?
+
+Hardcoding dispatchers makes unit tests harder to control.
+
+Instead:
+
+``` kotlin
+class Repository(
+    private val ioDispatcher: CoroutineDispatcher
+)
+```
+
+Production:
+
+``` kotlin
+Dispatchers.IO
+```
+
+Test:
+
+``` kotlin
+StandardTestDispatcher(testScheduler)
+```
+
+This makes asynchronous behavior deterministic.
+
+---
+
+## What is the Android test pyramid?
+
+A useful approach is:
+
+``` text
+        UI tests
+       /        \
+ Integration tests
+   /              \
+       Unit tests
+```
+
+Use many fast unit tests, fewer integration tests, and a smaller number
+of critical end-to-end UI tests.
+
+---
+
+## How do you handle flaky tests?
+
+-   Find the root cause instead of repeatedly rerunning.
+-   Remove arbitrary sleeps.
+-   Use deterministic synchronization.
+-   Check test isolation.
+-   Check race conditions.
+-   Control coroutine dispatchers.
+-   Separate product failures from environment failures.
+
+``` text
+Flaky test
+   ↓
+Timing?
+Isolation?
+Environment?
+Concurrency?
+Product bug?
+   ↓
+Fix root cause
+```
+
+---
+
+## Build, Modularization, and Release
+
+## What is CI/CD for Android?
+
+A typical pipeline is:
+
+``` text
+Pull Request
+    ↓
+Compile
+    ↓
+Lint / Static Analysis
+    ↓
+Unit Tests
+    ↓
+Instrumentation Tests
+    ↓
+Security Checks
+    ↓
+Build AAB
+    ↓
+Sign
+    ↓
+Release
+```
+
+The exact stages depend on the organization.
+
+---
+
+## What are CI quality gates?
+
+Possible gates include:
+
+-   Compilation
+-   Unit tests
+-   Instrumentation tests
+-   Lint
+-   Static analysis
+-   Security scanning
+-   Dependency checks
+-   Required code review
+
+A quality gate should prevent known high-risk problems from reaching
+release.
+
+---
+
+## How can you improve Android build time?
+
+Look at:
+
+-   Gradle configuration
+-   Build cache
+-   Configuration cache
+-   Parallel execution
+-   Dependency graph
+-   Modularization
+-   Incremental builds
+-   Avoiding unnecessary annotation processing
+-   CI caching
+
+Measure before changing the build system.
+
+---
+
+## How should Android signing be handled in CI/CD?
+
+-   Keep signing credentials outside source control.
+-   Use a secure secret manager.
+-   Restrict access.
+-   Separate debug and release credentials where appropriate.
+-   Audit release access.
+
+``` text
+CI
+ ↓
+Secure signing credentials
+ ↓
+Signed AAB
+ ↓
+Release
+```
+
+---
+
+## What are build variants?
+
+Build variants allow different configurations such as:
+
+``` text
+debug
+release
+staging
+production
+```
+
+They can use different API endpoints, logging settings, and feature
+configurations.
+
+Never allow development configuration to accidentally ship in
+production.
+
+---
+
+## What is modularization?
+
+-   Modularization divides a large codebase into meaningful modules.
+-   It improves ownership, dependency boundaries, build performance, and
+    reuse.
+
+``` text
+:app
+
+:feature-login
+:feature-dashboard
+:feature-payments
+
+:core-network
+:core-database
+:core-ui
+:core-security
+```
+
+Do not create modules for every small class.
+
+---
+
+## What is the problem with a huge common module?
+
+A giant `common` module can become a dumping ground.
+
+``` text
+feature A → common
+feature B → common
+feature C → common
+```
+
+Soon everything depends on everything.
+
+Prefer focused modules such as:
+
+``` text
+core-network
+core-database
+core-ui
+core-security
+```
+
+with clear responsibilities.
+
+---
+
+## What are shared libraries in Android?
+
+Shared libraries contain functionality used by multiple features or
+teams.
+
+Examples:
+
+``` text
+Design system
+Networking
+Authentication
+Logging
+Analytics
+Security utilities
+```
+
+They should have stable APIs and avoid unnecessary feature-specific
+dependencies.
+
+---
+
+## Reliability and Observability
+
+## How do you investigate an ANR?
+
+First determine what the main thread was doing.
+
+Look at:
+
+-   ANR traces
+-   Android Vitals
+-   Play Console
+-   StrictMode
+-   Perfetto
+-   CPU profiler
+
+Typical causes:
+
+``` text
+Main thread
+   ↓
+Disk I/O
+Network
+Large computation
+Lock contention
+Binder call
+```
+
+Move appropriate work away from the main thread and fix the underlying
+bottleneck.
+
+---
+
+## What is a memory leak?
+
+-   A memory leak occurs when objects remain reachable even though they
+    are no longer needed.
+-   Android commonly sees leaks from lifecycle misuse.
+
+Examples:
+
+``` text
+Singleton
+   ↓
+Activity
+   ↓
+Activity cannot be collected
+```
+
+Use LeakCanary and Memory Profiler to investigate.
+
+---
+
+## How do you investigate a crash?
+
+A good process is:
+
+``` text
+Crash report
+ ↓
+Stack trace
+ ↓
+Affected version/device
+ ↓
+Reproduction
+ ↓
+Root cause
+ ↓
+Fix
+ ↓
+Regression test
+ ↓
+Monitor release
+```
+
+Look for crash clustering rather than treating every stack trace
+independently.
+
+---
+
+## What is Android startup performance?
+
+Startup performance is the time needed before the application becomes
+usable.
+
+Common problems:
+
+-   Heavy Application initialization
+-   Synchronous disk I/O
+-   Large dependency initialization
+-   Unnecessary SDK initialization
+-   Expensive database work
+
+Use profiling and startup metrics before optimizing.
+
+---
+
+## What are Baseline Profiles?
+
+-   Baseline Profiles tell Android which code paths are important.
+-   They can improve startup and runtime performance by enabling
+    ahead-of-time optimization for important paths.
+
+For critical flows such as application startup and login, they can
+provide measurable benefits.
+
+---
+
+## What is Macrobenchmark?
+
+-   Macrobenchmark measures larger user journeys on real Android devices
+    or emulators.
+-   It is useful for startup, scrolling, and other performance
+    scenarios.
+
+``` text
+Launch app
+ ↓
+Navigate
+ ↓
+Scroll
+ ↓
+Measure performance
+```
+
+It complements unit and UI tests.
+
+---
+
+## What is feature flagging?
+
+-   A feature flag controls whether functionality is enabled.
+-   It allows deployment and release to be separated.
+
+``` kotlin
+if (featureFlags.newPaymentFlow) {
+    NewPaymentScreen()
+} else {
+    OldPaymentScreen()
+}
+```
+
+It supports gradual rollout and quick disablement.
+
+---
+
+## What is a phased rollout?
+
+Instead of releasing to everyone immediately:
+
+``` text
+1%
+ ↓
+5%
+ ↓
+10%
+ ↓
+25%
+ ↓
+50%
+ ↓
+100%
+```
+
+Monitor:
+
+-   Crash rate
+-   ANR
+-   API errors
+-   Performance
+-   Business metrics
+
+Stop or roll back if important metrics degrade.
+
+---
+
+## What is operational readiness?
+
+Before release, define:
+
+-   Monitoring
+-   Alerts
+-   Rollback process
+-   Feature flag strategy
+-   Ownership
+-   Runbook
+-   Known failure modes
+
+A feature is not production-ready simply because the code works locally.
+
+---
+
+## What is a runbook?
+
+A runbook explains what to do when an operational problem occurs.
+
+``` text
+Problem
+ ↓
+Detection
+ ↓
+Investigation
+ ↓
+Mitigation
+ ↓
+Rollback
+ ↓
+Recovery
+```
+
+For example, a crash spike after release should have a documented
+rollback or feature-disable procedure.
+
+---
+
+## What is crash-free rate?
+
+-   It measures how many users or sessions complete without crashes.
+-   It is a useful stability metric.
+
+Track it by:
+
+``` text
+App version
+Device
+OS version
+Feature
+Release cohort
+```
+
+A single overall percentage can hide problems affecting a specific
+group.
+
+---
+
+## What is ANR rate?
+
+-   It measures application-not-responding events.
+-   It is an important Android stability metric.
+-   Monitor it together with startup, rendering, and crash metrics.
+
+A release with good crash numbers can still be unhealthy if ANRs
+increase.
+
+---
+
+## How would you improve app stability?
+
+Use a loop:
+
+``` text
+Monitor
+ ↓
+Identify top crashes/ANRs
+ ↓
+Prioritize by user impact
+ ↓
+Fix root cause
+ ↓
+Add regression test
+ ↓
+Release gradually
+ ↓
+Monitor again
+```
+
+Avoid fixing only the visible symptom.
+
+---
+
+## Advanced Production Scenarios
+
+## How would you design an Android payment flow?
+
+``` text
+UI
+ ↓
+ViewModel
+ ↓
+UseCase
+ ↓
+Repository
+ ↓
+Payment API
+```
+
+Important considerations:
+
+-   Authentication
+-   Authorization
+-   Input validation
+-   Secure networking
+-   Idempotency
+-   Transaction state
+-   Timeout handling
+-   Error recovery
+-   Auditability
+-   Monitoring
+
+For payment requests, never blindly retry after an ambiguous timeout.
+
+---
+
+## How would you handle a token refresh?
+
+Typical flow:
+
+``` text
+API request
+ ↓
+401
+ ↓
+Refresh token
+ ↓
+New access token
+ ↓
+Retry original request
+```
+
+But concurrency matters.
+
+If five requests receive `401` simultaneously, avoid launching five
+refresh requests.
+
+Use a coordinated refresh mechanism so only one refresh occurs and other
+requests wait for the result.
+
+---
+
+## How do you prevent duplicate API requests?
+
+Possible approaches:
+
+-   `distinctUntilChanged`
+-   `debounce`
+-   `flatMapLatest`
+-   Request deduplication
+-   Caching
+-   Coordinated token refresh
+-   Idempotency on server-side write operations
+
+The solution depends on whether the requests are reads, writes, or user
+actions.
+
+---
+
+## How do you handle pagination?
+
+For simple offset pagination:
+
+``` text
+page=1
+page=2
+page=3
+```
+
+For more reliable APIs, cursor pagination can be better:
+
+``` text
+cursor=A
+ ↓
+nextCursor=B
+ ↓
+nextCursor=C
+```
+
+For Android, Paging 3 can manage loading, retry, refresh, and
+presentation state.
+
+---
+
+## What is the difference between retry and refresh?
+
+-   Retry repeats a failed operation.
+-   Refresh requests the latest state/data again.
+
+A retry should be used carefully with writes.
+
+For financial operations, use idempotency and server-side transaction
+semantics before retrying.
+
+---
+
+## What is idempotency?
+
+-   An operation is idempotent when repeating the same request does not
+    create additional unintended effects.
+-   It is critical for payment and transaction workflows.
+
+``` text
+POST payment + idempotencyKey=ABC
+POST payment + idempotencyKey=ABC
+```
+
+The server can recognize that both requests represent the same
+operation.
+
+---
+
+## How do you use AI coding assistants safely?
+
+-   Use only organization-approved AI tools.
+-   Do not provide confidential source code or customer data unless
+    explicitly permitted.
+-   Treat generated code as untrusted suggestions.
+-   Review the code.
+-   Run tests.
+-   Run static analysis and security checks.
+-   Validate behavior against requirements.
+
+``` text
+AI suggestion
+    ↓
+Developer review
+    ↓
+Tests
+    ↓
+Static/security analysis
+    ↓
+Code review
+    ↓
+Merge
+```
+
+---
+
+## What are the risks of AI-generated code?
+
+Possible risks:
+
+-   Incorrect APIs
+-   Security vulnerabilities
+-   Poor architecture
+-   Hallucinated behavior
+-   License/IP concerns
+-   Sensitive data exposure
+-   Hidden edge cases
+
+The developer remains responsible for the final code.
+
+---
+
+## How would you respond if AI generated insecure token storage?
+
+Do not merge it.
+
+``` text
+Generated code
+ ↓
+Security review
+ ↓
+Identify insecure storage
+ ↓
+Replace with approved secure approach
+ ↓
+Add tests
+ ↓
+Run security/static checks
+ ↓
+Code review
+```
+
+AI can accelerate implementation but cannot replace engineering
+judgment.
+
+---
+
+## How do you approach mentoring engineers?
+
+-   Understand their current approach first.
+-   Explain trade-offs rather than only giving the answer.
+-   Pair when needed.
+-   Give actionable code-review feedback.
+-   Document repeated patterns.
+-   Encourage ownership.
+
+The goal is to improve both the immediate code and the engineer's future
+decision-making.
+
+---
+
+## How do you lead a moderately complex Android initiative?
+
+``` text
+Requirements
+ ↓
+Technical risks
+ ↓
+Architecture
+ ↓
+Break into tasks
+ ↓
+Implementation
+ ↓
+Testing
+ ↓
+Code review
+ ↓
+Release
+ ↓
+Monitoring
+```
+
+A senior engineer should think beyond implementation and consider
+reliability, security, testing, delivery, and operational support.
+
+---
+
+## How do you handle an architecture disagreement?
+
+-   Understand the other proposal.
+-   Compare trade-offs.
+-   Use requirements and measurable constraints.
+-   Prototype when uncertainty is high.
+-   Align with the team.
+-   Document important decisions.
+
+Avoid making the discussion about who is technically right.
+
+---
+
+## What delivery metrics matter for an Android team?
+
+Important metrics include:
+
+-   Cycle time
+-   Deployment frequency
+-   Defect escape rate
+-   Crash-free users
+-   ANR rate
+-   Build duration
+-   Test stability
+-   Release rollback rate
+
+Do not optimize one metric alone.
+
+For example, reducing cycle time by skipping tests can increase
+production defects.
+
+---
+
+## How do you investigate a production performance regression?
+
+``` text
+Metric regression
+ ↓
+Identify affected version
+ ↓
+Compare with previous release
+ ↓
+Find affected devices/OS
+ ↓
+Inspect traces and telemetry
+ ↓
+Reproduce
+ ↓
+Fix
+ ↓
+Benchmark
+ ↓
+Gradual release
+```
+
+Measure before and after the change.
+
+---
+
+## How would you reduce Android app startup time?
+
+-   Remove unnecessary initialization from `Application`.
+-   Lazy-load noncritical dependencies.
+-   Avoid synchronous disk/database work on startup.
+-   Defer analytics/SDK initialization where allowed.
+-   Use Baseline Profiles.
+-   Measure using startup benchmarks and production telemetry.
+
+The first step should be profiling, not guessing.
+
+---
+
+## How do you handle sensitive data in logs?
+
+Never log:
+
+``` text
+Passwords
+Access tokens
+Refresh tokens
+PINs
+Full account numbers
+Sensitive customer data
+```
+
+Use safe identifiers and structured logging where appropriate.
+
+Production logging should follow security and privacy policies.
+
+---
+
+## Security and Performance Deep Dives
+
+## What is screenshot protection?
+
+Android can restrict screenshots for sensitive screens using appropriate
+window flags.
+
+``` kotlin
+window.setFlags(
+    WindowManager.LayoutParams.FLAG_SECURE,
+    WindowManager.LayoutParams.FLAG_SECURE
+)
+```
+
+Use it where the security requirement calls for preventing screenshots
+or screen capture.
+
+---
+
+## What is the Android Keystore?
+
+-   Android Keystore provides a secure mechanism for managing
+    cryptographic keys.
+-   Keys can be hardware-backed on supported devices.
+-   Applications can use it for encryption/signing operations without
+    exposing key material directly.
+
+It is not a general database. It is a key-management mechanism.
+
+---
+
+## What is certificate transparency?
+
+-   Certificate Transparency provides public logs of issued
+    certificates.
+-   It helps detect improperly issued certificates.
+-   It complements, rather than replaces, normal TLS validation.
+
+---
+
+## How would you secure a local database?
+
+-   Minimize sensitive data.
+-   Encrypt sensitive database content when required.
+-   Protect encryption keys using appropriate secure key-management
+    mechanisms.
+-   Restrict access.
+-   Avoid logging database contents.
+-   Consider backup behavior and logout/data-retention requirements.
+
+---
+
+## What is overdraw?
+
+-   Overdraw occurs when the same screen pixel is drawn multiple times.
+-   Excessive overdraw can increase rendering cost.
+
+Avoid unnecessary backgrounds and deeply nested layouts.
+
+Use Android Studio's rendering/profiling tools to investigate.
+
+---
+
+## How do you reduce memory usage?
+
+-   Avoid holding Activity/View references in long-lived objects.
+-   Load images at appropriate sizes.
+-   Avoid unnecessary large collections.
+-   Close resources appropriately.
+-   Use lifecycle-aware components.
+-   Profile before optimizing.
+
+---
+
+## How do you investigate UI jank?
+
+Look for:
+
+-   Long work on the main thread
+-   Expensive composition
+-   Excessive recomposition
+-   Large list rendering
+-   Image decoding
+-   Layout complexity
+
+Use:
+
+``` text
+Compose/Layout Inspector
+CPU profiler
+Perfetto
+Macrobenchmark
+Frame timing
+```
+
+---
+
+## What is the difference between a crash and an ANR?
+
+-   Crash terminates the application process or component due to an
+    unhandled failure.
+-   ANR means the application is not responding to user/system
+    interaction within required time limits.
+
+``` text
+Crash → application failure
+ANR   → application unresponsive
+```
+
+Both should be monitored in production.
+
+---
+
+## How do you decide what to UI test?
+
+Prioritize:
+
+-   Login
+-   Payments
+-   Navigation
+-   Critical business journeys
+-   Accessibility-critical behavior
+-   Important regression scenarios
+
+Do not put every business rule into UI tests. Keep most logic in fast
+unit tests.
+
+---
+
+## What is a good Android testing strategy?
+
+``` text
+Unit tests
+   ↓
+Business logic / ViewModel
+
+Integration tests
+   ↓
+Repository / DB / networking boundaries
+
+UI tests
+   ↓
+Critical user journeys
+```
+
+This gives good confidence without making the entire suite slow and
+fragile.
+
+---
+
+## What is a quality gate you would add to CI?
+
+A practical PR gate could be:
+
+``` text
+Compile
+ ↓
+Lint
+ ↓
+Static analysis
+ ↓
+Unit tests
+ ↓
+Security/dependency checks
+```
+
+For release:
+
+``` text
+Instrumentation/UI tests
+ ↓
+Release build
+ ↓
+Signing
+ ↓
+Artifact verification
+ ↓
+Deployment
+```
+
+---
+
+## What is release rollback?
+
+Rollback means stopping or reversing a problematic release.
+
+Use:
+
+-   Phased rollout
+-   Feature flags
+-   Previous stable version
+-   Server-side kill switches where available
+
+The safest rollback strategy depends on whether the problem is in the
+app, backend, or configuration.
+
+---
+
+## What is the difference between deployment and release?
+
+-   Deployment means code is made available to an environment.
+-   Release means functionality is made available to users.
+
+Feature flags allow:
+
+``` text
+Code deployed
+     ↓
+Feature disabled
+     ↓
+Feature validated
+     ↓
+Feature enabled gradually
+```
+
+This reduces release risk.
+
+---
+
+## Architecture and UX Scenarios
+
+## How would you design a large Android application for multiple teams?
+
+Use modularization with clear ownership.
+
+``` text
+app
+ ├── feature-login
+ ├── feature-accounts
+ ├── feature-payments
+ ├── feature-profile
+ │
+ ├── core-network
+ ├── core-database
+ ├── core-security
+ └── core-ui
+```
+
+Define dependency rules so feature modules do not depend directly on
+unrelated features.
+
+---
+
+## How do you avoid overengineering?
+
+Ask:
+
+``` text
+What problem does this abstraction solve?
+Will the project need it?
+Does it improve testability or maintainability?
+Does the complexity justify the benefit?
+```
+
+A simple feature does not need five architectural layers just because a
+pattern exists.
+
+---
+
+## How would you design error states in Android UI?
+
+Use explicit state.
+
+``` kotlin
+sealed interface UiState {
+    data object Loading : UiState
+    data class Success(val data: Account) : UiState
+    data class Error(val message: String) : UiState
+}
+```
+
+For more complex screens, model partial states rather than forcing
+everything into only Loading/Success/Error.
+
+---
+
+## How do you handle one-time events such as navigation?
+
+Keep durable screen state separate from transient events.
+
+``` kotlin
+data class UiState(
+    val account: Account? = null,
+    val isLoading: Boolean = false
+)
+
+sealed interface UiEvent {
+    data object NavigateBack : UiEvent
+    data class ShowMessage(val text: String) : UiEvent
+}
+```
+
+Use an appropriate event stream such as SharedFlow and collect it
+lifecycle-safely.
+
+---
+
+## How do you prevent duplicate navigation events after rotation?
+
+-   Do not model navigation as a simple persistent Boolean.
+-   Treat navigation as a transient event or derive navigation from
+    durable state.
+-   Ensure the event consumption model is lifecycle-aware.
+
+The exact implementation depends on the navigation architecture.
+
+---
+
+## How do you handle search in a ViewModel?
+
+For a suspend search function:
+
+``` kotlin
+private val query = MutableStateFlow("")
+
+val results = query
+    .debounce(300)
+    .distinctUntilChanged()
+    .mapLatest { text ->
+        repository.search(text)
+    }
+```
+
+`mapLatest` cancels the previous suspend search when a newer query
+arrives.
+
+For a Flow-returning search function, use `flatMapLatest`.
+
+---
+
+## How would you handle network and database consistency?
+
+A common approach is:
+
+``` text
+API
+ ↓
+Repository
+ ↓
+Database
+ ↓
+UI
+```
+
+The database becomes the observable source of truth.
+
+On successful API response, update the database in a transaction when
+multiple related records must remain consistent.
+
+---
+
+## What is a database transaction?
+
+-   A transaction groups operations so they succeed or fail together
+    according to the database's transaction guarantees.
+
+``` text
+Update account
+Update transaction
+Update balance
+        ↓
+    Transaction
+```
+
+This is important when multiple pieces of local state must remain
+consistent.
+
+---
+
+## How would you handle a server response that is successful but local database update fails?
+
+-   Do not pretend the operation completed locally.
+-   Capture the failure.
+-   Retry or recover according to the feature's consistency
+    requirements.
+-   Keep the UI state accurate.
+-   Log safe diagnostic information.
+-   Consider transactional persistence for related writes.
+
+The repository should define the consistency behavior rather than
+leaving it to the UI.
+
+---
+
+## Platform Compatibility and Delivery
+
+## What is the role of Android SDK knowledge in modern Android?
+
+Even with Compose, developers need to understand:
+
+-   Lifecycle
+-   Context
+-   Activity
+-   Services
+-   Permissions
+-   Saved state
+-   Background execution
+-   Notifications
+-   Configuration changes
+-   OS behavior
+
+Compose changes UI development, not the underlying Android platform
+model.
+
+---
+
+## What is your approach when supporting multiple Android OS versions?
+
+-   Use supported APIs according to min/target SDK.
+-   Guard newer APIs with version checks when required.
+-   Test behavior across important OS/device combinations.
+-   Avoid assuming behavior is identical across versions.
+-   Monitor production issues by OS version.
+
+``` kotlin
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.X) {
+    // New API
+}
+```
+
+---
+
+## What does "high-quality user experience across devices and OS versions" mean?
+
+It includes:
+
+-   Responsive layouts
+-   Accessibility
+-   Correct lifecycle behavior
+-   Reliable offline/error states
+-   Good startup and rendering performance
+-   Proper font scaling
+-   Device/OS compatibility
+-   Safe background behavior
+-   Consistent navigation
+
+Quality is more than visual correctness.
+
+---
+
+## How would you approach a moderately complex feature from requirements to production?
+
+``` text
+Requirements
+ ↓
+Clarify edge cases
+ ↓
+Architecture/design
+ ↓
+Security review
+ ↓
+Implementation
+ ↓
+Unit tests
+ ↓
+Integration/UI tests
+ ↓
+CI quality gates
+ ↓
+Phased release
+ ↓
+Monitoring
+ ↓
+Post-release review
+```
+
+This demonstrates ownership beyond writing code.
+
+---
+
+## Legacy Android Reference
+
 
 ---
 
@@ -19,13 +2256,14 @@ Because it lives as long as the process, **never store an `Activity` here** (tha
 
 ### Useful links
 
-- Project skeleton reference: https://github.com/gbajaj/interviewready  
+- [Project skeleton reference:](https://github.com/gbajaj/interviewready)  
 
 
 > `Application` is for **process scope**, not “hide globals”.
 
 ---
 
+- [Learn more](https://github.com/gbajaj/interviewready)
 ### What is **`Context`** — compare **Activity / Application / Service** contexts.
 
 **`Context`** is Android’s handle to the environment: **resources**, **package name**, **SharedPreferences**, starting **components**, and more. You almost always receive one from the framework.
@@ -36,13 +2274,14 @@ Because it lives as long as the process, **never store an `Activity` here** (tha
 
 ### Useful links
 
-- https://amitshekhar.me/blog/context-in-android-application  
+- [Learn more](https://amitshekhar.me/blog/context-in-android-application)  
 
 
 > **Scope your context** to the shortest correct lifetime.
 
 ---
 
+- [Learn more](https://amitshekhar.me/blog/context-in-android-application)
 ### Describe classic **Android application architecture components**.
 
 - **Activities:** foreground UI entry.
@@ -68,7 +2307,7 @@ Because it lives as long as the process, **never store an `Activity` here** (tha
 
 Lifecycle diagrams:
 
- <img src="/assets/activity_lifecycle.png" width="350">
+ <img src="../assets/activity_lifecycle.png" width="350">
 
 
 > Lifecycle is a **contract** with the system—don’t fight it with silent work in `onResume`.
@@ -88,23 +2327,24 @@ Lifecycle diagrams:
 ### Useful links / diagrams
 
 - Fragment lifecycle images:
-- <img src="/assets/fragment_lifecycle.png" width="350"> <img src="/assets/fragment_lifecycle_2.png" width="350"></br>
+- <img src="../assets/fragment_lifecycle.png" width="350"> <img src="../assets/fragment_lifecycle_2.png" width="350"></br>
 - Combined lifecycle diagram:
-- <img src="/assets/activity-fragment-lifecycles.png" width="350">
+- <img src="../assets/activity-fragment-lifecycles.png" width="350">
 - Back stack diagrams:
-  - https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png
-  - https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png
-  - https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png
-  - https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png
-  - https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png
-- Fragment back stack listener: https://why-android.com/2016/03/29/learn-how-to-use-the-onbackstackchangedlistener/
-- Official fragment creation doc: https://developer.android.com/guide/components/fragments#Creating
+  - [Learn more](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
+  - [Learn more](https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png)
+  - [Learn more](https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png)
+  - [Learn more](https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png)
+  - [Learn more](https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png)
+- [Fragment back stack listener:](https://why-android.com/2016/03/29/learn-how-to-use-the-onbackstackchangedlistener/)
+- [Official fragment creation doc:](https://developer.android.com/guide/components/fragments#Creating)
 
 
 > If back navigation feels random, your **transactions** are inconsistent.
 
 ---
 
+- [Learn more](https://developer.android.com/guide/components/fragments#Creating)
 ### **Intents:** explicit vs implicit; **Intent filters**; **PendingIntent**; **sticky broadcasts** (legacy).
 
 - **Explicit:** class + package—inside your app.
@@ -163,18 +2403,19 @@ Lifecycle diagrams:
 
 ### Useful links
 
-- Services overview: https://developer.android.com/guide/components/services  
-- IntentService deprecation: https://developer.android.com/reference/android/app/IntentService  
-- Service vs IntentService blog: https://blog.mindorks.com/service-vs-intentservice-in-android  
-- Modern background: https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html  
-- Headless fragment vs Service: https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android  
-- Update UI from background service: https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74  
+- [Services overview:](https://developer.android.com/guide/components/services)  
+- [IntentService deprecation:](https://developer.android.com/reference/android/app/IntentService)  
+- [Service vs IntentService blog:](https://blog.mindorks.com/service-vs-intentservice-in-android)  
+- [Modern background:](https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html)  
+- [Headless fragment vs Service:](https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android)  
+- [Update UI from background service:](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)  
 
 
 > If it must outlive UI, justify **foreground** or **WorkManager**.
 
 ---
 
+- [Learn more](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)
 ### **Handler, Looper, MessageQueue, HandlerThread**
 
 - **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
@@ -182,14 +2423,15 @@ Lifecycle diagrams:
 
 ### Useful links
 
-- Looper/Handler deep dive: https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181  
-- Mindorks core article: https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a  
+- [Looper/Handler deep dive:](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)  
+- [Mindorks core article:](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)  
 
 
 > Prefer **structured concurrency** for new code; understand Handlers to debug legacy.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
 ### **Thread safety** primitives (volatile/synchronized caveat)
 
 - `volatile` does not compose arbitrary atomicity for read-modify-write; use `Atomic*` or synchronized blocks.
@@ -206,14 +2448,15 @@ Lifecycle diagrams:
 
 ### Useful links
 
-- https://www.javatpoint.com/java-executorservice  
-- Java multithreading on Android: https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor  
+- [Learn more](https://www.javatpoint.com/java-executorservice)  
+- [Java multithreading on Android:](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)  
 
 
 > Unbounded thread creation is a **battery + latency** trap.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)
 ### **AIDL vs Messenger** (upgrade from oversimplified notes)
 
 - **AIDL:** typed IPC for frequent, rich cross-process calls; generates stubs; requires threading discipline.
@@ -232,14 +2475,15 @@ Lifecycle diagrams:
 
 ### Useful links
 
-- BroadcastReceiver primer: https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it  
-- LocalBroadcastManager (deprecated reference): https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html  
+- [BroadcastReceiver primer:](https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it)  
+- [LocalBroadcastManager (deprecated reference):](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)  
 
 
 > Avoid **broadcast-as-eventbus** in new code.
 
 ---
 
+- [Learn more](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
 ### **Loader** API?
 
 - Deprecated; use **ViewModel + coroutines/Flow + repository**.
@@ -253,9 +2497,9 @@ Lifecycle diagrams:
 
 - Deferrable guaranteed work with constraints; not for immediate UI-critical async.
 - **Links:**
-  - https://flexiple.com/android/android-workmanager-tutorial-getting-started  
-  - https://blog.mindorks.com/integrating-work-manager-in-android  
-  - How it works: https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager  
+  - [Learn more](https://flexiple.com/android/android-workmanager-tutorial-getting-started)  
+  - [Learn more](https://blog.mindorks.com/integrating-work-manager-in-android)  
+  - [How it works:](https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager)  
 
 
 > WorkManager is **not a replacement** for foreground music playback.
@@ -275,7 +2519,7 @@ Lifecycle diagrams:
 ### **Saved state**, rotation, **`ViewModel` + `SavedStateHandle`**, `onSaveInstanceState`
 
 - ViewModel survives config change but **not** process death; persist small UI in saved state; large data in storage.
-- **Runtime changes:** official doc: https://developer.android.com/guide/topics/resources/runtime-changes  
+- [**Runtime changes:** official doc:](https://developer.android.com/guide/topics/resources/runtime-changes)  
 
 
 > **Process death** always wins—design idempotent restoration.
@@ -286,7 +2530,7 @@ Lifecycle diagrams:
 
 - **compileSdk:** compile-time API surface.
 - **targetSdk:** behavior toggles for compatibility modes; raising it triggers review of behavior changes.
-- **Link:** https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion  
+- [**Link:**](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)  
 
 
 > Raising **targetSdk** is a **QA project**, not a one-line change.
@@ -298,10 +2542,10 @@ Lifecycle diagrams:
 - `View` leaf, `ViewGroup` container; `ConstraintLayout` reduces depth; `FrameLayout` for overlays; `LinearLayout`/`RelativeLayout` legacy trade-offs.
 - Custom view steps (attrs → constructors → measure/layout/draw) are covered in the legacy section below.
 - **Links:**
-  - ConstraintLayout: https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd  
-  - Sample: https://github.com/anitaa1990/ConstraintLayout-Sample  
-  - Article: https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a  
-  - Custom views tutorial: https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548  
+  - [ConstraintLayout:](https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd)  
+  - [Sample:](https://github.com/anitaa1990/ConstraintLayout-Sample)  
+  - [Article:](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a)  
+  - [Custom views tutorial:](https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548)  
 
 
 > Depth == **measure/layout cost**—flatten aggressively.
@@ -314,45 +2558,48 @@ Lifecycle diagrams:
 
 ### Useful links
 
-- Official migration: https://developer.android.com/develop/ui/views/animations/vp2-migration  
+- [Official migration:](https://developer.android.com/develop/ui/views/animations/vp2-migration)  
 
 
 > All new code: **ViewPager2**.
 
 ---
 
+- [Learn more](https://developer.android.com/develop/ui/views/animations/vp2-migration)
 ### **AsyncTask** pitfalls (legacy)
 
 - Not lifecycle-aware; leaks + wrong activity updates on rotation; cancel + retain patterns are obsolete—use structured concurrency.
 
 ### Useful links
 
-- Retain fragment gist (legacy): https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42  
+- [Retain fragment gist (legacy):](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)  
 
 
 > If you see AsyncTask in production, schedule **removal**.
 
 ---
 
+- [Learn more](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)
 ### **ART vs Dalvik / why Java bytecode isn’t executed directly**
 
 - Android executes **DEX** on ART; historically JIT/AOT evolution—know profiles, baseline profiles, R8 impact.
 
 ### Useful links
 
-- ART vs Dalvik: https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik  
+- [ART vs Dalvik:](https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik)  
 
 
 > Performance story today includes **baseline profiles + R8**.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik)
 ### **StrictMode, logging levels, Jetpack pointer**
 
 - StrictMode for dev-only main-thread violations.
-- Log level guidance: https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one  
-- Jetpack overview: https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it  
-- Architecture components: https://blog.mindorks.com/what-are-android-architecture-components/  
+- [Log level guidance:](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)  
+- [Jetpack overview:](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)  
+- [Architecture components:](https://blog.mindorks.com/what-are-android-architecture-components/)  
 
 
 > Operational hygiene matters in **staff** interviews too.
@@ -361,15 +2608,15 @@ Lifecycle diagrams:
 
 ### Android **code style** links
 
-- https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7  
-- Architecture components LinkedIn post: https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864  
+- [Learn more](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)  
+- [Architecture components LinkedIn post:](https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864)  
 
 
 > Consistency enables **scale**.
 
 ---
 
-### Android
+### Android Project Reference
 
 ### Android project skeleton
 
@@ -378,7 +2625,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://github.com/gbajaj/interviewready
+- [Learn more](https://github.com/gbajaj/interviewready)
 
 
 
@@ -387,6 +2634,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://github.com/gbajaj/interviewready)
 ### Android Code Style And Guidelines.
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -394,7 +2642,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7
+- [Learn more](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
 
 
 
@@ -403,6 +2651,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
 ### Android Architecture Components
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -410,7 +2659,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864)
 
 
 
@@ -419,6 +2668,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864)
 ### What is an Application class?
 
 The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
@@ -437,7 +2687,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://amitshekhar.me/blog/context-in-android-application
+- [Learn more](https://amitshekhar.me/blog/context-in-android-application)
 
 
 
@@ -446,6 +2696,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://amitshekhar.me/blog/context-in-android-application)
 ### What is the Android Application Architecture?
 
 - Activities - Provides the window in which the app draws its UI</br>
@@ -475,7 +2726,7 @@ An activity provides the window in which the app draws its UI. This window typic
 
 ### Activity Lifecycle
 
-<img src="/assets/activity_lifecycle.png" width="350">
+<img src="../assets/activity_lifecycle.png" width="350">
 
 
 
@@ -548,7 +2799,7 @@ A `Fragment` is a piece of an activity which enable more modular activity design
 
 ### Fragment Lifecycle
 
-<img src="/assets/fragment_lifecycle.png" width="200"> <img src="/assets/fragment_lifecycle_2.png" width="400">
+<img src="../assets/fragment_lifecycle.png" width="200"> <img src="../assets/fragment_lifecycle_2.png" width="400">
 
 
 
@@ -560,7 +2811,7 @@ A `Fragment` is a piece of an activity which enable more modular activity design
 ### What is the correlation between activity and fragment life cycle?
 
 Here is how Activity's and Fragment's lifecyle are called together:<br/>
-     <img src="/assets/activity-fragment-lifecycles.png" width="350">
+    <img src="../assets/activity-fragment-lifecycles.png" width="350">
 
 
 
@@ -608,11 +2859,11 @@ There are several ways to communicate two fragments. Using `interfaces` are a co
 
 ### Useful links
 
-- https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png
-- https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png
-- https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png
-- https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png
-- https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png
+- [Learn more](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
+- [Learn more](https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png)
+- [Learn more](https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png)
+- [Learn more](https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png)
+- [Learn more](https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png)
 
 
 
@@ -621,6 +2872,7 @@ There are several ways to communicate two fragments. Using `interfaces` are a co
 
 ---
 
+- [Learn more](https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png)
 ### What is the difference between Dialog and DialogFragment?
 
 - **Dialog** is a small window that prompts the user to make a decision or enter additional information. Instead, `dialogFragment` is a fragment that displays a dialog windows and contains a dialog object. </br>
@@ -755,7 +3007,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997
+- [Learn more](https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997)
 
 
 
@@ -764,6 +3016,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997)
 ### Launch modes in Android?
 
 **Standard**:  </br>It creates a new instance of an activity in the task from which it was started. Multiple instances of the activity can be created and multiple instances can be added to the same or different tasks.  </br>
@@ -825,7 +3078,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion
+- [Learn more](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
 
 
 
@@ -834,6 +3087,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
 ### What is onSavedInstanceState() and onRestoreInstanceState() in activity?
 
 - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
@@ -866,7 +3120,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://developer.android.com/develop/ui/views/animations/vp2-migration
+- [Learn more](https://developer.android.com/develop/ui/views/animations/vp2-migration)
 
 
 
@@ -875,6 +3129,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://developer.android.com/develop/ui/views/animations/vp2-migration)
 ### What is the difference between FragmentPagerAdapter vs FragmentStatePagerAdapter?
 
 - **FragmentPagerAdapter:** Each fragment visited by the user will be stored in the memory but the view will be destroyed. When the page is revisited, then the view will be recreated not the instance of the fragment. This can result in a significant amount of memory being used. FragmentPagerAdapter should be used when we need to store the whole fragment in memory. FragmentPagerAdapter calls ```detach(Fragment)``` on the transaction instead of ```remove(Fragment)```.
@@ -948,6 +3203,7 @@ According to the [documentation](https://developer.android.com/guide/components/
 
 ---
 
+- [Learn more](https://developer)
 ### How to know `configChange` happens in `onDestroy()` function?
 
 Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
@@ -981,6 +3237,7 @@ for complete reading, see the [official documentation](https://developer.android
 
 ---
 
+- [Learn more](https://developer.android.com/training/multiscreen/screensizes)
 ### What is the difference between margin and padding?
 
 - **Padding** will be space added inside the container, for instance, if it is a button, padding will be added inside the button.       
@@ -1064,7 +3321,7 @@ We can also avoid this crash by using 2 Alternatives -  </br>
 
 ### Useful links
 
-- https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42
+- [Learn more](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)
 
 
 
@@ -1073,6 +3330,7 @@ We can also avoid this crash by using 2 Alternatives -  </br>
 
 ---
 
+- [Learn more](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)
 ### How does the activity respond when orientation is changed?
 
 According to the [documentation](https://developer.android.com/guide/topics/resources/runtime-changes), Some device configurations can change during runtime (such as screen orientation, keyboard availability, and when the user enables multi-window mode). When such a change occurs, Android restarts the running `Activity` ( `onDestroy()` is called, followed by `onCreate()`). The restart behavior is designed to help your application adapt to new configurations by automatically reloading your application with alternative resources that match the new device configuration.
@@ -1089,6 +3347,7 @@ According to the [documentation](https://developer.android.com/guide/topics/reso
 
 ---
 
+- [Learn more](https://developer)
 ### How to prevent the data from reloading when orientation is changed?
 
 The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`. A `ViewModel` is LifeCycle-Aware. In other words, a `ViewModel` will not be destroyed if its owner is destroyed for a configuration change (e.g. rotation). The new instance of the owner will just re-connected to the existing `ViewModel`. So if you rotate an `Activity` three times, you have just created three different `Activity` instances, but you only have one `ViewModel`. So the common practice is to store data in the `ViewModel` class (since it persists data during configuration changes) and use `OnSaveInstanceState()` to store small amounts of UI data.
@@ -1121,7 +3380,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android
+- [Learn more](https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android)
 
 
 
@@ -1130,9 +3389,10 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/22799759/what-is-the-difference-between-a-headless-fragment-and-a-service-in-android)
 ### Service Lifecycle
 
-<img src="/assets/service_lifecycle.png" width="250">
+<img src="../assets/service_lifecycle.png" width="250">
 
 
 
@@ -1160,7 +3420,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74
+- [Learn more](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)
 
 
 
@@ -1169,6 +3429,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://medium.com/@anitaa_1990/how-to-update-an-activity-from-background-service-or-a-broadcastreceiver-6dabdb5cef74)
 ### What is thread-safe mean? How we can make our code thread-safe?
 
 Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
@@ -1205,7 +3466,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181
+- [Learn more](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
 
 
 
@@ -1214,6 +3475,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
 ### What is a Message?
 
 Message contains a description and arbitrary data object that can be sent to a Handler. Basically its used to process / send some data across threads.
@@ -1256,6 +3518,7 @@ Message contains a description and arbitrary data object that can be sent to a H
 
 ---
 
+- [Learn more](https://developer.android.com/guide/components/services)
 ### Bound Service vs UnBounded service?
 
 **A Bound service** is started by using method bindService(). As mentioned above system destroys bound service when no application component is accessing it. A Bound Service will stop automatically by the system when all the Application Components bound to it are unbinded.</br>
@@ -1276,7 +3539,7 @@ Message contains a description and arbitrary data object that can be sent to a H
 
 ### Useful links
 
-- https://blog.mindorks.com/service-vs-intentservice-in-android
+- [Learn more](https://blog.mindorks.com/service-vs-intentservice-in-android)
 
 
 
@@ -1285,6 +3548,7 @@ Message contains a description and arbitrary data object that can be sent to a H
 
 ---
 
+- [Learn more](https://blog.mindorks.com/service-vs-intentservice-in-android)
 ### Difference between Service, Intent Service, AsyncTask & Threads
 
 * **Android service** is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed. A class that directly extends Service runs on the main thread so it will block the UI (if there is one). This might cause ANR errors and hould therefore either be used only for short tasks or should make use of other threads for longer tasks. To stop a service from an activity we can call stopService(Intent intent) method. To Stop a service from itself, we can call stopSelf() method.</br>
@@ -1328,6 +3592,7 @@ IntentService is a subclass of Service that can perform tasks using worker threa
 
 ---
 
+- [Learn more](https://developer.android.com/reference/android/app/IntentService)
 ### When to use a service and when to use a thread?
 
 We will use a Thread when we want to perform background operations when application is running in foreground. We will use a service even when the application is not running.
@@ -1346,7 +3611,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://www.javatpoint.com/java-executorservice
+- [Learn more](https://www.javatpoint.com/java-executorservice)
 
 
 
@@ -1355,6 +3620,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://www.javatpoint.com/java-executorservice)
 ### What is a ThreadPool? And is it more effective than using several separate Threads?
 
 * Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.
@@ -1374,7 +3640,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html
+- [Learn more](https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html)
 
 
 
@@ -1383,6 +3649,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html)
 ### What is a Job Scheduling?
 
 * Job Scheduling api, as the name suggests, allows to schedule jobs while letting the system optimize based on memory, power, and connectivity conditions.
@@ -1406,6 +3673,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html#schedulingtasks)
 ### What is a BroadcastReceiver?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1413,7 +3681,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it
+- [Learn more](https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it)
 
 
 
@@ -1422,6 +3690,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it)
 ### What is a LocalBroadcastManager?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1429,7 +3698,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html
+- [Learn more](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
 
 
 
@@ -1438,6 +3707,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
 ### What is a JobScheduler?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1445,7 +3715,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html
+- [Learn more](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html)
 
 
 
@@ -1454,16 +3724,17 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html)
 ### What is Workmanager?
 
-*  https://flexiple.com/android/android-workmanager-tutorial-getting-started
- *  https://blog.mindorks.com/integrating-work-manager-in-android
+*  [Learn more](https://flexiple.com/android/android-workmanager-tutorial-getting-started)
+ *  [Learn more](https://blog.mindorks.com/integrating-work-manager-in-android)
 
 
 ### Useful links
 
-- https://flexiple.com/android/android-workmanager-tutorial-getting-started
-- https://blog.mindorks.com/integrating-work-manager-in-android
+- [Learn more](https://flexiple.com/android/android-workmanager-tutorial-getting-started)
+- [Learn more](https://blog.mindorks.com/integrating-work-manager-in-android)
 
 
 
@@ -1472,6 +3743,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/integrating-work-manager-in-android)
 ### How Workmanager works?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1479,7 +3751,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager
+- [Learn more](https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager)
 
 
 
@@ -1488,6 +3760,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://www.kodeco.com/20689637-scheduling-tasks-with-android-workmanager)
 ### Stateflow vs LiveData
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1495,7 +3768,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html
+- [Learn more](https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html)
 
 
 
@@ -1504,6 +3777,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html)
 ### Livedata vs ObservableField
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1511,7 +3785,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/livedata-vs-observable-in-android
+- [Learn more](https://blog.mindorks.com/livedata-vs-observable-in-android)
 
 
 
@@ -1520,6 +3794,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/livedata-vs-observable-in-android)
 ### Livedata Setvalue vs Postvalue
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1527,7 +3802,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80
+- [Learn more](https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80)
 
 
 
@@ -1536,6 +3811,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80)
 ### What is renderscript?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1543,7 +3819,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe
+- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
 
 
 
@@ -1552,6 +3828,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
 ### FlatBuffers vs JSON.
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1559,7 +3836,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07
+- [Learn more](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
 
 
 
@@ -1568,18 +3845,19 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
 ### What is `contentProvider` and what is typically used for?
 
 A `ContentProvider` provides data from one application to another, when requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42).
     For further reading see the [official android documentation]("https://developer.android.com/guide/topics/providers/content-provider-basics" "Android official documentation")
 
-  <img src="/assets/content-provider-diagram.png" width="400">
+  <img src="../assets/content-provider-diagram.png" width="400">
 
 
 ### Useful links
 
 - [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42)
-- https://developer.android.com/guide/topics/providers/content-provider-basics
+- [Learn more](https://developer.android.com/guide/topics/providers/content-provider-basics)
 
 
 
@@ -1595,7 +3873,7 @@ These two keywords work the same when you want to add a new library but the main
 
 ### Useful links
 
-- https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa
+- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)
 
 
 
@@ -1604,6 +3882,7 @@ These two keywords work the same when you want to add a new library but the main
 
 ---
 
+- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)
 ### What do you mean by Gradle wrapper?
 
 The Gradle wrapper is the most suitable way to initiate a Gradle build. A Gradle wrapper is a Window’s batch script which has a shell script for the OS (operating system). Once you start the Gradle build via the wrapper, you will see an auto download which runs the build.
@@ -1644,7 +3923,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one
+- [Learn more](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)
 
 
 
@@ -1653,6 +3932,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)
 ### Understanding scope storage in android
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1660,7 +3940,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/understanding-the-scoped-storage-in-android
+- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
 
 
 
@@ -1669,6 +3949,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
 ### Solve out of memory error
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1676,7 +3957,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application
+- [Learn more](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
 
 
 
@@ -1685,6 +3966,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
 ### What is ART? Difference between ART and Dalvik
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1692,7 +3974,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik
+- [Learn more](https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik)
 
 
 
@@ -1701,6 +3983,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/what-are-the-differences-between-dalvik-and-art/#:~:text=What%20is%20ART%3F,like%20in%20case%20of%20Dalvik)
 ### Battery optimizationn for Android
 
 - **Lead:** [Link](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)batteru
@@ -1709,7 +3992,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70
+- [Learn more](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)
 
 
 
@@ -1718,6 +4001,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)
 ### Reason for the exit in Android Application
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1725,7 +4009,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/reason-of-exit-in-android-application/
+- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)
 
 
 
@@ -1734,6 +4018,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)
 ### Android Jetpack component
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1741,7 +4026,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it
+- [Learn more](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)
 
 
 
@@ -1750,6 +4035,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)
 ### Android Architecture Component
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1757,7 +4043,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/what-are-android-architecture-components/
+- [Learn more](https://blog.mindorks.com/what-are-android-architecture-components/)
 
 
 
@@ -1766,6 +4052,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/what-are-android-architecture-components/)
 ### How ViewModel work internally?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1773,7 +4060,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/android-viewmodels-under-the-hood
+- [Learn more](https://blog.mindorks.com/android-viewmodels-under-the-hood)
 
 
 
@@ -1782,6 +4069,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/android-viewmodels-under-the-hood)
 ### Arraymap vs Sparsh Array
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1789,7 +4077,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47
+- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
 
 
 
@@ -1798,6 +4086,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
 ### Java Android Multithreading programming
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -1805,7 +4094,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor
+- [Learn more](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)
 
 
 
@@ -1814,6 +4103,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)
 ### How can you prevent creating another instance of singleton using `clone()` method?
 
 The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
@@ -1852,7 +4142,7 @@ Factory classes provide flexibility in terms of design. Below are some of the
 
 ### Useful links
 
-- https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO
+- [Learn more](https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO)
 
 
 
@@ -1861,6 +4151,7 @@ Factory classes provide flexibility in terms of design. Below are some of the
 
 ---
 
+- [Learn more](https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO)
 ### which pattern is used when we need to decouple an abstraction from its implementation?
 
 When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
@@ -1888,6 +4179,7 @@ Different Android handsets use different CPUs, which in turn support different i
 
 ---
 
+- [Learn more](https://developer.android.com/ndk/guides/abis)
 ### Why bytecode cannot be run in Android?
 
 Android uses DVM (Dalvik Virtual Machine ) rather using JVM(Java Virtual Machine).</br>
@@ -2099,6 +4391,7 @@ The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag. The second way is b
 
 ---
 
+- [Learn more](https://developer.android.com/topic/performance/memory)
 ### What is an intent?
 
 Intents are messages that can be used to pass information to the various components of android. For instance, launch an activity, open a webview etc.</br>
@@ -2255,6 +4548,7 @@ Android Toast can be used to display information for the short period of time. A
 
 ---
 
+- [Learn more](https://medium.com/mindorks/a-journey-to-the-world-of-mvp-and-loaders-part-2-e176200e5866)
 ### What is the difference between a regular .png and a nine-patch image?
 
 It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device. The NinePatch class allows drawing a bitmap in nine sections. The four corners are unscaled; the middle of the image is scaled in both axes, the four edges are scaled into one axis.</br>
@@ -2287,7 +4581,7 @@ It is one of a resizable bitmap resource which is being used as backgrounds or o
 
 ### Useful links
 
-- https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd
+- [Learn more](https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd)
 - [Sample Implementation](https://github.com/anitaa1990/ConstraintLayout-Sample)
 - [here](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a)
 
@@ -2298,6 +4592,7 @@ It is one of a resizable bitmap resource which is being used as backgrounds or o
 
 ---
 
+- [Learn more](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a)
 ### When might you use a FrameLayout?
 
 * Frame Layouts are designed to contain a single item, making them an efficient choice when you need to display a single View.
@@ -2359,6 +4654,7 @@ An adapter responsible for converting each data entry into a View that can then 
 
 ---
 
+- [Learn more](https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548)
 ### Briefly describe some ways that you can optimize View usage
 
 * Checking for excessive overdraw: install your app on an Android device, and then enable the "Debug GPU Overview" option.
@@ -2378,7 +4674,7 @@ An adapter responsible for converting each data entry into a View that can then 
 
 ### Useful links
 
-- https://outcomeschool.com/blog/bitmap-pool
+- [Learn more](https://outcomeschool.com/blog/bitmap-pool)
 
 
 
@@ -2387,6 +4683,7 @@ An adapter responsible for converting each data entry into a View that can then 
 
 ---
 
+- [Learn more](https://outcomeschool.com/blog/bitmap-pool)
 ### How you load your `Bitmaps`? What do you do for loading large bitmaps?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -2394,7 +4691,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53
+- [Learn more](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)
 
 
 
@@ -2403,6 +4700,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)
 ### What are the permission protection levels in Android?
 
 * **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
@@ -2424,7 +4722,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file
+- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
 
 
 
@@ -2433,6 +4731,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
 ### What is an Application Not Responding (ANR) error, and how can you prevent them from occurring in an app?
 
 An ANR dialog appears when your UI has been unresponsive for more than 5 seconds, usually because you’ve blocked the main thread. To avoid encountering ANR errors, you should move as much work off the main thread as possible.</br>
@@ -2482,7 +4781,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8
+- [Learn more](https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8)
 
 
 
@@ -2491,6 +4790,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8)
 ### How to handle multi-touch in android
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -2507,6 +4807,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
 ### How does RecyclerView work?
 
 * Let's start with some background on RecyclerView which is needed to understand ```onBindViewHolder()``` method inside RecyclerView.</br>
@@ -2568,7 +4869,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/
+- [Learn more](https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/)
 
 
 
@@ -2577,6 +4878,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/)
 ### Arraymap/SparseArray vs HashMap in Android?
 
 * [Article 1 on the subject](https://android.jlelse.eu/app-optimization-with-arraymap-sparsearray-in-android-c0b7de22541a)
@@ -2595,6 +4897,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://medium.com/@mohom.r/optimising-android-app-performance-with-arraymap-9296f4a1f9eb)
 ### How to reduce apk size?
 
 * Enable proguard in your project by adding following lines to your release build type.
@@ -2606,7 +4909,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e
+- [Learn more](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
 
 
 
@@ -2615,6 +4918,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
 ### How to reduce build time of an Android app?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -2622,7 +4926,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43
+- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)
 
 
 
@@ -2631,6 +4935,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)
 ### Android Architecture Components?
 
     A collection of libraries that help you design robust, testable, and maintainable apps. [Official documentation](https://developer.android.com/topic/libraries/architecture/)</br>
@@ -2679,6 +4984,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://developer.android.com/topic/libraries/architecture/lifecycle)
 ### Why we should use MVP / MVVM architectures?
 
    - to avoid too much logic code in the UI layer and god activities
@@ -2735,7 +5041,7 @@ According to this concept a class should not configure its dependencies statical
 
 - [Sample Implementation](https://github.com/anitaa1990/Inshorts)
 - [Sample Implementation](https://github.com/anitaa1990/Trailers)
-- https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec
+- [Learn more](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
 
 
 
@@ -2744,6 +5050,7 @@ According to this concept a class should not configure its dependencies statical
 
 ---
 
+- [Learn more](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
 ### What is the role of Presenter in MVP?
 
 The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
@@ -2773,7 +5080,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://medium.com/mindorks/android-testing-part-1-espresso-basics
+- [Learn more](https://medium.com/mindorks/android-testing-part-1-espresso-basics)
 
 
 
@@ -2782,16 +5089,17 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://medium.com/mindorks/android-testing-part-1-espresso-basics)
 ### What is Screenshot testing
 
-*  https://github.com/facebook/screenshot-tests-for-android
-*  https://facebook.github.io/screenshot-tests-for-android/#getting-started
+*  [Learn more](https://github.com/facebook/screenshot-tests-for-android)
+*  [Learn more](https://facebook.github.io/screenshot-tests-for-android/#getting-started)
 
 
 ### Useful links
 
-- https://github.com/facebook/screenshot-tests-for-android
-- https://facebook.github.io/screenshot-tests-for-android/#getting-started
+- [Learn more](https://github.com/facebook/screenshot-tests-for-android)
+- [Learn more](https://facebook.github.io/screenshot-tests-for-android/#getting-started)
 
 
 
@@ -2800,6 +5108,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://facebook.github.io/screenshot-tests-for-android/#getting-started)
 ### What are SOLID Principles? How they are applicable in Android?
 
 SOLID unites all the best practices of software development over the years to deliver good quality apps. Understanding SOLID Principles will help us write clean and elegant code. It helps us write the code with SOC (Separation of Concerns).
@@ -2815,7 +5124,7 @@ SOLID unites all the best practices of software development over the years to de
 
 ### Useful links
 
-- https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/
+- [Learn more](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 
 
 
@@ -2824,6 +5133,7 @@ SOLID unites all the best practices of software development over the years to de
 
 ---
 
+- [Learn more](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 ### How to reduce your app size?
 
     1. setting minifyEnabled to true
@@ -2855,6 +5165,7 @@ Retrofit reduces boiler plate code by internally using GSON library which helps 
 
 ---
 
+- [Learn more](https://stackoverflow.com/a/16903205/3424919)
 ### Advantage of Retrofit over Volley?
 
 Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
@@ -2895,7 +5206,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image
+- [Learn more](https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image)
 
 
 
@@ -2904,6 +5215,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image)
 ### How to upload an image file in Retrofit 2?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -2911,7 +5223,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2
+- [Learn more](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)
 
 
 
@@ -2920,6 +5232,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)
 ### Usecases of OkHttp Interceptor
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -2927,7 +5240,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://outcomeschool.com/blog/okhttp-interceptor
+- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)
 
 
 
@@ -2936,6 +5249,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)
 ### What is Alarm Manager?
 
 AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
@@ -2954,7 +5268,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://stackoverflow.com/a/41500910/3424919
+- [Learn more](https://stackoverflow.com/a/41500910/3424919)
 
 
 
@@ -2963,6 +5277,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://stackoverflow.com/a/41500910/3424919)
 ### How to Work With Geofences?
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -2970,7 +5285,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t
+- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
 
 
 
@@ -2979,22 +5294,23 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
 ### Why Do You Need SSL Certificate Pinning? How it works?
 
-    - https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109
-    - https://dzone.com/articles/encryption-and-signing
-    - https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
-    - https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
-    - https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e
+    - [Learn more](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)
+    - [Learn more](https://dzone.com/articles/encryption-and-signing)
+    - [Learn more](https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android)
+    - [Learn more](https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android)
+    - [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
 
 
 ### Useful links
 
-- https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109
-- https://dzone.com/articles/encryption-and-signing
-- https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android
-- https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android
-- https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e
+- [Learn more](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)
+- [Learn more](https://dzone.com/articles/encryption-and-signing)
+- [Learn more](https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android)
+- [Learn more](https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android)
+- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
 
 
 
@@ -3003,6 +5319,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
 ### How do you know if the device is rooted?
 
 We can check if superUser apk is installed in the device or if it contains su file or xbin folder. </br>
@@ -3021,6 +5338,7 @@ We can check if superUser apk is installed in the device or if it contains su fi
 
 ---
 
+- [Learn more](https://stackoverflow.com/a/35628977/3424919)
 ### What is Symmetric Encryption?
 
 Symmetric encryption deals with creating a passphrase and encrypting the file with it. Then the server needs to send this passphrase(key) to the client so that the client can decrypt. Here the problem is sending that key to decrypt the file. If Hackers can access that key, they can misuse the data.
@@ -3052,6 +5370,7 @@ Using algorithms like RSA, AES256, etc., the server generates 2 keys - public ke
 
 ---
 
+- [Learn more](https://youtu.be/AQDCe585Lnc)
 ### How do you encrypt the Data in Java?
 
 Using javax.crypto package's Cipher class. We can call the methods such as encrypt() or decrypt() from the Cipher class to encode or decode our data.
@@ -3070,6 +5389,7 @@ Using javax.crypto package's Cipher class. We can call the methods such as encry
 
 ---
 
+- [Learn more](https://githu…)
 ### App Data encryption
 
 Use the links below as the primary source; rehearse a short spoken summary.
@@ -3077,7 +5397,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore
+- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
 
 
 
@@ -3086,20 +5406,21 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
 ### How to save password safely in Android?
 
-    - https://developer.android.com/privacy-and-security/keystore
-      - https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b
-      - https://source.android.com/docs/security/features/keystore
-      - https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/
+    - [Learn more](https://developer.android.com/privacy-and-security/keystore)
+      - [Learn more](https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b)
+      - [Learn more](https://source.android.com/docs/security/features/keystore)
+      - [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)
 
 
 ### Useful links
 
-- https://developer.android.com/privacy-and-security/keystore
-- https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b
-- https://source.android.com/docs/security/features/keystore
-- https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/
+- [Learn more](https://developer.android.com/privacy-and-security/keystore)
+- [Learn more](https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b)
+- [Learn more](https://source.android.com/docs/security/features/keystore)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)
 
 
 
@@ -3108,6 +5429,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)
 ### How to avoid memory leaks in Android?
 
 ### Android Memory Related
@@ -3115,7 +5437,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://www.geeksforgeeks.org/memory-leaks-in-android/
+- [Learn more](https://www.geeksforgeeks.org/memory-leaks-in-android/)
 
 
 
@@ -3124,6 +5446,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://www.geeksforgeeks.org/memory-leaks-in-android/)
 ### How do you create a Memory Leak in Android?
 
 By passing the context to static block (class or method), we can create a Memory Leak.
@@ -3164,7 +5487,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662
+- [Learn more](https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662)
 
 
 
@@ -3173,6 +5496,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662)
 ### CICD for Android
 
 * [Using Workflow](https://blog.mindorks.com/github-actions-for-android/)
@@ -3184,7 +5508,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 ### Useful links
 
 - [Using Workflow](https://blog.mindorks.com/github-actions-for-android/)
-- https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/
+- [Learn more](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/)
 
 
 
@@ -3193,6 +5517,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/)
 ### How do you reduce battery consumption?
 
     1. Never poll the server for updates.
@@ -3233,9 +5558,7 @@ Dependency injection means a class receives the collaborators it needs instead o
 
 ### Further reading
 
-<img src="https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7" width="400">
-
-- https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7
+- [Learn more](https://github.com/user-attachments/assets/dbce5c43-8ec4-4143-a68c-28462d5442d7)
 
 
 
@@ -3272,6 +5595,7 @@ An anti-pattern are certain patterns in software development that are considered
 
 ---
 
+- [Learn more](https://stackoverflow.com/a/980616/3424919)
 ### What is the use-case of @BindsInstance Annotation?
 
 @BindsInstance is used to bind the available data at the time of building the Component. For example, while I needed to build dagger graph and username is already available to me, then I can bind that username to that dagger dependency graph as follows:
@@ -3584,7 +5908,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ### Useful links
 
-- https://outcomeschool.com/blog/http-request-long-polling-websocket-sse
+- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
 
 
 
@@ -3592,6 +5916,7 @@ Use the links below as the primary source; rehearse a short spoken summary.
 
 ---
 
+- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
 ### Real-World Scenario Interview Questions
 
 ---
@@ -3862,18 +6187,18 @@ Large apps need **clear ownership** of dependencies: who creates **Retrofit**, w
 ---
 
 ### Explain **Jetpack Architecture Components** and how **Room / LiveData / ViewModel / Lifecycle / Data Binding** fit together.
-- Architecture: https://developer.android.com/topic/libraries/architecture/  
-- Room: https://developer.android.com/topic/libraries/architecture/room  
-- LiveData: https://developer.android.com/topic/libraries/architecture/livedata  
-- ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel  
-- Lifecycle: https://developer.android.com/topic/libraries/architecture/lifecycle  
-- Data binding: https://developer.android.com/topic/libraries/data-binding/  
-- Room article: https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24  
-- Room sample: https://github.com/anitaa1990/RoomDb-Sample  
-- LiveData sample: https://github.com/anitaa1990/GameOfThronesTrivia  
-- Data binding sample: https://github.com/anitaa1990/DataBindingExample  
-- Room encryption: https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e  
-- Data binding vs view binding: https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding  
+- [Architecture:](https://developer.android.com/topic/libraries/architecture/)  
+- [Room:](https://developer.android.com/topic/libraries/architecture/room)  
+- [LiveData:](https://developer.android.com/topic/libraries/architecture/livedata)  
+- [ViewModel:](https://developer.android.com/topic/libraries/architecture/viewmodel)  
+- [Lifecycle:](https://developer.android.com/topic/libraries/architecture/lifecycle)  
+- [Data binding:](https://developer.android.com/topic/libraries/data-binding/)  
+- [Room article:](https://medium.com/@anitaa_1990/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24)  
+- [Room sample:](https://github.com/anitaa1990/RoomDb-Sample)  
+- [LiveData sample:](https://github.com/anitaa1990/GameOfThronesTrivia)  
+- [Data binding sample:](https://github.com/anitaa1990/DataBindingExample)  
+- [Room encryption:](https://medium.com/vmware-end-user-computing/securing-a-room-database-with-passcode-based-encryption-82ec670961e)  
+- [Data binding vs view binding:](https://stackoverflow.com/questions/58040778/android-difference-between-databinding-and-viewbinding)  
 ---
 
 ### How does **ViewModel** work internally (high level) and why not put `Context` in it?
@@ -3881,7 +6206,7 @@ A **ViewModel** is stored in a **ViewModelStore** tied to a lifecycle owner (Act
 
 Putting an **Activity `Context`** in a ViewModel is risky: the ViewModel can **outlive** the Activity configuration, which **leaks** the old Activity. Use **`Application`** context only for truly app-wide things, and prefer **Hilt/AndroidEntryPoint** patterns over stashing contexts.
 
-- Useful links - https://blog.mindorks.com/android-viewmodels-under-the-hood  
+- [Useful links -](https://blog.mindorks.com/android-viewmodels-under-the-hood)  
 
 ---
 
@@ -3894,10 +6219,11 @@ Putting an **Activity `Context`** in a ViewModel is risky: the ViewModel can **o
 
 ### Useful links
 
-- https://blog.mindorks.com/livedata-vs-observable-in-android  
-- https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80  
+- [Learn more](https://blog.mindorks.com/livedata-vs-observable-in-android)  
+- [Learn more](https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80)  
 ---
 
+- [Learn more](https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80)
 ### **StateFlow vs LiveData** (and when either is wrong)
 **StateFlow** is Kotlin-first and works naturally with **coroutines**; it **always has a current value**. You must **collect** it with lifecycle in mind (`repeatOnLifecycle`, etc.) so you do not leak or run work when the screen is off.
 
@@ -3905,7 +6231,7 @@ Putting an **Activity `Context`** in a ViewModel is risky: the ViewModel can **o
 
 When collecting **Flow**, use **`repeatOnLifecycle`** (or equivalent) so work stops when the UI is not active.
 
-- Useful links - https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html  
+- [Useful links -](https://scalereal.com/android/2020/05/22/stateflow-end-of-livedata.html)  
 
 ---
 
@@ -3937,8 +6263,8 @@ A **factory** creates **one kind of object**. An **abstract factory** creates **
 On Android you more often use **DI** or simple builders than textbook factories inside every Fragment—save factories for **SDK boundaries** and **test doubles**.
 
 -- Useful links
-- https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java  
-- https://www.baeldung.com/kotlin/builder-pattern  
+- [Learn more](https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java)  
+- [Learn more](https://www.baeldung.com/kotlin/builder-pattern)  
 ---
 
 ###  Explain the **test pyramid** on mobile.
@@ -3958,8 +6284,8 @@ Diagram: `assets/test_pyramid.png`
 **Screenshot tests** catch **visual** regressions in CI. You need **stable fonts, locale, and timing** so images are comparable. Keep the **golden set small** or maintenance hurts.
 
 - Useful links
-- https://github.com/facebook/screenshot-tests-for-android  
-- https://facebook.github.io/screenshot-tests-for-android/#getting-started  
+- [Learn more](https://github.com/facebook/screenshot-tests-for-android)  
+- [Learn more](https://facebook.github.io/screenshot-tests-for-android/#getting-started)  
 ---
 
 ### **Compose testing** — how is it different from Espresso?
@@ -4206,13 +6532,14 @@ viewLifecycleOwner.lifecycleScope.launch {
 
 ### Useful links
 
-- https://stackoverflow.com/a/16903205/3424919  
+- [Learn more](https://stackoverflow.com/a/16903205/3424919)  
 
 
 > Prefer **structured concurrency** and **cancellable** network calls—not **AsyncTask**.
 
 ---
 
+- [Learn more](https://stackoverflow.com/a/16903205/3424919)
 ### **Retrofit vs Volley**
 
 **Retrofit** pairs with **OkHttp** and shines when you want **typed endpoints**, **interceptors**, and modern **async** styles. **Volley** historically had a stronger **default cache story** for some workloads.
@@ -4252,27 +6579,29 @@ Use **`@Multipart`** and **`MultipartBody.Part`** for file fields. For **progres
 
 ### Useful links
 
-- https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image  
-- https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2  
+- [Learn more](https://stackoverflow.com/questions/34562950/post-multipart-form-data-using-retrofit-2-0-including-image)  
+- [Learn more](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)  
 
 
 > **Stream** large uploads—do not read a huge file fully into memory first.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)
 ### **OkHttp interceptors** — use cases
 
 **Interceptors** sit in the OkHttp chain. Common uses: add **auth headers**, **retry** with backoff, **pinning**, **metrics**, and **debug logging** (usually **debug-only** or heavily redacted).
 
 ### Useful links
 
-- https://outcomeschool.com/blog/okhttp-interceptor  
+- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)  
 
 
 > Do not ship **verbose logging** of bodies/headers to production without **redaction**.
 
 ---
 
+- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)
 ### **HTTP polling vs WebSocket vs SSE**
 
 - **Polling:** simple but **wakes the radio** often—bad for battery if frequent.
@@ -4283,33 +6612,35 @@ Pick based on **direction**, **battery**, and what your **backend** supports.
 
 ### Useful links
 
-- https://outcomeschool.com/blog/http-request-long-polling-websocket-sse  
+- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)  
 
 
 > **Battery and radio cost** matter as much as “real-time” buzzwords.
 
 ---
 
+- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
 ### Continuous **location** like Maps — constraints?
 
 Use the **Fused Location Provider**, **batch** updates when you can, and use a **foreground service** when the platform requires it for continuous tracking. Be **transparent** in the UI about **why** you need location and respect **Play policy**.
 
 ### Useful links
 
-- https://stackoverflow.com/a/41500910/3424919  
+- [Learn more](https://stackoverflow.com/a/41500910/3424919)  
 
 
 > Location is **trust + policy + UX**, not only an API call.
 
 ---
 
+- [Learn more](https://stackoverflow.com/a/41500910/3424919)
 ### **Geofences**
 
 **Geofencing** fires when the user enters or leaves regions. Triggers can be **delayed** or **missed** by OS optimization—design **confirmation UX** (e.g. open app to refresh) instead of assuming perfect firing.
 
 ### Useful links
 
-- https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t  
+- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)  
 
 
 > Treat geofences as **best-effort hints**, not hard real-time guarantees.
@@ -4317,6 +6648,7 @@ Use the **Fused Location Provider**, **batch** updates when you can, and use a *
 
 ---
 
+- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
 ### **OkHttp `Interceptor` vs `Authenticator`** — when do you refresh tokens, and how do you avoid **infinite 401 loops**?
 
 **Interceptors** run on **every** request/response and are ideal for **adding** headers (e.g. `Authorization: Bearer …`), **logging** (redacted), **metrics**, and **generic** retries you fully control.
@@ -4437,17 +6769,18 @@ You configure pins in the network stack (for example **OkHttp `CertificatePinner
 
 ### Useful links
 
-- https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109  
-- https://dzone.com/articles/encryption-and-signing  
-- https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android  
-- https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android  
-- https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e  
+- [Learn more](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)  
+- [Learn more](https://dzone.com/articles/encryption-and-signing)  
+- [Learn more](https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android)  
+- [Learn more](https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android)  
+- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)  
 
 
 > Pinning is **extra defense**—it does not replace **good auth** and **solid server design**.
 
 ---
 
+- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
 ### **Symmetric vs asymmetric encryption** — where does each belong?
 
 **Symmetric** encryption uses one shared key; it is **fast** for bulk data but you must solve **how both sides get the key safely**. **Asymmetric** uses a public/private pair—great for **key exchange** and **signatures**, slower for huge payloads.
@@ -4456,57 +6789,61 @@ Real systems (like **TLS**) are usually **hybrid**: asymmetric to set up a sessi
 
 ### Useful links
 
-- https://youtu.be/AQDCe585Lnc  
+- [Learn more](https://youtu.be/AQDCe585Lnc)  
 
 
 > Production setups are almost always **hybrid**, not “only RSA” or “only AES.”
 
 ---
 
+- [Learn more](https://youtu.be/AQDCe585Lnc)
 ### How do you **encrypt data in Java/Android**?
 
 Use **`javax.crypto.Cipher`** with a **modern mode** (prefer **AEAD** such as **GCM**), a **random IV** every time, and **keys you do not hardcode** in source. Store keys in **Android Keystore** when possible.
 
 ### Useful links
 
-- https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26  
+- [Learn more](https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26)  
 
 
 > **Mode + IV + key storage** matter more than naming a cipher on slides.
 
 ---
 
+- [Learn more](https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26)
 ### **Android Keystore** — how do you store passwords/secrets?
 
 Put **keys** in the **Android Keystore** so raw key material is harder to extract. For **small secrets** at rest, use **EncryptedSharedPreferences** or **EncryptedFile** (AndroidX Security) instead of **plain SharedPreferences**.
 
 ### Useful links
 
-- https://developer.android.com/privacy-and-security/keystore  
-- https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b  
-- https://source.android.com/docs/security/features/keystore  
-- https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/  
-- https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore  
+- [Learn more](https://developer.android.com/privacy-and-security/keystore)  
+- [Learn more](https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b)  
+- [Learn more](https://source.android.com/docs/security/features/keystore)  
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)  
+- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)  
 
 
 > Keep **keys out of app data dirs**; add **biometric / passcode** gates when the threat model says so.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
 ### Detecting **rooted/tampered** devices?
 
 **Heuristics** (e.g. **`su`**, unusual partitions) plus libraries like **RootBeer** can hint at **root** or **tampering**. Expect **false positives** and **false negatives**—many teams treat this as **risk scoring** on the server, not a hard block, unless policy requires otherwise.
 
 ### Useful links
 
-- https://github.com/scottyab/rootbeer  
-- https://stackoverflow.com/a/35628977/3424919  
+- [Learn more](https://github.com/scottyab/rootbeer)  
+- [Learn more](https://stackoverflow.com/a/35628977/3424919)  
 
 
 > Root detection is usually **risk scoring**, not a perfect gate.
 
 ---
 
+- [Learn more](https://stackoverflow.com/a/35628977/3424919)
 ### **Permission protection levels** (`normal`, `dangerous`, `signature`, `signature|privileged`)
 
 - **Normal:** granted at install; low risk.
@@ -4517,13 +6854,14 @@ Know the difference between **`<uses-permission>`** (your app requests) and decl
 
 ### Useful links
 
-- https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file  
+- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)  
 
 
 > **Dangerous** permissions need **user trust** and a **fallback** if denied.
 
 ---
 
+- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
 ### **WebView** security checklist
 
 Treat **WebView** like a small browser: **disable JavaScript bridges** you do not need, **validate** URLs before loading, avoid **mixed content**, **update** WebView/System WebView, and keep **file access** off unless required.
@@ -4683,8 +7021,8 @@ They are **verbose** to build. For **data only your app uses**, **Room** is simp
 
 ### Useful links
 
-- https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42  
-- https://developer.android.com/guide/topics/providers/content-provider-basics  
+- [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42)  
+- [Learn more](https://developer.android.com/guide/topics/providers/content-provider-basics)  
 - Diagram: `/assets/content-provider-diagram.png`  
 
 
@@ -4692,6 +7030,7 @@ They are **verbose** to build. For **data only your app uses**, **Room** is simp
 
 ---
 
+- [Learn more](https://developer.android.com/guide/topics/providers/content-provider-basics)
 ### **Room** — migrations, encryption, testing
 
 **Room** is SQLite with **compile-time query checking** and **migration** APIs. **Ship a migration test** whenever you bump the schema. For sensitive domains, consider **SQLCipher** or other **encryption** options on top of SQLite.
@@ -4711,13 +7050,14 @@ Avoid assuming **full filesystem** access. Use **MediaStore** for shared media, 
 
 ### Useful links
 
-- https://blog.mindorks.com/understanding-the-scoped-storage-in-android  
+- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)  
 
 
 > Separate **user-visible files** from **app-private cache**—privacy and UX depend on it.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
 ### How do you ensure **DB security & integrity** (health/finance examples)?
 
 Use **encryption at rest** when required, **validate** inputs and schemas, enforce **auth** on the server (never trust the client alone), **encrypt backups**, and use **least privilege** for any shared providers.
@@ -5049,13 +7389,14 @@ Negotiate **MTU**, tune **connection parameters** / **`requestConnectionPriority
 
 ### Useful links
 
-- BLE demo (author reference in source material): https://github.com/KiranDhiyad/BLE_Demo  
-- Android BLE overview: https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview  
+- [BLE demo (author reference in source material):](https://github.com/KiranDhiyad/BLE_Demo)  
+- [Android BLE overview:](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview)  
 
 > Senior BLE is **half protocol + queue discipline**, **half Android lifecycle + radio reality**—speak with **debug** stories and **metrics**.
 
 ---
 
+- [Learn more](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview)
 ### Real-World Scenario Interview Questions
 
 ---
@@ -5458,14 +7799,15 @@ If the map grows **large**, the classic `HashMap` often wins on lookup and struc
 
 ### Useful links
 
-- https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47  
-- https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray  
+- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)  
+- [Learn more](https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray)  
 
 
 > **Measure** size and allocation churn before micro-optimizing map types.
 
 ---
 
+- [Learn more](https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray)
 ### **Bitmap loading**, large images, and **bitmap pooling**
 
 Large bitmaps blow the heap if you decode them at full resolution. Use **`inJustDecodeBounds`** first to read dimensions, then set **`inSampleSize`** (or use `ImageDecoder`, Coil, Glide) so the decoded bitmap matches the **on-screen size**.
@@ -5474,14 +7816,15 @@ Large bitmaps blow the heap if you decode them at full resolution. Use **`inJust
 
 ### Useful links
 
-- https://outcomeschool.com/blog/bitmap-pool  
-- https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53  
+- [Learn more](https://outcomeschool.com/blog/bitmap-pool)  
+- [Learn more](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)  
 
 
 > **Read image size first**, then **downsample** to what the UI actually needs.
 
 ---
 
+- [Learn more](https://android.jlelse.eu/loading-large-bitmaps-efficiently-in-android-66826cd4ad53)
 ### **APK / app size reduction** and **build time** improvements
 
 Smaller APKs download faster and use less storage. Common levers: **R8/ProGuard** (shrink code), **`shrinkResources`**, limit languages with **`resConfigs`**, use **WebP** or vectors where it helps, **dynamic feature modules** for rarely used pieces, and remove dead code. **APK Analyzer** shows what actually ships.
@@ -5490,15 +7833,16 @@ Faster builds: Gradle **build cache**, fewer modules touching every change, sens
 
 ### Useful links
 
-- https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e  
-- https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662  
-- https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43  
+- [Learn more](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)  
+- [Learn more](https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662)  
+- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)  
 
 
 > App size and build speed are **ongoing hygiene**, not one-off tasks.
 
 ---
 
+- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)
 ### **StrictMode** — how do you use it without annoying everyone?
 
 StrictMode warns (or crashes in debug) when you accidentally do **disk or network I/O on the main thread**, or leak **SQLite cursors** and **closable** objects. It is a **development** tool to catch mistakes early.
@@ -5507,26 +7851,28 @@ Turn it on for **debug builds** (and tests), not for production users. Pair it w
 
 ### Useful links
 
-- https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997  
+- [Learn more](https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997)  
 
 
 > Use StrictMode in **debug and CI**, not as a hammer on real users.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/use-strictmode-to-find-things-you-did-by-accident-in-android-development-4cf0e7c8d997)
 ### **RenderScript vs NDK** (legacy note)
 
 RenderScript was meant for heavy parallel work on the GPU/CPU. It is **deprecated**; new code should use other options (NDK, GPU APIs, or higher-level libraries) depending on the problem.
 
 ### Useful links
 
-- https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe  
+- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)  
 
 
 > Know the **deprecation story** if you maintain older apps that still mention RenderScript.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
 ### **FlatBuffers vs JSON**
 
 **JSON** is text: easy to read and debug, but parsing allocates and copies a lot. **FlatBuffers** is a binary layout that can be read with **minimal parsing** (useful with memory-mapped files and tight latency).
@@ -5535,13 +7881,14 @@ You trade **human readability and tooling** for **speed and battery** on the wir
 
 ### Useful links
 
-- https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07  
+- [Learn more](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)  
 
 
 > Binary formats help **latency and battery** on slow or flaky networks when you own both ends.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
 ### **Battery optimization** — engineering checklist
 
 Radios (mobile data, Wi‑Fi) cost battery even after a small request because of **tail time**—the modem stays awake. **Batch** network work, avoid tight polling, and use **WorkManager** for deferrable jobs. Compress payloads when it helps.
@@ -5550,14 +7897,15 @@ For **location**, balance accuracy, interval, and max wait—higher accuracy and
 
 ### Useful links
 
-- https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70  
-- https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html  
+- [Learn more](https://blog.mindorks.com/battery-optimization-for-android-apps-f4ef6170ff70)  
+- [Learn more](https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html)  
 
 
 > **Batching network work** usually beats many tiny requests for battery.
 
 ---
 
+- [Learn more](https://android-developers.googleblog.com/2018/10/modern-background-execution-in-android.html)
 ### **Memory leaks** — create, avoid, detect
 
 A leak keeps objects alive when they should be collected—often by holding a **`Context`** (especially an **Activity**) in a static field, a long-lived **listener**, a **Handler** tied to the Activity, or a thread that outlives the screen.
@@ -5568,13 +7916,14 @@ A leak keeps objects alive when they should be collected—often by holding a **
 
 ### Useful links
 
-- https://www.geeksforgeeks.org/memory-leaks-in-android/  
+- [Learn more](https://www.geeksforgeeks.org/memory-leaks-in-android/)  
 
 
 > **Cancel work and drop references** when screens go away—especially for Activities and Fragments.
 
 ---
 
+- [Learn more](https://www.geeksforgeeks.org/memory-leaks-in-android/)
 ### **OOM** mitigation
 
 **OutOfMemoryError** often comes from **bitmaps** and **unbounded caches**—not from “the heap number is too small.” Downsample images, cap cache size, and **evict** on memory pressure.
@@ -5583,13 +7932,14 @@ Profile with **heap dumps** when OOMs happen in production-like conditions. Nati
 
 ### Useful links
 
-- https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application  
+- [Learn more](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)  
 
 
 > OOM is usually **images and cache policy**, not “just increase the heap.”
 
 ---
 
+- [Learn more](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
 ### **onTrimMemory** — why implement it?
 
 The system calls **`onTrimMemory`** (and related callbacks) when memory is tight. It is your chance to **drop caches** (thumbnails, parsed JSON, extra bitmaps) so the process is less likely to be killed.
@@ -5598,13 +7948,14 @@ Do **not** throw away data you need for correctness—only **recreatable** cache
 
 ### Useful links
 
-- https://developer.android.com/topic/performance/memory  
+- [Learn more](https://developer.android.com/topic/performance/memory)  
 
 
 > Trim **caches**, not essential user data or app state you cannot rebuild.
 
 ---
 
+- [Learn more](https://developer.android.com/topic/performance/memory)
 ### **Why apps exit** — process death vs finish
 
 Android does not work like desktop “Quit.” The system may **kill your process** in the background under memory pressure. The user may also swipe the app away from recents, which behaves differently by version.
@@ -5613,26 +7964,28 @@ Crashes and **low-memory killer** are normal topics in interviews—**do not rel
 
 ### Useful links
 
-- https://blog.mindorks.com/reason-of-exit-in-android-application/  
+- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)  
 
 
 > There is **no reliable desktop-style “exit app”** model—design for **process death** and restoration.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)
 ### **Shimmer placeholders**
 
 **Shimmer** (or skeleton placeholders) improves **perceived** performance: the user sees structure while content loads. Keep animations **light** so they do not steal GPU or CPU from real work.
 
 ### Useful links
 
-- https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/  
+- [Learn more](https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/)  
 
 
 > Skeleton UI should **match the final layout** so content does not jump when it arrives.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/using-shimmer-effect-placeholder-in-android/)
 ### **SnapHelper** in RecyclerView
 
 **SnapHelper** snaps the list so an item lines up (carousel, pager-like rows). You attach it to the `RecyclerView` and pick **linear** or **pager** behavior.
@@ -5641,26 +7994,28 @@ Watch **measurement order** and test on **RTL** and different **screen densities
 
 ### Useful links
 
-- https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8  
+- [Learn more](https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8)  
 
 
 > Test **RTL and density**—snap math is easy to get wrong on edge layouts.
 
 ---
 
+- [Learn more](https://blog.mindorks.com/using-snaphelper-in-recyclerview-fc616b6833e8)
 ### **Multi-touch**
 
 Touch events carry **multiple pointers** (fingers). **`MotionEvent`** reports indices and IDs; pointer **indices** can change when fingers lift, so use **`getPointerId`** for tracking across events. **`GestureDetector`** helps with common patterns.
 
 ### Useful links
 
-- https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/  
+- [Learn more](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)  
 
 
 > Track **pointer IDs**, not only indices—they are not the same across events.
 
 ---
 
+- [Learn more](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
 ### **Swipe animation XML example**
 
 This **translate** animation slides content in from the left over **700 ms** (legacy `View` animation XML).
@@ -5839,13 +8194,14 @@ WorkManager.getInstance(context).enqueueUniqueWork("sync", ExistingWorkPolicy.KE
 
 ### Useful links
 
-- https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa  
+- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)  
 
 
 > In libraries, default to **`implementation`** unless you intentionally expose types.
 
 ---
 
+- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)
 ### **Gradle wrapper** purpose
 
 The **wrapper** (`gradlew` + properties) pins the **Gradle version** so **CI** and every developer use the **same** build tool.
@@ -5870,27 +8226,29 @@ The **wrapper** (`gradlew` + properties) pins the **Gradle version** so **CI** a
 
 ### Useful links
 
-- https://developer.android.com/ndk/guides/abis  
+- [Learn more](https://developer.android.com/ndk/guides/abis)  
 
 
 > Native SDKs inflate **download size**—split and filter with intent.
 
 ---
 
+- [Learn more](https://developer.android.com/ndk/guides/abis)
 ### **CI/CD for Android**
 
 Typical pieces: **GitHub Actions**, **Jenkins + Docker**, **Bitrise**, **Gradle caching**, **secure signing**, **Play internal tracks**, and **automated tests** (including **Firebase Test Lab**).
 
 ### Useful links
 
-- https://blog.mindorks.com/github-actions-for-android/  
-- https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/  
+- [Learn more](https://blog.mindorks.com/github-actions-for-android/)  
+- [Learn more](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/)  
 
 
 > Cache **dependencies** and **build cache**—Android CI is I/O heavy.
 
 ---
 
+- [Learn more](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/)
 ### **CI/CD benefits & feature branching**
 
 Automation gives **faster releases**, **consistent quality gates**, and **smaller rollout risk**. **Trunk-based** development with **feature flags** usually scales better than long-lived branches.
@@ -6164,23 +8522,24 @@ Mix **consistent DSA practice**, **system design** drills, and **behavioral** st
 
 ### Useful links
 
-- https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/
-- https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/
-- https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/
-- https://www.linkedin.com/feed/update/urn:li:activity:7220663449440161793/
-- https://www.linkedin.com/feed/update/urn:li:activity:7219036304691388418/
-- https://www.linkedin.com/feed/update/urn:li:activity:7217827106083266560/
-- https://www.linkedin.com/feed/update/urn:li:activity:7213379334311448576/
-- https://www.linkedin.com/feed/update/urn:li:activity:7194272210679705600/
-- https://www.linkedin.com/feed/update/urn:li:activity:7177985319269502977/
-- https://blog.sp3.in/dsa
-- STAR method: https://www.testgorilla.com/blog/star-method-interviews/
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7220663449440161793/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7219036304691388418/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7217827106083266560/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7213379334311448576/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7194272210679705600/)
+- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7177985319269502977/)
+- [Learn more](https://blog.sp3.in/dsa)
+- [STAR method:](https://www.testgorilla.com/blog/star-method-interviews/)
 
 
 > **STAR + metrics** beat a list of adjectives about how “passionate” you are.
 
 ---
 
+- [Learn more](https://www.testgorilla.com/blog/star-method-interviews/)
 ### Describe a **performance troubleshooting** story on Android.
 
 Use **STAR**: **Situation** (slow app, big APK, bad reviews). **Task** (find hotspots without guessing). **Action** (Android Studio CPU/memory/network profilers, main-thread audit, caching, async boundaries, R8/shrinkResources, image pipeline). **Result** (startup ms, jank frames, APK size, crash-free rate—**real numbers**).
