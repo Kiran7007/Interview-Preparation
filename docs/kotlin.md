@@ -1,6 +1,8 @@
 # Kotlin
 ---
 
+## Kotlin Fundamentals
+
 
 ## What is `val` vs `var` in Kotlin?
 
@@ -340,6 +342,8 @@ It can also implement interfaces.
 
 ---
 
+## Coroutines: Builders and Structured Concurrency
+
 ## What are coroutine builders in Kotlin?
 
 Common builders are:
@@ -432,28 +436,6 @@ Use `async` only when the result is actually needed.
 
 ---
 
-## What is the difference between `coroutineScope` and `supervisorScope`?
-
--   `coroutineScope` propagates child failure and cancels sibling work.
--   `supervisorScope` prevents one child failure from automatically
-    cancelling siblings.
-
-``` kotlin
-supervisorScope {
-    launch {
-        loadProfile()
-    }
-
-    launch {
-        loadRecommendations()
-    }
-}
-```
-
-If recommendations fail, profile loading can continue.
-
----
-
 ## What is `SupervisorJob`?
 
 -   `SupervisorJob` creates a parent job where failure of one child does
@@ -526,6 +508,8 @@ Do not catch every `Throwable` blindly because cancellation must remain
 cancellable.
 
 ---
+
+## Flow and Reactive Streams
 
 ## What is Flow?
 
@@ -765,6 +749,8 @@ val events = repository.events()
 
 ---
 
+## Advanced Kotlin
+
 ## What is an inline function useful for in Android?
 
 -   It can reduce lambda allocation overhead.
@@ -901,57 +887,6 @@ viewModelScope.launch { ... }
 
 or an injected application-level scope when work truly belongs to the
 application lifecycle.
----
-
-## What is structured concurrency in Kotlin?
-
--   Structured concurrency ensures that child coroutines have a clear
-    parent.
--   The parent controls the lifetime of its children.
--   Cancellation and failures can propagate predictably.
-
-``` kotlin
-viewModelScope.launch {
-
-    coroutineScope {
-
-        launch {
-            loadUser()
-        }
-
-        launch {
-            loadOrders()
-        }
-    }
-}
-```
-
-The child coroutines belong to the parent.
-
-When the ViewModel is cleared:
-
-``` text
-viewModelScope
-      ↓
-parent coroutine
-      ↓
-child coroutine
-      ↓
-child coroutine
-```
-
-They are cancelled together.
-
-Avoid:
-
-``` kotlin
-GlobalScope.launch {
-    loadUser()
-}
-```
-
-because there is no feature-level owner controlling its lifetime.
-
 ---
 
 ## What does `ensureActive()` do?
@@ -1294,50 +1229,6 @@ finally {
 
 ---
 
-## What is the difference between `launch` and `async`?
-
-`launch` returns a `Job`.
-
-``` kotlin
-val job = launch {
-    saveData()
-}
-```
-
-`async` returns a `Deferred<T>`.
-
-``` kotlin
-val deferred = async {
-    loadUser()
-}
-```
-
-Use:
-
-``` text
-launch → fire-and-forget operation
-async  → operation that produces a result
-```
-
-Example:
-
-``` kotlin
-val job = launch {
-    saveUser()
-}
-
-val user = async {
-    loadUser()
-}.await()
-```
-
-Interview answer:
-
-> Use `launch` when you do not need a result. Use `async` when you need
-> a result through `await()`.
-
----
-
 ## Do two `async` calls execute if I never call `await()`?
 
 They can start and execute even if you never call `await()`.
@@ -1607,37 +1498,6 @@ child B continues
 ```
 
 Use it when sibling operations should be independent.
-
----
-
-## What is the difference between `coroutineScope` and `supervisorScope`?
-
-`coroutineScope`:
-
--   Child failure normally cancels the parent.
--   Sibling children are cancelled.
-
-`supervisorScope`:
-
--   Child failure does not automatically cancel siblings.
--   Useful for independent operations.
-
-Example:
-
-``` kotlin
-supervisorScope {
-
-    launch {
-        loadProfile()
-    }
-
-    launch {
-        loadRecommendations()
-    }
-}
-```
-
-If recommendations fail, the profile operation can still finish.
 
 ---
 
@@ -3305,6 +3165,8 @@ try {
 
 ---
 
+## Kotlin Operators and Language Keywords
+
 ### What is the safe-call `?.` operator in Kotlin?
 
 * `?.` safely accesses a property or function when the object can be `null`.
@@ -3555,30 +3417,6 @@ It is also commonly used with Android/Compose callbacks:
 ```kotlin
 Button(onClick = ::onButtonClick)
 ```
----
-
-### What does the `open` keyword mean in Kotlin?
-
-* Kotlin classes and functions are `final` by default.
-* `open` allows a class or function to be inherited or overridden.
-* This is different from Java, where classes and methods are inheritable by default.
-
-```kotlin
-open class Animal {
-
-    open fun sound() {
-        println("Animal sound")
-    }
-}
-
-class Dog : Animal() {
-
-    override fun sound() {
-        println("Bark")
-    }
-}
-```
-
 ---
 
 ### Why are Kotlin classes `final` by default?
@@ -4446,44 +4284,6 @@ Output:
 
 ---
 
-## What is destructuring in Kotlin and where is it unsafe?
-
-* Destructuring lets you unpack an object into multiple variables.
-* Kotlin uses `component1()`, `component2()`, etc. behind the scenes.
-* It is most commonly used with `data class`, pairs, maps, and collections.
-* It can become unsafe or confusing when the component order changes or when the type does not clearly communicate what each value means.
-
-```kotlin
-data class Employee(
-    val name: String,
-    val age: Int
-)
-
-val employee = Employee("Kiran", 30)
-
-val (name, age) = employee
-
-println(name) // Kiran
-println(age)  // 30
-```
-
-Conceptually, Kotlin does:
-
-```kotlin
-val name = employee.component1()
-val age = employee.component2()
-```
-
-**Interview point:** Destructuring is positional, not name-based.
-
-```kotlin
-val (name, age) = employee
-```
-
-If the property order changes, the meaning of the destructured variables can change too.
-
----
-
 ## What does the `open` keyword mean in Kotlin and why is it the default opposite of Java?
 
 * Kotlin classes and members are `final` by default.
@@ -4570,6 +4370,8 @@ fun loadOrder(id: OrderId)
 **Important:** Value classes are not guaranteed to be allocation-free in every situation. They can be boxed when used with generics, nullable types, arrays, reflection, or certain APIs.
 
 ---
+
+## Coroutine Cancellation, Context, and Concurrency
 
 ## What is a `CoroutineScope` and how should Android apps structure scopes?
 
@@ -4959,56 +4761,6 @@ launch {
     delay(5000)
 }
 ```
-
----
-
-## What is structured concurrency in Kotlin?
-
-* Structured concurrency ensures that child coroutines have a clear parent.
-* The parent controls the lifetime of its children.
-* Cancellation and failures can propagate predictably.
-
-```kotlin
-viewModelScope.launch {
-
-    coroutineScope {
-
-        launch {
-            loadUser()
-        }
-
-        launch {
-            loadOrders()
-        }
-    }
-}
-```
-
-The child coroutines belong to the parent.
-
-When the ViewModel is cleared:
-
-```text
-viewModelScope
-      ↓
-parent coroutine
-      ↓
-child coroutine
-      ↓
-child coroutine
-```
-
-They are cancelled together.
-
-Avoid:
-
-```kotlin
-GlobalScope.launch {
-    loadUser()
-}
-```
-
-because there is no feature-level owner controlling its lifetime.
 
 ---
 
