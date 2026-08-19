@@ -129,7 +129,7 @@ Kotlin makes classes final by default to reduce accidental inheritance.
 -   It is useful for UI states and result types.
 
 ``` kotlin
-sealed interface UiState {
+sealed class UiState {
     data object Loading : UiState
     data class Success(val users: List<User>) : UiState
     data class Error(val message: String) : UiState
@@ -140,13 +140,12 @@ It works well with exhaustive `when`.
 
 ---
 
-## What is a sealed interface and how is it different from a sealed class?
+## What is a sealed interface?
 
 -   Both restrict the hierarchy.
--   A class can extend only one class.
 -   A class can implement multiple interfaces.
--   A sealed interface is useful when multiple independent hierarchies
-    need the same contract.
+-   A sealed interface is useful when different types need the same
+    restricted contract.
 
 ``` kotlin
 sealed interface UiEvent
@@ -155,9 +154,28 @@ data object NavigateBack : UiEvent
 data class ShowError(val message: String) : UiEvent
 ```
 
-Use a sealed class when shared state or implementation belongs naturally
-to a base class. Use a sealed interface when you mainly need a
-restricted contract.
+It works well with exhaustive `when` expressions.
+
+---
+
+## What is the difference between a sealed class and a sealed interface?
+
+-   A sealed class can provide shared state or implementation.
+-   A class can extend only one sealed class.
+-   A class can implement multiple sealed interfaces.
+-   Use a sealed class for a closely related state hierarchy.
+-   Use a sealed interface when different class hierarchies need the
+    same restricted contract.
+
+``` kotlin
+sealed class Result {
+    data class Success(val value: String) : Result()
+    data class Error(val message: String) : Result()
+}
+
+sealed interface UiEvent
+data object NavigateBack : UiEvent
+```
 
 ---
 
