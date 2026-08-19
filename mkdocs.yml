@@ -1,6 +1,6 @@
 site_name: Kiran's Interview Preparation
-
 site_url: https://kiran7007.github.io/Interview-Preparation/
+site_description: Android, Kotlin and Software Engineering Interview Preparation
 
 theme:
   name: material
@@ -16,6 +16,7 @@ theme:
     - search.suggest
     - search.highlight
     - content.code.copy
+    - content.tabs.link
 
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -33,9 +34,38 @@ theme:
 markdown_extensions:
   - admonition
   - tables
-  - pymdownx.highlight
+  - attr_list
+  - md_in_html
+
+  - toc:
+      permalink: true
+
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
   - pymdownx.superfences
+
   - pymdownx.tabbed:
       alternate_style: true
   - toc:
       permalink: true
+
+nav:
+  - Android:
+      - Android: android.md
+
+  - Career: career.md
+
+  - Cross-platform: cross-platform.md
+
+  - DSA: dsa.md
+
+  - Java: java.md
+
+  - Kotlin: kotlin.md
+
+  - System Design:
+      - System Design: system-design.md
+
+extra_css:
+  - stylesheets/extra.css
