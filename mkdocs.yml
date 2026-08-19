@@ -51,8 +51,7 @@ markdown_extensions:
       permalink: true
 
 nav:
-  - Android:
-      - Android: android.md
+  - Android: android.md
 
   - Career: career.md
 
@@ -64,8 +63,7 @@ nav:
 
   - Kotlin: kotlin.md
 
-  - System Design:
-      - System Design: system-design.md
+  - System Design: system-design.md
 
 extra_css:
   - stylesheets/extra.css
