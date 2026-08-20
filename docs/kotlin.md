@@ -56,6 +56,48 @@ It is commonly used for API models, UI state, and domain models.
 
 ---
 
+## What is null safety in Kotlin?
+
+-   Kotlin distinguishes nullable and non-nullable references.
+-   The compiler forces you to handle `null` explicitly.
+-   This reduces `NullPointerException` risks in production code.
+
+``` kotlin
+var name: String? = null
+
+val length = name?.length ?: 0
+println(length)
+```
+
+The safe-call operator `?.` avoids a crash, and `?:` provides a
+fallback value.
+
+Use nullable types when data may genuinely be absent, such as user
+profiles, network responses, or optional settings.
+
+---
+
+## What is the difference between `List`, `MutableList`, `Set`, and `Map` in Kotlin?
+
+-   `List` is ordered and read-only by default.
+-   `MutableList` allows adding, removing, and replacing items.
+-   `Set` stores unique items without order guarantees.
+-   `Map` stores key-value pairs.
+
+``` kotlin
+val names: List<String> = listOf("Kiran", "Asha")
+val mutableNames = mutableListOf("Kiran")
+mutableNames.add("Asha")
+
+val uniqueTags = setOf("android", "kotlin")
+val userMap = mapOf("id" to 1, "name" to "Kiran")
+```
+
+Choose the collection based on the behavior you need: ordered access,
+uniqueness, or key-value lookups.
+
+---
+
 ## What is destructuring in Kotlin and where is it unsafe?
 
 -   Destructuring allows values to be unpacked into variables.
@@ -194,6 +236,27 @@ It is useful for small, reusable transformations.
 
 ---
 
+## What is smart casting in Kotlin?
+
+-   Kotlin analyzes null checks and type checks to cast safely.
+-   After a check, the compiler can treat the value as a non-null type.
+-   This reduces boilerplate and keeps code safer.
+
+``` kotlin
+fun printLength(value: Any?) {
+    if (value is String) {
+        println(value.length)
+    }
+}
+```
+
+The compiler knows `value` is a `String` inside the `if` block.
+
+It is especially helpful in Android when handling `Any?` from UI or
+network layers.
+
+---
+
 ## What is a higher-order function?
 
 -   A higher-order function takes another function as a parameter or
@@ -211,6 +274,34 @@ execute {
 
 Collection APIs such as `map`, `filter`, and `fold` heavily use
 higher-order functions.
+
+---
+
+## What is the difference between `let`, `run`, `also`, `apply`, and `with`?
+
+-   These are scope functions that make object manipulation more
+    readable.
+-   `let` is useful for null-safe calls and transformations.
+-   `run` executes a block on an object and returns its result.
+-   `also` performs side effects and returns the original object.
+-   `apply` configures an object and returns the same object.
+-   `with` runs a block on an object without extension syntax.
+
+``` kotlin
+val user = User("Kiran").apply {
+    age = 30
+}
+
+val nameLength = user?.name?.let { it.length }
+
+with(user) {
+    println(name)
+    println(age)
+}
+```
+
+Use `apply` for object configuration, `let` for null-safe work, and
+`run` when you want a computed value.
 
 ---
 
@@ -354,6 +445,24 @@ class User private constructor() {
 ```
 
 It can also implement interfaces.
+
+---
+
+## What is the difference between `const` and `val`?
+
+-   `val` is initialized at runtime and can use expressions.
+-   `const` is compile-time constant and must be declared at top-level
+    or inside an `object`.
+-   `const` works only for primitive types and `String`.
+
+``` kotlin
+const val BASE_URL = "https://api.example.com"
+val appVersion = BuildConfig.VERSION_NAME
+```
+
+Use `const` for values known at compile time, such as API endpoints or
+configuration keys. Use `val` for runtime values and dependency-driven
+configuration.
 
 ---
 
