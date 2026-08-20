@@ -3291,7 +3291,7 @@ try {
 
 ## Kotlin Operators and Language Keywords
 
-### What is the safe-call `?.` operator in Kotlin?
+## What is the safe-call `?.` operator in Kotlin?
 
 * `?.` safely accesses a property or function when the object can be `null`.
 * If the object is `null`, the expression returns `null` instead of throwing an exception.
@@ -3307,7 +3307,7 @@ println(length) // null
 
 ---
 
-### What is the Elvis `?:` operator in Kotlin?
+## What is the Elvis `?:` operator in Kotlin?
 
 * `?:` provides a default value when the left side is `null`.
 * It is useful for setting fallback values.
@@ -3322,7 +3322,7 @@ println(displayName) // Guest
 
 ---
 
-### What is the not-null assertion `!!` operator?
+## What is the not-null assertion `!!` operator?
 
 * `!!` tells Kotlin that a nullable value is definitely not `null`.
 * If the value is actually `null`, it throws `NullPointerException`.
@@ -3336,7 +3336,7 @@ val length = name!!.length // NullPointerException
 
 ---
 
-### What is the `==` operator in Kotlin?
+## What is the `==` operator in Kotlin?
 
 * `==` checks structural equality.
 * It internally uses `equals()`.
@@ -3356,7 +3356,7 @@ data class User(val name: String)
 
 ---
 
-### What is the `===` operator in Kotlin?
+## What is the `===` operator in Kotlin?
 
 * `===` checks whether two references point to the exact same object.
 * `==` checks values, while `===` checks references.
@@ -3371,7 +3371,7 @@ println(a === b)  // false
 
 ---
 
-### What is the `is` operator in Kotlin?
+## What is the `is` operator in Kotlin?
 
 * `is` checks the type of an object.
 * Kotlin automatically smart-casts the object after the check.
@@ -3388,7 +3388,7 @@ After `value is String`, Kotlin treats `value` as a `String`.
 
 ---
 
-### What is the `as` operator in Kotlin?
+## What is the `as` operator in Kotlin?
 
 * `as` performs an explicit type cast.
 * If the object cannot be converted to that type, it throws `ClassCastException`.
@@ -3403,7 +3403,7 @@ println(text.length)
 
 ---
 
-### What is the `as?` safe-cast operator?
+## What is the `as?` safe-cast operator?
 
 * `as?` safely casts an object.
 * If the cast fails, it returns `null` instead of throwing an exception.
@@ -3418,7 +3418,7 @@ println(text) // null
 
 ---
 
-### What is the `in` operator?
+## What is the `in` operator?
 
 * `in` checks whether a value exists inside a range or collection.
 * `!in` checks that it does not exist.
@@ -3443,7 +3443,7 @@ if ("Kiran" in names) {
 
 ---
 
-### What is the range `..` operator?
+## What is the range `..` operator?
 
 * `..` creates a range including both start and end values.
 
@@ -3465,7 +3465,7 @@ Output:
 
 ---
 
-### What is the `..<` operator?
+## What is the `..<` operator?
 
 * `..<` creates a range that excludes the end value.
 * It is called the open-ended range operator.
@@ -3487,7 +3487,7 @@ Output:
 
 ---
 
-### What are `&&` and `||` operators?
+## What are `&&` and `||` operators?
 
 * `&&` means logical AND.
 * `||` means logical OR.
@@ -3507,7 +3507,7 @@ if (isAdmin || isManager) {
 
 ---
 
-### What is the `!` operator?
+## What is the `!` operator?
 
 * `!` reverses a Boolean value.
 
@@ -3521,7 +3521,7 @@ if (!isLoggedIn) {
 
 ---
 
-### What is the `::` operator in Kotlin?
+## What is the `::` operator in Kotlin?
 
 * `::` creates a reference to a function, property, or class.
 * It is commonly used with higher-order functions.
@@ -3543,7 +3543,7 @@ Button(onClick = ::onButtonClick)
 ```
 ---
 
-### Why are Kotlin classes `final` by default?
+## Why are Kotlin classes `final` by default?
 
 * Kotlin makes classes final by default to prevent accidental inheritance.
 * It makes the class behavior easier to reason about.
@@ -3561,7 +3561,7 @@ This cannot be inherited:
 
 ---
 
-### What does the `override` keyword mean?
+## What does the `override` keyword mean?
 
 * `override` means a child class is replacing an `open` parent implementation.
 * The parent member must be `open`.
@@ -3582,7 +3582,7 @@ class Child : Parent() {
 
 ---
 
-### What does the `final` keyword mean?
+## What does the `final` keyword mean?
 
 * `final` prevents further overriding.
 * Kotlin members are final by default.
@@ -3605,7 +3605,7 @@ class GrandChild : Child() {
 ```
 
 ---
-### What does the `inline` keyword mean in Kotlin?
+## What does the `inline` keyword mean in Kotlin?
 
 * `inline` tells the compiler to replace the function call with the function body.
 * It is mainly useful for higher-order functions.
@@ -3625,7 +3625,7 @@ Conceptually, the compiler can place the lambda code directly at the call site.
 
 ---
 
-### Why is `inline` useful with higher-order functions?
+## Why is `inline` useful with higher-order functions?
 
 Without inline:
 
@@ -3649,7 +3649,7 @@ The compiler can inline the function and lambda at the call site.
 
 ---
 
-### What is `noinline` in Kotlin?
+## What is `noinline` in Kotlin?
 
 * `noinline` prevents a lambda parameter from being inlined.
 * It is useful when you need to store or pass the lambda as an object.
@@ -3673,7 +3673,7 @@ Here:
 
 ---
 
-### What is `crossinline` in Kotlin?
+## What is `crossinline` in Kotlin?
 
 * `crossinline` prevents a lambda from using a non-local `return`.
 * It is useful when the lambda is executed from another execution context such as a callback.
@@ -3693,7 +3693,7 @@ Without `crossinline`, Kotlin cannot safely allow a non-local return because the
 
 ---
 
-### What is a non-local return in Kotlin?
+## What is a non-local return in Kotlin?
 
 * A lambda passed to an inline function can normally return from the surrounding function.
 * This is called a non-local return.
@@ -3717,7 +3717,7 @@ The `return` returns from `test()`, not just the lambda.
 
 ---
 
-### Why does `crossinline` prevent non-local return?
+## Why does `crossinline` prevent non-local return?
 
 Consider:
 
@@ -3744,7 +3744,7 @@ Because the lambda is executed inside `Runnable`, Kotlin cannot allow the lambda
 
 ---
 
-### What is `reified` in Kotlin?
+## What is `reified` in Kotlin?
 
 * `reified` allows an inline generic function to access the generic type at runtime.
 * Normally generic types are erased at runtime.
@@ -3765,7 +3765,7 @@ println(isType<Int>("Kotlin"))    // false
 
 ---
 
-### Why must `reified` be used with `inline`?
+## Why must `reified` be used with `inline`?
 
 Normally:
 
@@ -3790,7 +3790,7 @@ The compiler knows the actual type at the call site.
 
 ---
 
-### What is a practical use case for `reified`?
+## What is a practical use case for `reified`?
 
 A common use case is avoiding `Class<T>` parameters.
 
@@ -3814,7 +3814,7 @@ val user = create(User::class.java)
 
 ---
 
-### What does `lateinit` mean in Kotlin?
+## What does `lateinit` mean in Kotlin?
 
 * `lateinit` allows you to initialize a non-null variable later.
 * It can only be used with mutable properties.
@@ -3838,7 +3838,7 @@ UninitializedPropertyAccessException
 
 ---
 
-### What is the difference between `lateinit` and `lazy`?
+## What is the difference between `lateinit` and `lazy`?
 
 | `lateinit`                                    | `lazy`                              |
 | --------------------------------------------- | ----------------------------------- |
@@ -3859,7 +3859,7 @@ val database by lazy {
 
 ---
 
-### What does `lazy` do in Kotlin?
+## What does `lazy` do in Kotlin?
 
 * `lazy` delays initialization until the property is accessed for the first time.
 * The value is then cached.
@@ -3881,7 +3881,7 @@ is accessed.
 
 ---
 
-### What does the `object` keyword mean?
+## What does the `object` keyword mean?
 
 * `object` creates a singleton object.
 * Only one instance of the object exists.
@@ -3909,7 +3909,7 @@ You don't need to create an instance:
 
 ---
 
-### What is a `companion object`?
+## What is a `companion object`?
 
 * A `companion object` provides class-level members.
 * It is Kotlin's common alternative to Java's `static`.
@@ -3934,7 +3934,7 @@ val user = User.create()
 
 ---
 
-### What is the difference between `object` and `companion object`?
+## What is the difference between `object` and `companion object`?
 
 `object` creates a standalone singleton:
 
@@ -3955,7 +3955,7 @@ class User {
 
 ---
 
-### What does the `data` keyword mean?
+## What does the `data` keyword mean?
 
 * `data class` is mainly used to hold data.
 * Kotlin automatically generates useful functions such as `equals()`, `hashCode()`, `toString()`, and `copy()`.
@@ -3976,7 +3976,7 @@ val user2 = user1.copy(name = "John")
 
 ---
 
-### What is a `sealed class`?
+## What is a `sealed class`?
 
 * A sealed class represents a restricted hierarchy.
 * The compiler knows all direct subclasses.
@@ -4007,7 +4007,7 @@ The compiler can check that all states are handled.
 
 ---
 
-### What is the difference between `sealed class` and `enum class`?
+## What is the difference between `sealed class` and `enum class`?
 
 * `enum` represents a fixed set of constants.
 * `sealed` represents a fixed hierarchy of different types/states.
@@ -4036,7 +4036,7 @@ Use sealed classes when different states need different data.
 
 ---
 
-### What does the `abstract` keyword mean?
+## What does the `abstract` keyword mean?
 
 * `abstract` defines something that must be implemented by a child class.
 * An abstract class cannot be instantiated directly.
@@ -4061,7 +4061,7 @@ class Dog : Animal() {
 
 ---
 
-### What is an interface in Kotlin?
+## What is an interface in Kotlin?
 
 * An interface defines a contract that classes can implement.
 * A class can implement multiple interfaces.
@@ -4082,7 +4082,7 @@ class Button : ClickListener {
 
 ---
 
-### What does the `by` keyword mean in Kotlin?
+## What does the `by` keyword mean in Kotlin?
 
 * `by` is used for delegation.
 * It allows another object to handle implementation.
@@ -4107,7 +4107,7 @@ Now `ViewModel` automatically delegates `getData()` to `repository`.
 
 ---
 
-### What is property delegation using `by lazy`?
+## What is property delegation using `by lazy`?
 
 ```kotlin
 val database by lazy {
@@ -4121,7 +4121,7 @@ The `by` keyword connects the property to the delegate.
 
 ---
 
-### What does the `operator` keyword mean?
+## What does the `operator` keyword mean?
 
 * `operator` allows a class to define custom behavior for operators such as `+`, `-`, `[]`, and `==`.
 
@@ -4152,7 +4152,7 @@ The `+` operator internally calls `plus()`.
 
 ---
 
-### What does the `infix` keyword mean?
+## What does the `infix` keyword mean?
 
 * `infix` allows a function to be called without parentheses and dot notation.
 * It makes certain APIs more readable.
@@ -4176,7 +4176,7 @@ val result = 10.add(5)
 ```
 ---
 
-### What does the `const` keyword mean?
+## What does the `const` keyword mean?
 
 * `const` defines a compile-time constant.
 * It can be used only with primitive types and `String`.
@@ -4196,7 +4196,7 @@ object Constants {
 
 ---
 
-### What is the difference between `const val` and normal `val`?
+## What is the difference between `const val` and normal `val`?
 
 ```kotlin
 const val API_VERSION = "v1"
@@ -4210,7 +4210,7 @@ val currentTime = System.currentTimeMillis()
 
 ---
 
-### What does `typealias` mean?
+## What does `typealias` mean?
 
 * `typealias` gives another name to an existing type.
 * It does not create a new type.
@@ -4238,7 +4238,7 @@ is easier to read.
 
 ---
 
-### What does the `tailrec` keyword mean?
+## What does the `tailrec` keyword mean?
 
 * `tailrec` tells the compiler that a recursive function can be optimized into a loop.
 * It helps avoid stack overflow for supported tail-recursive functions.
@@ -4258,7 +4258,7 @@ The compiler can optimize the recursion instead of creating a new stack frame fo
 
 ---
 
-### What are custom `get` and `set` accessors?
+## What are custom `get` and `set` accessors?
 
 * `get` controls how a property is read.
 * `set` controls how a property is changed.
@@ -4281,7 +4281,7 @@ println(name) // KIRAN
 
 ---
 
-### What does `this` mean in Kotlin?
+## What does `this` mean in Kotlin?
 
 * `this` refers to the current object.
 
@@ -4298,7 +4298,7 @@ class User(
 
 ---
 
-### What does `super` mean in Kotlin?
+## What does `super` mean in Kotlin?
 
 * `super` refers to the parent class implementation.
 
@@ -4327,7 +4327,7 @@ Child
 
 ---
 
-### What is the `when` expression in Kotlin?
+## What is the `when` expression in Kotlin?
 
 * `when` is Kotlin's powerful replacement for many `if-else` and `switch` statements.
 * It can return a value.
@@ -4352,7 +4352,7 @@ when (result) {
 
 ---
 
-### What does `return` do?
+## What does `return` do?
 
 * `return` exits a function and optionally returns a value.
 
@@ -4364,7 +4364,7 @@ fun getName(): String {
 
 ---
 
-### What does `break` do?
+## What does `break` do?
 
 * `break` stops the current loop.
 
@@ -4386,7 +4386,7 @@ Output:
 
 ---
 
-### What does `continue` do?
+## What does `continue` do?
 
 * `continue` skips the current iteration and moves to the next one.
 
