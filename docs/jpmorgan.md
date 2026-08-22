@@ -2,8 +2,6 @@
 
 ## What are Kotlin coroutine builder functions?
 
-**Answer**
-
 - Common coroutine builders/concurrency primitives include `launch`, `async`, `runBlocking`, `coroutineScope` and `supervisorScope`.
 - `launch` returns `Job` and is used when no result is required.
 - `async` returns `Deferred<T>` and is used when a result is required, especially for concurrent work.
@@ -21,8 +19,6 @@ viewModelScope.launch {
 ```
 
 ## What is structured concurrency?
-
-**Answer**
 
 - Child coroutines have a clear parent and lifetime.
 - The parent owns the children.
@@ -49,8 +45,6 @@ viewModelScope.launch {
 
 ## What is the XML/View equivalent of `LaunchedEffect`?
 
-**Answer**
-
 - There is no exact one-to-one equivalent.
 - `LaunchedEffect` starts a coroutine tied to Compose composition and restarts it when its keys change.
 - In View-based UI, use lifecycle-aware APIs according to the requirement:
@@ -70,8 +64,6 @@ viewLifecycleOwner.lifecycleScope.launch {
 ```
 
 ## How does Compose recomposition work?
-
-**Answer**
 
 - Compose executes composables during **composition** and records state reads.
 - When observed state changes, affected scopes are invalidated.
@@ -95,8 +87,6 @@ Unchanged stable subtrees may be skipped
 
 ## What causes recomposition?
 
-**Answer**
-
 - A composable reads Compose state and that state changes.
 - A parent recomposes and passes changed parameters.
 - A state holder emits a new value observed by the composable.
@@ -104,8 +94,6 @@ Unchanged stable subtrees may be skipped
 - Incorrect state placement can cause a much larger subtree to recompose than necessary.
 
 ## What is the difference between recomposition, layout and drawing?
-
-**Answer**
 
 ```text
 Composition -> What UI exists
@@ -117,8 +105,6 @@ Drawing      -> How pixels are drawn
 - Optimizing composition does not automatically solve every layout or rendering problem.
 
 ## Why is `LazyColumn` key important?
-
-**Answer**
 
 - A key provides stable identity for each item.
 - Compose can preserve item-specific composition and state when items are inserted, removed or reordered.
@@ -149,8 +135,6 @@ var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
 ## Why did you create a separate Fragment for Compose?
 
-**Answer**
-
 Strong answer:
 
 > "The application was already Fragment/XML based. I used the Fragment as the navigation and lifecycle boundary and hosted Compose inside it so we could migrate incrementally without rewriting the existing navigation and surrounding screens. It also allowed us to isolate the Compose screen and control the migration risk."
@@ -170,8 +154,6 @@ Be ready to discuss:
 
 ## What is state in Compose?
 
-**Answer**
-
 - State is data that can change over time and can cause UI updates.
 - Compose observes state reads and invalidates affected scopes when the value changes.
 
@@ -180,8 +162,6 @@ var count by remember { mutableIntStateOf(0) }
 ```
 
 ## What is state hoisting?
-
-**Answer**
 
 - Move state to the lowest common owner that needs to control it.
 - Child composables receive state and callbacks.
@@ -201,8 +181,6 @@ fun SearchBox(
 ```
 
 ## What is `derivedStateOf`?
-
-**Answer**
 
 - Use it when a derived value depends on frequently changing state but should only invalidate consumers when the derived result changes.
 
@@ -236,15 +214,11 @@ DisposableEffect(lifecycleOwner) {
 
 ## What is `rememberUpdatedState`?
 
-**Answer**
-
 - Keeps the latest value available to an effect without restarting the effect because the value changed.
 
 Useful for long-lived effects where the callback/value should be current.
 
 ## What is `snapshotFlow`?
-
-**Answer**
 
 - Converts Compose snapshot state reads into a Flow.
 
@@ -260,19 +234,13 @@ LaunchedEffect(listState) {
 
 ## What is `SideEffect`?
 
-**Answer**
-
 - Publishes Compose state to non-Compose code after successful composition.
 
 ## What is `produceState`?
 
-**Answer**
-
 - Bridges external asynchronous/callback-style data into Compose `State`.
 
 ## What is Compose stability?
-
-**Answer**
 
 - Stability helps the Compose compiler determine whether a composable can be skipped when inputs have not meaningfully changed.
 - Stable types have predictable observable behavior.
@@ -294,8 +262,6 @@ LaunchedEffect(listState) {
 
 ## How do you reduce unnecessary recomposition?
 
-**Answer**
-
 - Keep state close to where it is consumed.
 - Use stable keys.
 - Avoid creating unstable objects unnecessarily.
@@ -312,8 +278,6 @@ LaunchedEffect(listState) {
 
 ## What is an inline function?
 
-**Answer**
-
 - Compiler can substitute the function body at the call site.
 - Useful for higher-order functions to reduce lambda allocation/call overhead.
 - Can enable `reified` type parameters.
@@ -321,14 +285,10 @@ LaunchedEffect(listState) {
 
 ## What are `noinline` and `crossinline`?
 
-**Answer**
-
 - `noinline`: prevents a function parameter from being inlined.
 - `crossinline`: prevents non-local returns from an inlined lambda.
 
 ## What is a reified generic?
-
-**Answer**
 
 - Normally generic type information is erased at runtime.
 - `reified` preserves access to the type inside an inline function.
@@ -340,8 +300,6 @@ inline fun <reified T> Gson.fromJson(json: String): T {
 ```
 
 ## What is delegation?
-
-**Answer**
 
 ```kotlin
 class Repository(
@@ -374,15 +332,11 @@ sealed interface UiState {
 
 ## What is variance?
 
-**Answer**
-
 - `out` = producer/covariant.
 - `in` = consumer/contravariant.
 - `*` = star projection when exact type argument is unknown.
 
 ## Why is `List<String>` assignable to `List<Any>`?
-
-**Answer**
 
 - Kotlin's `List` is read-only and covariant: `List<out T>`.
 
@@ -410,8 +364,6 @@ Avoid chaining them excessively.
 - Do not use `async` just because multiple calls exist.
 
 ## What is cancellation?
-
-**Answer**
 
 - Cancellation is cooperative.
 - Suspending functions normally check cancellation.
@@ -473,8 +425,6 @@ while (isActive) {
 
 ## When use StateFlow?
 
-**Answer**
-
 Use for screen state:
 
 ```kotlin
@@ -486,8 +436,6 @@ data class UiState(
 ```
 
 ## When use SharedFlow?
-
-**Answer**
 
 Use for events:
 
@@ -574,8 +522,6 @@ override fun onDestroyView() {
 
 ## Why collect Flow with `repeatOnLifecycle`?
 
-**Answer**
-
 - Prevents collecting when the UI is stopped.
 - Automatically starts/stops collection according to lifecycle.
 
@@ -584,8 +530,6 @@ override fun onDestroyView() {
 # 7. Clean Architecture
 
 ## What is Clean Architecture?
-
-**Answer**
 
 Typical dependency direction:
 
@@ -612,8 +556,6 @@ UI → ViewModel → UseCase → Repository(interface)
 - Presentation should not directly depend on Retrofit/Room details.
 
 ## Is Clean Architecture always required?
-
-**Answer**
 
 No.
 
@@ -643,8 +585,6 @@ Choose based on complexity, team conventions and maintainability.
 
 ## How would you design offline-first?
 
-**Answer**
-
 ```text
 Compose UI
     ↓
@@ -671,8 +611,6 @@ Principles:
 - Handle conflicts explicitly.
 
 ## How do you resolve conflicts?
-
-**Answer**
 
 Possible approaches:
 
@@ -701,8 +639,6 @@ For financial/business-critical operations, the server should remain authoritati
 - `Authenticator` is designed to react to authentication challenges such as 401 and attempt credential refresh.
 
 ## How would you implement token refresh?
-
-**Answer**
 
 ```text
 Request
@@ -734,8 +670,6 @@ Avoid multiple simultaneous refresh requests. Coordinate refresh so concurrent r
 
 ## How do you securely store tokens?
 
-**Answer**
-
 - Use Android Keystore-backed secure mechanisms where appropriate.
 - Do not hardcode secrets.
 - Never log access/refresh tokens.
@@ -745,16 +679,12 @@ Avoid multiple simultaneous refresh requests. Coordinate refresh so concurrent r
 
 ## What is certificate pinning?
 
-**Answer**
-
 - Restricts accepted certificates/public keys to expected identities.
 - Can reduce certain MITM risks.
 - Creates operational risks during certificate rotation.
 - Must have a safe rotation and recovery strategy.
 
 ## What is OWASP MASVS?
-
-**Answer**
 
 - Mobile Application Security Verification Standard.
 - Use it as a structured security baseline for mobile applications.
@@ -764,8 +694,6 @@ Avoid multiple simultaneous refresh requests. Coordinate refresh so concurrent r
 # 11. Performance
 
 ## How do you investigate a slow Android app?
-
-**Answer**
 
 Use measurement first:
 
@@ -798,8 +726,6 @@ Tools:
 
 ## What causes ANRs?
 
-**Answer**
-
 - Long work on main thread.
 - Blocking I/O.
 - Expensive computation.
@@ -808,8 +734,6 @@ Tools:
 - Excessive rendering/layout work.
 
 ## How do you investigate an ANR?
-
-**Answer**
 
 - Check Android Vitals/ANR traces.
 - Inspect main thread stack.
@@ -822,15 +746,11 @@ Tools:
 
 ## What is Baseline Profile?
 
-**Answer**
-
 - A profile of important code paths used by the app.
 - Allows Android runtime to optimize frequently executed paths earlier.
 - Often improves startup and runtime performance.
 
 ## What is jank?
-
-**Answer**
 
 - Frames missing their rendering deadlines, resulting in visibly stuttery UI.
 - Investigate expensive composition, layout, drawing, main-thread work and rendering bottlenecks.
@@ -850,8 +770,6 @@ Tools:
 - Incorrect lifecycle ownership.
 
 ## How do you detect leaks?
-
-**Answer**
 
 - LeakCanary.
 - Android Studio Memory Profiler.
@@ -879,8 +797,6 @@ Verifies actual user interaction and UI behavior.
 
 ## What is `runTest`?
 
-**Answer**
-
 - Provides a coroutine test environment with virtual time support.
 - Allows deterministic testing of delays and coroutine scheduling.
 
@@ -895,8 +811,6 @@ fun `search updates state`() = runTest {
 ```
 
 ## Why `advanceTimeBy` instead of `delay` in tests?
-
-**Answer**
 
 - `delay` waits real time.
 - `advanceTimeBy` advances virtual test time.
@@ -1015,8 +929,6 @@ Know:
 
 ## How would you improve build time?
 
-**Answer**
-
 - Gradle build cache.
 - Configuration/build optimization.
 - Modularization.
@@ -1080,8 +992,6 @@ Then add:
 
 ## How would you prevent double payment?
 
-**Answer**
-
 - Disable duplicate UI submission.
 - Generate a client/request idempotency key.
 - Send it with the request.
@@ -1136,15 +1046,11 @@ Trade-offs
 
 ## How do you handle sprint planning?
 
-**Answer**
-
 Strong answer:
 
 > "I start by clarifying the business outcome, then break the feature into technical and testable slices. I identify dependencies, risks, API readiness, design dependencies and unknowns. I estimate with the team rather than assigning estimates individually, and I make sure acceptance criteria and non-functional requirements are explicit."
 
 ## How do you handle unclear requirements?
-
-**Answer**
 
 - Clarify expected behavior.
 - Identify edge cases.
@@ -1155,15 +1061,11 @@ Strong answer:
 
 ## What if product wants a feature urgently?
 
-**Answer**
-
 Answer:
 
 > "I first understand the business deadline and impact. Then I separate must-have scope from nice-to-have scope, identify technical risks, and propose the smallest safe deliverable. I would not trade away security, data integrity or critical quality gates just to meet a date."
 
 ## How do you handle disagreement with Product?
-
-**Answer**
 
 Use:
 
@@ -1185,8 +1087,6 @@ Do not make it personal.
 
 ## How do you handle a disagreement with another senior engineer?
 
-**Answer**
-
 - Understand their reasoning first.
 - Compare against requirements/data.
 - Prototype or benchmark if uncertain.
@@ -1199,8 +1099,6 @@ Do not make it personal.
 # 21. Lead-Level Code Review Questions
 
 ## What do you look for in a PR?
-
-**Answer**
 
 ### Correctness
 
@@ -1244,8 +1142,6 @@ Do not make it personal.
 
 ## How do you handle a PR from a junior engineer with problems?
 
-**Answer**
-
 - Do not rewrite everything yourself.
 - Explain the reasoning.
 - Identify high-risk issues clearly.
@@ -1260,8 +1156,6 @@ Do not make it personal.
 
 ## How do you mentor junior developers?
 
-**Answer**
-
 - Give context, not only instructions.
 - Start with small ownership.
 - Review code with explanations.
@@ -1271,8 +1165,6 @@ Do not make it personal.
 - Gradually increase responsibility.
 
 ## How do you measure whether mentoring worked?
-
-**Answer**
 
 - Increased independent ownership.
 - Better PR quality.
@@ -1309,8 +1201,6 @@ Example:
 
 ## Production crash increased after release. What do you do?
 
-**Answer**
-
 ```text
 Detect
  ↓
@@ -1333,8 +1223,6 @@ Post-incident review
 
 ## What should a runbook contain?
 
-**Answer**
-
 - Symptoms.
 - Detection/alerts.
 - Impact.
@@ -1351,15 +1239,11 @@ Post-incident review
 
 ## How do you use Claude/AI safely in enterprise development?
 
-**Answer**
-
 Strong answer:
 
 > "I use approved AI tools for boilerplate, test generation, refactoring ideas, documentation and exploring alternatives. I treat the output as untrusted generated code. I review it, compile it, run unit/UI tests, run static analysis and verify security and business behavior. I follow the organization's approved-tool and data-handling policies and never expose customer data, credentials or restricted source code to an unapproved service."
 
 ## How do you validate AI-generated code?
-
-**Answer**
 
 ```text
 AI suggestion
@@ -1418,8 +1302,6 @@ Final test
 ```
 
 ## How do you prevent hallucinated tests?
-
-**Answer**
 
 - Search actual source code.
 - Reuse existing project conventions.
