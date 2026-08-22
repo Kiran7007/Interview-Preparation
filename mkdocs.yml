@@ -53,15 +53,17 @@ markdown_extensions:
 nav:
   - Android: android.md
 
+  - Java: java.md
+
+  - Kotlin: kotlin.md
+
+  - JPMorganChase: jpmorgan.md
+
   - Career: career.md
 
   - Cross-platform: cross-platform.md
 
   - DSA: dsa.md
-
-  - Java: java.md
-
-  - Kotlin: kotlin.md
 
   - System Design: system-design.md
 
