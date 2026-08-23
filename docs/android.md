@@ -2456,7 +2456,7 @@ Lifecycle diagrams:
 
 - **AIDL:** typed IPC for frequent, rich cross-process calls; generates stubs; requires threading discipline.
 - **Messenger:** `Handler`-backed lightweight IPC using `Message` queues—great for simple command/response.
-- **What to watch for:** AIDL complexity vs Messenger throughput limits.
+- AIDL complexity vs Messenger throughput limits.
 
 
 > Pick Messenger unless you **need** a typed high-throughput IPC contract.
