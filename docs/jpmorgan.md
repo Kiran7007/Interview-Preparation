@@ -1397,322 +1397,269 @@ Ask 2-3, not all.
 
 - "How is the organization using approved AI tools in the mobile engineering workflow, and what validation standards are expected?"
 
----
+## What are the core building blocks of an Android application?
 
-# 30. Rapid Revision Sheet
+- **Activity:** A screen-level entry point for user interaction and lifecycle management.
+- **Fragment:** A reusable UI and lifecycle component hosted by an Activity or another Fragment.
+- **Service:** A component for work that should continue without a visible UI. Modern apps should prefer WorkManager for deferrable, guaranteed work and foreground services only when user-visible ongoing work is required.
+- **BroadcastReceiver:** A short-lived handler for system or application broadcasts.
+- **ContentProvider:** A controlled, URI-based data-sharing boundary between applications.
+- **Views and layouts:** The traditional UI hierarchy, created in XML or code. Compose provides a declarative alternative using composables and layout primitives.
+- **AndroidManifest.xml:** Declares components, capabilities, permissions, intent filters and application metadata.
 
-## Kotlin
+The important production distinction is that these components have different lifetimes. Work should be placed in the component whose lifecycle and guarantees match the requirement rather than started from an Activity indiscriminately.
 
-- `inline`
-- `reified`
-- `noinline`
-- `crossinline`
-- delegation
-- variance
-- sealed class/interface
-- data class
-- scope functions
-- null safety
+## What is an Intent?
 
-## Coroutines
+An Intent is a message describing an action for another Android component. It can carry data in extras and, for implicit intents, data such as a URI or MIME type.
 
-- builders
-- structured concurrency
-- cancellation
-- exception propagation
-- supervisor
-- dispatchers
-- `withContext`
-- `async/await`
+- **Explicit intent:** Names the target component, commonly for navigation inside the application.
+- **Implicit intent:** Describes an action and lets Android resolve a capable component through intent filters.
 
-## Flow
+```kotlin
+val explicit = Intent(this, SecondActivity::class.java)
+startActivity(explicit)
 
-- cold/hot
-- StateFlow
-- SharedFlow
-- Channel
-- `stateIn`
-- `shareIn`
-- combine/merge
-- debounce
-- flatMapLatest
-
-## Compose
-
-- composition
-- recomposition
-- skipping
-- stability
-- snapshots
-- state
-- state hoisting
-- remember
-- rememberSaveable
-- effects
-- keys
-- layout/draw
-
-## Android
-
-- lifecycle
-- process death
-- configuration change
-- ViewModel
-- WorkManager
-- permissions
-- background work
-- navigation
-
-## Architecture
-
-- MVVM
-- MVI
-- Clean Architecture
-- repository
-- UDF
-- modularization
-- offline-first
-- synchronization
-
-## Networking
-
-- Retrofit
-- OkHttp
-- interceptor
-- authenticator
-- OAuth
-- token refresh
-- retry
-- caching
-
-## Security
-
-- Keystore
-- secure storage
-- TLS
-- pinning
-- MASVS
-- secrets
-- secure logging
-
-## Performance
-
-- ANR
-- memory leaks
-- startup
-- jank
-- Perfetto
-- Profiler
-- Baseline Profile
-- Macrobenchmark
-
-## Testing
-
-- JUnit
-- MockK/Mockito
-- Turbine
-- `runTest`
-- virtual time
-- Compose UI testing
-- instrumentation
-- integration tests
-
-## CI/CD
-
-- Gradle
-- flavors
-- signing
-- lint
-- static analysis
-- test automation
-- staged rollout
-- feature flags
-- rollback
-
-## Leadership
-
-- Agile
-- estimation
-- planning
-- prioritization
-- mentoring
-- code review
-- stakeholder management
-- conflict resolution
-- incident management
-- metrics
-
-## AI
-
-- approved tools
-- prompt/context safety
-- code review
-- testing
-- security validation
-- sensitive-data handling
-
----
-
-# 31. Final Interview Mindset
-
-For every technical answer, think:
-
-```text
-What?
- ↓
-Why?
- ↓
-When?
- ↓
-Trade-off?
- ↓
-Production example?
- ↓
-How would I measure it?
+val browser = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"))
+startActivity(browser)
 ```
 
-For every leadership answer:
+Validate external intent data and use explicit intents for sensitive internal flows. Deep links should also validate authentication and authorization before displaying protected content.
+
+## Explain the Android application and Activity lifecycles.
+
+`Application.onCreate()` runs once when the process is created and is appropriate for lightweight, process-wide initialization. `onTerminate()` is not a reliable production-device callback. `onTrimMemory()` communicates memory pressure and is the useful callback for releasing caches or other reclaimable resources.
+
+An Activity commonly moves through:
 
 ```text
-Problem
- ↓
-Ownership
- ↓
-Decision
- ↓
-Influence
- ↓
-Trade-off
- ↓
-Result
- ↓
-Learning
+onCreate -> onStart -> onResume -> onPause -> onStop -> onDestroy
 ```
 
-For architecture:
+Use `onCreate()` for initial setup, `onStart()`/`onStop()` for visibility, and `onResume()`/`onPause()` for foreground interaction. Configuration changes recreate the Activity, while process death can remove both the Activity and its ViewModel. Use ViewModel for screen state and saved state mechanisms for small restorable UI state. See also [Android Lifecycle](#6-android-lifecycle) and [offline-first architecture](#8-offline-first-architecture).
 
-```text
-Requirements
- ↓
-Constraints
- ↓
-Architecture
- ↓
-Data/state flow
- ↓
-Failure handling
- ↓
-Security
- ↓
-Testing
- ↓
-Observability
- ↓
-Rollout
- ↓
-Trade-offs
+## Can `onDestroy()` be called without `onPause()` and `onStop()`?
+
+Yes. If an Activity calls `finish()` during `onCreate()`, it may be destroyed without becoming visible, so `onPause()` and `onStop()` are not necessarily called. Code must not assume every lifecycle callback pair occurs for an Activity that never reaches the started or resumed state.
+
+## What are intent filters?
+
+Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
+
+Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
+
+## What is a BroadcastReceiver?
+
+A BroadcastReceiver handles a broadcast Intent and is intended for short, bounded work. It has no UI and should return quickly. For longer work, enqueue WorkManager work or start an appropriately declared foreground service rather than blocking `onReceive()`.
+
+Examples include reacting to charging state, low battery, boot completion, or an app-specific event. On modern Android versions, background execution and implicit-broadcast restrictions apply, so register only broadcasts that the platform permits and scope dynamic receivers to the required lifecycle.
+
+## What are Loaders in Android?
+
+Loaders were lifecycle-aware APIs introduced in API 11 for asynchronous data loading, commonly with `CursorAdapter` and `LoaderManager`. They could reconnect after configuration changes and avoid repeated queries. They are legacy APIs today; use Room with `Flow`, ViewModel, and lifecycle-aware collection for new code. The underlying principle remains valid: database or provider work must not block the main thread and collection should follow the UI lifecycle.
+
+## What are Activity launch modes?
+
+- **standard:** Creates a new instance for every launch.
+- **singleTop:** Reuses the instance only when it is already at the top and delivers the Intent through `onNewIntent()`.
+- **singleTask:** Reuses an existing instance in the task, removes the activities above it, and calls `onNewIntent()`.
+- **singleInstance:** Places the Activity in its own task, isolating it from other Activities.
+
+Choose launch modes deliberately. For most navigation, standard behavior plus an explicit back-stack policy is easier to reason about. Notification and deep-link flows often use flags such as `FLAG_ACTIVITY_CLEAR_TOP` or a suitable navigation graph policy instead of broadly applying `singleTask`.
+
+## What is ConstraintLayout?
+
+ConstraintLayout positions views through relationships to the parent or other views. Chains support distribution, guidelines support alignment, and barriers respond to dynamic content. It can reduce deeply nested hierarchies, but it is not automatically faster than every alternative; measure layout cost and choose the simplest hierarchy that expresses the UI.
+
+## What is a Class and Object in Kotlin?
+
+A class defines state and behavior; an object is a runtime instance of that class with its own state. Classes support encapsulation, reuse and testable boundaries. Creating an object allocates runtime state, whereas the class declaration itself is a type definition.
+
+## What are primary and secondary constructors?
+
+The primary constructor is declared in the class header and is the normal way to initialize required properties. An `init` block performs additional initialization. Secondary constructors are optional alternatives inside the class body and must delegate to the primary constructor when one exists.
+
+```kotlin
+class User(val id: Long, val name: String) {
+    init { require(id > 0) }
+
+    constructor(id: Long) : this(id, "Unknown")
+}
 ```
 
-## The most important rule
+Prefer default and named arguments over many secondary constructors when they make the API clearer.
 
-Do not try to sound like you memorized Android documentation.
+## Explain inheritance and polymorphism in Android.
 
-Sound like an engineer who has **operated a production Android application**.
+Inheritance lets a subclass reuse and specialize a superclass, such as an Activity extending `ComponentActivity`, a Fragment extending `Fragment`, or a custom view extending `View`. Polymorphism lets code depend on an abstraction while receiving different implementations, such as a repository interface backed by a network or fake data source.
 
-When asked "Why?", explain the trade-off.
+Favor composition and interfaces when behavior varies independently. Inheritance is appropriate when the subtype genuinely satisfies the parent contract; otherwise it can create fragile coupling and violate substitutability.
 
-When asked "What if it fails?", explain recovery.
+## What are the main Kotlin features used in Android?
 
-When asked "How do you know?", explain metrics/testing.
+Kotlin provides concise syntax, null safety, extension functions, coroutines, smart casts, data classes, default and named arguments, lambdas, and higher-order functions. These reduce boilerplate, but they do not replace design discipline: nullable boundaries, coroutine cancellation, API stability and testability still need explicit decisions.
 
-When asked "Why this architecture?", explain alternatives and constraints.
+## What is the difference between `var`, `val`, and `const val`?
 
-When asked "How would you lead it?", explain communication, ownership and delivery.
+- `var` is a reassignable runtime property.
+- `val` is assigned once, but the referenced object may still be mutable.
+- `const val` is a compile-time constant of a supported primitive or `String` type and must be top-level or in an object/companion object.
 
-That combination is what separates an SE III/lead-level answer from a framework-level answer.
+```kotlin
+var retryCount = 0
+val userId = "user-123"
+const val MAX_RETRIES = 3
+```
 
----
+## What are Kotlin null-safety features?
 
-# 32. Final 30-Minute Revision Checklist
+Non-nullable types cannot hold `null`; nullable types use `?`. Use `?.` for a safe call, `?:` for a fallback, `as?` for a safe cast, and `!!` only when the invariant is proven because it can still throw `NullPointerException`. Keep null handling at boundaries such as network parsing and user input rather than spreading assertions through the application.
 
-## 1. Kotlin
-- Explain `inline`, `reified`, `noinline`, `crossinline`.
-- Explain delegation, variance and sealed hierarchies.
-- Know scope functions and their return/receiver behavior.
+## What is a data class?
 
-## 2. Coroutines and Flow
-- `launch` vs `async` vs `withContext`.
-- Structured concurrency and cancellation.
-- `coroutineScope` vs `supervisorScope`.
-- Cold vs hot Flow.
-- `StateFlow` vs `SharedFlow` vs `Channel`.
-- `stateIn`, `shareIn`, `combine`, `merge`, `flatMapLatest`.
+A data class models values and generates useful `equals()`, `hashCode()`, `toString()`, `copy()`, and component functions from its primary-constructor properties.
 
-## 3. Compose
-- Composition vs recomposition vs layout vs drawing.
-- Stability, `@Stable`, `@Immutable`.
-- State hoisting, `remember`, `rememberSaveable`.
-- Effect APIs and `snapshotFlow`.
-- `LazyColumn` keys and performance.
+```kotlin
+data class User(val name: String, val age: Int)
+```
 
-## 4. Architecture
-- MVVM vs MVI.
-- Repository and use-case boundaries.
-- When Clean Architecture is useful and when it is over-engineering.
-- Offline-first and source-of-truth decisions.
-- Conflict resolution and synchronization.
+It is useful for immutable UI state and DTOs, but `copy()` is shallow and does not make nested mutable objects immutable.
 
-## 5. Production Android
-- ANR investigation.
-- Memory leak investigation.
-- Startup and jank investigation.
-- Baseline Profiles and Macrobenchmark.
-- Lifecycle/process death/configuration changes.
+## What are MVVM, ViewModel, LiveData, StateFlow, Repository, and UseCase?
 
-## 6. Networking and Security
-- Retrofit vs OkHttp.
-- Interceptor vs Authenticator.
-- Token refresh concurrency.
-- Retry/backoff/idempotency.
-- Keystore, secure storage, TLS and certificate pinning.
+- **MVVM:** The UI renders state exposed by a ViewModel; the ViewModel coordinates use cases; repositories abstract data sources.
+- **ViewModel:** Retains screen state across configuration changes and must not hold Activity/View references. It does not survive process death by itself.
+- **LiveData:** A lifecycle-aware observable value, especially useful in legacy XML/View screens.
+- **StateFlow:** A coroutine-based hot stream representing current state; collect it with `repeatOnLifecycle` in Views or Compose lifecycle APIs.
+- **Repository:** Owns data access and hides API, Room, Firebase or cache details from callers.
+- **UseCase:** Encapsulates one meaningful business operation and is valuable when logic is reused or complex; it is not mandatory ceremony for every trivial operation.
 
-## 7. Testing and CI/CD
-- `runTest`, virtual time and Turbine.
-- Unit vs instrumentation vs UI tests.
-- Compose semantics and user-visible behavior.
-- Gradle build performance.
-- CI quality gates, signing, staged rollout and rollback.
+The existing [Clean Architecture](#7-clean-architecture), [Flow](#5-flow), and [offline-first](#8-offline-first-architecture) sections provide the deeper trade-offs and data-flow examples.
 
-## 8. SE III / Lead
-- Sprint planning and estimation.
-- Ambiguous requirements.
-- Product disagreement.
-- Senior-engineer disagreement.
-- PR/code review.
-- Mentoring.
-- Production incidents.
-- Delivery metrics.
+## What is Room, and how should it be used?
 
-## 9. AI-assisted development
-- Approved tools only.
-- Never expose customer data, credentials or restricted code to unapproved services.
-- Treat AI output as untrusted.
-- Compile, test, lint, security-review and human-review generated code.
+Room is an abstraction over SQLite that provides entities, DAOs, compile-time query verification, migrations, and observable queries through `Flow`. A production repository commonly treats Room as the source of truth for displayed offline-capable data and synchronizes it with the network.
 
-# 33. Interviewer Follow-Up Drill
+```kotlin
+@Entity
+data class User(
+    @PrimaryKey val id: Int,
+    val name: String
+)
 
-For every major answer, practice these five follow-ups:
+@Dao
+interface UserDao {
+    @Query("SELECT * FROM User ORDER BY name")
+    fun observeUsers(): Flow<List<User>>
 
-1. **Why did you choose this?**
-2. **What alternatives did you consider?**
-3. **What happens when it fails?**
-4. **How would you test it?**
-5. **How would you measure whether it worked?**
+    @Query("UPDATE User SET name = :name WHERE id = :id")
+    suspend fun updateName(id: Int, name: String)
+}
+```
 
-For architecture questions, add:
+Use a custom `@Query` for a partial update instead of replacing the full entity with `@Update`. `@Embedded` can flatten a value object into an entity, but define column names carefully to avoid collisions. Test migrations and keep database work off the main thread.
 
-6. **How does this behave offline?**
-7. **What happens under concurrency?**
-8. **How do you secure it?**
-9. **How would you roll it out or roll it back?**
-10. **How would you operate it in production?**
+## What are the SOLID principles, and how does Hilt support DIP?
+
+- **Single Responsibility:** Keep UI, business logic and data access in separate responsibilities.
+- **Open/Closed:** Add a payment implementation behind an abstraction instead of modifying a growing conditional processor.
+- **Liskov Substitution:** An implementation must honor the behavior promised by its abstraction.
+- **Interface Segregation:** Prefer focused interfaces over one large interface that forces unused methods.
+- **Dependency Inversion:** High-level code depends on repository interfaces, not concrete Retrofit or Room implementations.
+
+Hilt supports DIP by constructing object graphs and binding an implementation to an interface with `@Binds` or `@Provides`. This makes production wiring and test fakes replaceable; dependency injection does not by itself make a poor abstraction good.
+
+## What is Jetpack Compose, and what are its basic concepts?
+
+Compose is Kotlin's declarative UI toolkit. A `@Composable` describes UI from state and parameters; when observed state changes, Compose recomposes affected scopes. `Modifier` composes layout, drawing and interaction behavior from left to right. `Scaffold` provides common Material slots such as top bar, bottom bar, FAB and snackbar host.
+
+```kotlin
+@Composable
+fun Greeting(name: String) {
+    Text(
+        text = "Hello, $name",
+        modifier = Modifier.padding(16.dp)
+    )
+}
+```
+
+Hoist state to the lowest common owner, use `remember` for composition-local state, and use `rememberSaveable` for supported small UI values that should survive recreation. The existing [Compose Deep Dive](#2-compose-deep-dive) covers effects, stability, keys and recomposition optimization.
+
+## What is a side effect in Compose?
+
+A side effect changes something outside the Compose UI tree. Use the effect API that matches the lifetime and behavior required: `LaunchedEffect` for a coroutine keyed to composition, `DisposableEffect` for setup and cleanup, `SideEffect` to publish state after successful composition, and `produceState` to bridge asynchronous sources into Compose state. Do not show toasts, start requests, or mutate external state directly on every recomposition.
+
+## What is `PeriodicWorkRequest`, and what are WorkManager states and constraints?
+
+`PeriodicWorkRequest` is for deferrable recurring work such as synchronization, log upload, cache cleanup, or periodic content refresh. Its minimum interval is 15 minutes and execution is inexact because WorkManager respects constraints and system battery policy. It is not suitable for exact alarms or immediate user-visible work.
+
+WorkManager states are:
+
+- `ENQUEUED`: waiting to run or waiting for constraints.
+- `RUNNING`: currently executing.
+- `SUCCEEDED`: completed successfully.
+- `FAILED`: permanently failed.
+- `BLOCKED`: waiting for prerequisite work.
+- `CANCELLED`: explicitly cancelled.
+
+Constraints can require network availability, charging, battery-not-low, or storage-not-low. Observe work with `WorkInfo` through LiveData or Flow, and configure retry/backoff in the Worker for transient failures. Do not promise exact timing to product stakeholders.
+
+## How should unit tests and instrumentation tests be chosen?
+
+Unit tests run on the JVM and are fast, so use them for pure Kotlin, ViewModels, use cases, reducers and repository policies. Instrumentation tests run on a device or emulator and are appropriate for Android framework integration, Room behavior and UI. Compose UI tests should assert user-visible semantics and interactions, not implementation details.
+
+Common tools include JUnit, MockK or Mockito, Truth/AssertJ/Hamcrest, Robolectric where appropriate, Turbine for Flow, and `runTest` with virtual time for coroutine behavior. A ViewModel test should verify loading, success, error, cancellation and state transitions rather than merely checking that a method was called.
+
+## How do you securely store data and protect an Android application?
+
+Use Keystore-backed mechanisms for cryptographic keys and an approved encrypted storage mechanism for small sensitive values such as tokens. Never log credentials, use HTTPS/TLS, validate inputs, keep dependencies updated, and avoid putting secrets in the APK. R8 can shrink and obfuscate code, but obfuscation is not secret storage and cannot protect a secret shipped to a client.
+
+Certificate pinning can reduce some MITM risk, but requires planned key rotation and recovery. For API keys, assume anything in the app can be extracted; keep sensitive authority on the server and use scoped, short-lived credentials. The existing [Security](#10-security) section covers MASVS, token handling and pinning trade-offs.
+
+## How do you handle common Android scenarios?
+
+### Two API calls must complete before updating the UI
+
+Use structured concurrency and `async` only when the calls are independent and parallelism reduces latency:
+
+```kotlin
+viewModelScope.launch {
+    runCatching {
+        coroutineScope {
+            val user = async { api.getUser() }
+            val posts = async { api.getPosts() }
+            user.await() to posts.await()
+        }
+    }.onSuccess { (user, posts) ->
+        _uiState.value = UiState.Success(user, posts)
+    }.onFailure { error ->
+        _uiState.value = UiState.Error(error)
+    }
+}
+```
+
+Use `supervisorScope` only when the results are independent and one failure should not cancel the other operation.
+
+### Room and network data are both required
+
+Expose Room as the observable source of truth, render cached data immediately, and synchronize from the network when data is stale or missing. Save successful network results transactionally. Represent freshness, sync status and errors explicitly so offline data is not confused with fresh data.
+
+### The user opens the app offline
+
+Render the last valid Room snapshot, expose an offline indicator, and allow retry when connectivity returns. Do not block the UI waiting for a network timeout. WorkManager can reconcile queued mutations later, with idempotency and conflict handling for business-critical data.
+
+### Who handles click events in MVVM?
+
+The UI owns the event wiring and calls a ViewModel intent such as `onLoginClicked()`. The ViewModel validates input and coordinates business work; it emits state or one-time events for the UI to render. This keeps Activities and composables thin and makes behavior testable.
+
+### How do you preserve a Compose list's scroll position?
+
+Use `rememberLazyListState()` and pass the state to `LazyColumn`. Use stable item keys so insertion, removal and reordering do not attach remembered row state to the wrong item. For navigation or process recreation, place the required state in an appropriate saved-state or navigation owner rather than assuming `remember` survives everything.
+
+## What are CI/CD, Gradle, build variants, and product flavors?
+
+CI automatically compiles, tests, lint-checks and analyzes changes on shared infrastructure. CD packages validated builds for internal testing or release; continuous deployment may publish automatically after quality gates. A reliable Android pipeline also handles signing securely, artifact retention, security checks, staged rollout and rollback.
+
+Gradle is the Android build and dependency automation system. Project-level configuration establishes shared plugin/repository setup; module-level configuration defines SDK settings, dependencies, build types and flavors. A build variant is the combination of a build type and flavor, such as `freeDebug` or `paidRelease`. Use flavors for meaningful product dimensions and build types for concerns such as debug versus release behavior.
+
+Improve build time through measurement, build caching, appropriate modularization, avoiding unnecessary annotation processing, configuration optimization and parallel CI jobs. Never store signing credentials in source control; use protected CI secrets and restricted signing steps.
