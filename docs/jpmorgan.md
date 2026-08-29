@@ -276,6 +276,101 @@ LaunchedEffect(listState) {
 
 # 3. Kotlin Interview Questions
 
+## What are the main features of Kotlin?
+- **Concise:** Less boilerplate than Java
+- **Null Safety:** Built-in null checks
+- **Extension Functions:** Add functions to existing classes
+- **Coroutines:** Lightweight concurrency
+- **Smart Casts:** No need for explicit casting after type check
+- **Data Classes:** Auto-generate `equals()`, `hashCode()`, `toString()`, etc.
+- **Default & Named Arguments**
+- **Higher-order functions & Lambdas**
+
+---
+
+## What is the difference between val, var, and const in Kotlin?
+In Kotlin, `val` and `var` are used to declare variables, but they behave differently:
+
+1. **var (Variable)**
+   - A mutable variable.
+   - You can change its value after it's assigned.
+   - Stored in memory at runtime.
+
+2. **val (Value)**
+   - An immutable variable (like `final` in Java).
+   - You can assign only once.
+   - Value is also stored at runtime, but can’t be reassigned.
+
+3. **const val (Constant)**
+   - A compile-time constant.
+   - Can only be used with top-level properties or inside objects or companion objects.
+   - Must be of a primitive type or String, and value must be known at compile time.
+
+```kotlin
+val name = "Kiran" // Cannot be changed later
+var age = 30 // Can be updated
+age = 31
+```
+
+---
+
+## What are null safety features in Kotlin?
+Kotlin eliminates `NullPointerException` (NPE) by making all types non-nullable by default.
+
+#### Types:
+- **Non-nullable:** `var name: String = "Kiran"` → cannot hold null
+- **Nullable:** `var name: String? = null` → can hold null
+
+#### Safe Operations:
+- **Safe call `?.`:** Skips execution if the object is null.
+- **Elvis `?:`:** Provide default value if null.
+- **Not-null Assertion `!!`:** Throws Null Pointer Exception if value is null.
+- **Safe Cast `as?`:** Returns null instead of throwing ClassCastException.
+
+---
+
+## What is a data class in Kotlin?
+A data class is a special class made specifically for storing data. It automatically gives you useful methods like:
+- `toString()` – so you can print the object easily
+- `equals()` and `hashCode()` – to compare objects or use in HashMap/Set
+- `copy()` – to create a new object with some properties changed
+- `componentN()` – to access values using destructuring (like `val (a, b) = obj`)
+
+*Syntax:*
+```kotlin
+data class User(val name: String, val age: Int)
+```
+
+---
+
+## What are Primary and Secondary Constructors in Kotlin?
+
+#### Primary Constructor
+- The main constructor of a class.
+- Defined in the class header.
+- Can directly initialize properties.
+
+*Usage in Android:*
+- Pass data directly when creating an object.
+
+*Key Points:*
+- There can be only one primary constructor.
+- Can include `init` block for additional initialization.
+
+#### Secondary Constructor
+- Optional additional constructors for different ways to create an object.
+- Defined inside the class body with a `constructor` keyword.
+- Must delegate to the primary constructor (if primary exists) using `: this(...)`.
+
+*Usage in Android:*
+- Useful when you want flexible object creation in different scenarios.
+
+*Key Points:*
+- You can have multiple secondary constructors.
+- Helps when default values or alternative initialization is needed.
+
+---
+
 ## What is an inline function?
 
 - Compiler can substitute the function body at the call site.
@@ -668,6 +763,72 @@ Avoid multiple simultaneous refresh requests. Coordinate refresh so concurrent r
 
 # 10. Security
 
+## How can you securely store sensitive data in an Android app?
+You should never store sensitive data (like passwords or tokens) in plain text. Instead:
+- Use EncryptedSharedPreferences for small data like tokens.
+- Use Android Keystore to store cryptographic keys securely.
+- Avoid storing sensitive info in internal or external storage.
+
+---
+
+## What is Android Keystore and why is it used?
+Android Keystore is a secure container that helps store cryptographic keys. These keys can be used for encryption, decryption, or signing without exposing them directly to the app.
+It ensures that:
+- Keys cannot be extracted.
+- Operations happen in secure hardware (if available).
+- Your app remains safe even if rooted.
+
+---
+
+## What are common security risks in Android apps?
+Some common risks:
+- Storing data in plain text.
+- Using HTTP instead of HTTPS.
+- Hardcoding API keys in code.
+- Not validating inputs (leading to injection attacks).
+- Using outdated libraries with vulnerabilities.
+
+---
+
+## How can you protect your API keys in Android?
+- Don’t hardcode keys in code or strings.xml.
+- Use BuildConfig with Gradle to store API keys.
+- Store keys on the server and use token-based auth.
+- Use NDK (native C++) for critical keys (not fully secure but harder to reverse).
+
+---
+
+## How can you prevent reverse engineering of your APK?
+- Use ProGuard or R8 to obfuscate the code.
+- Remove unused code and classes.
+- Avoid storing logic or secrets in the app.
+- Sign APKs with release keystore.
+- Monitor unauthorized APKs using Play Store Console.
+
+---
+
+## What is the use of ProGuard/R8 in Android?
+ProGuard (now replaced by R8) is a tool that:
+- Minifies code (removes unused code).
+- Obfuscates names (changes class/method names to random characters).
+- Makes it harder for attackers to reverse engineer the app.
+
+---
+
+## How can you secure communication between app and server?
+- Always use HTTPS (SSL/TLS) to encrypt data in transit.
+- Use certificate pinning to verify the server.
+- Avoid logging sensitive data (e.g., tokens or passwords).
+- Use secure authentication methods like OAuth2 or JWT.
+
+---
+
+## What is certificate pinning?
+Certificate pinning is a technique where you hardcode your server’s public certificate or key in the app. It ensures:
+- The app only trusts your server.
+
+---
+
 ## How do you securely store tokens?
 
 - Use Android Keystore-backed secure mechanisms where appropriate.
@@ -794,6 +955,40 @@ Runs on Android environment and is useful for framework/integration behavior.
 ### UI
 
 Verifies actual user interaction and UI behavior.
+
+## What is Unit Testing in Android?
+Unit testing is the practice of testing individual components or functions in isolation to ensure they behave correctly.
+- In Android, we typically use JUnit for unit testing.
+- Unit tests run on the JVM and are fast because they don't require a device/emulator.
+
+---
+
+## What is the difference between Unit Tests and Instrumentation Tests in Android?
+
+| Unit Test | Instrumentation Test |
+| :--- | :--- |
+| Runs on JVM | Runs on a real device/emulator |
+| Fast | Slower due to UI/device interaction |
+| Tests logic in isolation | Tests integration, UI, and end-to-end |
+| Uses JUnit/Mockito | Uses Espresso, UI Automator, etc. |
+
+---
+
+## Which tools/libraries are used for Unit Testing in Android?
+- **JUnit** – Base library for writing tests.
+- **Mockito / MockK** – For mocking dependencies.
+- **Truth / AssertJ / Hamcrest** – Assertion libraries.
+- **Robolectric** – Allows you to run Android SDK code in JVM unit tests.
+- **Turbine** – For testing Kotlin Flow.
+- **Kotlin Test DSL** – For idiomatic Kotlin test writing.
+
+---
+
+## How do you test ViewModel in Android?
+- ViewModels are easy to test because they don’t depend on Android Framework.
+- You can write plain JUnit tests and verify outputs by observing LiveData or StateFlow.
+
+---
 
 ## What is `runTest`?
 
@@ -926,6 +1121,72 @@ Know:
 - quality gates
 - release automation
 - rollback
+
+## 9. DevOps in Android
+
+## What is CI/CD in Android?
+CI/CD in Android development refers to Continuous Integration and Continuous Delivery/Deployment, a set of practices that automate the building, testing, and delivery of Android applications.
+
+- **Continuous Integration (CI)** means that developers regularly push code to a shared repository (like GitHub), and every push automatically triggers a build and test. This helps catch errors early.
+- **Continuous Delivery (CD)** means that once code is tested and validated, it can be automatically packaged (APK or AAB) and delivered to testing environments (like Firebase App Distribution).
+- **Continuous Deployment** goes one step further and automatically publishes the app to production like Google Play once it passes all quality checks.
+
+CI/CD improves team collaboration, reduces manual errors, and speeds up release cycles.
+
+---
+
+## Why is CI/CD important in Android development?
+CI/CD helps in:
+- Faster development cycles by automating build and testing.
+- Early bug detection due to frequent code integration and automated tests.
+- Better team collaboration, as code is constantly merged and verified.
+- Reduced manual work — no need to manually run tests, generate APKs, or upload to Play Store.
+- Consistent builds because the process is scripted and version-controlled.
+
+---
+
+## Which tools are commonly used for CI/CD in Android?
+Some commonly used CI/CD tools are:
+- **GitHub Actions** – Integrated with GitHub, good for open-source and personal projects.
+- **Bitrise** – Android and iOS friendly, no setup needed, GUI-based.
+
+---
+
+## 10. Gradle Concepts & Issues
+
+## What is Gradle in Android?
+- Gradle is the build system used in Android.
+- It automates compiling code, packaging APKs, and managing dependencies.
+- Think of it as a recipe that tells Android Studio how to build your app.
+- It’s fast, flexible, and supports custom build configurations.
+
+---
+
+## What is the difference between Project-level and Module-level build.gradle?
+
+#### Project-level build.gradle
+- Applies to the entire project.
+- Defines global configurations such as:
+  - Gradle version
+  - Repositories
+  - Classpath for plugins
+
+#### Module-level build.gradle
+- Specific to each app/module.
+- Defines module-specific settings such as:
+  - Dependencies (`implementation`, `api`, etc.)
+  - Build types (`debug`/`release`)
+  - Product flavors
+  - Android SDK version
+
+*Key Point:* Project-level is for general setup affecting all modules, while Module-level is for app/module-specific configurations.
+
+---
+
+## What are Build Variants and Product Flavors?
+- **Build Variants:** Combination of build type (debug/release) + flavor. Example: `freeDebug`, `paidRelease`.
+
+---
 
 ## How would you improve build time?
 
@@ -1568,6 +1829,109 @@ Use a custom `@Query` for a partial update instead of replacing the full entity 
 - **Dependency Inversion:** High-level code depends on repository interfaces, not concrete Retrofit or Room implementations.
 
 Hilt supports DIP by constructing object graphs and binding an implementation to an interface with `@Binds` or `@Provides`. This makes production wiring and test fakes replaceable; dependency injection does not by itself make a poor abstraction good.
+
+## What is Jetpack Compose?
+Jetpack Compose is Android’s modern UI toolkit that lets you build UI using Kotlin code instead of XML.
+- It’s declarative, meaning you describe what the UI should look like, and the system updates it automatically when the data changes.
+- It replaces traditional XML + View-based UI system.
+- Offers less boilerplate, better state handling, and Kotlin-first approach.
+
+---
+
+## What is a Composable function?
+A Composable is a special Kotlin function marked with `@Composable` that describes part of the UI.
+
+*Example:*
+```kotlin
+@Composable
+fun Greeting(name: String) {
+    Text(text = "Hello, $name")
+}
+```
+You can call one composable inside another to build complex UIs.
+
+---
+
+## What is recomposition in Jetpack Compose?
+Recomposition is when Compose redraws parts of the UI because data/state has changed.
+- Only the part of the UI where data changed is recomposed.
+- Compose optimizes this to avoid redrawing everything.
+
+*Example:* If you update a count value shown in a Text, only that Text composable will recompose.
+
+---
+
+## What is State in Compose?
+State holds data that changes over time and triggers recomposition.
+You can use `remember` and `mutableStateOf`:
+```kotlin
+val count = remember { mutableStateOf(0) }
+```
+When `count.value` changes, any UI that depends on it will update automatically.
+
+---
+
+## What is remember and rememberSaveable?
+- `remember` stores state during recomposition but resets on configuration changes (like rotation).
+- `rememberSaveable` stores state across recomposition and configuration changes using Bundle.
+
+Use `rememberSaveable` for things like text input or selection state that should survive screen rotation.
+
+---
+
+## What is Modifier in Jetpack Compose?
+Modifier is used to modify or decorate a composable — like setting padding, background, size, click behavior, etc.
+
+*Example:*
+```kotlin
+Text(
+    text = "Hello",
+    modifier = Modifier
+        .padding(16.dp)
+        .background(Color.Yellow)
+)
+```
+Modifiers are chained and read from left to right.
+
+---
+
+## What is a Scaffold in Jetpack Compose?
+Scaffold is a layout component that provides basic structure like:
+- TopBar
+- BottomBar
+- FloatingActionButton
+- Drawer
+- SnackbarHost
+
+*Example:*
+```kotlin
+Scaffold(
+    topBar = { TopAppBar(title = { Text("Home") }) },
+    floatingActionButton = { FloatingActionButton(onClick = {}) { Text("+") } }
+) {
+    // Content
+}
+```
+Useful for material design layouts.
+
+---
+
+## What is SideEffect in Jetpack Compose?
+- In Jetpack Compose, a SideEffect is any operation that affects something outside of the Compose UI tree.
+- Compose functions are pure by default, meaning they should not change anything outside themselves.
+- SideEffect lets you perform actions that interact with external systems safely during recomposition.
+
+#### Why It’s Needed
+- Compose functions can recompose multiple times, so directly performing side-effects (like updating a variable, logging, or showing a toast) can cause bugs or repeated actions.
+- SideEffect APIs provide a safe way to run external operations exactly when Compose recomposes.
+
+#### Common Examples of SideEffects
+- Updating a state in ViewModel
+- Showing a Toast message
+- Logging events
+- Triggering analytics events
+
+---
 
 ## What is Jetpack Compose, and what are its basic concepts?
 
