@@ -1,60 +1,6 @@
 # Android
 ---
 
-# Architecture
-
-## What is MVVM?
-
--   MVVM separates UI from presentation state and business/data logic.
--   View observes state from ViewModel.
--   ViewModel survives configuration changes.
--   Repository abstracts data access.
-
-``` text
-Compose/XML
-    ↓
-ViewModel
-    ↓
-UseCase
-    ↓
-Repository
-    ↓
-API / Database
-```
-
-A ViewModel should expose UI-friendly state rather than exposing
-implementation details of the repository.
-
----
-
----
-# Android
----
-
-## What is MVVM?
-
--   MVVM separates UI from presentation state and business/data logic.
--   View observes state from ViewModel.
--   ViewModel survives configuration changes.
--   Repository abstracts data access.
-
-``` text
-Compose/XML
-    ↓
-ViewModel
-    ↓
-UseCase
-    ↓
-Repository
-    ↓
-API / Database
-```
-
-A ViewModel should expose UI-friendly state rather than exposing
-implementation details of the repository.
-
----
-
 ## What is Clean Architecture?
 
 -   Clean Architecture separates responsibilities into layers.
@@ -143,11 +89,42 @@ Room    API
 
 ## How would you implement offline-first behavior?
 
--   Read cached data first.
--   Display it immediately.
--   Refresh from the network.
--   Save successful data locally.
--   Let the UI observe the local source of truth.
+- I would design the application as offline-first, where Room acts as the local source of truth and the UI observes it using Flow. The repository coordinates Room and the remote API. All local mutations are written to Room immediately and also added to a persistent outbox or sync queue in the same database transaction. WorkManager performs synchronization when network connectivity is available.
+
+- For conflict resolution, I would use optimistic concurrency with a server-generated version or revision number. When a client sends an update, it includes the version it last read. If the server version has changed, the server rejects the update as a conflict instead of silently overwriting the newer data. The conflict resolver can then apply last-write-wins, server-wins, client-wins, field-level merging, or business-specific rules depending on the data. For sensitive business operations, I would keep the server authoritative.
+
+- I would also use idempotency keys so retries don't duplicate operations, exponential backoff for transient failures, and WorkManager for reliable background synchronization. In a multi-module architecture, feature modules depend on domain abstractions, while data modules own Room, networking, and synchronization. This keeps offline behavior, synchronization, and conflict handling isolated and testable."
+
+``` text
+Interview keywords to remember
+Offline First
+      ↓
+Room = Source of Truth
+      ↓
+Flow / StateFlow
+      ↓
+Repository
+      ↓
+Outbox Pattern
+      ↓
+WorkManager
+      ↓
+Push + Pull Sync
+      ↓
+Optimistic Concurrency
+      ↓
+Version / Revision
+      ↓
+Conflict Detection
+      ↓
+Conflict Resolution
+      ↓
+Idempotency
+      ↓
+Retry + Exponential Backoff
+```
+
+The key distinction interviewers usually look for: simply saying "save locally and sync when online" is not enough. The strong answer explains how writes are queued, how conflicts are detected, how retries are made safe, and what happens when two offline clients modify the same record.
 
 ``` text
 API
@@ -379,223 +356,6 @@ possible.
 
 Remember that anything shipped inside an APK should generally be
 considered potentially discoverable.
-
----
-
-## Compose and UI
-
-## What is MVVM state management?
-
-A ViewModel can expose a single immutable UI state.
-
-``` kotlin
-data class ScreenState(
-    val isLoading: Boolean = false,
-    val data: Account? = null,
-    val error: String? = null
-)
-```
-
-Then:
-
-``` kotlin
-private val _state = MutableStateFlow(ScreenState())
-val state = _state.asStateFlow()
-```
-
-This gives the UI one predictable state source.
-
----
-
-## What is state hoisting in Compose?
-
--   State hoisting means moving state to the caller.
--   The composable receives state and callbacks.
-
-``` kotlin
-@Composable
-fun UserCard(
-    user: User,
-    onClick: () -> Unit
-) {
-    // UI only
-}
-```
-
-Benefits:
-
--   Reusable
--   Easier to test
--   Easier to preview
--   Easier to control from ViewModel
-
----
-
-## What causes recomposition in Compose?
-
--   Compose tracks state read by composables.
--   When observed state changes, affected composables can recompose.
-
-``` kotlin
-var count by remember {
-    mutableStateOf(0)
-}
-
-Text("$count")
-```
-
-When `count` changes, the UI reading `count` is eligible for
-recomposition.
-
-Recomposition does not mean the entire application is redrawn.
-
----
-
-## What is `remember`?
-
--   `remember` keeps a value across recompositions.
--   It does not normally survive process death.
-
-``` kotlin
-val state = remember {
-    mutableStateOf("")
-}
-```
-
-Use it for UI-local state.
-
----
-
-## What is `rememberSaveable`?
-
--   It can restore suitable state across configuration changes and
-    saved-state restoration.
--   It is useful for small UI state such as text input or selected tabs.
-
-``` kotlin
-var query by rememberSaveable {
-    mutableStateOf("")
-}
-```
-
-Do not use it as a replacement for ViewModel state for complex business
-state.
-
----
-
-## What is `LaunchedEffect`?
-
--   `LaunchedEffect` starts a coroutine tied to the composition.
--   It is useful for lifecycle-aware side effects initiated by entering
-    composition or changing a key.
-
-``` kotlin
-LaunchedEffect(userId) {
-    viewModel.loadUser(userId)
-}
-```
-
-When the key changes, the previous effect is cancelled and a new one
-starts.
-
----
-
-## What is the XML equivalent of `LaunchedEffect`?
-
-There is no exact one-to-one equivalent.
-
-For XML/View-based screens, use lifecycle-aware mechanisms such as:
-
-``` kotlin
-lifecycleScope.launch {
-    repeatOnLifecycle(Lifecycle.State.STARTED) {
-        viewModel.state.collect { state ->
-            render(state)
-        }
-    }
-}
-```
-
-For one-time initialization, use lifecycle methods such as
-`onViewCreated` when appropriate.
-
----
-
-## What is `DisposableEffect`?
-
--   It is used when an effect needs cleanup.
-
-``` kotlin
-DisposableEffect(Unit) {
-    registerListener()
-
-    onDispose {
-        unregisterListener()
-    }
-}
-```
-
-Use it for listeners, observers, or other resources that need explicit
-cleanup.
-
----
-
-## What is `derivedStateOf`?
-
--   It creates state derived from other state.
--   It can prevent unnecessary recompositions when the derived result
-    has not changed.
-
-``` kotlin
-val showButton by remember {
-    derivedStateOf {
-        listState.firstVisibleItemIndex > 0
-    }
-}
-```
-
-Use it when derived state changes less frequently than its inputs.
-
----
-
-## Why are keys important in LazyColumn?
-
--   Keys help Compose identify items across updates.
--   Without stable keys, Compose may associate state with the wrong item
-    when list positions change.
-
-``` kotlin
-LazyColumn {
-    items(
-        users,
-        key = { it.id }
-    ) { user ->
-        UserRow(user)
-    }
-}
-```
-
-Stable unique keys are especially important when rows have remembered
-state or animations.
-
----
-
-## How do you optimize Compose performance?
-
-Check:
-
--   Unnecessary recomposition
--   Unstable parameters
--   Large composables
--   Expensive work during composition
--   Missing LazyColumn keys
--   Incorrect state ownership
--   Unnecessary object creation
-
-Profile before optimizing.
-
-Useful tools include Layout Inspector, CPU profiling, Macrobenchmark,
-and production metrics.
 
 ---
 
@@ -1571,11 +1331,14 @@ presentation state.
 ## How do you handle configuration changes (like screen rotation) in Android without losing data?
 ViewModel stores UI-related data across configuration changes.
 When screen rotates:
-- Activity/Fragment is destroyed and recreated.
-- ViewModel is not destroyed.
-- ViewModel retains the data and passes it again to the UI.
-
-*Example:* In a profile screen, if user scrolls halfway and rotates the screen, without ViewModel the screen will reload from start. But with ViewModel, the profile data and scroll position can be restored smoothly.
+``` text
+Activity/Fragment is destroyed and recreated
+ ↓
+ViewModel is not destroyed
+ ↓
+ViewModel retains the data and passes it again to the UI.
+```
+Example: In a profile screen, if user scrolls halfway and rotates the screen, without ViewModel the screen will reload from start. But with ViewModel, the profile data and scroll position can be restored smoothly.
 
 ---
 
@@ -1597,21 +1360,21 @@ This way, both calls run in parallel and UI updates after both are done.
 
 ## You need to fetch data from both the local Room database and network. How do you design this?
 Use Repository with a fallback logic:
-1. First try Room DB (cached data).
-2. If data is old/missing, fetch from API.
-3. Save new data in the Room.
+-   First try Room DB (cached data).
+-   If data is old/missing, fetch from API.
+-   Save new data in the Room.
 
 This ensures:
-- Fast response (local DB)
-- Always fresh data (network)
+-   Fast response (local DB)
+-   Always fresh data (network)
 
 ---
 
 ## A user opens an app with no internet. How do you show offline data?
 Use Room as the local cache.
-- Repository checks connectivity.
-- If offline, fetch from Room.
-- If online, fetch from API and update Room.
+-   Repository checks connectivity.
+-   If offline, fetch from Room.
+-   If online, fetch from API and update Room.
 
 Show “You’re offline” toast/snackbar while loading cached data.
 
@@ -1619,9 +1382,9 @@ Show “You’re offline” toast/snackbar while loading cached data.
 
 ## In MVVM, who should handle click events and why?
 The ViewModel should handle logic, not the Activity/Fragment.
-- UI calls `viewModel.onLoginClicked()`
-- ViewModel checks input, performs API call
-- Emits success/error state via LiveData or StateFlow
+-   UI calls `viewModel.onLoginClicked()`
+-   ViewModel checks input, performs API call
+-   Emits success/error state via LiveData or StateFlow
 
 Keeps code testable and follows separation of concerns.
 

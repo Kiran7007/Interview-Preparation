@@ -53,6 +53,12 @@ viewModelScope.launch {
   - `repeatOnLifecycle`
   - `viewModelScope` for business work
 
+``` kotlin
+LaunchedEffect(userId) {
+    viewModel.loadUser(userId)
+}
+```
+
 ```kotlin
 viewLifecycleOwner.lifecycleScope.launch {
     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -180,18 +186,24 @@ fun SearchBox(
 }
 ```
 
+---
+
 ## What is `derivedStateOf`?
 
-- Use it when a derived value depends on frequently changing state but should only invalidate consumers when the derived result changes.
+-   It creates state derived from other state.
+-   It can prevent unnecessary recompositions when the derived result
+    has not changed.
 
-```kotlin
+``` kotlin
 val showButton by remember {
-    derivedStateOf { listState.firstVisibleItemIndex > 0 }
+    derivedStateOf {
+        listState.firstVisibleItemIndex > 0
+    }
 }
 ```
+Use it when derived state changes less frequently than its inputs.
 
-- Do not use it everywhere.
-- It adds complexity and should solve a real invalidation problem.
+---
 
 ## `LaunchedEffect` vs `DisposableEffect`
 
