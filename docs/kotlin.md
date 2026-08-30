@@ -1,7 +1,3 @@
-# Kotlin Interview Questions and Answers
-
-> Kotlin-language questions are kept here. Questions owned by `jpmorgan.md` were removed from this file; `jpmorgan.md` remains unchanged.
-
 # Kotlin Language Fundamentals
 
 ## What is the difference between `==` and `===` in Kotlin?
