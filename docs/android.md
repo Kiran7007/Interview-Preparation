@@ -2534,24 +2534,16 @@ Interview Answer:
 ### Code example
 
 ```addOnBackStackChangedListener``` is called when fragment is added or removed from the backstack. Use this [link](https://why-android.com/2016/03/29/learn-how-to-use-the-onbackstackchangedlistener/) for reference</br>
-
-
-> ```addOnBackStackChangedListener``` is called when fragment is added or removed from the backstack.
+```addOnBackStackChangedListener``` is called when fragment is added or removed from the backstack.
 
 Interview Answer:
 > *(No additional notes in source.)* is called when fragment is added or removed from the backstack.
 
 ---
 
-```
-
----
-
 ## What are retained fragments
 
 By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs. Calling ```setRetainInstance(true)``` allows us to bypass this destroy-and-recreate cycle, signaling the system to retain the current instance of the fragment when the activity is recreated.</br>
-
-
 
 > By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs.
 
