@@ -3630,37 +3630,6 @@ Interview Answer:
 
 ---
 
-## What are Primary and Secondary Constructors in Kotlin?
-
-#### Primary Constructor
-- The main constructor of a class.
-- Defined in the class header.
-- Can directly initialize properties.
-
-*Usage in Android:*
-- Pass data directly when creating an object.
-
-*Key Points:*
-- There can be only one primary constructor.
-- Can include `init` block for additional initialization.
-
-#### Secondary Constructor
-- Optional additional constructors for different ways to create an object.
-- Defined inside the class body with a `constructor` keyword.
-- Must delegate to the primary constructor (if primary exists) using `: this(...)`.
-
-*Usage in Android:*
-- Useful when you want flexible object creation in different scenarios.
-
-*Key Points:*
-- You can have multiple secondary constructors.
-- Helps when default values or alternative initialization is needed.
-
-Interview Answer:
-> The main constructor of a class.
-
----
-
 ## Explain Inheritance in Android with an Example
 
 - Inheritance is an OOP concept where one class (child/subclass) inherits properties and behaviors of another class (parent/superclass).
@@ -3683,89 +3652,6 @@ Interview Answer:
 
 Interview Answer:
 > Polymorphism is an OOP concept that allows an object to take many forms.
-
----
-
-## What are the main features of Kotlin?
-
-- **Concise:** Less boilerplate than Java
-- **Null Safety:** Built-in null checks
-- **Extension Functions:** Add functions to existing classes
-- **Coroutines:** Lightweight concurrency
-- **Smart Casts:** No need for explicit casting after type check
-- **Data Classes:** Auto-generate `equals()`, `hashCode()`, `toString()`, etc.
-- **Default & Named Arguments**
-- **Higher-order functions & Lambdas**
-
-Interview Answer:
-> **Concise:** Less boilerplate than Java **Null Safety:** Built-in null checks **Extension Functions:** Add functions to existing classes **Coroutines:** Lightweight concurrency **Smart Casts:** No need for explicit casting after type check **Data Classes:** Auto-generate…
-
----
-
-## What is the difference between val, var, and const in Kotlin?
-
-In Kotlin, `val` and `var` are used to declare variables, but they behave differently:
-
-1. **var (Variable)**
-   - A mutable variable.
-   - You can change its value after it's assigned.
-   - Stored in memory at runtime.
-
-2. **val (Value)**
-   - An immutable variable (like `final` in Java).
-   - You can assign only once.
-   - Value is also stored at runtime, but can’t be reassigned.
-
-3. **const val (Constant)**
-   - A compile-time constant.
-   - Can only be used with top-level properties or inside objects or companion objects.
-   - Must be of a primitive type or String, and value must be known at compile time.
-
-```kotlin
-val name = "Kiran" // Cannot be changed later
-var age = 30 // Can be updated
-age = 31
-```
-
-Interview Answer:
-> In Kotlin, `val` and `var` are used to declare variables, but they behave differently: 1.
-
----
-
-## What are null safety features in Kotlin?
-
-Kotlin eliminates `NullPointerException` (NPE) by making all types non-nullable by default.
-
-#### Types:
-- **Non-nullable:** `var name: String = "Kiran"` → cannot hold null
-- **Nullable:** `var name: String? = null` → can hold null
-
-#### Safe Operations:
-- **Safe call `?.`:** Skips execution if the object is null.
-- **Elvis `?:`:** Provide default value if null.
-- **Not-null Assertion `!!`:** Throws Null Pointer Exception if value is null.
-- **Safe Cast `as?`:** Returns null instead of throwing ClassCastException.
-
-Interview Answer:
-> Kotlin eliminates `NullPointerException` (NPE) by making all types non-nullable by default.
-
----
-
-## What is a data class in Kotlin?
-
-A data class is a special class made specifically for storing data. It automatically gives you useful methods like:
-- `toString()` – so you can print the object easily
-- `equals()` and `hashCode()` – to compare objects or use in HashMap/Set
-- `copy()` – to create a new object with some properties changed
-- `componentN()` – to access values using destructuring (like `val (a, b) = obj`)
-
-*Syntax:*
-```kotlin
-data class User(val name: String, val age: Int)
-```
-
-Interview Answer:
-> A data class is a special class made specifically for storing data.
 
 ---
 
@@ -4993,6 +4879,28 @@ The source also contains practice areas rather than Android framework questions:
 
 Interview Answer:
 > The coding section covers common array, dynamic-programming, queue, stack, linked-list, graph, tree, string, integer, and backtracking patterns.
+
+---
+
+## Handler, Looper, MessageQueue, HandlerThread
+
+- **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
+- **HandlerThread** is a long-lived thread with its own looper—great for camera/pipeline work with explicit quit.
+
+### Useful links
+
+- [Looper/Handler deep dive:](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)  
+- [Mindorks core article:](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)  
+
+
+> Prefer **structured concurrency** for new code; understand Handlers to debug legacy.
+
+---
+
+- [Learn more](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
+
+Interview Answer:
+> **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
 
 ---
 
@@ -6693,37 +6601,6 @@ Interview Answer:
 
 # Bluetooth Low Energy
 
-## Why should Dispatchers be injectable?
-
-Hardcoding dispatchers makes unit tests harder to control.
-
-Instead:
-
-```kotlin
-class Repository(
-    private val ioDispatcher: CoroutineDispatcher
-)
-```
-
-Production:
-
-```kotlin
-Dispatchers.IO
-```
-
-Test:
-
-```kotlin
-StandardTestDispatcher(testScheduler)
-```
-
-This makes asynchronous behavior deterministic.
-
-Interview Answer:
-> Hardcoding dispatchers makes unit tests harder to control.
-
----
-
 ## What is the problem with a huge common module?
 
 A giant `common` module can become a dumping ground.
@@ -7365,30 +7242,6 @@ Welcome **debate** on **merits**; if their **risk** argument wins, **merge** and
 
 Interview Answer:
 > Welcome **debate** on **merits**; if their **risk** argument wins, **merge** and move on.
-
----
-
-# Kotlin and Concurrency
-
-## Handler, Looper, MessageQueue, HandlerThread
-
-- **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
-- **HandlerThread** is a long-lived thread with its own looper—great for camera/pipeline work with explicit quit.
-
-### Useful links
-
-- [Looper/Handler deep dive:](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)  
-- [Mindorks core article:](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)  
-
-
-> Prefer **structured concurrency** for new code; understand Handlers to debug legacy.
-
----
-
-- [Learn more](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
-
-Interview Answer:
-> **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
 
 ---
 

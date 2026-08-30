@@ -1,24 +1,8 @@
-# Kotlin
----
+# Kotlin Interview Questions and Answers
 
-## What is `val` vs `var` in Kotlin?
+> Kotlin-language questions are kept here. Questions owned by `jpmorgan.md` were removed from this file; `jpmorgan.md` remains unchanged.
 
--   `val` means the reference cannot be reassigned.
--   `var` means the reference can be reassigned.
--   `val` does not make a mutable object immutable.
-
-``` kotlin
-val users = mutableListOf<String>()
-users.add("Kiran")
-
-var count = 0
-count++
-```
-
-`users` cannot point to another list, but the list itself can still
-change.
-
----
+# Kotlin Language Fundamentals
 
 ## What is the difference between `==` and `===` in Kotlin?
 
@@ -35,45 +19,8 @@ println(a === b)  // false
 
 Use `==` when comparing values.
 
----
-
-## What is a data class in Kotlin?
-
--   A data class is mainly used to hold data.
--   Kotlin automatically provides useful functions such as `equals()`,
-    `hashCode()`, `toString()`, `copy()`, and `componentN()`.
-
-``` kotlin
-data class User(
-    val id: String,
-    val name: String
-)
-
-val user2 = user1.copy(name = "John")
-```
-
-It is commonly used for API models, UI state, and domain models.
-
----
-
-## What is null safety in Kotlin?
-
--   Kotlin distinguishes nullable and non-nullable references.
--   The compiler forces you to handle `null` explicitly.
--   This reduces `NullPointerException` risks in production code.
-
-``` kotlin
-var name: String? = null
-
-val length = name?.length ?: 0
-println(length)
-```
-
-The safe-call operator `?.` avoids a crash, and `?:` provides a
-fallback value.
-
-Use nullable types when data may genuinely be absent, such as user
-profiles, network responses, or optional settings.
+Interview Answer:
+> - == checks structural equality using equals.
 
 ---
 
@@ -95,6 +42,9 @@ val userMap = mapOf("id" to 1, "name" to "Kiran")
 
 Choose the collection based on the behavior you need: ordered access,
 uniqueness, or key-value lookups.
+
+Interview Answer:
+> - List is ordered and read-only by default.
 
 ---
 
@@ -134,6 +84,9 @@ data class Employee(
 val (age, name) = employee // Compiles, but meaning is wrong
 ```
 
+Interview Answer:
+> - Destructuring allows values to be unpacked into variables.
+
 ---
 
 ## What does the `open` keyword mean in Kotlin?
@@ -159,62 +112,8 @@ class Dog : Animal() {
 
 Kotlin makes classes final by default to reduce accidental inheritance.
 
----
-
-## What is a sealed class?
-
--   A sealed class represents a restricted hierarchy.
--   The compiler knows the possible subclasses.
--   It is useful for UI states and result types.
-
-``` kotlin
-sealed class UiState {
-    data object Loading : UiState
-    data class Success(val users: List<User>) : UiState
-    data class Error(val message: String) : UiState
-}
-```
-
-It works well with exhaustive `when`.
-
----
-
-## What is a sealed interface?
-
--   Both restrict the hierarchy.
--   A class can implement multiple interfaces.
--   A sealed interface is useful when different types need the same
-    restricted contract.
-
-``` kotlin
-sealed interface UiEvent
-
-data object NavigateBack : UiEvent
-data class ShowError(val message: String) : UiEvent
-```
-
-It works well with exhaustive `when` expressions.
-
----
-
-## What is the difference between a sealed class and a sealed interface?
-
--   A sealed class can provide shared state or implementation.
--   A class can extend only one sealed class.
--   A class can implement multiple sealed interfaces.
--   Use a sealed class for a closely related state hierarchy.
--   Use a sealed interface when different class hierarchies need the
-    same restricted contract.
-
-``` kotlin
-sealed class Result {
-    data class Success(val value: String) : Result()
-    data class Error(val message: String) : Result()
-}
-
-sealed interface UiEvent
-data object NavigateBack : UiEvent
-```
+Interview Answer:
+> - Kotlin classes and methods are final by default.
 
 ---
 
@@ -233,6 +132,9 @@ val valid = "1234567890".isValidAccountId()
 ```
 
 It is useful for small, reusable transformations.
+
+Interview Answer:
+> - An extension function adds a function to an existing type without modifying that type.
 
 ---
 
@@ -255,6 +157,9 @@ The compiler knows `value` is a `String` inside the `if` block.
 It is especially helpful in Android when handling `Any?` from UI or
 network layers.
 
+Interview Answer:
+> - Kotlin analyzes null checks and type checks to cast safely.
+
 ---
 
 ## What is a higher-order function?
@@ -274,6 +179,9 @@ execute {
 
 Collection APIs such as `map`, `filter`, and `fold` heavily use
 higher-order functions.
+
+Interview Answer:
+> - A higher-order function takes another function as a parameter or returns a function.
 
 ---
 
@@ -303,84 +211,8 @@ with(user) {
 Use `apply` for object configuration, `let` for null-safe work, and
 `run` when you want a computed value.
 
----
-
-## What is an inline function?
-
--   `inline` asks the compiler to inline the function body at the call
-    site.
--   It can reduce lambda allocation overhead in suitable cases.
--   It is especially useful for small higher-order functions.
-
-``` kotlin
-inline fun measure(block: () -> Unit) {
-    val start = System.currentTimeMillis()
-    block()
-    println(System.currentTimeMillis() - start)
-}
-```
-
-Do not use `inline` everywhere. Large functions can increase generated
-code size.
-
----
-
-## What is a reified generic?
-
--   Normally generic type information is erased at runtime.
--   `reified` allows an inline function to access the generic type at
-    runtime.
-
-``` kotlin
-inline fun <reified T> isType(value: Any): Boolean {
-    return value is T
-}
-
-isType<String>("Hello")
-```
-
-It is useful for type-safe APIs such as JSON parsing and dependency
-helpers.
-
----
-
-## What is delegation in Kotlin?
-
--   Delegation allows one object to delegate behavior to another.
--   Kotlin supports class delegation and property delegation.
-
-``` kotlin
-interface Logger {
-    fun log(message: String)
-}
-
-class ConsoleLogger : Logger {
-    override fun log(message: String) {
-        println(message)
-    }
-}
-
-class UserLogger(
-    logger: Logger
-) : Logger by logger
-```
-
-The compiler generates forwarding methods.
-
----
-
-## What is property delegation?
-
--   Property delegation moves getter/setter behavior to another object.
--   Common examples are `lazy` and Android-specific delegates.
-
-``` kotlin
-val database by lazy {
-    createDatabase()
-}
-```
-
-The value is created only when first accessed.
+Interview Answer:
+> - These are scope functions that make object manipulation more readable.
 
 ---
 
@@ -397,37 +229,8 @@ val repository by lazy {
 
 It is useful for expensive objects that are not needed immediately.
 
----
-
-## What is `lateinit`?
-
--   `lateinit` allows a non-null `var` to be initialized later.
--   It works mainly with reference types.
--   Accessing it before initialization throws an exception.
-
-``` kotlin
-lateinit var repository: UserRepository
-```
-
-Use it carefully. Constructor injection is usually safer.
-
----
-
-## What is an `object` in Kotlin?
-
--   `object` creates a singleton object.
--   It is initialized when first accessed.
-
-``` kotlin
-object AppLogger {
-    fun log(message: String) {
-        println(message)
-    }
-}
-```
-
-Avoid using global singletons for dependencies that need easy
-replacement in tests.
+Interview Answer:
+> - lazy initializes a value only when it is first accessed.
 
 ---
 
@@ -446,329 +249,8 @@ class User private constructor() {
 
 It can also implement interfaces.
 
----
-
-## What is the difference between `const` and `val`?
-
--   `val` is initialized at runtime and can use expressions.
--   `const` is compile-time constant and must be declared at top-level
-    or inside an `object`.
--   `const` works only for primitive types and `String`.
-
-``` kotlin
-const val BASE_URL = "https://api.example.com"
-val appVersion = BuildConfig.VERSION_NAME
-```
-
-Use `const` for values known at compile time, such as API endpoints or
-configuration keys. Use `val` for runtime values and dependency-driven
-configuration.
-
----
-
-## Coroutines: Builders and Structured Concurrency
-
-## What are coroutine builders in Kotlin?
-
-Common builders are:
-
--   `launch` returns a `Job`.
--   `async` returns a `Deferred<T>`.
--   `runBlocking` blocks the current thread.
--   `coroutineScope` creates a structured child scope.
--   `supervisorScope` isolates child failures.
-
-``` kotlin
-viewModelScope.launch {
-    val result = async {
-        repository.loadUser()
-    }.await()
-}
-```
-
----
-
-## What is structured concurrency in Kotlin?
-
--   Structured concurrency ensures that child coroutines have a clear
-    parent.
--   The parent controls the lifetime of its children.
--   Cancellation and failures can propagate predictably.
-
-``` kotlin
-viewModelScope.launch {
-
-    coroutineScope {
-
-        launch {
-            loadUser()
-        }
-
-        launch {
-            loadOrders()
-        }
-    }
-}
-```
-
-The child coroutines belong to the parent.
-
-When the ViewModel is cleared:
-
-``` text
-viewModelScope
-      ↓
-parent coroutine
-      ↓
-child coroutine
-      ↓
-child coroutine
-```
-
-They are cancelled together.
-
-Avoid:
-
-``` kotlin
-GlobalScope.launch {
-    loadUser()
-}
-```
-
-because there is no feature-level owner controlling its lifetime.
-
----
-
-## What is the difference between `launch` and `async`?
-
--   `launch` is used when you do not need a return value.
--   `async` is used when you need a result.
--   `launch` returns `Job`.
--   `async` returns `Deferred<T>`.
-
-``` kotlin
-launch {
-    saveUser()
-}
-
-val user = async {
-    loadUser()
-}.await()
-```
-
-Use `async` only when the result is actually needed.
-
----
-
-## What is `SupervisorJob`?
-
--   `SupervisorJob` creates a parent job where failure of one child does
-    not automatically cancel sibling children.
--   It is useful when independent tasks should continue independently.
-
-``` kotlin
-val scope = CoroutineScope(
-    SupervisorJob() + Dispatchers.Main
-)
-```
-
-In Android, prefer lifecycle-aware scopes such as `viewModelScope`
-rather than creating unmanaged scopes.
-
----
-
-## What is coroutine cancellation?
-
--   Cancellation is cooperative.
--   Suspending functions usually check cancellation automatically.
--   CPU-heavy loops should check cancellation explicitly.
-
-``` kotlin
-while (isActive) {
-    doWork()
-}
-```
-
-Avoid swallowing `CancellationException`.
-
----
-
-## What is the difference between `Dispatchers.Main`, `IO`, and `Default`?
-
--   `Main` is for UI work.
--   `IO` is for blocking I/O such as files, database, and network
-    operations.
--   `Default` is for CPU-intensive work.
-
-``` kotlin
-withContext(Dispatchers.IO) {
-    database.loadUsers()
-}
-```
-
-Use the dispatcher based on the work, not simply because it is a
-background operation.
-
----
-
-## What is exception handling in coroutines?
-
--   Use `try/catch` around operations where you can recover.
--   `CoroutineExceptionHandler` is mainly for uncaught exceptions in
-    root coroutines.
--   `supervisorScope` is useful when child failures should be isolated.
-
-``` kotlin
-viewModelScope.launch {
-    try {
-        repository.loadUser()
-    } catch (e: IOException) {
-        showNetworkError()
-    }
-}
-```
-
-Do not catch every `Throwable` blindly because cancellation must remain
-cancellable.
-
----
-
-## Flow and Reactive Streams
-
-## What is Flow?
-
--   `Flow` represents an asynchronous stream of values.
--   It is cold by default.
--   The producer executes when a collector starts collecting.
-
-``` kotlin
-fun users(): Flow<List<User>> = flow {
-    emit(api.getUsers())
-}
-```
-
-Each collector can trigger the upstream flow independently.
-
----
-
-## What is a cold Flow?
-
--   A cold Flow does not start producing values until collected.
--   Each collector gets its own execution.
-
-``` kotlin
-val flow = flow {
-    println("Started")
-    emit(1)
-}
-```
-
-Collecting twice can execute the upstream twice.
-
----
-
-## What is a hot Flow?
-
--   A hot flow exists independently of collectors.
--   `StateFlow` and `SharedFlow` are common hot flows.
-
-``` kotlin
-val state: StateFlow<UiState>
-```
-
-The producer can exist even when no UI is collecting.
-
----
-
-## What is StateFlow?
-
--   `StateFlow` represents current state.
--   It always has a current value.
--   It replays the latest value to a new collector.
-
-``` kotlin
-private val _state = MutableStateFlow(UiState.Loading)
-val state = _state.asStateFlow()
-```
-
-It is ideal for ViewModel UI state.
-
----
-
-## What is SharedFlow?
-
--   `SharedFlow` is a hot stream for shared events or values.
--   It supports replay and buffering configuration.
-
-``` kotlin
-private val _events = MutableSharedFlow<UiEvent>()
-val events = _events.asSharedFlow()
-```
-
-It is useful for events such as navigation or snackbar messages.
-
----
-
-## StateFlow vs SharedFlow
-
-  StateFlow                  SharedFlow
-  -------------------------- ---------------------------
-  Represents state           Represents events/streams
-  Requires initial value     Does not require one
-  Always has current value   May have no current value
-  Replays latest state       Replay is configurable
-
-Example:
-
-``` kotlin
-StateFlow<ScreenState>
-SharedFlow<UiEvent>
-```
-
----
-
-## What is LiveData and how does it compare with StateFlow?
-
--   LiveData is lifecycle-aware and Android-specific.
--   StateFlow is Kotlin/Coroutine based.
--   StateFlow works outside Android.
--   StateFlow provides Flow operators.
-
-For new coroutine-based applications, StateFlow is usually preferred.
-
----
-
-## What is `combine` vs `merge`?
-
--   `merge` forwards emissions from multiple flows.
--   `combine` combines the latest value from each flow.
-
-``` kotlin
-combine(userFlow, accountFlow) { user, account ->
-    Dashboard(user, account)
-}
-```
-
-Use `combine` when the output needs the latest value from multiple
-sources.
-
----
-
-## What is `flatMapLatest`?
-
--   It switches to the latest flow and cancels the previous one.
--   It is useful for search.
-
-``` kotlin
-query
-    .debounce(300)
-    .distinctUntilChanged()
-    .flatMapLatest {
-        repository.search(it)
-    }
-```
-
-If the user types again, the previous search is cancelled.
+Interview Answer:
+> - A companion object provides class-level members.
 
 ---
 
@@ -784,6 +266,9 @@ query
 
 If the user types continuously, intermediate values are skipped.
 
+Interview Answer:
+> - debounce waits for a quiet period before emitting.
+
 ---
 
 ## What is `distinctUntilChanged`?
@@ -798,44 +283,8 @@ query
 Typing the same query twice does not trigger another identical
 downstream operation.
 
----
-
-## How do you convert a cold Flow to a hot Flow?
-
-Use `stateIn` or `shareIn`.
-
-``` kotlin
-val users = repository.users()
-    .stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5_000),
-        emptyList()
-    )
-```
-
-`stateIn` creates StateFlow.
-
-`shareIn` creates SharedFlow.
-
----
-
-## How do you convert a hot Flow to a cold Flow?
-
-You normally cannot turn a hot stream into a truly equivalent cold
-stream without changing its semantics.
-
-If you need independent execution per collector, expose the underlying
-cold producer instead.
-
-For example:
-
-``` kotlin
-fun users(): Flow<List<User>> = flow {
-    emit(repository.loadUsers())
-}
-```
-
-A `StateFlow` itself remains hot.
+Interview Answer:
+> - It prevents consecutive duplicate values.
 
 ---
 
@@ -855,6 +304,9 @@ val state = repository.users()
 
 It is useful when UI needs current state.
 
+Interview Answer:
+> - stateIn converts a Flow into StateFlow.
+
 ---
 
 ## What is `shareIn`?
@@ -871,18 +323,8 @@ val events = repository.events()
     )
 ```
 
----
-
-## Advanced Kotlin
-
-## What is an inline function useful for in Android?
-
--   It can reduce lambda allocation overhead.
--   It enables `reified` type parameters.
--   It is useful for small utility APIs.
-
-Do not inline large functions unnecessarily because generated code can
-increase.
+Interview Answer:
+> - shareIn converts a cold Flow into SharedFlow.
 
 ---
 
@@ -903,6 +345,9 @@ val total = Money(100) + Money(50)
 
 Use it only when the operator meaning is obvious.
 
+Interview Answer:
+> - Kotlin allows operators such as +, -, , and invoke to map to functions.
+
 ---
 
 ## What is a DSL in Kotlin?
@@ -920,6 +365,9 @@ buildUser {
 ```
 
 DSLs are useful for readable configuration and builders.
+
+Interview Answer:
+> - A DSL creates an API that reads like a small domain-specific language.
 
 ---
 
@@ -943,74 +391,9 @@ iOS     → iOS UI
 Use it when code sharing provides enough value to justify the added
 complexity.
 
----
+Interview Answer:
+> - Kotlin Multiplatform allows sharing Kotlin code across platforms.
 
-## What is the difference between a suspend function and Flow?
-
--   A `suspend` function usually returns one result.
--   A Flow can emit multiple values over time.
-
-``` kotlin
-suspend fun getUser(): User
-
-fun observeUser(): Flow<User>
-```
-
-Use a suspend function for one-shot work and Flow for streams/state.
-
----
-
-## What happens if `searchRepositories(query)` is a suspend function?
-
-If it returns one result:
-
-``` kotlin
-val repositories = query
-    .debounce(300)
-    .distinctUntilChanged()
-    .mapLatest { query ->
-        repository.searchRepositories(query)
-    }
-```
-
-`mapLatest` is useful because a new query cancels the previous suspend
-operation.
-
----
-
-## What is `runBlocking` vs `runTest`?
-
--   `runBlocking` blocks a real thread.
--   `runTest` provides coroutine test scheduling and virtual time.
--   Android unit tests should generally use `runTest` for coroutine
-    code.
-
-``` kotlin
-@Test
-fun testLoadUser() = runTest {
-    viewModel.loadUser()
-}
-```
-
-Use `runBlocking` mainly when bridging synchronous and coroutine code,
-not as the normal coroutine test tool.
-
----
-
-## Why should you avoid `GlobalScope`?
-
--   It is not lifecycle-aware.
--   Work can outlive the feature that started it.
--   It makes cancellation and testing harder.
-
-Prefer:
-
-``` kotlin
-viewModelScope.launch { ... }
-```
-
-or an injected application-level scope when work truly belongs to the
-application lifecycle.
 ---
 
 ## What does `ensureActive()` do?
@@ -1064,6 +447,9 @@ Interview answer:
 > `ensureActive()` does not keep a cancelled coroutine running. It
 > detects cancellation and throws `CancellationException`.
 
+Interview Answer:
+> - ensureActive checks whether the coroutine has been cancelled.
+
 ---
 
 ## What is the difference between `ensureActive()` and `isActive`?
@@ -1109,6 +495,1625 @@ Interview answer:
 > happens. Use `ensureActive()` when cancellation should immediately
 > abort the operation.
 
+Interview Answer:
+> - Both can be used to react to cancellation.
+
+---
+
+## What is the difference between `cancel()` and `cancelAndJoin()`?
+
+Instead of:
+
+``` kotlin
+job.cancel()
+job.join()
+```
+
+you can use:
+
+``` kotlin
+job.cancelAndJoin()
+```
+
+It performs both operations.
+
+``` text
+cancelAndJoin()
+      ↓
+request cancellation
+      ↓
+wait for completion
+```
+
+This is useful in tests and lifecycle-sensitive code.
+
+Interview Answer:
+> Instead of: you can use: It performs both operations.
+
+---
+
+## What happens when you call `join()` without cancelling?
+
+``` kotlin
+val job = launch {
+    delay(1000)
+    println("Done")
+}
+
+job.join()
+
+println("Finished waiting")
+```
+
+Output:
+
+``` text
+Done
+Finished waiting
+```
+
+`join()` does not cancel anything.
+
+It simply waits for the job to complete.
+
+Interview Answer:
+> Output: join does not cancel anything.
+
+---
+
+## What is a common race condition with shared mutable state?
+
+Example:
+
+``` kotlin
+var count = 0
+
+coroutineScope {
+
+    repeat(1000) {
+
+        launch(Dispatchers.Default) {
+            count++
+        }
+    }
+}
+```
+
+The final value is not guaranteed to be 1000.
+
+Why?
+
+`count++` is not one atomic operation.
+
+Conceptually:
+
+``` text
+read count
+   ↓
+add 1
+   ↓
+write count
+```
+
+Multiple threads can interleave these operations.
+
+Interview Answer:
+> Example: The final value is not guaranteed to be 1000.
+
+---
+
+## How do you safely update shared mutable state?
+
+Use `Mutex`:
+
+``` kotlin
+val mutex = Mutex()
+var count = 0
+
+coroutineScope {
+
+    repeat(1000) {
+
+        launch(Dispatchers.Default) {
+
+            mutex.withLock {
+                count++
+            }
+        }
+    }
+}
+```
+
+Or use atomic primitives when appropriate:
+
+``` kotlin
+val count = AtomicInteger(0)
+
+count.incrementAndGet()
+```
+
+Interview answer:
+
+> Coroutines do not automatically make shared mutable state thread-safe.
+
+Interview Answer:
+> Use Mutex: Or use atomic primitives when appropriate: Interview answer: Coroutines do not automatically make shared mutable state thread-safe.
+
+---
+
+## What is a common hidden question about sequential API calls?
+
+Suppose you have:
+
+``` kotlin
+val user = loadUser()
+val orders = loadOrders(user.id)
+```
+
+This is sequential because the second call depends on the first result.
+
+You cannot make it fully parallel if `orders` needs `user.id`.
+
+But if the calls are independent:
+
+``` kotlin
+val user = async {
+    loadUser()
+}
+
+val settings = async {
+    loadSettings()
+}
+
+val finalUser = user.await()
+val finalSettings = settings.await()
+```
+
+They can run concurrently.
+
+Interview answer:
+
+> Parallelism should be based on data dependencies, not simply on using
+> `async`.
+
+Interview Answer:
+> Suppose you have: This is sequential because the second call depends on the first result.
+
+---
+
+## What is the difference between `cancel()` and throwing an exception?
+
+Cancellation:
+
+``` kotlin
+job.cancel()
+```
+
+means:
+
+> This operation is no longer needed.
+
+Normal exception:
+
+``` kotlin
+throw IOException()
+```
+
+means:
+
+> The operation failed.
+
+Cancellation should normally not be treated as an application error.
+
+``` kotlin
+catch (e: CancellationException) {
+    throw e
+}
+```
+
+Interview Answer:
+> Cancellation: means: This operation is no longer needed.
+
+---
+
+## What is the safe-call `?.` operator in Kotlin?
+
+* `?.` safely accesses a property or function when the object can be `null`.
+* If the object is `null`, the expression returns `null` instead of throwing an exception.
+* Very common when handling API responses and nullable Android data.
+
+```kotlin
+val name: String? = null
+
+val length = name?.length
+
+println(length) // null
+```
+
+Interview Answer:
+> ?.
+
+---
+
+## What is the Elvis `?:` operator in Kotlin?
+
+* `?:` provides a default value when the left side is `null`.
+* It is useful for setting fallback values.
+
+```kotlin
+val name: String? = null
+
+val displayName = name ?: "Guest"
+
+println(displayName) // Guest
+```
+
+Interview Answer:
+> ?: provides a default value when the left side is null.
+
+---
+
+## What is the not-null assertion `!!` operator?
+
+* `!!` tells Kotlin that a nullable value is definitely not `null`.
+* If the value is actually `null`, it throws `NullPointerException`.
+* Avoid it when possible.
+
+```kotlin
+val name: String? = null
+
+val length = name!!.length // NullPointerException
+```
+
+Interview Answer:
+> !!
+
+---
+
+## What is the `==` operator in Kotlin?
+
+* `==` checks structural equality.
+* It internally uses `equals()`.
+
+```kotlin
+val user1 = User("Kiran")
+val user2 = User("Kiran")
+
+println(user1 == user2)
+```
+
+For a `data class`, this returns `true` because the values are equal.
+
+```kotlin
+data class User(val name: String)
+```
+
+Interview Answer:
+> == checks structural equality.
+
+---
+
+## What is the `===` operator in Kotlin?
+
+* `===` checks whether two references point to the exact same object.
+* `==` checks values, while `===` checks references.
+
+```kotlin
+val a = String(charArrayOf('H', 'i'))
+val b = String(charArrayOf('H', 'i'))
+
+println(a == b)   // true
+println(a === b)  // false
+```
+
+Interview Answer:
+> === checks whether two references point to the exact same object.
+
+---
+
+## What is the `is` operator in Kotlin?
+
+* `is` checks the type of an object.
+* Kotlin automatically smart-casts the object after the check.
+
+```kotlin
+fun printValue(value: Any) {
+    if (value is String) {
+        println(value.length)
+    }
+}
+```
+
+After `value is String`, Kotlin treats `value` as a `String`.
+
+Interview Answer:
+> is checks the type of an object.
+
+---
+
+## What is the `as` operator in Kotlin?
+
+* `as` performs an explicit type cast.
+* If the object cannot be converted to that type, it throws `ClassCastException`.
+
+```kotlin
+val value: Any = "Kotlin"
+
+val text = value as String
+
+println(text.length)
+```
+
+Interview Answer:
+> as performs an explicit type cast.
+
+---
+
+## What is the `as?` safe-cast operator?
+
+* `as?` safely casts an object.
+* If the cast fails, it returns `null` instead of throwing an exception.
+
+```kotlin
+val value: Any = 10
+
+val text = value as? String
+
+println(text) // null
+```
+
+Interview Answer:
+> as?
+
+---
+
+## What is the `in` operator?
+
+* `in` checks whether a value exists inside a range or collection.
+* `!in` checks that it does not exist.
+
+```kotlin
+val number = 5
+
+if (number in 1..10) {
+    println("Valid")
+}
+```
+
+With a collection:
+
+```kotlin
+val names = listOf("Kiran", "John")
+
+if ("Kiran" in names) {
+    println("Found")
+}
+```
+
+Interview Answer:
+> in checks whether a value exists inside a range or collection.
+
+---
+
+## What is the range `..` operator?
+
+* `..` creates a range including both start and end values.
+
+```kotlin
+for (i in 1..5) {
+    println(i)
+}
+```
+
+Output:
+
+```text
+1
+2
+3
+4
+5
+```
+
+Interview Answer:
+> ..
+
+---
+
+## What is the `..<` operator?
+
+* `..<` creates a range that excludes the end value.
+* It is called the open-ended range operator.
+
+```kotlin
+for (i in 1..<5) {
+    println(i)
+}
+```
+
+Output:
+
+```text
+1
+2
+3
+4
+```
+
+Interview Answer:
+> ..< creates a range that excludes the end value.
+
+---
+
+## What are `&&` and `||` operators?
+
+* `&&` means logical AND.
+* `||` means logical OR.
+* They are commonly used in conditions.
+
+```kotlin
+if (age >= 18 && isVerified) {
+    println("Allowed")
+}
+```
+
+```kotlin
+if (isAdmin || isManager) {
+    println("Access granted")
+}
+```
+
+Interview Answer:
+> && means logical AND.
+
+---
+
+## What is the `!` operator?
+
+* `!` reverses a Boolean value.
+
+```kotlin
+val isLoggedIn = false
+
+if (!isLoggedIn) {
+    println("Please login")
+}
+```
+
+Interview Answer:
+> !
+
+---
+
+## What is the `::` operator in Kotlin?
+
+* `::` creates a reference to a function, property, or class.
+* It is commonly used with higher-order functions.
+
+```kotlin
+fun printName(name: String) {
+    println(name)
+}
+
+val action = ::printName
+
+action("Kiran")
+```
+
+It is also commonly used with Android/Compose callbacks:
+
+```kotlin
+Button(onClick = ::onButtonClick)
+```
+
+Interview Answer:
+> :: creates a reference to a function, property, or class.
+
+---
+
+## Why are Kotlin classes `final` by default?
+
+* Kotlin makes classes final by default to prevent accidental inheritance.
+* It makes the class behavior easier to reason about.
+* Use `open` only when inheritance is intentionally supported.
+
+```kotlin
+class User
+```
+
+This cannot be inherited:
+
+```kotlin
+// class Admin : User() // Error
+```
+
+Interview Answer:
+> Kotlin makes classes final by default to prevent accidental inheritance.
+
+---
+
+## What does the `override` keyword mean?
+
+* `override` means a child class is replacing an `open` parent implementation.
+* The parent member must be `open`.
+
+```kotlin
+open class Parent {
+    open fun show() {
+        println("Parent")
+    }
+}
+
+class Child : Parent() {
+    override fun show() {
+        println("Child")
+    }
+}
+```
+
+Interview Answer:
+> override means a child class is replacing an open parent implementation.
+
+---
+
+## What does the `final` keyword mean?
+
+* `final` prevents further overriding.
+* Kotlin members are final by default.
+
+```kotlin
+open class Parent {
+
+    open fun test() {}
+}
+
+class Child : Parent() {
+
+    final override fun test() {}
+}
+
+class GrandChild : Child() {
+
+    // Cannot override test()
+}
+```
+
+Interview Answer:
+> final prevents further overriding.
+
+---
+
+## What is `noinline` in Kotlin?
+
+* `noinline` prevents a lambda parameter from being inlined.
+* It is useful when you need to store or pass the lambda as an object.
+
+```kotlin
+inline fun execute(
+    block1: () -> Unit,
+    noinline block2: () -> Unit
+) {
+    block1()
+
+    val savedBlock = block2
+    savedBlock()
+}
+```
+
+Here:
+
+* `block1` is inlined.
+* `block2` remains a normal function object.
+
+Interview Answer:
+> noinline prevents a lambda parameter from being inlined.
+
+---
+
+## What is `crossinline` in Kotlin?
+
+* `crossinline` prevents a lambda from using a non-local `return`.
+* It is useful when the lambda is executed from another execution context such as a callback.
+
+```kotlin
+inline fun execute(crossinline block: () -> Unit) {
+
+    val runnable = Runnable {
+        block()
+    }
+
+    runnable.run()
+}
+```
+
+Without `crossinline`, Kotlin cannot safely allow a non-local return because the lambda executes inside another function/callback.
+
+Interview Answer:
+> crossinline prevents a lambda from using a non-local return.
+
+---
+
+## What is a non-local return in Kotlin?
+
+* A lambda passed to an inline function can normally return from the surrounding function.
+* This is called a non-local return.
+
+```kotlin
+inline fun execute(block: () -> Unit) {
+    block()
+}
+
+fun test() {
+
+    execute {
+        return
+    }
+
+    println("This will not execute")
+}
+```
+
+The `return` returns from `test()`, not just the lambda.
+
+Interview Answer:
+> A lambda passed to an inline function can normally return from the surrounding function.
+
+---
+
+## Why does `crossinline` prevent non-local return?
+
+Consider:
+
+```kotlin
+inline fun execute(crossinline block: () -> Unit) {
+
+    val runnable = Runnable {
+        block()
+    }
+
+    runnable.run()
+}
+```
+
+Now this is not allowed:
+
+```kotlin
+execute {
+    return
+}
+```
+
+Because the lambda is executed inside `Runnable`, Kotlin cannot allow the lambda to return from the outer function.
+
+Interview Answer:
+> Consider: Now this is not allowed: Because the lambda is executed inside Runnable, Kotlin cannot allow the lambda to return from the outer function.
+
+---
+
+## What does the `object` keyword mean?
+
+* `object` creates a singleton object.
+* Only one instance of the object exists.
+
+```kotlin
+object Logger {
+
+    fun log(message: String) {
+        println(message)
+    }
+}
+```
+
+Usage:
+
+```kotlin
+Logger.log("Hello")
+```
+
+You don't need to create an instance:
+
+```kotlin
+// Logger() // Not allowed
+```
+
+Interview Answer:
+> object creates a singleton object.
+
+---
+
+## What is a `companion object`?
+
+* A `companion object` provides class-level members.
+* It is Kotlin's common alternative to Java's `static`.
+
+```kotlin
+class User {
+
+    companion object {
+
+        fun create(): User {
+            return User()
+        }
+    }
+}
+```
+
+Usage:
+
+```kotlin
+val user = User.create()
+```
+
+Interview Answer:
+> A companion object provides class-level members.
+
+---
+
+## What is the difference between `object` and `companion object`?
+
+`object` creates a standalone singleton:
+
+```kotlin
+object Logger
+```
+
+`companion object` belongs to a class:
+
+```kotlin
+class User {
+
+    companion object {
+        fun create() = User()
+    }
+}
+```
+
+Interview Answer:
+> object creates a standalone singleton: companion object belongs to a class: ---
+
+---
+
+## What does the `data` keyword mean?
+
+* `data class` is mainly used to hold data.
+* Kotlin automatically generates useful functions such as `equals()`, `hashCode()`, `toString()`, and `copy()`.
+
+```kotlin
+data class User(
+    val id: Int,
+    val name: String
+)
+```
+
+You can do:
+
+```kotlin
+val user1 = User(1, "Kiran")
+val user2 = user1.copy(name = "John")
+```
+
+Interview Answer:
+> data class is mainly used to hold data.
+
+---
+
+## What does the `abstract` keyword mean?
+
+* `abstract` defines something that must be implemented by a child class.
+* An abstract class cannot be instantiated directly.
+
+```kotlin
+abstract class Animal {
+
+    abstract fun sound()
+}
+```
+
+Child class:
+
+```kotlin
+class Dog : Animal() {
+
+    override fun sound() {
+        println("Bark")
+    }
+}
+```
+
+Interview Answer:
+> abstract defines something that must be implemented by a child class.
+
+---
+
+## What is an interface in Kotlin?
+
+* An interface defines a contract that classes can implement.
+* A class can implement multiple interfaces.
+
+```kotlin
+interface ClickListener {
+
+    fun onClick()
+}
+
+class Button : ClickListener {
+
+    override fun onClick() {
+        println("Clicked")
+    }
+}
+```
+
+Interview Answer:
+> An interface defines a contract that classes can implement.
+
+---
+
+## What does the `by` keyword mean in Kotlin?
+
+* `by` is used for delegation.
+* It allows another object to handle implementation.
+
+```kotlin
+interface Repository {
+    fun getData()
+}
+
+class RepositoryImpl : Repository {
+    override fun getData() {
+        println("Data")
+    }
+}
+
+class ViewModel(
+    private val repository: Repository
+) : Repository by repository
+```
+
+Now `ViewModel` automatically delegates `getData()` to `repository`.
+
+Interview Answer:
+> by is used for delegation.
+
+---
+
+## What does the `operator` keyword mean?
+
+* `operator` allows a class to define custom behavior for operators such as `+`, `-`, `[]`, and `==`.
+
+```kotlin
+data class Point(
+    val x: Int,
+    val y: Int
+) {
+    operator fun plus(other: Point): Point {
+        return Point(
+            x + other.x,
+            y + other.y
+        )
+    }
+}
+```
+
+Now:
+
+```kotlin
+val p1 = Point(10, 20)
+val p2 = Point(5, 5)
+
+val result = p1 + p2
+```
+
+The `+` operator internally calls `plus()`.
+
+Interview Answer:
+> operator allows a class to define custom behavior for operators such as +, -, , and ==.
+
+---
+
+## What does the `infix` keyword mean?
+
+* `infix` allows a function to be called without parentheses and dot notation.
+* It makes certain APIs more readable.
+
+```kotlin
+infix fun Int.add(value: Int): Int {
+    return this + value
+}
+```
+
+Usage:
+
+```kotlin
+val result = 10 add 5
+```
+
+Instead of:
+
+```kotlin
+val result = 10.add(5)
+```
+
+Interview Answer:
+> infix allows a function to be called without parentheses and dot notation.
+
+---
+
+## What does the `const` keyword mean?
+
+* `const` defines a compile-time constant.
+* It can be used only with primitive types and `String`.
+* It must be a top-level property or inside an `object`/`companion object`.
+
+```kotlin
+const val BASE_URL = "https://example.com"
+```
+
+Another example:
+
+```kotlin
+object Constants {
+    const val TIMEOUT = 30
+}
+```
+
+Interview Answer:
+> const defines a compile-time constant.
+
+---
+
+## What does `typealias` mean?
+
+* `typealias` gives another name to an existing type.
+* It does not create a new type.
+
+```kotlin
+typealias UserId = String
+
+val id: UserId = "123"
+```
+
+It is especially useful for complex function types:
+
+```kotlin
+typealias OnUserClick = (User) -> Unit
+```
+
+Now:
+
+```kotlin
+fun setListener(listener: OnUserClick) {
+}
+```
+
+is easier to read.
+
+Interview Answer:
+> typealias gives another name to an existing type.
+
+---
+
+## What does the `tailrec` keyword mean?
+
+* `tailrec` tells the compiler that a recursive function can be optimized into a loop.
+* It helps avoid stack overflow for supported tail-recursive functions.
+
+```kotlin
+tailrec fun countDown(value: Int) {
+
+    if (value == 0) return
+
+    println(value)
+
+    countDown(value - 1)
+}
+```
+
+The compiler can optimize the recursion instead of creating a new stack frame for every call.
+
+Interview Answer:
+> tailrec tells the compiler that a recursive function can be optimized into a loop.
+
+---
+
+## What are custom `get` and `set` accessors?
+
+* `get` controls how a property is read.
+* `set` controls how a property is changed.
+
+```kotlin
+var name: String = ""
+    get() = field.uppercase()
+    set(value) {
+        field = value.trim()
+    }
+```
+
+Usage:
+
+```kotlin
+name = " Kiran "
+
+println(name) // KIRAN
+```
+
+Interview Answer:
+> get controls how a property is read.
+
+---
+
+## What does `this` mean in Kotlin?
+
+* `this` refers to the current object.
+
+```kotlin
+class User(
+    private val name: String
+) {
+
+    fun printName() {
+        println(this.name)
+    }
+}
+```
+
+Interview Answer:
+> this refers to the current object.
+
+---
+
+## What does `super` mean in Kotlin?
+
+* `super` refers to the parent class implementation.
+
+```kotlin
+open class Parent {
+    open fun show() {
+        println("Parent")
+    }
+}
+
+class Child : Parent() {
+
+    override fun show() {
+        super.show()
+        println("Child")
+    }
+}
+```
+
+Output:
+
+```text
+Parent
+Child
+```
+
+Interview Answer:
+> super refers to the parent class implementation.
+
+---
+
+## What is the `when` expression in Kotlin?
+
+* `when` is Kotlin's powerful replacement for many `if-else` and `switch` statements.
+* It can return a value.
+
+```kotlin
+val result = when (status) {
+    "SUCCESS" -> "Done"
+    "ERROR" -> "Failed"
+    else -> "Loading"
+}
+```
+
+It is especially useful with sealed classes:
+
+```kotlin
+when (result) {
+    is Result.Success -> showData(result.data)
+    is Result.Error -> showError(result.message)
+    Result.Loading -> showLoading()
+}
+```
+
+Interview Answer:
+> when is Kotlin's powerful replacement for many if-else and switch statements.
+
+---
+
+## What does `return` do?
+
+* `return` exits a function and optionally returns a value.
+
+```kotlin
+fun getName(): String {
+    return "Kiran"
+}
+```
+
+Interview Answer:
+> return exits a function and optionally returns a value.
+
+---
+
+## What does `break` do?
+
+* `break` stops the current loop.
+
+```kotlin
+for (i in 1..10) {
+    if (i == 5) break
+    println(i)
+}
+```
+
+Output:
+
+```text
+1
+2
+3
+4
+```
+
+Interview Answer:
+> break stops the current loop.
+
+---
+
+## What does `continue` do?
+
+* `continue` skips the current iteration and moves to the next one.
+
+```kotlin
+for (i in 1..5) {
+    if (i == 3) continue
+    println(i)
+}
+```
+
+Output:
+
+```text
+1
+2
+4
+5
+```
+
+Interview Answer:
+> continue skips the current iteration and moves to the next one.
+
+---
+
+## What does the `open` keyword mean in Kotlin and why is it the default opposite of Java?
+
+* Kotlin classes and members are `final` by default.
+* `open` explicitly allows inheritance or overriding.
+* This makes inheritance intentional instead of accidental.
+* Java classes and methods are inheritable by default unless marked `final`.
+
+```kotlin
+open class Animal {
+
+    open fun sound() {
+        println("Animal sound")
+    }
+}
+
+class Dog : Animal() {
+
+    override fun sound() {
+        println("Bark")
+    }
+}
+```
+
+Without `open`:
+
+```kotlin
+class Animal
+```
+
+This cannot be inherited.
+
+**Android interview point:** Some mocking frameworks or Android frameworks may require classes to be open. Plugins such as Kotlin's all-open plugin can also make selected classes open automatically.
+
+Interview Answer:
+> Kotlin classes and members are final by default.
+
+---
+
+## What is a Kotlin `value class` and when do you use it on Android?
+
+* A `value class` creates a distinct type around one value.
+* It gives compile-time type safety without necessarily creating a separate object at runtime.
+* It is useful when two values have the same underlying type but different meanings.
+
+```kotlin
+@JvmInline
+value class UserId(val value: String)
+
+@JvmInline
+value class OrderId(val value: String)
+```
+
+Now this is type-safe:
+
+```kotlin
+fun loadUser(id: UserId) {
+    // ...
+}
+
+val userId = UserId("123")
+
+loadUser(userId)
+```
+
+You cannot accidentally pass:
+
+```kotlin
+val orderId = OrderId("123")
+
+// loadUser(orderId) // Compilation error
+```
+
+Instead of:
+
+```kotlin
+fun loadUser(id: String)
+fun loadOrder(id: String)
+```
+
+you get:
+
+```kotlin
+fun loadUser(id: UserId)
+fun loadOrder(id: OrderId)
+```
+
+**Important:** Value classes are not guaranteed to be allocation-free in every situation. They can be boxed when used with generics, nullable types, arrays, reflection, or certain APIs.
+
+Interview Answer:
+> A value class creates a distinct type around one value.
+
+---
+
+## Does `ConcurrentHashMap` make all operations thread-safe?
+
+* Individual map operations are thread-safe.
+* A sequence of operations can still have a race condition.
+
+For example:
+
+```kotlin
+if (!cache.containsKey(id)) {
+    cache[id] = user
+}
+```
+
+Another thread can modify the map between `containsKey()` and `put()`.
+
+Prefer atomic operations when appropriate:
+
+```kotlin
+cache.putIfAbsent(id, user)
+```
+
+Interview Answer:
+> Thread-safe collection does not automatically make a multi-step business operation atomic. ---
+
+---
+
+## What are Primary and Secondary Constructors in Kotlin?
+
+#### Primary Constructor
+- The main constructor of a class.
+- Defined in the class header.
+- Can directly initialize properties.
+
+*Usage in Android:*
+- Pass data directly when creating an object.
+
+*Key Points:*
+- There can be only one primary constructor.
+- Can include `init` block for additional initialization.
+
+#### Secondary Constructor
+- Optional additional constructors for different ways to create an object.
+- Defined inside the class body with a `constructor` keyword.
+- Must delegate to the primary constructor (if primary exists) using `: this(...)`.
+
+*Usage in Android:*
+- Useful when you want flexible object creation in different scenarios.
+
+*Key Points:*
+- You can have multiple secondary constructors.
+- Helps when default values or alternative initialization is needed.
+
+Interview Answer:
+> Primary Constructor - The main constructor of a class.
+
+---
+
+## What are the main features of Kotlin?
+
+- **Concise:** Less boilerplate than Java
+- **Null Safety:** Built-in null checks
+- **Extension Functions:** Add functions to existing classes
+- **Coroutines:** Lightweight concurrency
+- **Smart Casts:** No need for explicit casting after type check
+- **Data Classes:** Auto-generate `equals()`, `hashCode()`, `toString()`, etc.
+- **Default & Named Arguments**
+- **Higher-order functions & Lambdas**
+
+Interview Answer:
+> - Concise: Less boilerplate than Java - Null Safety: Built-in null checks - Extension Functions: Add functions to existing classes - Coroutines: Lightweight concurrency - Smart Casts: No need for explicit casting after type check - Data Classes: Auto-generate equals, hashCode, toString, etc.
+
+---
+
+# Kotlin Coroutines and Flow
+
+## What are coroutine builders in Kotlin?
+
+Common builders are:
+
+-   `launch` returns a `Job`.
+-   `async` returns a `Deferred<T>`.
+-   `runBlocking` blocks the current thread.
+-   `coroutineScope` creates a structured child scope.
+-   `supervisorScope` isolates child failures.
+
+``` kotlin
+viewModelScope.launch {
+    val result = async {
+        repository.loadUser()
+    }.await()
+}
+```
+
+Interview Answer:
+> Common builders are: - launch returns a Job.
+
+---
+
+## What is coroutine cancellation?
+
+-   Cancellation is cooperative.
+-   Suspending functions usually check cancellation automatically.
+-   CPU-heavy loops should check cancellation explicitly.
+
+``` kotlin
+while (isActive) {
+    doWork()
+}
+```
+
+Avoid swallowing `CancellationException`.
+
+Interview Answer:
+> - Cancellation is cooperative.
+
+---
+
+## What is exception handling in coroutines?
+
+-   Use `try/catch` around operations where you can recover.
+-   `CoroutineExceptionHandler` is mainly for uncaught exceptions in
+    root coroutines.
+-   `supervisorScope` is useful when child failures should be isolated.
+
+``` kotlin
+viewModelScope.launch {
+    try {
+        repository.loadUser()
+    } catch (e: IOException) {
+        showNetworkError()
+    }
+}
+```
+
+Do not catch every `Throwable` blindly because cancellation must remain
+cancellable.
+
+Interview Answer:
+> - Use try/catch around operations where you can recover.
+
+---
+
+## What is Flow?
+
+-   `Flow` represents an asynchronous stream of values.
+-   It is cold by default.
+-   The producer executes when a collector starts collecting.
+
+``` kotlin
+fun users(): Flow<List<User>> = flow {
+    emit(api.getUsers())
+}
+```
+
+Each collector can trigger the upstream flow independently.
+
+Interview Answer:
+> - Flow represents an asynchronous stream of values.
+
+---
+
+## What is a cold Flow?
+
+-   A cold Flow does not start producing values until collected.
+-   Each collector gets its own execution.
+
+``` kotlin
+val flow = flow {
+    println("Started")
+    emit(1)
+}
+```
+
+Collecting twice can execute the upstream twice.
+
+Interview Answer:
+> - A cold Flow does not start producing values until collected.
+
+---
+
+## What is a hot Flow?
+
+-   A hot flow exists independently of collectors.
+-   `StateFlow` and `SharedFlow` are common hot flows.
+
+``` kotlin
+val state: StateFlow<UiState>
+```
+
+The producer can exist even when no UI is collecting.
+
+Interview Answer:
+> - A hot flow exists independently of collectors.
+
+---
+
+## What is LiveData and how does it compare with StateFlow?
+
+-   LiveData is lifecycle-aware and Android-specific.
+-   StateFlow is Kotlin/Coroutine based.
+-   StateFlow works outside Android.
+-   StateFlow provides Flow operators.
+
+For new coroutine-based applications, StateFlow is usually preferred.
+
+Interview Answer:
+> - LiveData is lifecycle-aware and Android-specific.
+
+---
+
+## How do you convert a cold Flow to a hot Flow?
+
+Use `stateIn` or `shareIn`.
+
+``` kotlin
+val users = repository.users()
+    .stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        emptyList()
+    )
+```
+
+`stateIn` creates StateFlow.
+
+`shareIn` creates SharedFlow.
+
+Interview Answer:
+> Use stateIn or shareIn.
+
+---
+
+## How do you convert a hot Flow to a cold Flow?
+
+You normally cannot turn a hot stream into a truly equivalent cold
+stream without changing its semantics.
+
+If you need independent execution per collector, expose the underlying
+cold producer instead.
+
+For example:
+
+``` kotlin
+fun users(): Flow<List<User>> = flow {
+    emit(repository.loadUsers())
+}
+```
+
+A `StateFlow` itself remains hot.
+
+Interview Answer:
+> You normally cannot turn a hot stream into a truly equivalent cold stream without changing its semantics.
+
+---
+
+## What is the difference between a suspend function and Flow?
+
+-   A `suspend` function usually returns one result.
+-   A Flow can emit multiple values over time.
+
+``` kotlin
+suspend fun getUser(): User
+
+fun observeUser(): Flow<User>
+```
+
+Use a suspend function for one-shot work and Flow for streams/state.
+
+Interview Answer:
+> - A suspend function usually returns one result.
+
+---
+
+## What happens if `searchRepositories(query)` is a suspend function?
+
+If it returns one result:
+
+``` kotlin
+val repositories = query
+    .debounce(300)
+    .distinctUntilChanged()
+    .mapLatest { query ->
+        repository.searchRepositories(query)
+    }
+```
+
+`mapLatest` is useful because a new query cancels the previous suspend
+operation.
+
+Interview Answer:
+> If it returns one result: mapLatest is useful because a new query cancels the previous suspend operation.
+
+---
+
+## What is `runBlocking` vs `runTest`?
+
+-   `runBlocking` blocks a real thread.
+-   `runTest` provides coroutine test scheduling and virtual time.
+-   Android unit tests should generally use `runTest` for coroutine
+    code.
+
+``` kotlin
+@Test
+fun testLoadUser() = runTest {
+    viewModel.loadUser()
+}
+```
+
+Use `runBlocking` mainly when bridging synchronous and coroutine code,
+not as the normal coroutine test tool.
+
+Interview Answer:
+> - runBlocking blocks a real thread.
+
+---
+
+## Why should you avoid `GlobalScope`?
+
+-   It is not lifecycle-aware.
+-   Work can outlive the feature that started it.
+-   It makes cancellation and testing harder.
+
+Prefer:
+
+``` kotlin
+viewModelScope.launch { ... }
+```
+
+or an injected application-level scope when work truly belongs to the
+application lifecycle.
+
+Interview Answer:
+> - It is not lifecycle-aware.
+
 ---
 
 ## What is cooperative cancellation?
@@ -1153,6 +2158,9 @@ Interview answer:
 > cooperate by reaching a cancellation-aware suspension point or
 > checking its active state.
 
+Interview Answer:
+> - Kotlin coroutine cancellation is cooperative.
+
 ---
 
 ## What happens when `job.cancel()` is called while `delay()` is running?
@@ -1190,6 +2198,9 @@ coroutine ends
 
 This is one reason `delay()` is safe for coroutine cancellation.
 
+Interview Answer:
+> delay is cancellation-aware.
+
 ---
 
 ## Does `delay()` block the Main thread?
@@ -1221,6 +2232,9 @@ Interview answer:
 
 > `delay()` is non-blocking suspension. `Thread.sleep()` is blocking and
 > can cause UI freezes or ANRs on Main.
+
+Interview Answer:
+> No.
 
 ---
 
@@ -1267,6 +2281,9 @@ withContext(NonCancellable) {
 
 Do not use it simply to make normal business work ignore cancellation.
 
+Interview Answer:
+> - NonCancellable is a special CoroutineContext element.
+
 ---
 
 ## Is `NonCancellable` the same as `GlobalScope`?
@@ -1307,6 +2324,9 @@ Interview answer:
 
 > `NonCancellable` changes cancellation behavior inside a block.
 > `GlobalScope` changes coroutine ownership and lifetime.
+
+Interview Answer:
+> No.
 
 ---
 
@@ -1350,6 +2370,9 @@ finally {
     }
 }
 ```
+
+Interview Answer:
+> finally normally executes during cancellation.
 
 ---
 
@@ -1398,6 +2421,9 @@ Interview answer:
 > `async` starts a child coroutine, but its purpose is to produce a
 > result. Not calling `await()` does not make it independent or detach
 > it from structured concurrency.
+
+Interview Answer:
+> They can start and execute even if you never call await.
 
 ---
 
@@ -1456,6 +2482,9 @@ Interview answer:
 > Create both `async` operations first and then await their results to
 > allow them to run concurrently.
 
+Interview Answer:
+> This is parallel/concurrent: Both operations are started before the first await.
+
 ---
 
 ## Does `async` always mean parallel execution?
@@ -1499,6 +2528,9 @@ Interview answer:
 > `async` provides concurrency. Actual parallel execution depends on the
 > dispatcher and available threads.
 
+Interview Answer:
+> No.
+
 ---
 
 ## What happens if `await()` is called immediately after `async`?
@@ -1535,6 +2567,9 @@ val result2 = second.await()
 ```
 
 This is a very common interview trap.
+
+Interview Answer:
+> Example: This is effectively sequential.
 
 ---
 
@@ -1575,6 +2610,9 @@ coroutineScope
 
 The exception is not made harmless simply because `await()` was not
 called.
+
+Interview Answer:
+> The failure cancels the parent scope.
 
 ---
 
@@ -1623,6 +2661,9 @@ child B continues
 
 Use it when sibling operations should be independent.
 
+Interview Answer:
+> supervisorScope prevents one child failure from automatically cancelling sibling children.
+
 ---
 
 ## Does `launch` exception get caught by an outer `try-catch`?
@@ -1669,45 +2710,8 @@ Interview answer:
 > failing code, or the exception must be handled through structured
 > concurrency.
 
----
-
-## How are exceptions different between `launch` and `async`?
-
-`launch` returns a `Job` and does not provide a result.
-
-``` kotlin
-launch {
-    throw Exception("Failed")
-}
-```
-
-The exception is propagated to its parent.
-
-`async` returns a `Deferred`.
-
-``` kotlin
-val deferred = async {
-    throw Exception("Failed")
-}
-```
-
-There is an important nuance:
-
-Inside a normal `coroutineScope`, the failure can still cancel the
-parent immediately.
-
-If the `Deferred` is independently supervised, the exception becomes
-observable when its result is awaited.
-
-So avoid saying:
-
-> "async always stores the exception until await."
-
-The more accurate answer is:
-
-> `async` exposes the result and exception through `Deferred`, but
-> structured concurrency still controls exception propagation. `await()`
-> is where the caller receives the failed result.
+Interview Answer:
+> This does not work as many developers expect: The launch body executes asynchronously.
 
 ---
 
@@ -1736,6 +2740,9 @@ exception is completely ignored.
 The parent can be cancelled because the `async` child failed.
 
 This is a common senior-level interview correction.
+
+Interview Answer:
+> Consider: The failure still affects the structured scope.
 
 ---
 
@@ -1781,6 +2788,9 @@ child.cancel()
 parent continues
 ```
 
+Interview Answer:
+> Output: The child is cancelled.
+
 ---
 
 ## What happens when a parent coroutine is cancelled?
@@ -1806,6 +2816,9 @@ Both children are cancelled.
 
 This is structured concurrency.
 
+Interview Answer:
+> Both children are cancelled.
+
 ---
 
 ## What happens with `launch` inside another `launch`?
@@ -1829,6 +2842,9 @@ Then the child prints later.
 The important point is that the parent coroutine does not necessarily
 wait at that exact line, but the structured parent does not complete
 until its child completes.
+
+Interview Answer:
+> The parent prints immediately.
 
 ---
 
@@ -1858,44 +2874,8 @@ GlobalScope child → continues
 
 This is why `GlobalScope` is usually avoided in Android feature code.
 
----
-
-## What is the difference between `withContext` and `launch`?
-
-`withContext`:
-
--   Changes context.
--   Suspends the current coroutine until the block completes.
--   Returns a result.
-
-``` kotlin
-val user = withContext(Dispatchers.IO) {
-    repository.loadUser()
-}
-
-println(user)
-```
-
-The `println()` happens after `loadUser()` completes.
-
-`launch`:
-
--   Creates a child coroutine.
--   Returns immediately with a `Job`.
--   Does not return the block result.
-
-``` kotlin
-launch(Dispatchers.IO) {
-    repository.loadUser()
-}
-
-println("This can execute before loadUser finishes")
-```
-
-Interview answer:
-
-> `withContext` is for switching context and waiting for the result.
-> `launch` creates a concurrent child operation.
+Interview Answer:
+> The GlobalScope coroutine is not a child of the surrounding launch.
 
 ---
 
@@ -1928,6 +2908,9 @@ coroutine pauses
      ↓
 thread can do other work
 ```
+
+Interview Answer:
+> No, not in the thread-blocking sense.
 
 ---
 
@@ -1965,6 +2948,9 @@ Important:
 
 > `Main.immediate` does not mean "always synchronous." It avoids an
 > unnecessary dispatch when already on the Main dispatcher.
+
+Interview Answer:
+> Dispatchers.Main.immediate can execute immediately when the coroutine is already running on the Main dispatcher.
 
 ---
 
@@ -2004,6 +2990,9 @@ launch(Dispatchers.Main) {
 ```
 
 This blocks Main and can cause an ANR.
+
+Interview Answer:
+> During the delay: Compare: This blocks Main and can cause an ANR.
 
 ---
 
@@ -2046,6 +3035,9 @@ Interview answer:
 > `yield()` suspends the current coroutine and gives other coroutines a
 > chance to run. It does not guarantee a specific execution order.
 
+Interview Answer:
+> yield gives other ready coroutines an opportunity to execute.
+
 ---
 
 ## What is the difference between `delay()` and `yield()`?
@@ -2068,6 +3060,9 @@ does not intentionally wait for a fixed amount of time. It gives the
 scheduler an opportunity to run other work.
 
 Both are suspension points.
+
+Interview Answer:
+> delay: suspends for at least the requested delay period.
 
 ---
 
@@ -2096,6 +3091,9 @@ withContext(Dispatchers.IO) {
 
 Avoid unnecessary context switches because they make code harder to
 reason about.
+
+Interview Answer:
+> Technically yes: But it is usually unnecessary.
 
 ---
 
@@ -2128,6 +3126,9 @@ return to original context
 
 `withContext` is sequential. The outer block waits for the inner block
 to finish.
+
+Interview Answer:
+> Execution moves: withContext is sequential.
 
 ---
 
@@ -2174,6 +3175,9 @@ Interview answer:
 > especially in tests or `main()` examples, but it should not be used to
 > block Android's Main thread.
 
+Interview Answer:
+> Yes.
+
 ---
 
 ## What happens when `runBlocking` contains a normal child `launch`?
@@ -2198,6 +3202,9 @@ Done
 ```
 
 `runBlocking` waits for its structured children before returning.
+
+Interview Answer:
+> Output is: runBlocking waits for its structured children before returning.
 
 ---
 
@@ -2228,6 +3235,9 @@ GlobalScope.launch
    ↓
 not a child
 ```
+
+Interview Answer:
+> runBlocking does not wait for the GlobalScope coroutine.
 
 ---
 
@@ -2270,6 +3280,9 @@ first { it == 1 }
 
 depending on the requirement.
 
+Interview Answer:
+> Consider: When cancel cancels the collecting coroutine, collection stops through cancellation.
+
 ---
 
 ## What happens if you catch `CancellationException` incorrectly?
@@ -2306,6 +3319,9 @@ Interview answer:
 > Never swallow `CancellationException`. Cancellation is a control
 > signal, not a normal business failure.
 
+Interview Answer:
+> This is dangerous: Because CancellationException is an Exception, this can accidentally catch cancellation.
+
 ---
 
 ## What is the tricky problem with `catch (Exception)` in coroutine code?
@@ -2338,6 +3354,9 @@ catch (e: Exception) {
 
 This is a very common senior-level interview question.
 
+Interview Answer:
+> Example: If the coroutine is cancelled during delay, the catch block can catch CancellationException.
+
 ---
 
 ## What happens if `CancellationException` is thrown manually?
@@ -2353,6 +3372,9 @@ cancellation is part of coroutine control flow.
 
 Usually you should let cancellation propagate instead of converting it
 into another exception.
+
+Interview Answer:
+> The coroutine becomes cancelled.
 
 ---
 
@@ -2384,6 +3406,9 @@ withContext(NonCancellable) {
 ```
 
 This is a useful interview combination.
+
+Interview Answer:
+> Cancellation normally propagates.
 
 ---
 
@@ -2419,6 +3444,9 @@ cleanup finishes
 coroutine completes
 ```
 
+Interview Answer:
+> No.
+
 ---
 
 ## What happens if you call `job.cancel()` and immediately call `job.join()`?
@@ -2447,60 +3475,8 @@ Interview answer:
 > `cancel()` requests cancellation. `join()` waits for the coroutine to
 > finish.
 
----
-
-## What is the difference between `cancel()` and `cancelAndJoin()`?
-
-Instead of:
-
-``` kotlin
-job.cancel()
-job.join()
-```
-
-you can use:
-
-``` kotlin
-job.cancelAndJoin()
-```
-
-It performs both operations.
-
-``` text
-cancelAndJoin()
-      ↓
-request cancellation
-      ↓
-wait for completion
-```
-
-This is useful in tests and lifecycle-sensitive code.
-
----
-
-## What happens when you call `join()` without cancelling?
-
-``` kotlin
-val job = launch {
-    delay(1000)
-    println("Done")
-}
-
-job.join()
-
-println("Finished waiting")
-```
-
-Output:
-
-``` text
-Done
-Finished waiting
-```
-
-`join()` does not cancel anything.
-
-It simply waits for the job to complete.
+Interview Answer:
+> cancel requests cancellation.
 
 ---
 
@@ -2531,6 +3507,9 @@ child.cancel()
 does not normally cancel the parent.
 
 Cancellation flows downward.
+
+Interview Answer:
+> The child is cancelled because cancellation propagates from parent to child.
 
 ---
 
@@ -2565,79 +3544,8 @@ sibling can continue
 This distinction is important when explaining `coroutineScope` vs
 `supervisorScope`.
 
----
-
-## What is a common race condition with shared mutable state?
-
-Example:
-
-``` kotlin
-var count = 0
-
-coroutineScope {
-
-    repeat(1000) {
-
-        launch(Dispatchers.Default) {
-            count++
-        }
-    }
-}
-```
-
-The final value is not guaranteed to be 1000.
-
-Why?
-
-`count++` is not one atomic operation.
-
-Conceptually:
-
-``` text
-read count
-   ↓
-add 1
-   ↓
-write count
-```
-
-Multiple threads can interleave these operations.
-
----
-
-## How do you safely update shared mutable state?
-
-Use `Mutex`:
-
-``` kotlin
-val mutex = Mutex()
-var count = 0
-
-coroutineScope {
-
-    repeat(1000) {
-
-        launch(Dispatchers.Default) {
-
-            mutex.withLock {
-                count++
-            }
-        }
-    }
-}
-```
-
-Or use atomic primitives when appropriate:
-
-``` kotlin
-val count = AtomicInteger(0)
-
-count.incrementAndGet()
-```
-
-Interview answer:
-
-> Coroutines do not automatically make shared mutable state thread-safe.
+Interview Answer:
+> Cancellation: Normal failure: With supervision: This distinction is important when explaining coroutineScope vs supervisorScope.
 
 ---
 
@@ -2669,6 +3577,9 @@ For blocking I/O, prefer:
 Dispatchers.IO
 ```
 
+Interview Answer:
+> Yes.
+
 ---
 
 ## Does switching to `Dispatchers.IO` automatically make blocking code safe?
@@ -2686,6 +3597,9 @@ The worker thread is still blocked while the operation runs.
 
 The benefit is that you are blocking an I/O worker rather than the Main
 thread.
+
+Interview Answer:
+> It protects the Main thread, but it does not make the operation magically non-blocking.
 
 ---
 
@@ -2709,6 +3623,9 @@ CPU-heavy work → Default
 Blocking I/O    → IO
 UI work         → Main
 ```
+
+Interview Answer:
+> It can consume CPU dispatcher threads while they are waiting for blocking I/O.
 
 ---
 
@@ -2736,6 +3653,9 @@ still cancelled
 
 `withContext` changes context elements such as dispatcher, but it does
 not detach the coroutine from its parent.
+
+Interview Answer:
+> Changing dispatcher does not reset cancellation.
 
 ---
 
@@ -2779,6 +3699,9 @@ lifecycleScope.launch {
 }
 ```
 
+Interview Answer:
+> coroutineScope: The child has a clear parent and lifecycle.
+
 ---
 
 ## What is the difference between `viewModelScope` and `lifecycleScope`?
@@ -2809,79 +3732,8 @@ Interview answer:
 > UI lifecycle; business/state work owned by the ViewModel belongs in
 > `viewModelScope`.
 
----
-
-## What is the difference between `launch`, `async`, and `withContext`?
-
-  -----------------------------------------------------------------------
-  API                     Returns                 Main purpose
-  ----------------------- ----------------------- -----------------------
-  `launch`                `Job`                   Start concurrent work
-                                                  without a result
-
-  `async`                 `Deferred<T>`           Start concurrent work
-                                                  that produces a result
-
-  `withContext`           `T`                     Switch context and wait
-                                                  for result
-  -----------------------------------------------------------------------
-
-Example:
-
-``` kotlin
-launch {
-    saveUser()
-}
-```
-
-``` kotlin
-val user = async {
-    loadUser()
-}.await()
-```
-
-``` kotlin
-val user = withContext(Dispatchers.IO) {
-    loadUser()
-}
-```
-
----
-
-## What is a common hidden question about sequential API calls?
-
-Suppose you have:
-
-``` kotlin
-val user = loadUser()
-val orders = loadOrders(user.id)
-```
-
-This is sequential because the second call depends on the first result.
-
-You cannot make it fully parallel if `orders` needs `user.id`.
-
-But if the calls are independent:
-
-``` kotlin
-val user = async {
-    loadUser()
-}
-
-val settings = async {
-    loadSettings()
-}
-
-val finalUser = user.await()
-val finalSettings = settings.await()
-```
-
-They can run concurrently.
-
-Interview answer:
-
-> Parallelism should be based on data dependencies, not simply on using
-> `async`.
+Interview Answer:
+> viewModelScope is tied to the ViewModel.
 
 ---
 
@@ -2929,6 +3781,9 @@ await(second)
 already completed
 ```
 
+Interview Answer:
+> second can finish first.
+
 ---
 
 ## Does calling `await()` cancel other `async` operations?
@@ -2946,6 +3801,9 @@ Calling `first.await()` only waits for the first result.
 
 `second` continues unless the parent scope is cancelled or another
 failure causes cancellation.
+
+Interview Answer:
+> No.
 
 ---
 
@@ -2988,6 +3846,9 @@ supervisorScope {
 }
 ```
 
+Interview Answer:
+> In a normal coroutineScope: If api1 fails: If the operations are independent and should not cancel each other, consider: ---
+
 ---
 
 ## What is the hidden trap with `supervisorScope` and `async`?
@@ -3019,6 +3880,9 @@ supervisorScope {
 Supervision does not automatically convert a failed operation into a
 successful result.
 
+Interview Answer:
+> supervisorScope prevents sibling cancellation, but you still need to handle the failed Deferred.
+
 ---
 
 ## What happens if a coroutine is cancelled before it starts executing?
@@ -3039,6 +3903,9 @@ Do not rely on the body always running.
 If an operation must happen before cancellation can occur, structure the
 operation appropriately rather than assuming `launch` starts
 synchronously.
+
+Interview Answer:
+> Depending on scheduling, the coroutine may be cancelled before its body gets a chance to execute.
 
 ---
 
@@ -3078,6 +3945,9 @@ A senior answer should say:
 > invocation. The dispatcher determines when the coroutine gets
 > execution.
 
+Interview Answer:
+> Not necessarily.
+
 ---
 
 ## What happens with `launch(start = CoroutineStart.LAZY)`?
@@ -3113,6 +3983,9 @@ val result = deferred.await()
 
 `await()` starts the lazy coroutine.
 
+Interview Answer:
+> A lazy coroutine does not start until it is needed.
+
 ---
 
 ## What is the difference between `CoroutineStart.DEFAULT` and `LAZY`?
@@ -3142,6 +4015,9 @@ Interview answer:
 
 > Lazy start is useful when you want to create a coroutine now but
 > decide later whether and when to start it.
+
+Interview Answer:
+> Default: The coroutine is scheduled immediately.
 
 ---
 
@@ -3192,37 +4068,8 @@ finally {
 
 if the cleanup must suspend and complete.
 
----
-
-## What is the difference between `cancel()` and throwing an exception?
-
-Cancellation:
-
-``` kotlin
-job.cancel()
-```
-
-means:
-
-> This operation is no longer needed.
-
-Normal exception:
-
-``` kotlin
-throw IOException()
-```
-
-means:
-
-> The operation failed.
-
-Cancellation should normally not be treated as an application error.
-
-``` kotlin
-catch (e: CancellationException) {
-    throw e
-}
-```
+Interview Answer:
+> Question: Will Cleanup execute?
 
 ---
 
@@ -3248,6 +4095,9 @@ viewModelScope.launch {
 
 Use `CoroutineExceptionHandler` for last-resort handling/logging of
 uncaught exceptions.
+
+Interview Answer:
+> CoroutineExceptionHandler is mainly for uncaught exceptions at coroutine boundaries.
 
 ---
 
@@ -3287,1215 +4137,10 @@ try {
 }
 ```
 
----
-
-## Kotlin Operators and Language Keywords
-
-## What is the safe-call `?.` operator in Kotlin?
-
-* `?.` safely accesses a property or function when the object can be `null`.
-* If the object is `null`, the expression returns `null` instead of throwing an exception.
-* Very common when handling API responses and nullable Android data.
-
-```kotlin
-val name: String? = null
-
-val length = name?.length
-
-println(length) // null
-```
+Interview Answer:
+> Example: The handler can observe an uncaught exception from launch.
 
 ---
-
-## What is the Elvis `?:` operator in Kotlin?
-
-* `?:` provides a default value when the left side is `null`.
-* It is useful for setting fallback values.
-
-```kotlin
-val name: String? = null
-
-val displayName = name ?: "Guest"
-
-println(displayName) // Guest
-```
-
----
-
-## What is the not-null assertion `!!` operator?
-
-* `!!` tells Kotlin that a nullable value is definitely not `null`.
-* If the value is actually `null`, it throws `NullPointerException`.
-* Avoid it when possible.
-
-```kotlin
-val name: String? = null
-
-val length = name!!.length // NullPointerException
-```
-
----
-
-## What is the `==` operator in Kotlin?
-
-* `==` checks structural equality.
-* It internally uses `equals()`.
-
-```kotlin
-val user1 = User("Kiran")
-val user2 = User("Kiran")
-
-println(user1 == user2)
-```
-
-For a `data class`, this returns `true` because the values are equal.
-
-```kotlin
-data class User(val name: String)
-```
-
----
-
-## What is the `===` operator in Kotlin?
-
-* `===` checks whether two references point to the exact same object.
-* `==` checks values, while `===` checks references.
-
-```kotlin
-val a = String(charArrayOf('H', 'i'))
-val b = String(charArrayOf('H', 'i'))
-
-println(a == b)   // true
-println(a === b)  // false
-```
-
----
-
-## What is the `is` operator in Kotlin?
-
-* `is` checks the type of an object.
-* Kotlin automatically smart-casts the object after the check.
-
-```kotlin
-fun printValue(value: Any) {
-    if (value is String) {
-        println(value.length)
-    }
-}
-```
-
-After `value is String`, Kotlin treats `value` as a `String`.
-
----
-
-## What is the `as` operator in Kotlin?
-
-* `as` performs an explicit type cast.
-* If the object cannot be converted to that type, it throws `ClassCastException`.
-
-```kotlin
-val value: Any = "Kotlin"
-
-val text = value as String
-
-println(text.length)
-```
-
----
-
-## What is the `as?` safe-cast operator?
-
-* `as?` safely casts an object.
-* If the cast fails, it returns `null` instead of throwing an exception.
-
-```kotlin
-val value: Any = 10
-
-val text = value as? String
-
-println(text) // null
-```
-
----
-
-## What is the `in` operator?
-
-* `in` checks whether a value exists inside a range or collection.
-* `!in` checks that it does not exist.
-
-```kotlin
-val number = 5
-
-if (number in 1..10) {
-    println("Valid")
-}
-```
-
-With a collection:
-
-```kotlin
-val names = listOf("Kiran", "John")
-
-if ("Kiran" in names) {
-    println("Found")
-}
-```
-
----
-
-## What is the range `..` operator?
-
-* `..` creates a range including both start and end values.
-
-```kotlin
-for (i in 1..5) {
-    println(i)
-}
-```
-
-Output:
-
-```text
-1
-2
-3
-4
-5
-```
-
----
-
-## What is the `..<` operator?
-
-* `..<` creates a range that excludes the end value.
-* It is called the open-ended range operator.
-
-```kotlin
-for (i in 1..<5) {
-    println(i)
-}
-```
-
-Output:
-
-```text
-1
-2
-3
-4
-```
-
----
-
-## What are `&&` and `||` operators?
-
-* `&&` means logical AND.
-* `||` means logical OR.
-* They are commonly used in conditions.
-
-```kotlin
-if (age >= 18 && isVerified) {
-    println("Allowed")
-}
-```
-
-```kotlin
-if (isAdmin || isManager) {
-    println("Access granted")
-}
-```
-
----
-
-## What is the `!` operator?
-
-* `!` reverses a Boolean value.
-
-```kotlin
-val isLoggedIn = false
-
-if (!isLoggedIn) {
-    println("Please login")
-}
-```
-
----
-
-## What is the `::` operator in Kotlin?
-
-* `::` creates a reference to a function, property, or class.
-* It is commonly used with higher-order functions.
-
-```kotlin
-fun printName(name: String) {
-    println(name)
-}
-
-val action = ::printName
-
-action("Kiran")
-```
-
-It is also commonly used with Android/Compose callbacks:
-
-```kotlin
-Button(onClick = ::onButtonClick)
-```
----
-
-## Why are Kotlin classes `final` by default?
-
-* Kotlin makes classes final by default to prevent accidental inheritance.
-* It makes the class behavior easier to reason about.
-* Use `open` only when inheritance is intentionally supported.
-
-```kotlin
-class User
-```
-
-This cannot be inherited:
-
-```kotlin
-// class Admin : User() // Error
-```
-
----
-
-## What does the `override` keyword mean?
-
-* `override` means a child class is replacing an `open` parent implementation.
-* The parent member must be `open`.
-
-```kotlin
-open class Parent {
-    open fun show() {
-        println("Parent")
-    }
-}
-
-class Child : Parent() {
-    override fun show() {
-        println("Child")
-    }
-}
-```
-
----
-
-## What does the `final` keyword mean?
-
-* `final` prevents further overriding.
-* Kotlin members are final by default.
-
-```kotlin
-open class Parent {
-
-    open fun test() {}
-}
-
-class Child : Parent() {
-
-    final override fun test() {}
-}
-
-class GrandChild : Child() {
-
-    // Cannot override test()
-}
-```
-
----
-## What does the `inline` keyword mean in Kotlin?
-
-* `inline` tells the compiler to replace the function call with the function body.
-* It is mainly useful for higher-order functions.
-* It can reduce lambda/object allocation overhead.
-
-```kotlin
-inline fun execute(block: () -> Unit) {
-    block()
-}
-
-execute {
-    println("Hello")
-}
-```
-
-Conceptually, the compiler can place the lambda code directly at the call site.
-
----
-
-## Why is `inline` useful with higher-order functions?
-
-Without inline:
-
-```kotlin
-fun execute(block: () -> Unit) {
-    block()
-}
-```
-
-The lambda may require an object/function instance.
-
-With inline:
-
-```kotlin
-inline fun execute(block: () -> Unit) {
-    block()
-}
-```
-
-The compiler can inline the function and lambda at the call site.
-
----
-
-## What is `noinline` in Kotlin?
-
-* `noinline` prevents a lambda parameter from being inlined.
-* It is useful when you need to store or pass the lambda as an object.
-
-```kotlin
-inline fun execute(
-    block1: () -> Unit,
-    noinline block2: () -> Unit
-) {
-    block1()
-
-    val savedBlock = block2
-    savedBlock()
-}
-```
-
-Here:
-
-* `block1` is inlined.
-* `block2` remains a normal function object.
-
----
-
-## What is `crossinline` in Kotlin?
-
-* `crossinline` prevents a lambda from using a non-local `return`.
-* It is useful when the lambda is executed from another execution context such as a callback.
-
-```kotlin
-inline fun execute(crossinline block: () -> Unit) {
-
-    val runnable = Runnable {
-        block()
-    }
-
-    runnable.run()
-}
-```
-
-Without `crossinline`, Kotlin cannot safely allow a non-local return because the lambda executes inside another function/callback.
-
----
-
-## What is a non-local return in Kotlin?
-
-* A lambda passed to an inline function can normally return from the surrounding function.
-* This is called a non-local return.
-
-```kotlin
-inline fun execute(block: () -> Unit) {
-    block()
-}
-
-fun test() {
-
-    execute {
-        return
-    }
-
-    println("This will not execute")
-}
-```
-
-The `return` returns from `test()`, not just the lambda.
-
----
-
-## Why does `crossinline` prevent non-local return?
-
-Consider:
-
-```kotlin
-inline fun execute(crossinline block: () -> Unit) {
-
-    val runnable = Runnable {
-        block()
-    }
-
-    runnable.run()
-}
-```
-
-Now this is not allowed:
-
-```kotlin
-execute {
-    return
-}
-```
-
-Because the lambda is executed inside `Runnable`, Kotlin cannot allow the lambda to return from the outer function.
-
----
-
-## What is `reified` in Kotlin?
-
-* `reified` allows an inline generic function to access the generic type at runtime.
-* Normally generic types are erased at runtime.
-* `reified` is therefore commonly used for type checks and reflection.
-
-```kotlin
-inline fun <reified T> isType(value: Any): Boolean {
-    return value is T
-}
-```
-
-Usage:
-
-```kotlin
-println(isType<String>("Kotlin")) // true
-println(isType<Int>("Kotlin"))    // false
-```
-
----
-
-## Why must `reified` be used with `inline`?
-
-Normally:
-
-```kotlin
-fun <T> check(value: Any): Boolean {
-    // value is T // Not allowed
-    return false
-}
-```
-
-The type `T` is erased at runtime.
-
-With `reified`:
-
-```kotlin
-inline fun <reified T> check(value: Any): Boolean {
-    return value is T
-}
-```
-
-The compiler knows the actual type at the call site.
-
----
-
-## What is a practical use case for `reified`?
-
-A common use case is avoiding `Class<T>` parameters.
-
-```kotlin
-inline fun <reified T> create(): T {
-    return T::class.java.getDeclaredConstructor().newInstance()
-}
-```
-
-Usage:
-
-```kotlin
-val user = create<User>()
-```
-
-Instead of:
-
-```kotlin
-val user = create(User::class.java)
-```
-
----
-
-## What does `lateinit` mean in Kotlin?
-
-* `lateinit` allows you to initialize a non-null variable later.
-* It can only be used with mutable properties.
-* It is commonly used with dependency injection and Android view binding.
-
-```kotlin
-lateinit var repository: UserRepository
-```
-
-Later:
-
-```kotlin
-repository = UserRepository()
-```
-
-If you access it before initialization, Kotlin throws:
-
-```text
-UninitializedPropertyAccessException
-```
-
----
-
-## What is the difference between `lateinit` and `lazy`?
-
-| `lateinit`                                    | `lazy`                              |
-| --------------------------------------------- | ----------------------------------- |
-| Usually used with `var`                       | Used with `val`                     |
-| You initialize it manually                    | Kotlin initializes it automatically |
-| No default value                              | Has initialization block            |
-| Access before initialization causes exception | Initializes on first access         |
-
-Example:
-
-```kotlin
-lateinit var repository: UserRepository
-
-val database by lazy {
-    createDatabase()
-}
-```
-
----
-
-## What does `lazy` do in Kotlin?
-
-* `lazy` delays initialization until the property is accessed for the first time.
-* The value is then cached.
-
-```kotlin
-val database by lazy {
-    println("Creating database")
-    createDatabase()
-}
-```
-
-The database is not created until:
-
-```kotlin
-database
-```
-
-is accessed.
-
----
-
-## What does the `object` keyword mean?
-
-* `object` creates a singleton object.
-* Only one instance of the object exists.
-
-```kotlin
-object Logger {
-
-    fun log(message: String) {
-        println(message)
-    }
-}
-```
-
-Usage:
-
-```kotlin
-Logger.log("Hello")
-```
-
-You don't need to create an instance:
-
-```kotlin
-// Logger() // Not allowed
-```
-
----
-
-## What is a `companion object`?
-
-* A `companion object` provides class-level members.
-* It is Kotlin's common alternative to Java's `static`.
-
-```kotlin
-class User {
-
-    companion object {
-
-        fun create(): User {
-            return User()
-        }
-    }
-}
-```
-
-Usage:
-
-```kotlin
-val user = User.create()
-```
-
----
-
-## What is the difference between `object` and `companion object`?
-
-`object` creates a standalone singleton:
-
-```kotlin
-object Logger
-```
-
-`companion object` belongs to a class:
-
-```kotlin
-class User {
-
-    companion object {
-        fun create() = User()
-    }
-}
-```
-
----
-
-## What does the `data` keyword mean?
-
-* `data class` is mainly used to hold data.
-* Kotlin automatically generates useful functions such as `equals()`, `hashCode()`, `toString()`, and `copy()`.
-
-```kotlin
-data class User(
-    val id: Int,
-    val name: String
-)
-```
-
-You can do:
-
-```kotlin
-val user1 = User(1, "Kiran")
-val user2 = user1.copy(name = "John")
-```
-
----
-
-## What is a `sealed class`?
-
-* A sealed class represents a restricted hierarchy.
-* The compiler knows all direct subclasses.
-* It is very useful for UI state and API results.
-
-```kotlin
-sealed class Result {
-
-    data class Success(val data: String) : Result()
-
-    data class Error(val message: String) : Result()
-
-    data object Loading : Result()
-}
-```
-
-Usage:
-
-```kotlin
-when (result) {
-    is Result.Success -> println(result.data)
-    is Result.Error -> println(result.message)
-    Result.Loading -> println("Loading")
-}
-```
-
-The compiler can check that all states are handled.
-
----
-
-## What is the difference between `sealed class` and `enum class`?
-
-* `enum` represents a fixed set of constants.
-* `sealed` represents a fixed hierarchy of different types/states.
-
-Enum:
-
-```kotlin
-enum class Status {
-    LOADING,
-    SUCCESS,
-    ERROR
-}
-```
-
-Sealed class:
-
-```kotlin
-sealed class Result {
-    data object Loading : Result()
-    data class Success(val data: String) : Result()
-    data class Error(val message: String) : Result()
-}
-```
-
-Use sealed classes when different states need different data.
-
----
-
-## What does the `abstract` keyword mean?
-
-* `abstract` defines something that must be implemented by a child class.
-* An abstract class cannot be instantiated directly.
-
-```kotlin
-abstract class Animal {
-
-    abstract fun sound()
-}
-```
-
-Child class:
-
-```kotlin
-class Dog : Animal() {
-
-    override fun sound() {
-        println("Bark")
-    }
-}
-```
-
----
-
-## What is an interface in Kotlin?
-
-* An interface defines a contract that classes can implement.
-* A class can implement multiple interfaces.
-
-```kotlin
-interface ClickListener {
-
-    fun onClick()
-}
-
-class Button : ClickListener {
-
-    override fun onClick() {
-        println("Clicked")
-    }
-}
-```
-
----
-
-## What does the `by` keyword mean in Kotlin?
-
-* `by` is used for delegation.
-* It allows another object to handle implementation.
-
-```kotlin
-interface Repository {
-    fun getData()
-}
-
-class RepositoryImpl : Repository {
-    override fun getData() {
-        println("Data")
-    }
-}
-
-class ViewModel(
-    private val repository: Repository
-) : Repository by repository
-```
-
-Now `ViewModel` automatically delegates `getData()` to `repository`.
-
----
-
-## What is property delegation using `by lazy`?
-
-```kotlin
-val database by lazy {
-    createDatabase()
-}
-```
-
-Here, `lazy` controls how the property is initialized.
-
-The `by` keyword connects the property to the delegate.
-
----
-
-## What does the `operator` keyword mean?
-
-* `operator` allows a class to define custom behavior for operators such as `+`, `-`, `[]`, and `==`.
-
-```kotlin
-data class Point(
-    val x: Int,
-    val y: Int
-) {
-    operator fun plus(other: Point): Point {
-        return Point(
-            x + other.x,
-            y + other.y
-        )
-    }
-}
-```
-
-Now:
-
-```kotlin
-val p1 = Point(10, 20)
-val p2 = Point(5, 5)
-
-val result = p1 + p2
-```
-
-The `+` operator internally calls `plus()`.
-
----
-
-## What does the `infix` keyword mean?
-
-* `infix` allows a function to be called without parentheses and dot notation.
-* It makes certain APIs more readable.
-
-```kotlin
-infix fun Int.add(value: Int): Int {
-    return this + value
-}
-```
-
-Usage:
-
-```kotlin
-val result = 10 add 5
-```
-
-Instead of:
-
-```kotlin
-val result = 10.add(5)
-```
----
-
-## What does the `const` keyword mean?
-
-* `const` defines a compile-time constant.
-* It can be used only with primitive types and `String`.
-* It must be a top-level property or inside an `object`/`companion object`.
-
-```kotlin
-const val BASE_URL = "https://example.com"
-```
-
-Another example:
-
-```kotlin
-object Constants {
-    const val TIMEOUT = 30
-}
-```
-
----
-
-## What is the difference between `const val` and normal `val`?
-
-```kotlin
-const val API_VERSION = "v1"
-
-val currentTime = System.currentTimeMillis()
-```
-
-`const val` is known at compile time.
-
-`val` is read-only after initialization but its value can be determined at runtime.
-
----
-
-## What does `typealias` mean?
-
-* `typealias` gives another name to an existing type.
-* It does not create a new type.
-
-```kotlin
-typealias UserId = String
-
-val id: UserId = "123"
-```
-
-It is especially useful for complex function types:
-
-```kotlin
-typealias OnUserClick = (User) -> Unit
-```
-
-Now:
-
-```kotlin
-fun setListener(listener: OnUserClick) {
-}
-```
-
-is easier to read.
-
----
-
-## What does the `tailrec` keyword mean?
-
-* `tailrec` tells the compiler that a recursive function can be optimized into a loop.
-* It helps avoid stack overflow for supported tail-recursive functions.
-
-```kotlin
-tailrec fun countDown(value: Int) {
-
-    if (value == 0) return
-
-    println(value)
-
-    countDown(value - 1)
-}
-```
-
-The compiler can optimize the recursion instead of creating a new stack frame for every call.
-
----
-
-## What are custom `get` and `set` accessors?
-
-* `get` controls how a property is read.
-* `set` controls how a property is changed.
-
-```kotlin
-var name: String = ""
-    get() = field.uppercase()
-    set(value) {
-        field = value.trim()
-    }
-```
-
-Usage:
-
-```kotlin
-name = " Kiran "
-
-println(name) // KIRAN
-```
-
----
-
-## What does `this` mean in Kotlin?
-
-* `this` refers to the current object.
-
-```kotlin
-class User(
-    private val name: String
-) {
-
-    fun printName() {
-        println(this.name)
-    }
-}
-```
-
----
-
-## What does `super` mean in Kotlin?
-
-* `super` refers to the parent class implementation.
-
-```kotlin
-open class Parent {
-    open fun show() {
-        println("Parent")
-    }
-}
-
-class Child : Parent() {
-
-    override fun show() {
-        super.show()
-        println("Child")
-    }
-}
-```
-
-Output:
-
-```text
-Parent
-Child
-```
-
----
-
-## What is the `when` expression in Kotlin?
-
-* `when` is Kotlin's powerful replacement for many `if-else` and `switch` statements.
-* It can return a value.
-
-```kotlin
-val result = when (status) {
-    "SUCCESS" -> "Done"
-    "ERROR" -> "Failed"
-    else -> "Loading"
-}
-```
-
-It is especially useful with sealed classes:
-
-```kotlin
-when (result) {
-    is Result.Success -> showData(result.data)
-    is Result.Error -> showError(result.message)
-    Result.Loading -> showLoading()
-}
-```
-
----
-
-## What does `return` do?
-
-* `return` exits a function and optionally returns a value.
-
-```kotlin
-fun getName(): String {
-    return "Kiran"
-}
-```
-
----
-
-## What does `break` do?
-
-* `break` stops the current loop.
-
-```kotlin
-for (i in 1..10) {
-    if (i == 5) break
-    println(i)
-}
-```
-
-Output:
-
-```text
-1
-2
-3
-4
-```
-
----
-
-## What does `continue` do?
-
-* `continue` skips the current iteration and moves to the next one.
-
-```kotlin
-for (i in 1..5) {
-    if (i == 3) continue
-    println(i)
-}
-```
-
-Output:
-
-```text
-1
-2
-4
-5
-```
-
----
-
-## What does the `open` keyword mean in Kotlin and why is it the default opposite of Java?
-
-* Kotlin classes and members are `final` by default.
-* `open` explicitly allows inheritance or overriding.
-* This makes inheritance intentional instead of accidental.
-* Java classes and methods are inheritable by default unless marked `final`.
-
-```kotlin
-open class Animal {
-
-    open fun sound() {
-        println("Animal sound")
-    }
-}
-
-class Dog : Animal() {
-
-    override fun sound() {
-        println("Bark")
-    }
-}
-```
-
-Without `open`:
-
-```kotlin
-class Animal
-```
-
-This cannot be inherited.
-
-**Android interview point:** Some mocking frameworks or Android frameworks may require classes to be open. Plugins such as Kotlin's all-open plugin can also make selected classes open automatically.
-
----
-
-## What is a Kotlin `value class` and when do you use it on Android?
-
-* A `value class` creates a distinct type around one value.
-* It gives compile-time type safety without necessarily creating a separate object at runtime.
-* It is useful when two values have the same underlying type but different meanings.
-
-```kotlin
-@JvmInline
-value class UserId(val value: String)
-
-@JvmInline
-value class OrderId(val value: String)
-```
-
-Now this is type-safe:
-
-```kotlin
-fun loadUser(id: UserId) {
-    // ...
-}
-
-val userId = UserId("123")
-
-loadUser(userId)
-```
-
-You cannot accidentally pass:
-
-```kotlin
-val orderId = OrderId("123")
-
-// loadUser(orderId) // Compilation error
-```
-
-Instead of:
-
-```kotlin
-fun loadUser(id: String)
-fun loadOrder(id: String)
-```
-
-you get:
-
-```kotlin
-fun loadUser(id: UserId)
-fun loadOrder(id: OrderId)
-```
-
-**Important:** Value classes are not guaranteed to be allocation-free in every situation. They can be boxed when used with generics, nullable types, arrays, reflection, or certain APIs.
-
----
-
-## Coroutine Cancellation, Context, and Concurrency
 
 ## What is a `CoroutineScope` and how should Android apps structure scopes?
 
@@ -4533,7 +4178,8 @@ GlobalScope.launch {
 
 because the work can outlive the screen or feature that started it.
 
-**Interview point:** Scope answers **"How long should this coroutine live?"**
+Interview Answer:
+> Scope answers **"How long should this coroutine live?"** ---
 
 ---
 
@@ -4571,7 +4217,8 @@ lifecycleScope.launch {
 }
 ```
 
-**Interview point:** Coroutines provide the asynchronous execution model; `Flow` provides a stream of asynchronous values.
+Interview Answer:
+> Coroutines provide the asynchronous execution model; `Flow` provides a stream of asynchronous values. ---
 
 ---
 
@@ -4614,6 +4261,9 @@ Simple way to remember:
 > **Context = configuration**
 > **Scope = ownership/lifecycle**
 
+Interview Answer:
+> CoroutineContext A collection of elements that describes how a coroutine executes.
+
 ---
 
 ## What does `withContext()` do?
@@ -4647,6 +4297,9 @@ viewModelScope.launch { // Main
 }
 ```
 
+Interview Answer:
+> withContext changes the coroutine context for a specific block.
+
 ---
 
 ## What is a `suspend` function?
@@ -4676,6 +4329,9 @@ suspend fun readFile(): String {
 **Important interview point:**
 
 > `suspend` means the function can suspend. It does not mean the function runs on a background thread.
+
+Interview Answer:
+> A suspend function can suspend execution without blocking the underlying thread.
 
 ---
 
@@ -4715,69 +4371,8 @@ fun `loads user`() = runTest {
 }
 ```
 
-**Interview point:**
-
-> `runBlocking` blocks a thread; `runTest` provides coroutine-aware testing with virtual time.
-
----
-
-## How do you handle cancellation and structured concurrency in a multi-layer app?
-
-* Cancellation should flow from the owner of the work down through the layers.
-* Avoid launching independent coroutines that outlive their owner.
-* Use structured concurrency so child coroutines belong to a parent.
-
-Example:
-
-```kotlin
-viewModelScope.launch {
-
-    repository.loadUser()
-}
-```
-
-When the ViewModel is cleared:
-
-```text
-ViewModel cancelled
-       ↓
-Coroutine cancelled
-       ↓
-Repository operation cancelled
-       ↓
-Network operation can be cancelled
-```
-
-For parallel work:
-
-```kotlin
-viewModelScope.launch {
-
-    coroutineScope {
-        val user = async {
-            repository.getUser()
-        }
-
-        val orders = async {
-            repository.getOrders()
-        }
-
-        showData(user.await(), orders.await())
-    }
-}
-```
-
-Both `async` operations belong to the parent coroutine.
-
-Use `NonCancellable` only when an operation genuinely must finish:
-
-```kotlin
-withContext(NonCancellable) {
-    saveCriticalData()
-}
-```
-
-Do not use it simply to ignore normal cancellation.
+Interview Answer:
+> > `runBlocking` blocks a thread; `runTest` provides coroutine-aware testing with virtual time. ---
 
 ---
 
@@ -4830,6 +4425,9 @@ suspend fun load() {
 does not automatically mean IO.
 
 A suspend function can still execute on Main if called from Main.
+
+Interview Answer:
+> A coroutine does not physically move its existing thread.
 
 ---
 
@@ -4886,121 +4484,8 @@ launch {
 }
 ```
 
----
-
-## What is the difference between `coroutineScope` and `supervisorScope`?
-
-* `coroutineScope` propagates child failure to the parent and can cancel sibling work.
-* `supervisorScope` allows children to fail independently.
-
-Example:
-
-```kotlin
-coroutineScope {
-
-    launch {
-        throw Exception("Failed")
-    }
-
-    launch {
-        loadOrders()
-    }
-}
-```
-
-If the first child fails, the scope fails and the sibling is cancelled.
-
-With:
-
-```kotlin
-supervisorScope {
-
-    launch {
-        throw Exception("Failed")
-    }
-
-    launch {
-        loadOrders()
-    }
-}
-```
-
-the second child can continue.
-
-**Interview point:**
-
-> Use `coroutineScope` when child tasks are dependent on each other. Use `supervisorScope` when they should fail independently.
-
----
-
-## What is the difference between structured concurrency and `ConcurrentHashMap`?
-
-These solve completely different problems.
-
-### Structured concurrency
-
-Controls:
-
-* Coroutine lifetime
-* Cancellation
-* Parent-child relationships
-* Failure propagation
-
-```kotlin
-viewModelScope.launch {
-    repository.loadData()
-}
-```
-
-### `ConcurrentHashMap`
-
-Controls:
-
-* Concurrent access to a shared map
-* Thread-safe reads and updates
-
-```kotlin
-val cache = ConcurrentHashMap<String, User>()
-
-cache["123"] = user
-```
-
-Think of it as:
-
-```text
-Structured concurrency
-→ "Who owns this work?"
-
-ConcurrentHashMap
-→ "How can multiple threads safely access this map?"
-```
-
-They are not alternatives.
-
----
-
-## Does `ConcurrentHashMap` make all operations thread-safe?
-
-* Individual map operations are thread-safe.
-* A sequence of operations can still have a race condition.
-
-For example:
-
-```kotlin
-if (!cache.containsKey(id)) {
-    cache[id] = user
-}
-```
-
-Another thread can modify the map between `containsKey()` and `put()`.
-
-Prefer atomic operations when appropriate:
-
-```kotlin
-cache.putIfAbsent(id, user)
-```
-
-**Interview point:** Thread-safe collection does not automatically make a multi-step business operation atomic.
+Interview Answer:
+> A thread has its own stack and operating-system resources.
 
 ---
 
@@ -5029,5 +4514,39 @@ For a simple cache:
 ```kotlin
 private val cache = ConcurrentHashMap<String, User>()
 ```
+
+Interview Answer:
+> Use Mutex when multiple operations must be treated as one atomic coroutine operation.
+
+---
+
+## Why should Dispatchers be injectable?
+
+Hardcoding dispatchers makes unit tests harder to control.
+
+Instead:
+
+```kotlin
+class Repository(
+    private val ioDispatcher: CoroutineDispatcher
+)
+```
+
+Production:
+
+```kotlin
+Dispatchers.IO
+```
+
+Test:
+
+```kotlin
+StandardTestDispatcher(testScheduler)
+```
+
+This makes asynchronous behavior deterministic.
+
+Interview Answer:
+> Hardcoding dispatchers makes unit tests harder to control.
 
 ---
