@@ -4971,15 +4971,15 @@ Interview Answer:
 ## Jetpack Compose Performance Issue — Excessive Recompositions
 Modern app fully built in Jetpack Compose. Users report: UI feels laggy during interactions, animations stutter, CPU spikes during scrolling. Recomposition count is very high; even small state updates trigger full-screen recomposition. Recent changes: shared UI state in ViewModel, large data objects passed to composables, multiple `collectAsState()` calls added. **How would you debug and fix?**
 
-Treat this as a **state architecture problem**, not a UI rendering problem. Compose performance is directly tied to how state is structured and consumed.
+> Treat this as a **state architecture problem**, not a UI rendering problem. Compose performance is directly tied to how state is structured and consumed.
 
-**1. Measure Recompositions Before Changing Code**
+#### Measure Recompositions Before Changing Code
 - **Layout Inspector** (Android Studio) → "Recomposition counts" view — shows how many times each composable recomposed in a session
 - **Composition tracing** — `Trace` calls + Perfetto to see recompositions in system trace
 - **CPU Profiler** — confirm CPU spikes correlate with scrolls/interactions
 - Goal: identify *which* composables recompose, and whether it is **localized** (good) or **cascading** (bad)
 
-**2. Identify Root Causes in This Scenario**
+#### Identify Root Causes in This Scenario
 
 | Root Cause | Symptom |
 |-----------|---------|
@@ -4989,8 +4989,50 @@ Treat this as a **state architecture problem**, not a UI rendering problem. Comp
 | Missing `remember` | Expensive object re-created every recomposition |
 | Lambdas recreated in composable body | Child composables never skip even with same params |
 
-Interview Answer:
-> Modern app fully built in Jetpack Compose.
+#### Identify Root Causes 
+- Passing unstable or large objects as parameters 
+- Shared state causing global recomposition 
+- Multiple collectAsState() causing redundant updates 
+- Missing remember or incorrect state scoping 
+
+#### Fix State Design 
+- Hoist and Scope State Properly 
+- Avoid global state for entire screen 
+- Break state into smaller, independent pieces 
+- Use Stable Data Structures 
+- Ensure models are immutable 
+- Avoid passing mutable lists or objects 
+- Avoid Passing Large Objects 
+Instead of: 
+- Passing full UI model 
+Pass: 
+- Only required fields 
+
+#### Optimize State Collection
+- collectAsState() calls 
+Use: 
+- Combine flows in ViewModel 
+- Expose single UI state
+
+#### Use remember and derivedStateOf 
+- Cache expensive calculations 
+- Avoid recomputation 
+
+#### Reduce Recomposition Scope 
+- Break UI into smaller composables 
+- Ensure only affected composables recompose 
+
+#### Advanced Optimization 
+- Use key() for stable identity 
+- Avoid lambda recreation inside composables 
+
+#### Validation 
+- Compare recomposition counts 
+- Measure FPS improvement 
+- Track CPU usage 
+
+Interview Answer: 
+> Compose performance issues are not UI problems — they are state architecture  problems, and solving them requires precise control over state flow and recomposition boundaries.
 ---
 ## What is Jetpack Compose?
 Jetpack Compose is Android’s modern UI toolkit that lets you build UI using Kotlin code instead of XML.
@@ -5992,9 +6034,6 @@ Interview Answer:
 
 The repository should define the consistency behavior rather than
 leaving it to the UI.
-
-Interview Answer:
-> Do not pretend the operation completed locally.
 ---
 ## How would you design a banking account dashboard?
 ```text
@@ -6016,9 +6055,6 @@ Room    API
 -   Sensitive data is minimized and protected.
 -   Errors are represented explicitly.
 -   Tests cover business logic, integration, and critical UI flows.
-
-Interview Answer:
-> UI observes immutable StateFlow.
 ---
 ## How do you investigate a crash?
 A good process is:
@@ -6043,9 +6079,6 @@ Monitor release
 
 Look for crash clustering rather than treating every stack trace
 independently.
-
-Interview Answer:
-> A good process is: Look for crash clustering rather than treating every stack trace independently.
 ---
 ## How would you design an Android payment flow?
 ```text
@@ -6073,10 +6106,8 @@ Important considerations:
 -   Auditability
 -   Monitoring
 
-For payment requests, never blindly retry after an ambiguous timeout.
-
 Interview Answer:
-> Important considerations: Authentication Authorization Input validation Secure networking Idempotency Transaction state Timeout handling Error recovery Auditability Monitoring For payment requests, never blindly retry after an ambiguous timeout.
+> For payment requests, never blindly retry after an ambiguous timeout.
 ---
 ## How would you handle a token refresh?
 Typical flow:
@@ -6100,9 +6131,6 @@ refresh requests.
 
 Use a coordinated refresh mechanism so only one refresh occurs and other
 requests wait for the result.
-
-Interview Answer:
-> Typical flow: But concurrency matters.
 ---
 ## How would you design a large Android application for multiple teams?
 Use modularization with clear ownership.
@@ -6139,31 +6167,116 @@ sealed interface UiState {
 
 For more complex screens, model partial states rather than forcing
 everything into only Loading/Success/Error.
-
-Interview Answer:
-> Use explicit state.
 ---
 ## Is there any scenario where onDestoy() will be called without calling onPause() and onStop()?
 If we call finish() method inside onCreate() of our Activity, then onDestroy() will be called directly.
 
+---
+## Scenario: Crash Spike Due to Lifecycle Issues (Fragment + Coroutines) 
+You are working on a modular app with multiple teams contributing. 
+After a recent release: 
+- Crash rate increased significantly 
+- Common crash: 
+IllegalStateException: Fragment not attached to a context 
+Observations: 
+- Occurs during navigation or screen rotation 
+- App uses: 
+○ Fragments 
+○ Coroutines 
+○ ViewBinding 
+Recent changes: 
+- Async API calls added inside fragments 
+- Navigation refactoring 
+How would you debug and fix this? 
 
+> I would approach this as a lifecycle misalignment problem between UI components and async operations. 
 
-> If we call finish() method inside onCreate() of our Activity, then onDestroy() will be called directly.
+#### Understand Crash Context
+- When does crash occur? → navigation, rotation 
+- Which thread? → usually main thread 
+- What operation triggers it? → UI update after async call 
+#### Root Cause Identification 
+Typical issue: 
+- Coroutine launched in Fragment scope 
+- Fragment destroyed 
+- Coroutine still running 
+- On completion → tries to access UI or context 
+#### Fix Strategy — Lifecycle Awareness 
+a. Use viewLifecycleOwner Scope 
+```kotlin
+lifecycleScope.launch { ... } 
+Use: 
+viewLifecycleOwner.lifecycleScope.launch { ... } 
+This ensures coroutine is cancelled when view is destroyed. 
+```
+b. Use repeatOnLifecycle 
+```kotlin
+For flows: 
+viewLifecycleOwner.lifecycleScope.launch { 
+repeatOnLifecycle(Lifecycle.State.STARTED) { 
+flow.collect { ... } 
+} 
+}
+```
+c. Avoid Direct Context Usage 
+Before accessing context: 
+- Check if fragment is attached 
+- Or use requireContext() only when safe 
+d. Cancel Jobs Properly 
+- Store coroutine jobs 
+Follow  Krishanu Nandan 
+https://www.linkedin.com/in/krishanu-android/
+- Cancel them in onDestroyView() if needed 
+#### Navigation Safety 
+- Avoid triggering navigation after Fragment is destroyed 
+- Use safe navigation patterns 
+#### Architectural Fix 
+- Move business logic to ViewModel 
+- Fragment should only observe state 
+#### Validation 
+- Rapid navigation 
+- Screen rotation 
+- Background/foreground 
+- Ensure no crashes 
 
-Interview Answer:
-> If we call finish() method inside onCreate() of our Activity, then onDestroy() will be called directly.
+Interview Answer: 
+> This issue arises from mixing asynchronous work with lifecycle-unaware components, and the fix requires strict lifecycle-scoped execution. 
 ---
 ## Scenario: Deep Link Handling Breaking Navigation
-E-commerce app. Users report: deep links open the wrong screen, app crashes when opened via link, back navigation behaves incorrectly. App uses Navigation Component, multiple entry points (home, product, offer pages), some deep links have query params. **How would you fix?**
-Treat this as a **navigation state reconstruction problem**. Deep links bypass normal user flow — the app must reconstruct a correct, coherent back stack from a cold or warm start.
+E-commerce app. Users report: deep links open the wrong screen, app crashes when opened via link, back navigation behaves incorrectly. App uses Navigation Component, multiple entry points (home, product, offer pages), some deep links have query params. How would you fix?
 
-**1. Understand the Three Deep Link Entry Scenarios**
-Each behaves differently and must be tested separately:
-- **Cold start (app not running):** App process created → deep link intent delivered → must construct full back stack
-- **Warm start (app in background):** Existing task restored → deep link intent delivered → must navigate to correct destination
-- **App already in foreground:** Current task active → `onNewIntent()` called → must navigate without duplicating back stack
+> Treat this as a **navigation state reconstruction problem**. Deep links bypass normal user flow — the app must reconstruct a correct, coherent back stack from a cold or warm start.
 
-**2. Validate Deep Link Declaration in Manifest**
+#### Understand the Three Deep Link Entry Scenarios
+
+Cold start (app not running)
+```text
+App process created
+ ↓
+deep link intent delivered
+ ↓
+must construct full back stack
+```
+Warm start (app in background)
+```text
+Existing task restored
+ ↓
+deep link intent delivered
+ ↓
+must navigate to correct
+```
+App already in foreground
+```text
+Current task active
+ ↓
+`onNewIntent()` called
+ ↓
+must navigate without duplicating back stack
+```
+
+#### Validate Deep Link Declaration in Manifest
+-   `autoVerify="true"` enables **App Links** (no disambiguation dialog on Android 6+)
+-   Without verified App Links, Android may show a chooser or open in browser
 ```xml
 <activity android:name=".MainActivity">
     <intent-filter android:autoVerify="true">
@@ -6174,10 +6287,10 @@ Each behaves differently and must be tested separately:
     </intent-filter>
 </activity>
 ```
-- `autoVerify="true"` enables **App Links** (no disambiguation dialog on Android 6+)
-- Without verified App Links, Android may show a chooser or open in browser
 
-**3. Declare Deep Links in Navigation Graph**
+#### Declare Deep Links in Navigation Graph
+-   Navigation Component automatically constructs the back stack from `<deepLink>` declarations
+-   Argument types are validated at build time (Safe Args)
 ```xml
 <!-- nav_graph.xml -->
 <fragment android:id="@+id/productDetailFragment" ...>
@@ -6188,10 +6301,10 @@ Each behaves differently and must be tested separately:
     <argument android:name="productId" app:argType="string"/>
 </fragment>
 ```
-- Navigation Component automatically constructs the back stack from `<deepLink>` declarations
-- Argument types are validated at build time (Safe Args)
 
-**4. Validate Parameters Before Navigation** _(prevent crashes)_
+#### Validate Parameters Before Navigation
+-   Deep link URLs from notifications, SMS, or QR codes can be malformed or tampered
+-   Always validate: non-null, correct format, within expected range
 ```kotlin
 // In NavController / ViewModel: never trust raw deep link params
 val productId = args.productId
@@ -6201,10 +6314,10 @@ if (productId.isBlank() || productId.length > 50) {
     return
 }
 ```
-- Deep link URLs from notifications, SMS, or QR codes can be malformed or tampered
-- Always validate: non-null, correct format, within expected range
 
-**5. Fix Back Stack for Cold Start**
+#### Fix Back Stack for Cold Start
+- `NavDeepLinkBuilder` adds Home → Category → Product to the back stack automatically
+- User pressing Back from a cold-start deep link navigates correctly, not to empty task
 ```kotlin
 // NavDeepLinkBuilder: manually construct back stack for cold-start deep links
 val pendingIntent = NavDeepLinkBuilder(context)
@@ -6213,10 +6326,8 @@ val pendingIntent = NavDeepLinkBuilder(context)
     .setArguments(bundleOf("productId" to productId))
     .createPendingIntent()
 ```
-- `NavDeepLinkBuilder` adds Home → Category → Product to the back stack automatically
-- User pressing Back from a cold-start deep link navigates correctly, not to empty task
 
-**6. Handle `onNewIntent` for Foreground Case**
+#### Handle `onNewIntent` for Foreground Case
 ```kotlin
 // MainActivity
 override fun onNewIntent(intent: Intent) {
@@ -6225,7 +6336,7 @@ override fun onNewIntent(intent: Intent) {
 }
 ```
 
-**7. Avoid Duplicate Fragments on Back Stack**
+#### Avoid Duplicate Fragments on Back Stack
 ```kotlin
 // When navigating to deep link destination that may already be in stack
 navController.navigate(deepLinkUri, NavOptions.Builder()
@@ -6234,7 +6345,7 @@ navController.navigate(deepLinkUri, NavOptions.Builder()
 )
 ```
 
-**One-time events pattern:**
+One-time events pattern:
 ```kotlin
 // ViewModel
 private val _events = Channel<UiEvent>(Channel.BUFFERED)
@@ -6248,70 +6359,32 @@ viewLifecycleOwner.lifecycleScope.launch {
 }
 ```
 
-Interview Answer:
-> E-commerce app.
----
-## STAR — “backend returned 200 but payment failed”?
-Tell a **true** story: how you **detected** envelope parsing, **stopped** false retries, **aligned** with backend on **codes**, and **measured** outcome. Avoid **invented** “**30%**” metrics unless they are **yours**.
+#### Prevent Crashes
+- Validate data before navigation 
+- Handle missing parameters gracefully 
 
-
-> Interviewers want **instrumentation + contract** fixes, not **blame**.
-
-Interview Answer:
-> Tell a **true** story: how you **detected** envelope parsing, **stopped** false retries, **aligned** with backend on **codes**, and **measured** outcome.
----
-## Scenario: OTA/DFU fails mid-transfer on many phones — what goes wrong?
-**Link drops**, **133**, **bootloader** switching **address** or **GATT table** (treat as **new** device), **bonding** cache showing **stale services**—**`close()`**, **rescan**, **refresh** strategy (risky hidden APIs), **PRN/flow control** so the device **RAM** is not overrun. **Foreground** + **keep-awake** policy during DFU.
-
-
-> **DFU** is a **state machine** problem: **bootloader transition**, **cache**, and **flow control** dominate.
----
-### Useful links
-
-- [BLE demo (author reference in source material):](https://github.com/KiranDhiyad/BLE_Demo)
-- [Android BLE overview:](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview)
-
-> Senior BLE is **half protocol + queue discipline**, **half Android lifecycle + radio reality**—speak with **debug** stories and **metrics**.
----
-- [Learn more](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview)
+#### Testing Strategy 
+- App closed 
+- App in background 
+- App in foreground 
 
 Interview Answer:
-> *Link drops**, **133**, **bootloader** switching **address** or **GATT table** (treat as **new** device), **bonding** cache showing **stale services**—**`close()`**, **rescan**, **refresh** strategy (risky hidden APIs), **PRN/flow control** so the device **RAM** is not overrun.
----
-## Production incident handling
-Show **calm steps**: assess **user impact**, **mitigate** fast, **communicate**, then **root cause** and **prevention** (flags, tests, runbooks). **Blameless** postmortems build trust.
-
-
-> They want **customer focus** and **clear communication**, not panic.
-
-Interview Answer:
-> Show **calm steps**: assess **user impact**, **mitigate** fast, **communicate**, then **root cause** and **prevention** (flags, tests, runbooks).
----
-## What is the Scenario in which only onDestroy is called for an activity without onPause() and onStop()?
-If `finish()` is called in the `onCreate` method of an activity, the system will invoke `onDestroy()` method directly.
-
-Commonly used in:
-- Notifications – to open an activity when user taps it
-- AlarmManager – to run something at a scheduled time
-- Broadcasts – to send data in the future
-
-Interview Answer:
-> If `finish()` is called in the `onCreate` method of an activity, the system will invoke `onDestroy()` method directly.
+> Deep linking is not just routing — it’s about reconstructing app state correctly, and requires careful navigation and validation logic.
 ---
 ## Scenario: API Layer Instability — Retries, Failures, Token Expiry
-You are on a fintech app with millions of daily transactions. Users report: random API failures, some requests succeed on retry, occasional logouts. Monitoring shows: HTTP 401 and 500 spikes, duplicate API calls, token refresh logic recently changed. Constraints: no duplicate financial transactions, backend has rate limits, network is unstable (Tier-2/3 cities). **How would you design and fix this?**
+You are on a fintech app with millions of daily transactions. Users report: random API failures, some requests succeed on retry, occasional logouts. Monitoring shows: HTTP 401 and 500 spikes, duplicate API calls, token refresh logic recently changed. Constraints: no duplicate financial transactions, backend has rate limits, network is unstable (Tier-2/3 cities). How would you design and fix this?
 
-Treat this as a **network reliability + distributed consistency** problem — not a simple "add retry" fix, especially with financial data.
+> Treat this as a **network reliability + distributed consistency** problem — not a simple "add retry" fix, especially with financial data.
 
-**1. Categorize Failures First** _(don't mix causes)_
-- **Client-side:** timeouts, retry storms, duplication bugs
-- **Auth:** 401 → token expiry, refresh race condition
-- **Server-side:** 500 errors, rate limit responses (429)
-- Separating these prevents one fix masking another problem
+#### Categorize Failures First
+-   **Client-side:** timeouts, retry storms, duplication bugs
+-   **Auth:** 401 → token expiry, refresh race condition
+-   **Server-side:** 500 errors, rate limit responses (429)
+-   Separating these prevents one fix masking another problem
 
-**2. Fix Token Refresh — Single-Flight Pattern** _(root cause of 401 storms)_
-- Multiple requests fail with 401 simultaneously → each independently triggers token refresh → **race condition** → multiple refresh calls → all fail or produce duplicate tokens
-- **Fix:** One active refresh request at a time; others suspend and wait for the result
+#### Fix Token Refresh — Single-Flight Pattern
+-   Multiple requests fail with 401 simultaneously → each independently triggers token refresh → **race condition** → multiple refresh calls → all fail or produce duplicate tokens
+-   **Fix:** One active refresh request at a time; others suspend and wait for the result
 
 ```kotlin
 class TokenAuthenticator(private val tokenRepo: TokenRepository) : Authenticator {
@@ -6335,19 +6408,19 @@ class TokenAuthenticator(private val tokenRepo: TokenRepository) : Authenticator
 }
 ```
 
-**3. Prevent Duplicate Financial Transactions — Idempotency Keys**
-- Generate a **UUID per transaction request** on the client side before the call
-- Include it as a header: `X-Idempotency-Key: <uuid>`
-- Server deduplicates: if same key received again → return cached result, do not re-process
-- Even on network retry, the transaction processes exactly once
+#### Prevent Duplicate Financial Transactions — Idempotency Keys
+-   Generate a **UUID per transaction request** on the client side before the call
+-   Include it as a header: `X-Idempotency-Key: <uuid>`
+-   Server deduplicates: if same key received again → return cached result, do not re-process
+-   Even on network retry, the transaction processes exactly once
 
-**4. Retry Strategy — Not All APIs Are Equal**
-- **GET requests and safe POSTs:** retry with exponential backoff
-- **Financial mutation APIs:** only retry with idempotency key; never blind retry
-- Retry config: `maxRetries = 3`, backoff = 2^attempt seconds, jitter to spread load
-- Stop retry if: 4xx (except 401/408/429) → likely client error, not transient
+#### Retry Strategy — Not All APIs Are Equal
+-   **GET requests and safe POSTs:** retry with exponential backoff
+-   **Financial mutation APIs:** only retry with idempotency key; never blind retry
+-   Retry config: `maxRetries = 3`, backoff = 2^attempt seconds, jitter to spread load
+-   Stop retry if: 4xx (except 401/408/429) → likely client error, not transient
 
-**5. OkHttp Network Layer Hardening**
+#### OkHttp Network Layer Hardening
 ```kotlin
 OkHttpClient.Builder()
     .connectTimeout(10, TimeUnit.SECONDS)
@@ -6359,78 +6432,78 @@ OkHttpClient.Builder()
     .build()
 ```
 
-**6. Rate Limit Awareness**
-- On 429 response: read `Retry-After` header, back off that long before retrying
-- Queue pending requests in memory during rate-limit window
-- Exponential backoff prevents retry storms that amplify rate limit problems
+#### Rate Limit Awareness
+-   On 429 response: read `Retry-After` header, back off that long before retrying
+-   Queue pending requests in memory during rate-limit window
+-   Exponential backoff prevents retry storms that amplify rate limit problems
 
-**7. Offline Request Queue** _(for poor connectivity markets)_
-- Queue mutation requests locally in Room with status `PENDING`
-- WorkManager job retries with network constraint — sends when connected
-- Mark transaction as `SYNCING` in UI while queued
+#### Offline Request Queue _(for poor connectivity markets)_
+-   Queue mutation requests locally in Room with status `PENDING`
+-   WorkManager job retries with network constraint — sends when connected
+-   Mark transaction as `SYNCING` in UI while queued
 
-**8. Observability**
-- Structured logging per request: `requestId`, `attemptNumber`, `statusCode`, `durationMs`
-- Track metrics: retry rate · 401 frequency · duplicate request detection · token refresh cadence
-- Alert if retry rate exceeds 5% of requests — early warning of upstream issues
+#### Observability
+-   Structured logging per request: `requestId`, `attemptNumber`, `statusCode`, `durationMs`
+-   Track metrics: retry rate · 401 frequency · duplicate request detection · token refresh cadence
+-   Alert if retry rate exceeds 5% of requests — early warning of upstream issues
 
-**9. Validation**
-- Simulate: 401 mid-session · network drop · concurrent requests all expiring at once
-- Verify: no duplicate charges in transaction log · correct token refresh exactly once
-- Load test: 1000 concurrent requests all expiring → single refresh, clean recovery
+#### Validation
+-   Simulate: 401 mid-session · network drop · concurrent requests all expiring at once
+-   Verify: no duplicate charges in transaction log · correct token refresh exactly once
+-   Load test: 1000 concurrent requests all expiring → single refresh, clean recovery
 
-
+Interview Answer:
 > Fintech API reliability = **idempotency + single-flight auth + controlled retry**. Every financial mutation must be safe to retry without side effects.
-
-Interview Answer:
-> You are on a fintech app with millions of daily transactions.
----
-## STAR — SDK caused compliance or instability risk?
-Use **STAR** with **real** numbers you own: **Situation** (what shipped / what alarm fired), **Task** (your ownership), **Action** (consent gating, vendor ticket, abstraction, rollback), **Result** (metric or audit outcome). Do **not** invent **RBI/PhonePe** specifics—speak to **your** regulatory context.
-
-
-> Interviewers want **process + measurable** outcome, not **vendor blame** alone.
-
-Interview Answer:
-> Use **STAR** with **real** numbers you own: **Situation** (what shipped / what alarm fired), **Task** (your ownership), **Action** (consent gating, vendor ticket, abstraction, rollback), **Result** (metric or audit outcome).
 ---
 ## Scenario: Slow Build Time in Multi-Module Project
 Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local build ~10–12 minutes. Small changes trigger full rebuilds. Developers are losing productivity. **How would you optimize?**
 
 Treat this as a **build system scalability problem**, not just "add more RAM to the CI box."
 
-**1. Measure Build Bottlenecks First** _(data beats guessing)_
+#### Measure Build Bottlenecks First _(data beats guessing)_
 - Run `./gradlew build --scan` → get a **Gradle Build Scan** URL
 - Identify: slowest tasks · which tasks are not incremental · cache miss rate
 - Check if CI and local share any remote cache (often they don't)
 
-**2. Identify Root Causes**
+#### Identify Root Causes
 - Poor module boundaries → one change invalidates many modules
 - Too many inter-module `implementation` dependencies → wide invalidation graph
 - `KAPT` annotation processing → slow, non-incremental by nature
 - Non-incremental tasks that run every time (e.g. custom Gradle tasks doing file I/O)
 
-**3. Modularization Strategy**
+#### Modularization Strategy
 - Feature-based module structure: `:feature:login`, `:feature:dashboard`, `:core:network`
 - Reduce coupling: features should depend on `:core` interfaces, not each other
 - Eliminate circular dependencies (use `./gradlew :module:dependencies` to audit)
 
-**4. Incremental Build Optimization**
+#### Incremental Build Optimization
 - Ensure `kapt.incremental.apt=true` in `gradle.properties`
 - Avoid modifying shared/core modules frequently — changes ripple everywhere
 - Enable `org.gradle.caching=true` in `gradle.properties`
 
-**5. Replace KAPT with KSP**
+#### Replace KAPT with KSP
 - KAPT compiles Java stubs → slow and non-incremental
 - KSP (Kotlin Symbol Processing) is 2× faster for supported libraries (Room, Hilt, Moshi)
 - Migrate one library at a time; most major libs support KSP now
 
-**6. Enable Build Cache**
-```properties
+#### Enable Build Cache
+- Local + Remote cache 
+- Avoid recompilation of unchanged code 
 
-```
-Interview Answer:
-> Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local build ~10–12 minutes.
+#### Parallel Execution 
+- Enable parallel builds 
+- Optimize Gradle workers 
+
+#### Dependency Optimization 
+- Remove unused dependencies 
+- Avoid large libraries 
+
+#### CI Optimization 
+- Use remote build cache 
+- Run only affected modules 
+
+Conclusion:
+> Build time issues are usually due to poor modular boundaries and lack of incremental build optimization, and solving them requires both architectural and tooling improvements. 
 ---
 ## How do you investigate an ANR?
 First determine what the main thread was doing.
@@ -6600,7 +6673,6 @@ Treat this as a **progressive memory leak** (lifecycle mismanagement), not an im
 - Code review checklist: "Does this hold a Context longer than its scope?"
 - Architectural boundary rule: no UI references in data layer components
 
-
 > Memory leaks are **systemic lifecycle mismanagement** — fix at the architectural level, not one-off patches. LeakCanary in CI is your canary in the coal mine.
 
 Interview Answer:
@@ -6609,62 +6681,61 @@ Interview Answer:
 ## Scenario: Battery Drain Due to Background Work
 You are working on a fitness tracking app. Users report significant battery drain; the app appears at the top of battery usage. The app uses location tracking, background sync, and periodic API polling. **How would you diagnose and fix?**
 
-Treat this as a **resource efficiency + background execution policy** problem, not a single bug.
+> Treat this as a **resource efficiency + background execution policy** problem, not a single bug.
 
-**1. Measure Before Changing Anything**
+#### Measure Before Changing Anything
 - **Battery Historian** — visualize wake locks, alarms, wakeups over time
 - **Android Profiler (CPU / Network)** — identify which code is running and when
 - Identify: CPU wake-up frequency · network calls per hour · wake lock duration
 
-**2. Identify Problematic Components**
+#### Identify Problematic Components**
 - Frequent location updates (high accuracy at short intervals drains most)
 - Continuous foreground service running even when not needed
 - Aggressive periodic polling (pulling data every minute when push notifications could serve)
 
-**3. Fix Strategy**
+#### Fix Strategy
 
-**a. Replace Services with WorkManager for deferrable tasks**
+### Replace Services with WorkManager for deferrable tasks
 - WorkManager respects Doze, App Standby, and battery constraints
 - Use `Constraints.Builder()` — run only on Wi-Fi, when charging, etc.
 - Only use Foreground Service when **active user-facing** work is happening (e.g. live workout tracking)
 
-**b. Optimize Location Updates**
+### Optimize Location Updates
 - Switch from `PRIORITY_HIGH_ACCURACY` → `PRIORITY_BALANCED_POWER_ACCURACY` when precision not critical
 - Reduce update interval; use geofencing for region-based triggers instead of continuous polling
 - Use `FusedLocationProviderClient` (not raw GPS)
 
-**c. Eliminate Polling — Use Push**
+### Eliminate Polling — Use Push
 - Replace periodic API polling with FCM push notifications
 - Batch network calls — consolidate multiple small requests into one scheduled job
 - Use `WorkManager` periodic work (min 15 min interval) instead of `AlarmManager` for non-critical sync
 
-**d. Respect Doze Mode**
+### Respect Doze Mode
 - Do not use `WAKE_LOCK` unless absolutely necessary
 - Use `setAndAllowWhileIdle()` only for critical alarms
 - Never keep CPU awake for background work that can be deferred
 
-**4. Validation**
+### Validation
 - Measure battery stats before/after using Battery Historian
 - Run 8-hour real-device soak test; compare mAh consumed
 - Confirm app dropped from top battery consumers list
 
-
-> Battery drain = **misusing background execution**. Align with Android's power management system — WorkManager, bounded location, and push over poll.
-
 Interview Answer:
-> You are working on a fitness tracking app.
+> Battery drain = **misusing background execution**. Align with Android's power management system — WorkManager, bounded location, and push over poll.
 ---
 ## Scenario: Large List Data Loading Causing OOM
 Marketplace app. Users report crashes when scrolling large product lists. Observations: entire dataset loaded at once, images are high-resolution, no pagination. **How would you fix?**
 
-Treat this as a **memory management + data loading strategy** problem — you must never load unbounded data into memory.
+> Treat this as a **memory management + data loading strategy** problem — you must never load unbounded data into memory.
 
-**1. Identify Root Causes**
+#### Identify Root Causes
 - Entire dataset in memory → linear memory growth → OOM
 - High-res images decoded at original size → single image can be 10–20 MB in RAM
 - No lazy loading → RecyclerView has nothing to throw away
 
-**2. Introduce Pagination with Paging 3**
+#### Introduce Pagination with Paging 3
+- Load data in pages (e.g. 20 items at a time)
+- Paging 3 handles: loading states · retry · Room integration · LazyColumn/RecyclerView adapter
 ```kotlin
 // PagingSource example
 class ProductPagingSource(private val api: ProductApi) : PagingSource<Int, Product>() {
@@ -6677,42 +6748,28 @@ class ProductPagingSource(private val api: ProductApi) : PagingSource<Int, Produ
     }
 }
 ```
-- Load data in pages (e.g. 20 items at a time)
-- Paging 3 handles: loading states · retry · Room integration · LazyColumn/RecyclerView adapter
 
-**3. Optimize Images**
+#### Optimize Images
 - Never decode at original resolution for a thumbnail — use `inSampleSize` or image loaders
 - Use Coil/Glide with explicit `size()` constraint matching the view dimensions
 - Use WebP or AVIF format — same quality, 30–50% smaller than JPEG/PNG
 - Implement placeholder + loading states so UI stays responsive
 
-**4. RecyclerView Optimization**
+#### RecyclerView Optimization
 - `setHasStableIds(true)` if IDs are stable — improves DiffUtil efficiency
 - Use `DiffUtil.ItemCallback` for surgical updates (no `notifyDataSetChanged()`)
 - Avoid creating new objects in `onBindViewHolder` — allocate in `onCreateViewHolder`
 
-**5. Memory Cache Strategy**
+#### Memory Cache Strategy
 - Use disk cache + bounded in-memory cache (Glide/Coil do this by default)
 - Set explicit max memory cache size relative to available heap
 - Clear cache on `onTrimMemory(TRIM_MEMORY_RUNNING_CRITICAL)`
 
-**6. Validation**
+#### Validation
 - Profile with Android Studio Memory Profiler during scroll
 - Confirm heap stays bounded (does not grow with list size)
 - Test with 10,000-item dataset on a low-end device (2 GB RAM)
 
-
+Interview Answer:
 > OOM in lists = **unbounded data + unbounded images**. Paging 3 for data, downsized image loading, and bounded caches for memory — control flow at every layer.
-
-Interview Answer:
-> Marketplace app.
----
-## STAR for leadership — what must be real?
-Use **your** **Situation / Task / Action / Result**; **replace** LLM placeholders (“**zero** critical issues”, “**90%**”) with **numbers you own** or **honest qualitative** outcomes. Interviewers probe **depth**—fabricated metrics **fail**.
-
-
-> One **true** story beats five **polished** fictions.
-
-Interview Answer:
-> Use **your** **Situation / Task / Action / Result**; **replace** LLM placeholders (“**zero** critical issues”, “**90%**”) with **numbers you own** or **honest qualitative** outcomes.
 ---
