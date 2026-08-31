@@ -6218,14 +6218,11 @@ flow.collect { ... }
 } 
 }
 ```
-c. Avoid Direct Context Usage 
-Before accessing context: 
+#### Avoid Direct Context Usage Before accessing context: 
 - Check if fragment is attached 
 - Or use requireContext() only when safe 
-d. Cancel Jobs Properly 
-- Store coroutine jobs 
-Follow  Krishanu Nandan 
-https://www.linkedin.com/in/krishanu-android/
+- Cancel Jobs Properly 
+- Store coroutine jobs
 - Cancel them in onDestroyView() if needed 
 #### Navigation Safety 
 - Avoid triggering navigation after Fragment is destroyed 
@@ -6624,51 +6621,51 @@ You are working on a large-scale social media app (~20M MAU). Users report: app 
 
 Treat this as a **progressive memory leak** (lifecycle mismanagement), not an immediate crash — degradation correlates with user interaction over time.
 
-**1. Confirm Leak vs Expected Growth**
+#### Confirm Leak vs Expected Growth
 - Memory grows linearly without release → leak
 - Memory grows then stabilizes → expected caching behavior (not a bug)
-- Tools: **Android Studio Memory Profiler**, heap dumps at intervals, **LeakCanary** (auto-detection)
+- Tools: **Android Studio Memory Profiler**, heap dumps at intervals **LeakCanary** (auto-detection)
 - If objects are retained after screen destruction → confirms leak
 
-**2. Identify Leak Source via Heap Analysis**
+#### Identify Leak Source via Heap Analysis
 - Capture heap dump → analyze **dominator tree** (which objects retain memory) and **reference chain** (why GC can't collect them)
 - Typical suspects here: RecyclerView Adapter holding Activity/Fragment reference · ViewHolder retaining heavy objects · Singleton analytics manager holding `Context` · Image loader caching incorrectly
 
-**3. Investigate RecyclerView Layer** _(issue prominent on feed screen)_
+#### Investigate RecyclerView Layer
 - Is adapter holding a strong reference to `Context`?
 - Are listeners cleared in `onViewRecycled()`?
 - Does ViewHolder store any long-lived references?
 - Are new objects being created inside `onBindViewHolder()` on every scroll pass?
 
-**4. Analyze Singleton / Shared Components** _(analytics manager is the prime suspect)_
+#### Analyze Singleton / Shared Components
 - Is it storing Activity context instead of Application context?
 - Is it holding references to views, callbacks, or lifecycle owners?
 - **Fix:** Replace Activity context with `applicationContext`; never store UI references in a singleton
 
-**5. Image Loading & Caching Layer**
+#### Image Loading & Caching Layer
 - Are images cleared properly on view recycle?
 - Is image loading lifecycle-aware (e.g. Glide tied to Fragment lifecycle)?
 - Validate cache size and eviction policy — unbounded cache = leak
 
-**6. GC Pressure Optimization** _(high GC frequency = excessive allocations)_
+#### GC Pressure Optimization
 - Reduce object creation inside the scroll path
 - Reuse objects where possible (object pools for frequent allocations)
 - Avoid unnecessary boxing/unboxing
 
-**7. Fix Strategy Summary**
+#### Fix Strategy Summary
 - Remove strong references causing leaks
 - Enforce proper lifecycle cleanup (`onViewRecycled`, `onDestroyView`)
 - Optimize adapter and ViewHolder — no Context refs, no listeners left attached
 - Fix singleton misuse — Application context, no UI refs
 - Tune image caching — bounded, lifecycle-aware
 
-**8. Validation**
+#### Validation
 - Compare heap dumps before and after fix
 - Memory stabilizes over extended session
 - GC frequency drops measurably
 - Run long-session soak test (30–60 min on real device)
 
-**9. Long-Term Prevention**
+#### Long-Term Prevention
 - LeakCanary integrated in all debug builds (CI gates on new leaks)
 - Code review checklist: "Does this hold a Context longer than its scope?"
 - Architectural boundary rule: no UI references in data layer components
