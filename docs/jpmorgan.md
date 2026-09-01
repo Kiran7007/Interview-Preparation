@@ -343,6 +343,7 @@ Kotlin eliminates `NullPointerException` (NPE) by making all types non-nullable 
 
 ## What is a data class in Kotlin?
 A data class is a special class made specifically for storing data. It automatically gives you useful methods like:
+
 - `toString()` – so you can print the object easily
 - `equals()` and `hashCode()` – to compare objects or use in HashMap/Set
 - `copy()` – to create a new object with some properties changed
@@ -357,29 +358,15 @@ data class User(val name: String, val age: Int)
 
 ## What are Primary and Secondary Constructors in Kotlin?
 
-#### Primary Constructor
-- The main constructor of a class.
-- Defined in the class header.
-- Can directly initialize properties.
-
-*Usage in Android:*
-- Pass data directly when creating an object.
-
-*Key Points:*
-- There can be only one primary constructor.
-- Can include `init` block for additional initialization.
-
-#### Secondary Constructor
-- Optional additional constructors for different ways to create an object.
-- Defined inside the class body with a `constructor` keyword.
-- Must delegate to the primary constructor (if primary exists) using `: this(...)`.
-
-*Usage in Android:*
-- Useful when you want flexible object creation in different scenarios.
-
-*Key Points:*
-- You can have multiple secondary constructors.
-- Helps when default values or alternative initialization is needed.
+| Primary Constructor  | Secondary Constructor                                                    |
+| --- | --- |
+| The main constructor of a class.                           | Optional additional constructors for different ways to create an object. |
+| Defined in the class header.                               | Defined inside the class body using the `constructor` keyword.           |
+| Can directly initialize properties.                        | Used for alternative initialization scenarios.                           |
+| Pass data directly when creating an object.                | Can provide different ways to create an object.                          |
+| There can be only one primary constructor.                 | You can have multiple secondary constructors.                            |
+| Can include an `init` block for additional initialization. | Must delegate to the primary constructor using `: this(...)`.            |
+| Best suited for the main required parameters.              | Useful for alternative initialization.                                   |
 
 ---
 
@@ -420,22 +407,22 @@ class Repository(
 ## `lazy` vs `lateinit`
 
 - `lazy`: initializes on first access and supports immutable `val`.
-- `lateinit`: deferred initialization of a mutable non-null property, mainly reference types.
-- Accessing an uninitialized `lateinit` property throws an exception.
+- `lateinit`: deferred initialization of a mutable non-null property, mainly reference types. Accessing an uninitialized `lateinit` property throws an exception.
+
+---
 
 ## Sealed class vs sealed interface
 
-- Both restrict known direct subtypes.
-- Sealed class can carry constructor/state and allows only one superclass.
-- Sealed interface allows a class to implement multiple interfaces and is useful for modeling orthogonal state/capability hierarchies.
+| Feature | Sealed Class | Sealed Interface |
+|---|---|---|
+| **Purpose** | Models a restricted class hierarchy | Models a restricted interface hierarchy |
+| **Inheritance** | A class can extend only one class | A class can implement multiple interfaces |
+| **State / Constructor** | Can have constructors and maintain state | Interfaces generally don't hold instance state or constructors |
+| **Multiple inheritance** | ❌ Cannot extend multiple classes | ✅ Can implement multiple interfaces |
+| **Use case** | Best when subtypes share common state or implementation | Best for modeling states, capabilities, or orthogonal hierarchies |
+| **Example** | `sealed class Result` | `sealed interface UiState` |
 
-```kotlin
-sealed interface UiState {
-    data object Loading : UiState
-    data class Success(val data: List<Item>) : UiState
-    data class Error(val message: String) : UiState
-}
-```
+---
 
 ## What is variance?
 
@@ -511,12 +498,12 @@ while (isActive) {
 
 ## Cold Flow vs Hot Flow
 
-### Cold Flow
+#### Cold Flow
 
 - Starts execution for each collector.
 - Example: a regular `flow {}`.
 
-### Hot Flow
+#### Hot Flow
 
 - Exists independently of collectors.
 - Examples: `StateFlow`, `SharedFlow`.
@@ -555,7 +542,7 @@ sealed interface UiEvent {
 
 ## `stateIn`
 
-Converts a cold Flow into StateFlow.
+Converts a cold `Flow` into `StateFlow`.
 
 ```kotlin
 val uiState = repository.observe()
@@ -568,7 +555,16 @@ val uiState = repository.observe()
 
 ## `shareIn`
 
-Converts a cold Flow into SharedFlow.
+Converts a cold `Flow` into a `SharedFlow`.
+
+```kotlin
+val events = repository.observeEvents()
+    .shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        replay = 1
+    )
+```
 
 ## `combine` vs `merge`
 
@@ -603,6 +599,7 @@ onDestroy
 ```
 
 Know:
+
 - configuration changes
 - process death
 - saved instance state
@@ -672,13 +669,13 @@ Strong answer:
 
 ## MVVM vs MVI
 
-### MVVM
+#### MVVM
 
 - View observes state from ViewModel.
 - Simple and widely adopted.
 - Multiple state mutation paths can become harder to control if poorly designed.
 
-### MVI
+#### MVI
 
 - Intent/action -> reducer/state transition -> single UI state.
 - Predictable state transitions.
@@ -777,6 +774,7 @@ Avoid multiple simultaneous refresh requests. Coordinate refresh so concurrent r
 
 ## How can you securely store sensitive data in an Android app?
 You should never store sensitive data (like passwords or tokens) in plain text. Instead:
+
 - Use EncryptedSharedPreferences for small data like tokens.
 - Use Android Keystore to store cryptographic keys securely.
 - Avoid storing sensitive info in internal or external storage.
@@ -786,6 +784,7 @@ You should never store sensitive data (like passwords or tokens) in plain text. 
 ## What is Android Keystore and why is it used?
 Android Keystore is a secure container that helps store cryptographic keys. These keys can be used for encryption, decryption, or signing without exposing them directly to the app.
 It ensures that:
+
 - Keys cannot be extracted.
 - Operations happen in secure hardware (if available).
 - Your app remains safe even if rooted.
@@ -794,6 +793,7 @@ It ensures that:
 
 ## What are common security risks in Android apps?
 Some common risks:
+
 - Storing data in plain text.
 - Using HTTP instead of HTTPS.
 - Hardcoding API keys in code.
@@ -821,6 +821,7 @@ Some common risks:
 
 ## What is the use of ProGuard/R8 in Android?
 ProGuard (now replaced by R8) is a tool that:
+
 - Minifies code (removes unused code).
 - Obfuscates names (changes class/method names to random characters).
 - Makes it harder for attackers to reverse engineer the app.
@@ -836,8 +837,11 @@ ProGuard (now replaced by R8) is a tool that:
 ---
 
 ## What is certificate pinning?
-Certificate pinning is a technique where you hardcode your server’s public certificate or key in the app. It ensures:
-- The app only trusts your server.
+- Certificate pinning is a technique where you hardcode your server’s public certificate or key in the app. 
+- Restricts accepted certificates/public keys to expected identities.
+- Can reduce certain MITM risks.
+- Creates operational risks during certificate rotation.
+- Must have a safe rotation and recovery strategy.
 
 ---
 
@@ -849,13 +853,6 @@ Certificate pinning is a technique where you hardcode your server’s public cer
 - Minimize token lifetime and scope.
 - Clear credentials on logout.
 - Follow organizational security policies.
-
-## What is certificate pinning?
-
-- Restricts accepted certificates/public keys to expected identities.
-- Can reduce certain MITM risks.
-- Creates operational risks during certificate rotation.
-- Must have a safe rotation and recovery strategy.
 
 ## What is OWASP MASVS?
 
@@ -887,6 +884,7 @@ Monitor in production
 ```
 
 Tools:
+
 - Android Studio Profiler
 - CPU profiler
 - Memory profiler
@@ -956,22 +954,9 @@ Tools:
 
 ## Unit vs instrumentation vs UI tests
 
-### Unit
-
-Fast, JVM-based, business logic/ViewModel/use case.
-
-### Instrumentation
-
-Runs on Android environment and is useful for framework/integration behavior.
-
-### UI
-
-Verifies actual user interaction and UI behavior.
-
-## What is Unit Testing in Android?
-Unit testing is the practice of testing individual components or functions in isolation to ensure they behave correctly.
-- In Android, we typically use JUnit for unit testing.
-- Unit tests run on the JVM and are fast because they don't require a device/emulator.
+- `Unit` - Fast, JVM-based, business logic/ViewModel/use case. It runs on the JVM and are fast because they don't require a device/emulator.
+- `Instrumentation` - Runs on Android environment and is useful for framework/integration behavior.
+- `UI` - Verifies actual user interaction and UI behavior.
 
 ---
 
@@ -1083,14 +1068,6 @@ Benefits:
 - Reusable libraries.
 - Easier testing.
 
-Be ready for:
-- feature vs layer modules
-- dependency cycles
-- public APIs
-- navigation ownership
-- Gradle convention plugins
-- build performance
-
 ---
 
 # 16. CI/CD
@@ -1123,17 +1100,6 @@ Staged rollout
 Production monitoring
 ```
 
-Know:
-- Gradle build variants
-- product flavors
-- signing
-- keystore/security
-- caching
-- parallel jobs
-- quality gates
-- release automation
-- rollback
-
 ## 9. DevOps in Android
 
 ## What is CI/CD in Android?
@@ -1148,7 +1114,6 @@ CI/CD improves team collaboration, reduces manual errors, and speeds up release 
 ---
 
 ## Why is CI/CD important in Android development?
-CI/CD helps in:
 - Faster development cycles by automating build and testing.
 - Early bug detection due to frequent code integration and automated tests.
 - Better team collaboration, as code is constantly merged and verified.
@@ -1158,9 +1123,8 @@ CI/CD helps in:
 ---
 
 ## Which tools are commonly used for CI/CD in Android?
-Some commonly used CI/CD tools are:
-- **GitHub Actions** – Integrated with GitHub, good for open-source and personal projects.
-- **Bitrise** – Android and iOS friendly, no setup needed, GUI-based.
+- `GitHub Actions` – Integrated with GitHub, good for open-source and personal projects.
+- `Bitrise` – Android and iOS friendly, no setup needed, GUI-based.
 
 ---
 
@@ -1176,20 +1140,18 @@ Some commonly used CI/CD tools are:
 
 ## What is the difference between Project-level and Module-level build.gradle?
 
-#### Project-level build.gradle
+#### **Project-level build.gradle** 
 - Applies to the entire project.
-- Defines global configurations such as:
-  - Gradle version
-  - Repositories
-  - Classpath for plugins
+- Gradle version
+- Repositories
+- Classpath for plugins
 
-#### Module-level build.gradle
+#### **Module-level build.gradle** 
 - Specific to each app/module.
-- Defines module-specific settings such as:
-  - Dependencies (`implementation`, `api`, etc.)
-  - Build types (`debug`/`release`)
-  - Product flavors
-  - Android SDK version
+- Dependencies (`implementation`, `api`, etc.)
+- Build types (`debug`/`release`)
+- Product flavors
+- Android SDK version
 
 *Key Point:* Project-level is for general setup affecting all modules, while Module-level is for app/module-specific configurations.
 
@@ -1373,40 +1335,40 @@ Do not make it personal.
 
 ## What do you look for in a PR?
 
-### Correctness
+#### Correctness
 
 - Does behavior meet requirements?
 - Edge cases?
 - Concurrency?
 
-### Architecture
+#### Architecture
 
 - Correct dependency direction?
 - Appropriate abstraction?
 - No unnecessary complexity?
 
-### Maintainability
+#### Maintainability
 
 - Naming?
 - Cohesion?
 - Duplication?
 - Testability?
 
-### Performance
+#### Performance
 
 - Main-thread work?
 - Allocation?
 - Unnecessary recomposition?
 - Database/network efficiency?
 
-### Security
+#### Security
 
 - Sensitive logging?
 - Credentials?
 - Input validation?
 - Unsafe storage?
 
-### Testing
+#### Testing
 
 - Happy path?
 - Error path?
@@ -1701,15 +1663,19 @@ Validate external intent data and use explicit intents for sensitive internal fl
 
 ## Explain the Android application and Activity lifecycles.
 
-`Application.onCreate()` runs once when the process is created and is appropriate for lightweight, process-wide initialization. `onTerminate()` is not a reliable production-device callback. `onTrimMemory()` communicates memory pressure and is the useful callback for releasing caches or other reclaimable resources.
+- `Application.onCreate()` runs once when the process is created and is appropriate for lightweight, process-wide initialization.
+- `onTerminate()` is not a reliable production-device callback. 
+- `onTrimMemory()` communicates memory pressure and is the useful callback for releasing caches or other reclaimable resources.
 
-An Activity commonly moves through:
+- An Activity commonly moves through:
 
 ```text
 onCreate -> onStart -> onResume -> onPause -> onStop -> onDestroy
 ```
 
-Use `onCreate()` for initial setup, `onStart()`/`onStop()` for visibility, and `onResume()`/`onPause()` for foreground interaction. Configuration changes recreate the Activity, while process death can remove both the Activity and its ViewModel. Use ViewModel for screen state and saved state mechanisms for small restorable UI state. See also [Android Lifecycle](#6-android-lifecycle) and [offline-first architecture](#8-offline-first-architecture).
+- Use `onCreate()` for initial setup, `onStart()`/`onStop()` for visibility, and `onResume()`/`onPause()` for foreground interaction. 
+- Configuration changes recreate the Activity, while process death can remove both the Activity and its ViewModel.
+- Use ViewModel for screen state and saved state mechanisms for small restorable UI state.
 
 ## Can `onDestroy()` be called without `onPause()` and `onStop()`?
 
@@ -1717,19 +1683,18 @@ Yes. If an Activity calls `finish()` during `onCreate()`, it may be destroyed wi
 
 ## What are intent filters?
 
-Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
-
-Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
+- Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
+- Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
 
 ## What is a BroadcastReceiver?
-
-A BroadcastReceiver handles a broadcast Intent and is intended for short, bounded work. It has no UI and should return quickly. For longer work, enqueue WorkManager work or start an appropriately declared foreground service rather than blocking `onReceive()`.
-
-Examples include reacting to charging state, low battery, boot completion, or an app-specific event. On modern Android versions, background execution and implicit-broadcast restrictions apply, so register only broadcasts that the platform permits and scope dynamic receivers to the required lifecycle.
+- A BroadcastReceiver handles a broadcast Intent and is intended for short, bounded work. It has no UI and should return quickly. For longer work, enqueue WorkManager work or start an appropriately declared foreground service rather than blocking `onReceive()`.
+- Examples include reacting to charging state, low battery, boot completion, or an app-specific event. On modern Android versions, background execution and implicit-broadcast restrictions apply, so register only broadcasts that the platform permits and scope dynamic receivers to the required lifecycle.
 
 ## What are Loaders in Android?
 
-Loaders were lifecycle-aware APIs introduced in API 11 for asynchronous data loading, commonly with `CursorAdapter` and `LoaderManager`. They could reconnect after configuration changes and avoid repeated queries. They are legacy APIs today; use Room with `Flow`, ViewModel, and lifecycle-aware collection for new code. The underlying principle remains valid: database or provider work must not block the main thread and collection should follow the UI lifecycle.
+- Loaders were lifecycle-aware APIs introduced in API 11 for asynchronous data loading, commonly with `CursorAdapter` and `LoaderManager`. They could reconnect after configuration changes and avoid repeated queries.
+- They are legacy APIs today; use Room with `Flow`, ViewModel, and lifecycle-aware collection for new code. 
+- The underlying principle remains valid: database or provider work must not block the main thread and collection should follow the UI lifecycle.
 
 ## What are Activity launch modes?
 
@@ -1742,35 +1707,18 @@ Choose launch modes deliberately. For most navigation, standard behavior plus an
 
 ## What is ConstraintLayout?
 
-ConstraintLayout positions views through relationships to the parent or other views. Chains support distribution, guidelines support alignment, and barriers respond to dynamic content. It can reduce deeply nested hierarchies, but it is not automatically faster than every alternative; measure layout cost and choose the simplest hierarchy that expresses the UI.
+- ConstraintLayout positions views through relationships to the parent or other views. 
+- Chains support distribution, guidelines support alignment, and barriers respond to dynamic content. It can reduce deeply nested hierarchies, but it is not automatically faster than every alternative; measure layout cost and choose the simplest hierarchy that expresses the UI.
 
 ## What is a Class and Object in Kotlin?
 
 A class defines state and behavior; an object is a runtime instance of that class with its own state. Classes support encapsulation, reuse and testable boundaries. Creating an object allocates runtime state, whereas the class declaration itself is a type definition.
-
-## What are primary and secondary constructors?
-
-The primary constructor is declared in the class header and is the normal way to initialize required properties. An `init` block performs additional initialization. Secondary constructors are optional alternatives inside the class body and must delegate to the primary constructor when one exists.
-
-```kotlin
-class User(val id: Long, val name: String) {
-    init { require(id > 0) }
-
-    constructor(id: Long) : this(id, "Unknown")
-}
-```
-
-Prefer default and named arguments over many secondary constructors when they make the API clearer.
 
 ## Explain inheritance and polymorphism in Android.
 
 Inheritance lets a subclass reuse and specialize a superclass, such as an Activity extending `ComponentActivity`, a Fragment extending `Fragment`, or a custom view extending `View`. Polymorphism lets code depend on an abstraction while receiving different implementations, such as a repository interface backed by a network or fake data source.
 
 Favor composition and interfaces when behavior varies independently. Inheritance is appropriate when the subtype genuinely satisfies the parent contract; otherwise it can create fragile coupling and violate substitutability.
-
-## What are the main Kotlin features used in Android?
-
-Kotlin provides concise syntax, null safety, extension functions, coroutines, smart casts, data classes, default and named arguments, lambdas, and higher-order functions. These reduce boilerplate, but they do not replace design discipline: nullable boundaries, coroutine cancellation, API stability and testability still need explicit decisions.
 
 ## What is the difference between `var`, `val`, and `const val`?
 
@@ -1784,20 +1732,6 @@ val userId = "user-123"
 const val MAX_RETRIES = 3
 ```
 
-## What are Kotlin null-safety features?
-
-Non-nullable types cannot hold `null`; nullable types use `?`. Use `?.` for a safe call, `?:` for a fallback, `as?` for a safe cast, and `!!` only when the invariant is proven because it can still throw `NullPointerException`. Keep null handling at boundaries such as network parsing and user input rather than spreading assertions through the application.
-
-## What is a data class?
-
-A data class models values and generates useful `equals()`, `hashCode()`, `toString()`, `copy()`, and component functions from its primary-constructor properties.
-
-```kotlin
-data class User(val name: String, val age: Int)
-```
-
-It is useful for immutable UI state and DTOs, but `copy()` is shallow and does not make nested mutable objects immutable.
-
 ## What are MVVM, ViewModel, LiveData, StateFlow, Repository, and UseCase?
 
 - **MVVM:** The UI renders state exposed by a ViewModel; the ViewModel coordinates use cases; repositories abstract data sources.
@@ -1806,8 +1740,6 @@ It is useful for immutable UI state and DTOs, but `copy()` is shallow and does n
 - **StateFlow:** A coroutine-based hot stream representing current state; collect it with `repeatOnLifecycle` in Views or Compose lifecycle APIs.
 - **Repository:** Owns data access and hides API, Room, Firebase or cache details from callers.
 - **UseCase:** Encapsulates one meaningful business operation and is valuable when logic is reused or complex; it is not mandatory ceremony for every trivial operation.
-
-The existing [Clean Architecture](#7-clean-architecture), [Flow](#5-flow), and [offline-first](#8-offline-first-architecture) sections provide the deeper trade-offs and data-flow examples.
 
 ## What is Room, and how should it be used?
 
@@ -1844,6 +1776,7 @@ Hilt supports DIP by constructing object graphs and binding an implementation to
 
 ## What is Jetpack Compose?
 Jetpack Compose is Android’s modern UI toolkit that lets you build UI using Kotlin code instead of XML.
+
 - It’s declarative, meaning you describe what the UI should look like, and the system updates it automatically when the data changes.
 - It replaces traditional XML + View-based UI system.
 - Offers less boilerplate, better state handling, and Kotlin-first approach.
@@ -1880,14 +1813,6 @@ You can use `remember` and `mutableStateOf`:
 val count = remember { mutableStateOf(0) }
 ```
 When `count.value` changes, any UI that depends on it will update automatically.
-
----
-
-## What is remember and rememberSaveable?
-- `remember` stores state during recomposition but resets on configuration changes (like rotation).
-- `rememberSaveable` stores state across recomposition and configuration changes using Bundle.
-
-Use `rememberSaveable` for things like text input or selection state that should survive screen rotation.
 
 ---
 
@@ -1944,27 +1869,6 @@ Useful for material design layouts.
 - Triggering analytics events
 
 ---
-
-## What is Jetpack Compose, and what are its basic concepts?
-
-Compose is Kotlin's declarative UI toolkit. A `@Composable` describes UI from state and parameters; when observed state changes, Compose recomposes affected scopes. `Modifier` composes layout, drawing and interaction behavior from left to right. `Scaffold` provides common Material slots such as top bar, bottom bar, FAB and snackbar host.
-
-```kotlin
-@Composable
-fun Greeting(name: String) {
-    Text(
-        text = "Hello, $name",
-        modifier = Modifier.padding(16.dp)
-    )
-}
-```
-
-Hoist state to the lowest common owner, use `remember` for composition-local state, and use `rememberSaveable` for supported small UI values that should survive recreation. The existing [Compose Deep Dive](#2-compose-deep-dive) covers effects, stability, keys and recomposition optimization.
-
-## What is a side effect in Compose?
-
-A side effect changes something outside the Compose UI tree. Use the effect API that matches the lifetime and behavior required: `LaunchedEffect` for a coroutine keyed to composition, `DisposableEffect` for setup and cleanup, `SideEffect` to publish state after successful composition, and `produceState` to bridge asynchronous sources into Compose state. Do not show toasts, start requests, or mutate external state directly on every recomposition.
-
 ## What is `PeriodicWorkRequest`, and what are WorkManager states and constraints?
 
 `PeriodicWorkRequest` is for deferrable recurring work such as synchronization, log upload, cache cleanup, or periodic content refresh. Its minimum interval is 15 minutes and execution is inexact because WorkManager respects constraints and system battery policy. It is not suitable for exact alarms or immediate user-visible work.
@@ -1982,15 +1886,11 @@ Constraints can require network availability, charging, battery-not-low, or stor
 
 ## How should unit tests and instrumentation tests be chosen?
 
-Unit tests run on the JVM and are fast, so use them for pure Kotlin, ViewModels, use cases, reducers and repository policies. Instrumentation tests run on a device or emulator and are appropriate for Android framework integration, Room behavior and UI. Compose UI tests should assert user-visible semantics and interactions, not implementation details.
-
-Common tools include JUnit, MockK or Mockito, Truth/AssertJ/Hamcrest, Robolectric where appropriate, Turbine for Flow, and `runTest` with virtual time for coroutine behavior. A ViewModel test should verify loading, success, error, cancellation and state transitions rather than merely checking that a method was called.
-
-## How do you securely store data and protect an Android application?
-
-Use Keystore-backed mechanisms for cryptographic keys and an approved encrypted storage mechanism for small sensitive values such as tokens. Never log credentials, use HTTPS/TLS, validate inputs, keep dependencies updated, and avoid putting secrets in the APK. R8 can shrink and obfuscate code, but obfuscation is not secret storage and cannot protect a secret shipped to a client.
-
-Certificate pinning can reduce some MITM risk, but requires planned key rotation and recovery. For API keys, assume anything in the app can be extracted; keep sensitive authority on the server and use scoped, short-lived credentials. The existing [Security](#10-security) section covers MASVS, token handling and pinning trade-offs.
+- Unit tests run on the JVM and are fast, so use them for pure Kotlin, ViewModels, use cases, reducers and repository policies. 
+- Instrumentation tests run on a device or emulator and are appropriate for Android framework integration, Room behavior and UI.
+- Compose UI tests should assert user-visible semantics and interactions, not implementation details.
+- Common tools include JUnit, MockK or Mockito, Truth/AssertJ/Hamcrest, Robolectric where appropriate, Turbine for Flow, and `runTest` with virtual time for coroutine behavior. 
+- A ViewModel test should verify loading, success, error, cancellation and state transitions rather than merely checking that a method was called.
 
 ## How do you handle common Android scenarios?
 
@@ -2034,8 +1934,6 @@ Use `rememberLazyListState()` and pass the state to `LazyColumn`. Use stable ite
 
 ## What are CI/CD, Gradle, build variants, and product flavors?
 
-CI automatically compiles, tests, lint-checks and analyzes changes on shared infrastructure. CD packages validated builds for internal testing or release; continuous deployment may publish automatically after quality gates. A reliable Android pipeline also handles signing securely, artifact retention, security checks, staged rollout and rollback.
-
-Gradle is the Android build and dependency automation system. Project-level configuration establishes shared plugin/repository setup; module-level configuration defines SDK settings, dependencies, build types and flavors. A build variant is the combination of a build type and flavor, such as `freeDebug` or `paidRelease`. Use flavors for meaningful product dimensions and build types for concerns such as debug versus release behavior.
-
-Improve build time through measurement, build caching, appropriate modularization, avoiding unnecessary annotation processing, configuration optimization and parallel CI jobs. Never store signing credentials in source control; use protected CI secrets and restricted signing steps.
+- CI automatically compiles, tests, lint-checks and analyzes changes on shared infrastructure. CD packages validated builds for internal testing or release; continuous deployment may publish automatically after quality gates. A reliable Android pipeline also handles signing securely, artifact retention, security checks, staged rollout and rollback.
+- Gradle is the Android build and dependency automation system. Project-level configuration establishes shared plugin/repository setup; module-level configuration defines SDK settings, dependencies, build types and flavors. A build variant is the combination of a build type and flavor, such as `freeDebug` or `paidRelease`. Use flavors for meaningful product dimensions and build types for concerns such as debug versus release behavior.
+- Improve build time through measurement, build caching, appropriate modularization, avoiding unnecessary annotation processing, configuration optimization and parallel CI jobs. Never store signing credentials in source control; use protected CI secrets and restricted signing steps.
