@@ -756,18 +756,14 @@ lifecycle-safely.
 -   Test behavior across important OS/device combinations.
 -   Avoid assuming behavior is identical across versions.
 -   Monitor production issues by OS version.
-
 ```kotlin
 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.X) {
     // New API
 }
 ```
 
-Interview Answer:
-> Use supported APIs according to min/target SDK.
 ---
 ## What does "high-quality user experience across devices and OS versions" mean?
-It includes:
 
 -   Responsive layouts
 -   Accessibility
@@ -779,10 +775,6 @@ It includes:
 -   Safe background behavior
 -   Consistent navigation
 
-Quality is more than visual correctness.
-
-Interview Answer:
-> It includes: Responsive layouts Accessibility Correct lifecycle behavior Reliable offline/error states Good startup and rendering performance Proper font scaling Device/OS compatibility Safe background behavior Consistent navigation Quality is more than visual correctness.
 ---
 ## How would you approach a moderately complex feature from requirements to production?
 ```text
@@ -809,29 +801,31 @@ Monitoring
 Post-release review
 ```
 
-This demonstrates ownership beyond writing code.
-
-Interview Answer:
-> This demonstrates ownership beyond writing code.
 ---
 ## What is the `Application` class and how should teams use it safely?
-The **`Application`** class is created once **per app process**, before your activities and most other components. It is the usual place to register **process-wide** setup: crash reporting, dependency injection roots, image loader singletons, and callbacks like **`onTrimMemory`**.
+- Application is the process-level entry point of an Android app. Android creates one Application instance when the app process starts.
+- Use if for global initialization such as DI, logging, analytics, database, or networking.
+- Avoid storing mutable UI/business state in it.
+- Example:
+```text
+class MyApplication : Application() {
 
-Because it lives as long as the process, **never store an `Activity` here** (that leaks the whole screen). Also avoid **heavy work in `onCreate`**—it slows **cold start**. Prefer **lazy** initialization and real background APIs for anything expensive.
+    override fun onCreate() {
+        super.onCreate()
 
-**Examples that fit:** crash SDK init, DI container, bounded image pipeline. **Poor fit:** blocking feature-flag fetches on the main thread.
+        // Initialize app-wide dependencies
+        Timber.plant(Timber.DebugTree())
+    }
+}
+```
+- Register It:
 
-### Useful links
+```
+<application
+    android:name=".MyApplication"
+    ... />
+```
 
-- [Project skeleton reference:](https://github.com/gbajaj/interviewready)
-
-
-> `Application` is for **process scope**, not “hide globals”.
----
-- [Learn more](https://github.com/gbajaj/interviewready)
-
-Interview Answer:
-> The **`Application`** class is created once **per app process**, before your activities and most other components.
 ---
 ## Describe classic Android application architecture components.
 - **Activities:** foreground UI entry.
@@ -840,257 +834,134 @@ Interview Answer:
 - **Content providers:** structured cross-app data with permissions.
 - **Intents:** messaging between components.
 - **Resources:** localization, density, configuration qualifiers.
-
-
-> Modern apps still host these primitives—**Jetpack wraps**, doesn’t erase them.
-
-Interview Answer:
-> **Activities:** foreground UI entry.
 ---
 ## Intents: explicit vs implicit; Intent filters; PendingIntent; sticky broadcasts (legacy).
-- **Explicit:** class + package—inside your app.
-- **Implicit:** action + category + data—system resolves; declare `<intent-filter>` carefully to avoid exported surface surprises.
-- **PendingIntent:** delegates future execution with original app identity; mind **mutability flags** (Android 12+), request codes, and **immutable** requirements.
-- **Sticky:** historical `sendStickyBroadcast`—largely obsolete/restricted; prefer modern APIs.
+| Concept              | Short Explanation                                                                                                              | Example                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| **Explicit Intent**  | Specifies the exact component to launch.                                                                                       | `Intent(this, SecondActivity::class.java)`                    |
+| **Implicit Intent**  | Specifies an action, and Android finds a suitable component.                                                                   | `Intent(Intent.ACTION_VIEW, Uri.parse("https://google.com"))` |
+| **Intent Filter**    | Declares which implicit intents a component can handle.                                                                        | `<intent-filter>` with `ACTION_VIEW`                          |
+| **PendingIntent**    | Gives another app/system permission to execute an Intent **later on your app's behalf**. Common in notifications, alarms, etc. | `PendingIntent.getActivity(...)`                              |
+| **Sticky Broadcast** | Broadcast whose last value remains available after delivery. **Legacy/deprecated approach; avoid for new apps.**               | `sendStickyBroadcast()` ❌                                     |
 
-
-> PendingIntents are **security boundaries**—treat them like public APIs.
-
-Interview Answer:
-> **Explicit:** class + package—inside your app.
 ---
 ## `START_NOT_STICKY` vs `START_STICKY` vs `START_REDELIVER_INTENT`
-- **NOT_STICKY:** don’t resurrect unless pending work exists.
-- **STICKY:** restart with `null` intent unless pending starts exist—good for long-lived “wait for work” services (still prefer modern alternatives).
-- **REDELIVER_INTENT:** replay last intent after kill—downloads/uploads.
+| Mode                     | If Service is killed           | `Intent` after restart             | Typical use                    |
+| ------------------------ | ------------------------------ | ---------------------------------- | ------------------------------ |
+| `START_NOT_STICKY`       | **Don't recreate** the Service | No new Intent                      | One-time/background task       |
+| `START_STICKY`           | **Recreate** the Service       | Usually `null`                     | Long-running service           |
+| `START_REDELIVER_INTENT` | **Recreate** the Service       | **Original Intent is redelivered** | Must finish a specific command |
 
-
-> Maps directly to **user-visible correctness** vs **cost**.
-
-Interview Answer:
-> **NOT_STICKY:** don’t resurrect unless pending work exists.
 ---
 ## Launch modes: `standard`, `singleTop`, `singleTask`, `singleInstance` (corrected interview explanation)
-- **standard:** new instance per start (within task rules).
-- **singleTop:** reuse top if same activity at top; otherwise new.
-- **`singleTask`:** affinity + task rules: if an instance exists in the task, clears above it and routes via `onNewIntent` (simplified—verify manifest `taskAffinity` interactions).
-- **`singleInstance`:** activity is alone in its task; subsequent launches route elsewhere—use rarely (widgets/VoIP entry points).
-- **Correction note:** Some informal examples online confuse `singleTask` vs `singleInstance` stack pictures—always verify with official docs + logging in a sample app.
+| Launch Mode      | New Instance?         | Existing Instance Reused?   | `onNewIntent()` | Typical Use                    |
+| ---------------- | --------------------- | --------------------------- | --------------- | ------------------------------ |
+| `standard`       | ✅ Always              | ❌                           | ❌               | Default, normal screens        |
+| `singleTop`      | ⚠️ Only if not on top | ✅ If already on top         | ✅               | Notifications, detail screens  |
+| `singleTask`     | ❌                     | ✅ Existing instance in task | ✅               | Main/root Activity, deep links |
+| `singleInstance` | ❌                     | ✅ One dedicated task        | ✅               | Special isolated Activity      |
 
-
-> Launch modes interact with **taskAffinity**, **intent flags**, and **deep links**—debug empirically.
-
-Interview Answer:
-> **standard:** new instance per start (within task rules).
 ---
 ## Processes vs threads vs tasks
-- **Process:** isolated memory; components default same process; override with `android:process` for isolation (IPC cost).
-- **Thread:** execution unit inside process; **main thread** is UI + event dispatch.
-- **Task:** user-facing back stack of activities—NOT identical to process.
+| Concept     | What it represents                  | Main purpose                | Example                        |
+| ----------- | ----------------------------------- | --------------------------- | ------------------------------ |
+| **Process** | OS-level execution container        | Memory & resource isolation | Your app's Linux process       |
+| **Thread**  | Unit of execution inside a process  | Execute code                | Main thread, background thread |
+| **Task**    | Collection/back stack of Activities | Manage user navigation      | `Login → Home → Details`       |
 
-
-> “App in background” often means **activity stopped**, process may still live.
-
-Interview Answer:
-> **Process:** isolated memory; components default same process; override with `android:process` for isolation (IPC cost).
 ---
 ## Thread safety primitives (volatile/synchronized caveat)
-- `volatile` does not compose arbitrary atomicity for read-modify-write; use `Atomic*` or synchronized blocks.
-- **Example:** `boolean flag` toggled from multiple threads.
-
-
-> Concurrency bugs are **intermittent**—design invariants.
-
-Interview Answer:
-> `volatile` does not compose arbitrary atomicity for read-modify-write; use `Atomic*` or synchronized blocks.
----
-## AIDL vs Messenger (upgrade from oversimplified notes)
-- **AIDL:** typed IPC for frequent, rich cross-process calls; generates stubs; requires threading discipline.
-- **Messenger:** `Handler`-backed lightweight IPC using `Message` queues—great for simple command/response.
-- AIDL complexity vs Messenger throughput limits.
-
-
-> Pick Messenger unless you **need** a typed high-throughput IPC contract.
-
-Interview Answer:
-> **AIDL:** typed IPC for frequent, rich cross-process calls; generates stubs; requires threading discipline.
+#### volatile
+- Ensures changes are visible across threads, but does not guarantee atomicity.
+- Example:
+```kotlin
+@Volatile var isRunning = true
+```
+#### synchronized
+- Allows only one thread at a time to access a critical section.
+- Example:
+```kotlin
+synchronized(lock) {
+    count++
+}
+```
 ---
 ## Parcelable vs Serializable (performance & security framing)
-- **Parcelable:** designed for Android IPC performance (prefer `@Parcelize`).
-- **Serializable:** Java reflection; more allocations—avoid on hot paths.
+#### Parcelable
+- Android-specific, generally faster and more efficient because it manually writes data to a Parcel.
+- Example:
+```kotlin
+@Parcelize
+data class User(val id: Int, val name: String) : Parcelable
+```
 
-
-> **Parcelize** reduces boilerplate and mistakes.
-
-Interview Answer:
-> **Parcelable:** designed for Android IPC performance (prefer `@Parcelize`).
+#### Serializable
+- Standard Java mechanism, easier but slower due to reflection/object serialization overhead.
+- Example:
+```kotlin
+data class User(val id: Int, val name: String) : Serializable
+```
 ---
 ## compileSdk vs targetSdk vs minSdk
-- **compileSdk:** compile-time API surface.
-- **targetSdk:** behavior toggles for compatibility modes; raising it triggers review of behavior changes.
-- [**Link:**](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
+|                               | `compileSdk`                  | `targetSdk`                     | `minSdk`                                 |
+| ----------------------------- | ----------------------------- | ------------------------------- | ---------------------------------------- |
+| **Purpose**                   | Compile the app               | Define target Android behavior  | Define minimum supported Android version |
+| **Affects build?**            | ✅ Yes                         | ❌ Not directly                  | ✅ Yes                                    |
+| **Affects runtime behavior?** | ❌ No                          | ✅ Yes                           | ✅ Yes                                    |
+| **Can use newer APIs?**       | ✅ Yes                         | Not necessarily                 | Only with version checks                 |
+| **Example**                   | `36`                          | `36`                            | `24`                                     |
+| **Meaning**                   | Build against Android 16 APIs | App targets Android 16 behavior | Supports Android 7.0+                    |
 
-
-> Raising **targetSdk** is a **QA project**, not a one-line change.
-
-Interview Answer:
-> **compileSdk:** compile-time API surface.
----
-## AsyncTask pitfalls (legacy)
-- Not lifecycle-aware; leaks + wrong activity updates on rotation; cancel + retain patterns are obsolete—use structured concurrency.
-
-### Useful links
-
-- [Retain fragment gist (legacy):](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)
-
-
-> If you see AsyncTask in production, schedule **removal**.
----
-- [Learn more](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)
-
-Interview Answer:
-> Not lifecycle-aware; leaks + wrong activity updates on rotation; cancel + retain patterns are obsolete—use structured concurrency.
----
-## StrictMode, logging levels, Jetpack pointer
-- StrictMode for dev-only main-thread violations.
-- [Log level guidance:](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)
-- [Jetpack overview:](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)
-- [Architecture components:](https://blog.mindorks.com/what-are-android-architecture-components/)
-
-
-> Operational hygiene matters in **staff** interviews too.
-
-Interview Answer:
-> StrictMode for dev-only main-thread violations.
----
-## Android code style links
-- [Learn more](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7)
-- [Architecture components LinkedIn post:](https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864)
-
-
-> Consistency enables **scale**.
-
-Interview Answer:
-> [Learn more](https://blog.mindorks.com/android-code-style-and-guidelines-d5f80453d5c7) [Architecture components LinkedIn post:](https://www.linkedin.com/feed/update/urn:li:activity:7244987022665252864) Consistency enables **scale**.
----
-## What is the Android Application Architecture?
-- Activities - Provides the window in which the app draws its UI<br>
-      - Services − It will perform background functionalities<br>
-      - Intent − It will perform the inter connection between activities and the data passing mechanism<br>
-      - Resource Externalization − strings and graphics<br>
-      - Notification − light,sound,icon,notification,dialog box,and toast<br>
-      - Content Providers − It will share the data between applications<br>
-
-Interview Answer:
-> Activities - Provides the window in which the app draws its UI<br>Services − It will perform background functionalities<br>Intent − It will perform the inter connection between activities and the data passing mechanism<br>Resource Externalization − strings and…
----
-## What is an Activity?
-An activity provides the window in which the app draws its UI. This window typically fills the screen, but may be smaller than the screen and float on top of other windows. Generally, one activity implements one screen in an app. For instance, one of an app’s activities may implement a Preferences screen, while another activity implements a Select Photo screen.
-
-
-
-> An activity provides the window in which the app draws its UI.
-
-Interview Answer:
-> An activity provides the window in which the app draws its UI.
----
-## What is `Fragment`?
-A `Fragment` is a piece of an activity which enable more modular activity design. A fragment has its layout, its behavior, and its life cycle callbacks. You can add or remove fragments in an activity while the activity is running. You can combine multiple fragments in a single activity to build a multi-pane UI. A fragment can also be used in multiple activities. The fragment life cycle is closely related to its host activity which means when the activity is paused, all the fragments available in the activity will also be stopped.
-
-
-
-> A `Fragment` is a piece of an activity which enable more modular activity design.
-
-Interview Answer:
-> A `Fragment` is a piece of an activity which enable more modular activity design.
 ---
 ## Fragment Lifecycle
 <img src="../assets/fragment_lifecycle.png" width="200" alt="Android Fragment lifecycle"> <img src="../assets/fragment_lifecycle_2.png" width="400" alt="Android Fragment lifecycle details">
-
-Interview Answer:
-> This topic is answered with the key points above.
 ---
 ## What is the correlation between activity and fragment life cycle?
 Here is how Activity's and Fragment's lifecyle are called together:<br/>
     <img src="../assets/activity-fragment-lifecycles.png" width="350">
-
-
-
-> Here is how Activity's and Fragment's lifecyle are called together:
-
-Interview Answer:
-> Here is how Activity's and Fragment's lifecyle are called together:<br/Here is how Activity's and Fragment's lifecyle are called together:
----
-## How to pass items to `fragment`?
-Using `Bundle` you can pass items to the fragment.
-
-
-
-> Using `Bundle` you can pass items to the fragment.
-
-Interview Answer:
-> Using `Bundle` you can pass items to the fragment.
----
-## How would you communicate between two `fragments`?
-There are several ways to communicate two fragments. Using `interfaces` are a common way to do that. You can connect two fragments through interfaces that are implemented in the parent activity.
-
-
-
-> There are several ways to communicate two fragments.
-
-Interview Answer:
-> There are several ways to communicate two fragments.
 ---
 ## Difference between adding/replacing `fragment` in `backstack`?
-- `replace` removes the existing `fragment` and adds a new `fragment`. This means when you press back button the fragment that got replaced will be created with its onCreateView being invoked.
-- `add` retains the existing fragments and adds a new `fragment` that means existing fragment  will be active and they wont be in 'paused' state hence when a back button is pressed onCreateView is not called for the existing fragment(the fragment which was there before new fragment was added).
-      In terms of fragment’s life cycle events `onPause()`, `onResume()`, `onCreateView()` and other life cycle events will be invoked in case of `replace` but they wont be invoked in case of `add`. <br>
-     <img src="https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png" width="400"><br>
-     <img src="https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png" width="400"><br>
-     <img src="https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png" width="400"><br><br>
-      <p align="center">
-          <img src="https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png" width="400">
-          <img src="https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png" width="400">
-      </p>
-      <br>
+|                   | **Add Fragment**                  | **Replace Fragment**                      |
+| ----------------- | --------------------------------- | ----------------------------------------- |
+| What happens      | Adds a new Fragment on top        | Removes current Fragment and adds new one |
+| Existing Fragment | Usually remains in container      | Removed from container                    |
+| UI                | Both can remain in hierarchy      | Only new Fragment is visible              |
+| Back stack        | Can add transaction to back stack | Can add transaction to back stack         |
+| Common use        | Multiple fragments together       | Screen-to-screen navigation               |
 
-
-### Useful links
-
-- [Learn more](https://user-images.githubusercontent.com/18071333/109423939-88001a80-7a07-11eb-995e-b7d16c5e51bb.png)
-- [Learn more](https://user-images.githubusercontent.com/18071333/109423948-95b5a000-7a07-11eb-8aa6-840f01beb236.png)
-- [Learn more](https://user-images.githubusercontent.com/18071333/109423954-9d754480-7a07-11eb-9e45-ea95fa038feb.png)
-- [Learn more](https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png)
-- [Learn more](https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png)
----
-- [Learn more](https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png)
-
-Interview Answer:
-> `replace` removes the existing `fragment` and adds a new `fragment`.
+<br>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/18071333/109424405-7ae42b00-7a09-11eb-94b1-a2d648d7d33e.png" width="400">
+  <img src="https://user-images.githubusercontent.com/18071333/109424414-86cfed00-7a09-11eb-848c-0948dc8fceab.png" width="400">
+</p>
+    
 ---
 ## What is the difference between Dialog and DialogFragment?
-- **Dialog** is a small window that prompts the user to make a decision or enter additional information. Instead, `dialogFragment` is a fragment that displays a dialog windows and contains a dialog object. <br>
-- **DialogFragment** does various things to keep the fragment's lifecycle driving it, instead of the Dialog. Dialogs are generally autonomous entities -- they are their own window, receiving their own input events, and often deciding on their own when to disappear. DialogFragment needs to ensure that what is happening with the Fragment and Dialog states remains consistent. To do this, it watches for dismiss events from the dialog and takes care of removing its own state when they happen.
+|                       | **Dialog**               | **DialogFragment**                   |
+| --------------------- | ------------------------ | ------------------------------------ |
+| Type                  | Window/UI component      | Fragment that hosts a Dialog         |
+| Lifecycle             | Managed manually         | Managed by Fragment lifecycle        |
+| Configuration changes | Can be problematic       | Better handling                      |
+| Back stack            | ❌ No Fragment back stack | ✅ Can integrate with FragmentManager |
+| Recommended           | Simple/temporary dialogs | Complex or lifecycle-aware dialogs   |
 
-Interview Answer:
-> **Dialog** is a small window that prompts the user to make a decision or enter additional information.
 ---
 ## What is the difference between `apply()` and `commit()` in `sharedPreferences`?
-- `commit()` writes the data **synchronously** and returns a boolean value of success or failure depending on the result immediately.
-- `apply()` is **asynchronous** and it won’t return any boolean response. Also if there is an `apply()` outstanding and we perform another `commit()`, The `commit()` will be blocked until the `apply()` is not completed.
+|                                          | `apply()`    | `commit()`                   |
+| ---------------------------------------- | ------------ | ---------------------------- |
+| **Write**                                | Asynchronous | Synchronous                  |
+| **Return value**                         | `Unit`       | `Boolean`                    |
+| **Blocks calling thread?**               | ❌ No         | ✅ Yes                        |
+| **Can cause UI delay?**                  | Less likely  | Yes, if used on main thread  |
+| **Know immediately if write succeeded?** | ❌ No         | ✅ Yes                        |
+| **Recommended**                          | ✅ Usually    | Only when result is required |
 
-Interview Answer:
-> `commit()` writes the data **synchronously** and returns a boolean value of success or failure depending on the result immediately.
 ---
 ## What is Pending Intent in Android?
-Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.  <br>
-
-
-PendingIntent uses the following methods to handle the different types of intents:
-
-
-### Code example
-
+- Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. 
+- This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.
+- PendingIntent uses the following methods to handle the different types of intents:
+- Example:
 ```kotlin
 Intent intent = new Intent(this, AnyActivity.class);
 
@@ -1103,231 +974,94 @@ try {
     e.printStackTrace();
 }
 ```
-
 ```kotlin
 PendingIntent.getActivity();   // Retrieves a PendingIntent to start an Activity
 PendingIntent.getBroadcast(); // Retrieves a PendingIntent to perform a Broadcast
 PendingIntent.getService();  // Retrieves a PendingIntent to start a Service
 ```
-
-
-> Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive.
-
-Interview Answer:
-> Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive.
----
-## What are Processes in Android?
-Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution. By default all the components of the same application runs in the same process. While most apps donot change this behavior, some apps like games, might want to run in different processes. Then we can use *android:process* attribute in our AndroidManifest.xml to specify the process name.
-
-
-
-> Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution.
-
-Interview Answer:
-> Everytime an Android App starts, the Android System creates a New Process for this Application with a Single thread of Execution.
----
-## Compilesdkversion vs Targetsdkversion
-- `compileSdk` is the API level used to compile the app.
-- `targetSdk` opts the app into behavior changes for that API level.
-- `minSdk` is the oldest Android version the app supports.
-
-
-### Useful links
-
-- [Learn more](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
----
-- [Learn more](https://stackoverflow.com/questions/26694108/what-is-the-difference-between-compilesdkversion-and-targetsdkversion)
-
-Interview Answer:
-> `compileSdk` affects compilation, `targetSdk` affects platform behavior, and `minSdk` defines device compatibility.
----
-## Which method in `fragment` runs only once?
-According to the [documentation](https://developer.android.com/guide/components/fragments#Creating), the `onCreate()` method is called once a fragment is created. Within your implementation, you should initialize essential components of the fragment that you want to retain when the fragment is paused or stopped, then resumed.
-
-
-### Useful links
-
-- [documentation](https://developer.android.com/guide/components/fragments#Creating)
-
-
-
-> According to the [documentation](https://developer.
----
-- [Learn more](https://developer)
-
-Interview Answer:
-> According to the [documentation](https://developer.android.com/guide/components/fragments#Creating), the `onCreate()` method is called once a fragment is created.
 ---
 ## How to know `configChange` happens in `onDestroy()` function?
 Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
 
-
-
-> Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
-
-Interview Answer:
-> Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
----
-## How to handle crashing of AsyncTask during screen rotation?
-One way is by cancelling the AsyncTask by using cancel() method on its instance. It will call onCancelled() method of AsyncTask where we can do some clean-up activities like hiding progress bar etc.  <br>
-The best way to handle AsyncTask crash is to create a RetainFragment, i.e., a fragment without UI as shown in the list below: https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42  <br>
-We can also avoid this crash by using 2 Alternatives -  <br>
-1) Using RxJava by subscribing and unsubscribing at onResume() and onPause() methods respectively. <br>
-2) Using LiveData - lifecycle aware component.
-
-
-### Useful links
-
-- [Learn more](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)
-
-
-
-> One way is by cancelling the AsyncTask by using cancel() method on its instance.
----
-- [Learn more](https://gist.github.com/vamsitallapudi/26030c15829d7be8118e42b1fcd0fa42)
-
-Interview Answer:
-> One way is by cancelling the AsyncTask by using cancel() method on its instance.
----
-## How does the activity respond when orientation is changed?
-According to the [documentation](https://developer.android.com/guide/topics/resources/runtime-changes), Some device configurations can change during runtime (such as screen orientation, keyboard availability, and when the user enables multi-window mode). When such a change occurs, Android restarts the running `Activity` ( `onDestroy()` is called, followed by `onCreate()`). The restart behavior is designed to help your application adapt to new configurations by automatically reloading your application with alternative resources that match the new device configuration.
-
-
-### Useful links
-
-- [documentation](https://developer.android.com/guide/topics/resources/runtime-changes)
-
-
-
-> According to the [documentation](https://developer.
----
-- [Learn more](https://developer)
-
-Interview Answer:
-> According to the [documentation](https://developer.android.com/guide/topics/resources/runtime-changes), Some device configurations can change during runtime (such as screen orientation, keyboard availability, and when the user enables multi-window mode).
----
-## How to prevent the data from reloading when orientation is changed?
-The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`. A `ViewModel` is LifeCycle-Aware. In other words, a `ViewModel` will not be destroyed if its owner is destroyed for a configuration change (e.g. rotation). The new instance of the owner will just re-connected to the existing `ViewModel`. So if you rotate an `Activity` three times, you have just created three different `Activity` instances, but you only have one `ViewModel`. So the common practice is to store data in the `ViewModel` class (since it persists data during configuration changes) and use `OnSaveInstanceState()` to store small amounts of UI data.
-
-
-
-> The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`.
-
-Interview Answer:
-> The most basic approach would be to use a combination of `ViewModels` and `onSaveInstanceState()`.
 ---
 ## What is thread-safe mean? How we can make our code thread-safe?
-Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
-- Synchronization
-- Use of Atomic Wrapper, For example AtomicInteger.
-- Use of locks from java.util.concurrent.locks package.
-- Using thread safe collection classes
-- Using volatile keyword.
-
-Note that if two threads are both reading and writing to a shared variable, then using the volatile keyword for that is not enough. You need to use a synchronized in that case to guarantee that the reading and writing of the variable is atomic. Reading or writing a volatile variable does not block threads reading or writing. For this to happen you must use the synchronized keyword around critical sections.
-
-
-
-> Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
-
-Interview Answer:
-> Thread safety in java is the process to make our program safe to use in multithreaded environment, there are different ways through which we can make our program thread safe.
+- Thread-safe means code can be safely accessed by multiple threads simultaneously without causing incorrect or inconsistent results.
+- How to achieve it:
+    1. Use synchronized / locks
+    2. Use AtomicInteger, AtomicBoolean, etc.
+    3. Use thread-safe collections
+    4. Prefer immutable data
+    5. Use Kotlin coroutines with proper synchronization
+- Example:
+```kotlin
+synchronized(lock) {
+    count++
+}
+```
 ---
 ## AIDL vs Messenger Queue
-* AIDL is for purpose when you've to go application level communication for data and control sharing, a scenario depicting it can be : An app requires list of all contacts from Contacts app (content part lies here) plus it also wants to show the call's duration and you can also disconnect it from that app (control part lies here).
-* In Messenger queues you're more IN the application and working on threads and processes to manage the queue having messages so no Outside services interference here.
-* Messenger is needed if you want to bind a remote service (e.g. running in another process).
+|               | **AIDL**                           | **Messenger**                  |
+| ------------- | ---------------------------------- | ------------------------------ |
+| Communication | IPC between processes              | IPC between processes          |
+| Calls         | **Concurrent / multiple requests** | **Sequential queue**           |
+| Threading     | Can handle multiple threads        | Requests handled one at a time |
+| Complexity    | More complex                       | Simpler                        |
+| Best for      | High-performance IPC               | Simple request/response IPC    |
 
-Interview Answer:
-> AIDL is for purpose when you've to go application level communication for data and control sharing, a scenario depicting it can be : An app requires list of all contacts from Contacts app (content part lies here) plus it also wants to show the call's duration and you can also…
+```text
+AIDL:
+Client → Request 1 ─┐
+Client → Request 2 ─┼→ Service
+Client → Request 3 ─┘   (can process concurrently)
+```
+```text
+Messenger:
+Client → Request 1 → Request 2 → Request 3 → Service
+                       (queued)
+```
+
 ---
 ## What is a ThreadPool? And is it more effective than using several separate Threads?
-* Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.
-* ThreadPool consists of a task queue and a group of worker threads, which allows it to run multiple parallel instances of a task.
+- A ThreadPool is a group of reusable threads that execute tasks from a queue.
+```text
+Tasks → Queue → ThreadPool → Threads
+          ↓
+       Reuse threads
+```
+- ThreadPool is usually better than creating separate threads because it:
+    1. Reuses threads
+    2. Reduces thread creation overhead
+    3. Controls the number of concurrent tasks
+    4. Prevents creating too many threads
+- Example:
+```kotlin
+val executor = Executors.newFixedThreadPool(4)
+executor.submit { doWork() }
+```
 
-Interview Answer:
-> Creating and destroying threads has a high CPU usage, so when we need to perform lots of small, simple tasks concurrently, the overhead of creating our own threads can take up a significant portion of the CPU cycles and severely affect the final response time.
 ---
 ## What is a JobScheduler?
 - JobScheduler schedules deferrable background work using conditions such as network or charging.
 - The system controls the exact execution time to protect battery.
 - Prefer WorkManager for most app-level persistent jobs.
-
-
-### Useful links
-
-- [Learn more](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html)
----
-- [Learn more](http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html)
-
-Interview Answer:
-> JobScheduler schedules constrained background jobs, while WorkManager is usually the modern app-level choice.
 ---
 ## Livedata Setvalue vs Postvalue
 - `setValue()` updates LiveData immediately and must run on the main thread.
 - `postValue()` schedules an update from a background thread.
 - Several quick `postValue()` calls may be coalesced, so the latest value can win.
-
-
-### Useful links
-
-- [Learn more](https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80)
----
-- [Learn more](https://medium.com/@shashankmohabia/livedata-setvalue-vs-postvalue-91ec550b4c80)
-
-Interview Answer:
-> Use `setValue()` on the main thread and `postValue()` from a background thread.
 ---
 ## What is renderscript?
 - RenderScript was an Android API for compute-heavy operations.
 - It is deprecated and should not be used for new code.
 - Consider Kotlin, optimized libraries, GPU APIs, or the NDK for current needs.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
----
-- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
-
-Interview Answer:
-> RenderScript is a deprecated compute API; use modern supported alternatives for new work.
 ---
 ## FlatBuffers vs JSON.
 - JSON is text-based, human-readable, and easy to debug.
 - FlatBuffers is a compact binary format with fast access and low parsing overhead.
 - Use FlatBuffers for performance-sensitive structured data; use JSON for flexible APIs and readability.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
----
-- [Learn more](https://blog.mindorks.com/why-consider-flatbuffer-over-json-2e4aa8d4ed07)
-
-Interview Answer:
-> JSON favors readability and flexibility; FlatBuffers favors compact size and fast access.
----
-## What is `contentProvider` and what is typically used for?
-A `ContentProvider` provides data from one application to another, when requested. It manages access to a structured set of data. It provides mechanisms for defining data security. [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42).
-    For further reading see the [official android documentation]("https://developer.android.com/guide/topics/providers/content-provider-basics" "Android official documentation")
-
-  <img src="../assets/content-provider-diagram.png" width="400">
-
-
-### Useful links
-
-- [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42)
-- [Learn more](https://developer.android.com/guide/topics/providers/content-provider-basics)
-
-
-
-> A `ContentProvider` provides data from one application to another, when requested.
-
-Interview Answer:
-> A `ContentProvider` provides data from one application to another, when requested.
 ---
 ## Log.v(), Log.d(), Log.i(), Log.w(), Log.e() - When to use each one?
+
 - `VERBOSE`: very detailed development diagnostics.
 - `DEBUG`: developer troubleshooting.
 - `INFO`: important normal application events.
@@ -1335,108 +1069,39 @@ Interview Answer:
 - `ERROR`: failures that need investigation.
 - Never log tokens, passwords, or personal data.
 
-
-### Useful links
-
-- [Learn more](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)
----
-- [Learn more](https://stackoverflow.com/questions/7959263/android-log-v-log-d-log-i-log-w-log-e-when-to-use-each-one)
-
-Interview Answer:
-> Choose log levels by severity and remove or protect sensitive data before release.
 ---
 ## Understanding scope storage in android
 - Scoped storage limits broad access to shared external files.
 - Use app-specific storage for private files.
 - Use MediaStore for shared photos, videos, and audio.
 - Use the Storage Access Framework when the user selects documents.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
----
-- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
-
-Interview Answer:
-> Scoped storage protects shared files; use app storage, MediaStore, or the Storage Access Framework according to the file’s purpose.
 ---
 ## Solve out of memory error
 - Capture a heap dump and identify the object retaining excessive memory.
 - Load large images at the display size and use an image-loading library.
 - Avoid holding Activity or View references in long-lived objects.
 - Page large datasets and release caches when memory is low.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
----
-- [Learn more](https://blog.mindorks.com/practical-guide-to-solve-out-of-memory-error-in-android-application)
-
-Interview Answer:
-> Find the retaining object, reduce large allocations, page data, and release lifecycle-bound resources.
 ---
 ## Reason for the exit in Android Application
 - The user may finish the Activity or remove the task.
 - The system may kill the process to reclaim memory.
 - A crash, force-stop, or device restart can also end the process.
 - Save important state because process death can happen without a final callback.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)
----
-- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)
-
-Interview Answer:
-> An app can exit because of user action, a crash, force-stop, restart, or system process reclamation.
 ---
 ## Android Jetpack component
 - Jetpack is a collection of Android libraries and guidance.
 - It includes lifecycle, ViewModel, Room, Navigation, WorkManager, Compose, and more.
 - These components reduce boilerplate and encourage lifecycle-aware design.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)
----
-- [Learn more](https://blog.mindorks.com/what-is-android-jetpack-and-why-should-we-use-it)
-
-Interview Answer:
-> Jetpack provides compatible libraries that simplify modern Android architecture, UI, persistence, and background work.
----
-## Android Architecture Component
-- Architecture Components include lifecycle-aware APIs, ViewModel, Room, and observable data tools.
-- They separate UI state from data and help screens survive configuration changes.
-- Modern apps commonly use these with coroutines, Flow, and Compose.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/what-are-android-architecture-components/)
----
-- [Learn more](https://blog.mindorks.com/what-are-android-architecture-components/)
-
-Interview Answer:
-> Android Architecture Components help separate UI, state, data, and lifecycle concerns in a testable way.
 ---
 ## Arraymap vs Sparsh Array
-- `ArrayMap` stores key-value pairs with less memory than `HashMap` for small collections.
-- `SparseArray` stores integer keys without boxing and is useful for small Android collections.
-- `HashMap` is generally faster for large collections or frequent updates.
+|          | `ArrayMap`                  | `SparseArray`                   |
+| -------- | --------------------------- | ------------------------------- |
+| Key      | Any object                  | `Int`                           |
+| Stores   | Key → Value                 | Int → Value                     |
+| Memory   | Less than `HashMap`         | Less than `HashMap<Integer, V>` |
+| Best for | Small maps with object keys | Small maps with integer keys    |
+| Example  | `ArrayMap<String, User>`    | `SparseArray<User>`             |
 
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
----
-- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
-
-Interview Answer:
-> Use `ArrayMap` or `SparseArray` for small Android collections; use `HashMap` for larger or heavily accessed maps.
 ---
 ## Java Android Multithreading programming
 - Keep blocking work off the main thread.
@@ -1444,221 +1109,51 @@ Interview Answer:
 - Use executors for controlled Java-style task pools.
 - Protect shared mutable state with synchronization or atomic types.
 
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)
----
-- [Learn more](https://blog.mindorks.com/java-android-multithreaded-programming-runnable-callable-future-executor)
-
-Interview Answer:
-> Use lifecycle-aware coroutines or bounded executors, and protect shared state from races.
 ---
 ## How can you prevent creating another instance of singleton using `clone()` method?
-The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
+The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method".
 
-
-
-> The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
-
-Interview Answer:
-> The preferred way to prevent creating another instance of a singleton is by not implementing Cloneable interface and if you do just throw an exception from `clone()` method "_not to create a clone of singleton class_".
----
-## When will you prefer to use a Factory Pattern?
-The factory pattern is preferred in the following cases:
-      - A class does not know which class of objects it must create
-      - Factory pattern can be used where we need to create an object of any one of sub-classes depending on the data provided
-      - you can use factory pattern where you have to create an object of any one of sub-classes depending on the given data
-
-
-
-> The factory pattern is preferred in the following cases: - A class does not know which class of objects it must create - Factory pattern can be used where we need to create an object of any one of sub-classes depending o…
-
-Interview Answer:
-> The factory pattern is preferred in the following cases: A class does not know which class of objects it must create Factory pattern can be used where we need to create an object of any one of sub-classes depending on the data provided you can use factory pattern where you have…
----
-## Why use a factory class to instantiate a class when we can use new operator?
-Factory classes provide flexibility in terms of design. Below are some of the
-    benefits of factory class:
-      - Factory design pattern results in more decoupled code as it allows us to
-        hide creational logic from dependent code
-      - It allows us to introduce an [Inversion of Control]("https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO" "What is IoC?") container
-      - It gives you a lot more flexibility when it comes time to change the
-        application as our creational logic is hidden from dependant code
-
-
-### Useful links
-
-- [Learn more](https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO)
-
-
-
-> Factory classes provide flexibility in terms of design.
----
-- [Learn more](https://www.codeproject.com/Articles/592372/Dependency-Injection-DI-vs-Inversion-of-Control-IO)
-
-Interview Answer:
-> Factory classes provide flexibility in terms of design.
----
-## which pattern is used when we need to decouple an abstraction from its implementation?
-When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
-
-
-
-> When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
-
-Interview Answer:
-> When we want to decouple an abstraction from its implementation in order that two can vary independently we use **bridge pattern**.
----
-## What is Manifest file and R.java file in Android?
-* **Manifest**: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory. The manifest presents essential information about the application to the Android system, information the system must have before it can run any of the application's code. It contains information of your package, including components of the application such as activities, services, broadcast receivers, content providers etc.
- * **R.Java**: It is an auto-generated file by aapt (Android Asset Packaging Tool) that contains resource IDs for all the resources of res/ directory. <br>
-
-* **How does the activity respond when the user rotates the screen?** <br>
-     When the screen is rotated, the current instance of activity is destroyed a new instance of the Activity is created in the new orientation. The onRestart() method is invoked first when a screen is rotated. The other lifecycle methods get invoked in the similar flow as they were when the activity was first created.<br>
-
-Interview Answer:
-> **Manifest**: Every application must have an AndroidManifest.xml file (with precisely that name) in its root directory.
----
-## Mention two ways to clear the back stack of Activities when a new Activity is called using intent
-The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag. The second way is by using FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_NEW_TASK in conjunction.<br>
-
-
-
-> The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag.
-
-Interview Answer:
-> The first approach is to use a FLAG_ACTIVITY_CLEAR_TOP flag.
----
-## Describe content providers
-* A ContentProvider provides data from one application to another, when requested. It manages access to a structured set of data.  It provides mechanisms for defining data security. ContentProvider is the standard interface that connects data in one process with code running in another process.<br>
- * When you want to access data in a **ContentProvider**, you must instead use the ContentResolver object in your application’s Context to communicate with the provider as a client. The provider object receives data requests from clients, performs the requested action, and returns the results.<br>
-
-Interview Answer:
-> A ContentProvider provides data from one application to another, when requested.
 ---
 ## What is the onTrimMemory() method?
-* ```onTrimMemory()```: Called when the operating system has determined that it is a good time for a process to trim unneeded memory from its process. This will happen for example when it goes in the background and there is not enough memory to keep as many background processes running as desired.
-* Android can reclaim memory for from your app in several ways or kill your app entirely if necessary to free up memory for critical tasks. To help balance the system memory and avoid the system's need to kill your app process, you can implement the ```ComponentCallbacks2``` interface in your Activity classes. The provided onTrimMemory() callback method allows your app to listen for memory related events when your app is in either the foreground or the background, and then release objects in response to app lifecycle or system events that indicate the system needs to reclaim memory. [Reference](https://developer.android.com/topic/performance/memory)<br>
+- onTrimMemory() is a callback that tells your app the system is under memory pressure and your app should release unnecessary memory.
+- Example: 
+```kotlin
+override fun onTrimMemory(level: Int) {
+    super.onTrimMemory(level)
 
+    if (level >= TRIM_MEMORY_BACKGROUND) {
+        imageCache.clear()
+    }
+}
+```
 
-### Useful links
-
-- [Reference](https://developer.android.com/topic/performance/memory)
----
-- [Learn more](https://developer.android.com/topic/performance/memory)
-
-Interview Answer:
-> : Called when the operating system has determined that it is a good time for a process to trim unneeded memory from its process.
----
-## What is an intent?
-Intents are messages that can be used to pass information to the various components of android. For instance, launch an activity, open a webview etc.<br>
-* Two types of intents-<br>
-* Implicit: Implicit intent is when you call system default intent like send email, send SMS, dial number.<br>
-* Explicit: Explicit intent is when you call an application activity from another activity of the same application.<br>
-
-Interview Answer:
-> Intents are messages that can be used to pass information to the various components of android.
----
-## What is a Sticky Intent?
-* Sticky Intents allows communication between a function and a service.
- * ```sendStickyBroadcast()``` performs a sendBroadcast(Intent) known as sticky, i.e. the Intent you are sending stays around after the broadcast is complete, so that others can quickly retrieve that data through the return value of ```registerReceiver(BroadcastReceiver, IntentFilter)```.
- * For example, if you take an intent for ACTION_BATTERY_CHANGED to get battery change events: When you call registerReceiver() for that action — even with a null BroadcastReceiver — you **get the Intent that was last Broadcast for that action**. Hence, you can use this to find the state of the battery without necessarily registering for all future state changes in the battery.<br>
-
-Interview Answer:
-> Sticky Intents allows communication between a function and a service.
----
-## Describe fragments:
-Fragment is a UI entity attached to Activity. Fragments can be reused by attaching in different activities. Activity can have multiple fragments attached to it. Fragment must be attached to an activity and its lifecycle will depend on its host activity.<br>
-
-
-
-> Fragment is a UI entity attached to Activity.
-
-Interview Answer:
-> Fragment is a UI entity attached to Activity.
----
-## What is the difference between fragments & activities. Explain the relationship between the two.
-An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).<br>
-
-
-
-> An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or removed at will).
-
-Interview Answer:
-> An Activity is an application component that provides a screen, with which users can interact in order to do something whereas a Fragment represents a behavior or a portion of user interface in an Activity (with its own lifecycle and input events, and which can be added or…
 ---
 ## Why is it recommended to use only the default constructor to create a Fragment?
-The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle. This way you are guaranteed to restore the state of the fragment correctly to the same state the fragment was initialised with.<br>
+- The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle. 
+- This way you are guaranteed to restore the state of the fragment correctly to the same state the fragment was initialised with.
 
-
-
-> The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.
-
-Interview Answer:
-> The reason why you should be passing parameters through bundle is because when the system restores a fragment (e.g on config change), it will automatically restore your bundle.
----
-## You’re replacing one Fragment with another — how do you ensure that the user can return to the previous Fragment, by pressing the Back button?
-We need to save each Fragment transaction to the backstack, by calling ```addToBackStack()``` before you ```commit()``` that transaction<br>
-
-> We need to save each Fragment transaction to the backstack, by calling ```addToBackStack()``` before you ```commit()``` that transaction
-
-Interview Answer:
-> We need to save each Fragment transaction to the backstack, by calling before you that transaction<br>We need to save each Fragment transaction to the backstack, by calling before you that transaction
----
-## Callbacks invoked during addition of a fragment to back stack and while popping back from back stack:
-- *(No additional notes in source.)*
-
-
-### Code example
-
-`addOnBackStackChangedListener` is called when fragment is added or removed from the backstack. Use this [link](https://why-android.com/2016/03/29/learn-how-to-use-the-onbackstackchangedlistener/) for reference<br>
-`addOnBackStackChangedListener` is called when fragment is added or removed from the backstack.
-
-Interview Answer:
-> *(No additional notes in source.)* is called when fragment is added or removed from the backstack.
 ---
 ## What are retained fragments
-By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs. Calling ```setRetainInstance(true)``` allows us to bypass this destroy-and-recreate cycle, signaling the system to retain the current instance of the fragment when the activity is recreated.<br>
+- By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs. 
+- Calling ```setRetainInstance(true)``` allows us to bypass this destroy-and-recreate cycle, signaling the system to retain the current instance of the fragment when the activity is recreated.<br>
 
-> By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs.
-
-Interview Answer:
-> By default, Fragments are destroyed and recreated along with their parent Activity’s when a configuration change occurs.
 ---
 ## What is Toast in Android?
-Android Toast can be used to display information for the short period of time. A toast contains message to be displayed quickly and disappears after sometime.<br>
+Android Toast can be used to display information for the short period of time. A toast contains message to be displayed quickly and disappears after sometime.
 
-
-
-> Android Toast can be used to display information for the short period of time.
-
-Interview Answer:
-> Android Toast can be used to display information for the short period of time.
 ---
 ## What is the difference between a regular .png and a nine-patch image?
-It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device. The NinePatch class allows drawing a bitmap in nine sections. The four corners are unscaled; the middle of the image is scaled in both axes, the four edges are scaled into one axis.<br>
+|              | **PNG**                | **Nine-Patch**                     |
+| ------------ | ---------------------- | ---------------------------------- |
+| Extension    | `.png`                 | `.9.png`                           |
+| Scaling      | Entire image scales    | Specific areas stretch             |
+| Text/content | Can distort background | Keeps corners/borders intact       |
+| Best for     | Icons, fixed images    | Buttons, chat bubbles, backgrounds |
 
-
-
-> It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device.
-
-Interview Answer:
-> It is one of a resizable bitmap resource which is being used as backgrounds or other images on the device.
----
-## Briefly describe some ways that you can optimize View usage
-* Checking for excessive overdraw: install your app on an Android device, and then enable the "Debug GPU Overview" option.
-* Flattening your view hierarchy: inspect your view hierarchy using Android Studio’s ‘Hierarchy Viewer’ tool.
-* Measuring how long it takes each View to complete the measure, layout, and draw phases. You can also use Hierarchy Viewer to identify any parts of the rendering pipeline that you need to optimize.<br>
-
-Interview Answer:
-> Checking for excessive overdraw: install your app on an Android device, and then enable the "Debug GPU Overview" option.
 ---
 ## What is a singleton class in Android?
-A singleton class is a class which can create only an object that can be shared all other classes.
-
-### Code example
-
+- A singleton class is a class which can create only an object that can be shared all other classes.
+- Example:
 ```kotlin
 private static volatile RESTService instance;
 
@@ -1676,37 +1171,18 @@ public static RESTService getInstance(Context context) {
 }
 ```
 
-
-> A singleton class is a class which can create only an object that can be shared all other classes.
-
-Interview Answer:
-> A singleton class is a class which can create only an object that can be shared all other classes.
 ---
 ## How to handle multi-touch in android
 - Handle pointer IDs, not only pointer indexes.
 - Process `ACTION_DOWN`, `ACTION_POINTER_DOWN`, movement, and pointer-up events correctly.
 - Use `scaleGestureDetector` for pinch-to-zoom.
 - Test different pointer orders and cancellation events.
-
-
-### Useful links
-
-- [link](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
----
-- [Learn more](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
-
-Interview Answer:
-> Multi-touch handling requires tracking each pointer ID and correctly processing pointer lifecycle events.
 ---
 ## What is Alarm Manager?
-AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
+- AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future. 
+- When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. 
+- Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted.
 
-
-
-> AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future.
-
-Interview Answer:
-> AlarmManager is a class which helps scheduling your Application code to run at some point of time or at particular time intervals in future.
 ---
 ## How to Work With Geofences?
 - Request location permission and explain the feature clearly.
@@ -1714,422 +1190,29 @@ Interview Answer:
 - Receive transitions through a `PendingIntent` and validate the event.
 - Use reasonable expiration, debounce events, and respect battery limits.
 
-
-### Useful links
-
-- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
----
-- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
-
-Interview Answer:
-> Geofences trigger a `PendingIntent` when a device enters or leaves a configured region; permissions and battery limits matter.
----
-## How to save password safely in Android?
-- [Learn more](https://developer.android.com/privacy-and-security/keystore)
-      - [Learn more](https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b)
-      - [Learn more](https://source.android.com/docs/security/features/keystore)
-      - [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)
-
-
-### Useful links
-
-- [Learn more](https://developer.android.com/privacy-and-security/keystore)
-- [Learn more](https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b)
-- [Learn more](https://source.android.com/docs/security/features/keystore)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)
----
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)
-
-Interview Answer:
-> [Learn more](https://developer.android.com/privacy-and-security/keystore) [Learn more](https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b) [Learn more](https://source.android.com/docs/security/features/keystore) [Learn…
----
-## What is Anti-Pattern?
-An anti-pattern are certain patterns in software development that are considered bad programming practices.<br/>
-      For more, click [Here](https://stackoverflow.com/a/980616/3424919).
-
-
-### Useful links
-
-- [Here](https://stackoverflow.com/a/980616/3424919)
-
-
-
-> An anti-pattern are certain patterns in software development that are considered bad programming practices.
----
-- [Learn more](https://stackoverflow.com/a/980616/3424919)
-
-Interview Answer:
-> An anti-pattern are certain patterns in software development that are considered bad programming practices.<br/For more, click [Here](https://stackoverflow.com/a/980616/3424919).
----
-## What is the use-case of @Module Annotation?
-@Module is the Annotation used on the class for the Dagger to look inside it, to provide dependencies. We may be declaring methods inside the module class that are enclosed with @Provides annotation.
-
-
-
-> @Module is the Annotation used on the class for the Dagger to look inside it, to provide dependencies.
-
-Interview Answer:
-> @Module is the Annotation used on the class for the Dagger to look inside it, to provide dependencies.
----
-## Graphs
-* [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java)
-* [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java)
-* [Form circular chain by given list of words](/src/graphs/WordChaining.java)
-     <br>
-
-Interview Answer:
-> [Clone a Directed Graph](/src/graphs/CloneDirectedGraph.java) [Minimum Spanning Tree](/src/graphs/MinimumSpanningTree.java) [Form circular chain by given list of words](/src/graphs/WordChaining.java) <br>
----
-## Trees
-* [Implements an InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java)
-* [Convert a binary tree to a doubly linked list](/src/trees/BinaryTreeToLinkedList.java)
-* [Connect a sibling pointer of a binary tree to next node in the same level](/src/trees/ConnectAllSiblings.java)
-* [Given a binary tree, connect its siblings at each level](/src/trees/ConnectSiblings.java)
-* [Delete any subtrees whose nodes sum up to zero](/src/trees/DeleteZeroSumSubTrees.java)
-* [Given roots of two binary trees, determine if these trees are identical](/src/trees/IdenticalBinaryTree.java)
-* [Find the Inorder successor of a node in binary Search Tree](/src/trees/InOrderSuccessor.java)
-* [Algorithm to traverse the tree inorder](/src/trees/InOrderTraversal.java)
-* [Check if a given tree is a binary search tree](/src/trees/IsBST.java)
-* [Display node values at each level in a binary tree](/src/trees/LevelOrderTraversal.java)
-* [Swap the 'left' and 'right' children for each node in a binary tree](/src/trees/MirrorBinaryTreeNodes.java)
-* [Find nth highest node in a Binary Search Tree](/src/trees/NthHighestBST.java)
-* [Print nodes forming the boundary of a Binary Search Tree](/src/trees/PrintTreePerimeter.java)
-* [Serialize binary tree to a file and then deserialize back to tree](/src/trees/SerializeBinaryTree.java)
-     <br>
-
-Interview Answer:
-> [Implements an InOrder Iterator on a Binary Tree](/src/trees/BinaryTreeIterator.java) [Convert a binary tree to a doubly linked list](/src/trees/BinaryTreeToLinkedList.java) [Connect a sibling pointer of a binary tree to next node in the same…
----
-## Strings
-* [Reverse String](/src/strings/ReverseString.java)
-* [Palindrone String](/src/strings/PalindroneStrings.java)
-* [Regular Expression](/src/strings/RegularExpression.java)
-* [Remove Duplicates](/src/strings/RemoveDuplicates.java)
-* [Remove White Spaces](/src/strings/RemoveWhiteSpaces.java)
-* [Remove a String](/src/strings/ReverseString.java)
-* [String Segmentation](/src/strings/StringSegmentation.java)
-* [Find next highest permutation of a given string](/src/strings/NextHighestPermutation.java)
-* [Check if two strings are anagrams](/src/strings/CheckIfAnagram.java)
-     <br>
-
-Interview Answer:
-> [Reverse String](/src/strings/ReverseString.java) [Palindrone String](/src/strings/PalindroneStrings.java) [Regular Expression](/src/strings/RegularExpression.java) [Remove Duplicates](/src/strings/RemoveDuplicates.java) [Remove White Spaces](/src/strings/RemoveWhiteSpaces.java)…
----
-## Integers
-* [Reverse Integer](/src/math/ReverseInteger.java)
-* [Find sum of digits of an integer](/src/math/FindSumOfInteger.java)
-* [Find Next highest Number from a Integer](/src/math/NextHighestNumber.java)
-* [Check if it is an Armstrong number](/src/math/CheckIfArmstrongNumber.java)
-* [Find the factorial of a number](/src/math/FindFactorial.java)
-* [Print all prime numbers upto the given number](/src/math/PrintPrimeNumbers.java)
-* [Find all the prime factors of a given integer](/src/math/FindPrimeFactors.java)
-* [Check if a given number is binary](/src/math/CheckIfBinary.java)
-* [Find kth permutation](/src/math/KthPermutation.java)
-* [Integer Division](/src/math/IntegerDivision.java)
-* [Find Pythagorean Triplets](/src/math/FindPythagoreanTriplets.java)
-* [Print all possible sum combinations using positive integers](/src/math/SumCombinations.java)
-* [Find Missing Number](/src/math/FindMissingNumber.java)
-* [Find all subsets of a given set of integers](/src/math/IntegerSubsets.java)
-* [Given an input string, determine if it makes a valid number](/src/math/NumberValidity.java)
-* [Calculate 'x' raised to the power 'n'](/src/math/PowerOfNumber.java)
-* [Calculate square root of a number](/src/math/CalculateRoot.java)
-* [Minimum Number of Platforms Required for a Railway/Bus Station](/src/math/MinimumPlatforms.java)
-     <br>
-
-Interview Answer:
-> [Reverse Integer](/src/math/ReverseInteger.java) [Find sum of digits of an integer](/src/math/FindSumOfInteger.java) [Find Next highest Number from a Integer](/src/math/NextHighestNumber.java) [Check if it is an Armstrong number](/src/math/CheckIfArmstrongNumber.java) [Find the…
----
-## Miscellaneous
-* [Find three integers in the array with sum equal to the given value](/src/misc/SumOfThreeValues.java)
-* [Find position of a given key in 2D matrix](/src/misc/SearchMatrix.java)
-* [Determine the host byte order of any system](/src/misc/HostByteOrder.java)
-* [Find the point that requires the least total distance covered by all the ​people to meet at that point](/src/misc/ClosestMeetingPoint.java)
-* [Given a two dimensional array, if any element in it is zero make its whole row and column zero](/src/misc/SumOfThreeValues.java)
-     <br>
-
-Interview Answer:
-> [Find three integers in the array with sum equal to the given value](/src/misc/SumOfThreeValues.java) [Find position of a given key in 2D matrix](/src/misc/SearchMatrix.java) [Determine the host byte order of any system](/src/misc/HostByteOrder.java) [Find the point that…
----
-## Factory vs Abstract Factory (and when neither belongs in Android UI)
-A **factory** creates **one kind of object**. An **abstract factory** creates **families** of related objects (think UI toolkits).
-
-On Android you more often use **DI** or simple builders than textbook factories inside every Fragment—save factories for **SDK boundaries** and **test doubles**.
-
--- Useful links
-- [Learn more](https://www.journaldev.com/1418/abstract-factory-design-pattern-in-java)
-- [Learn more](https://www.baeldung.com/kotlin/builder-pattern)
-
-Interview Answer:
-> A **factory** creates **one kind of object**.
----
-## 3. Fix State Design
-**a. Hoist and Scope State — Don't Put Everything in One Place**
-```kotlin
-// Bad: one giant state object drives entire screen
-data class ScreenState(val header: Header, val feed: List<Item>, val footer: Footer)
-
-// Good: break into independent state holders per UI zone
-@Composable fun FeedScreen(vm: FeedViewModel) {
-    val headerState by vm.headerState.collectAsState()
-    val feedState by vm.feedState.collectAsState()
-    Header(headerState)  // only recomposes when headerState changes
-    Feed(feedState)      // only recomposes when feedState changes
-}
-```
-
-**c. Use `@Stable` / `@Immutable` for Data Classes**
-```kotlin
-@Immutable  // tells Compose this class never changes after creation
-data class Product(val id: String, val name: String, val price: Double)
-```
-Without `@Immutable`, Compose assumes any data class *might* change → always recomposes. With it → Compose skips composables if all params are equal.
-
-**4. Fix Multiple `collectAsState()` — Combine into One State**
-```kotlin
-// Bad: two separate flows → two separate recomposition triggers
-val user by vm.user.collectAsState()
-val posts by vm.posts.collectAsState()
-
-// Good: combine in ViewModel → single emission → one recomposition
-data class ScreenUiState(val user: User?, val posts: List<Post>)
-val uiState by vm.uiState.collectAsState()  // ViewModel combines internally with combine()
-```
-
-**5. Use `remember` and `derivedStateOf` to Cache Computations**
-```kotlin
-// Without remember: filterApplied() runs on every recomposition
-val filteredList = items.filter { it.isVisible }
-
-// With derivedStateOf: only recalculates when items actually changes
-val filteredList by remember { derivedStateOf { items.filter { it.isVisible } } }
-```
-
-**6. Prevent Lambda Recreation — `rememberUpdatedState`**
-```kotlin
-// Bad: new lambda on every recomposition → child never skips
-LazyColumn {
-    items(list) { item ->
-        ProductCard(item, onClick = { handleClick(item) })  // new lambda each time
-    }
-}
-
-// Good: stable callback reference
-val onClick = remember<(Item) -> Unit> { { item -> handleClick(item) } }
-```
-
-**7. `key()` in Lazy Lists — Stable Identity**
-```kotlin
-LazyColumn {
-    items(products, key = { it.id }) { product ->  // stable key = smart diff + correct animations
-        ProductCard(product.name, product.price)
-    }
-}
-```
-
-**8. Break UI into Small, Focused Composables**
-- Each composable should read only the state it needs
-- A small composable that reads one field will only recompose when that one field changes
-- Large composables that read everything recompose for everything
-
-**9. Validation**
-- Layout Inspector: recomposition counts should drop dramatically (ideally to 1–2 per user action, not 20+)
-- FPS: scrolling should hit 60 fps consistently (no frames > 16ms in Profiler)
-- CPU trace: composition phase time should reduce
-
-> Compose recomposition problems = **state not scoped tightly enough + unstable parameters + single giant state object**. Fix: break state, annotate stability, combine flows in ViewModel, use `derivedStateOf` for derived reads.
-
-Interview Answer:
-> *a.
 ---
 ## What are SOLID principles and how do they apply in Android?
-| Principle | Rule | Android Example |
-|-----------|------|-----------------|
-| **S** — Single Responsibility | One class, one reason to change | Activity for UI · ViewModel for logic · Repository for data — each has one job |
-| **O** — Open/Closed | Open for extension, closed for modification | `PaymentProcessor` interface → `CardPayment`, `UPIPayment`, `WalletPayment` implement it — add payment type without changing existing code |
-| **L** — Liskov Substitution | Subclass must be safely substitutable for parent | `LocalUserRepo` and `RemoteUserRepo` both implement `UserRepository` — ViewModel works with either without modification |
-| **I** — Interface Segregation | Many small interfaces > one large one | Split `UserActions(login, logout, uploadPhoto)` into `AuthActions`, `ProfileActions`, `MediaActions` — classes only implement what they use |
-| **D** — Dependency Inversion | Depend on abstractions, not implementations | ViewModel depends on `UserRepository` interface; Hilt injects `UserRepositoryImpl` at runtime |
+| Principle                     | Meaning                                      | Android Example                                                           |
+| ----------------------------- | -------------------------------------------- | ------------------------------------------------------------------------- |
+| **S – Single Responsibility** | One class should have one responsibility     | `ViewModel` handles UI state, `Repository` handles data                   |
+| **O – Open/Closed**           | Open for extension, closed for modification  | Use interfaces to add new API implementations                             |
+| **L – Liskov Substitution**   | Child should be replaceable for parent       | Implementations of a `Repository` interface should behave correctly       |
+| **I – Interface Segregation** | Prefer small, focused interfaces             | `UserReader` and `UserWriter` instead of one huge interface               |
+| **D – Dependency Inversion**  | Depend on abstractions, not concrete classes | ViewModel depends on `UserRepository` interface, not `UserRepositoryImpl` |
 
-**In practice — User Profile Screen example:**
-- **SRP:** `ProfileActivity` → only layout. `ProfileViewModel` → only logic. `UserRepository` → only data.
-- **OCP:** New API provider? Add `NewApiUserRepo` implementing `UserRepository` — zero changes to ViewModel.
-- **LSP:** Swap `LocalUserRepository` with `RemoteUserRepository` in tests — ViewModel doesn't notice.
-- **ISP:** `ProfileViewModel` injects only `ProfileRepository`, not a giant `AppRepository`.
-- **DIP:** `@HiltViewModel class ProfileViewModel @Inject constructor(val repo: UserRepository)` — bound to interface via Hilt module.
-
-> SOLID on Android = **testable boundaries** and **zero merge conflicts** between teams. DIP + Hilt is the most impactful pair: swap implementations without touching callers.
----
-<!-- Source: docs/android/android-networking-security.md -->
-
-Interview Answer:
-> | Principle | Rule | Android Example | |-----------|------|-----------------| | **S** — Single Responsibility | One class, one reason to change | Activity for UI · ViewModel for logic · Repository for data — each has one job | | **O** — Open/Closed | Open for extension, closed…
----
-## Volley advantages (when it still matters)
-Older codebases may still use **Volley** for its **request queue** and **memory/disk cache** behavior. If you maintain that code, know **why** it was chosen and have a **migration** story (OkHttp cache, Coil for images, etc.).
-
-
-> A calm **migration plan** beats arguing “our stack is always best.”
-
-Interview Answer:
-> Older codebases may still use **Volley** for its **request queue** and **memory/disk cache** behavior.
 ---
 ## HTTP polling vs WebSocket vs SSE
 - **Polling:** simple but **wakes the radio** often—bad for battery if frequent.
 - **WebSocket:** **two-way** channel; good for chat or live control—needs **reconnect** logic.
 - **SSE:** **server → client** stream over HTTP; one-way updates.
-
-Pick based on **direction**, **battery**, and what your **backend** supports.
-
-### Useful links
-
-- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
-
-
-> **Battery and radio cost** matter as much as “real-time” buzzwords.
----
-- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
-
-Interview Answer:
-> **Polling:** simple but **wakes the radio** often—bad for battery if frequent.
 ---
 ## Geofences
 **Geofencing** fires when the user enters or leaves regions. Triggers can be **delayed** or **missed** by OS optimization—design **confirmation UX** (e.g. open app to refresh) instead of assuming perfect firing.
 
-### Useful links
-
-- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
-
-
-> Treat geofences as **best-effort hints**, not hard real-time guarantees.
----
-- [Learn more](https://code.tutsplus.com/how-to-work-with-geofences-on-android--cms-26639t)
-
-Interview Answer:
-> *Geofencing** fires when the user enters or leaves regions.
----
-## Retry — what is safe to retry, and what is never retried blindly?
-**Retry** (with **backoff** and **max attempts**): **timeouts**, **DNS/transient** failures, some **5xx** **GET**/**idempotent** reads. **Do not** blindly retry **POST** **payments** or **non-idempotent** writes—**double submit** risk; **4xx** (**401** aside from one **refresh** path) usually **no**. Prefer **idempotency keys** on the **server** if the client must **retry** money flows.
-
-
-> **Retry** is a **business** decision for **writes**—default **off** for **payments**.
-
-Interview Answer:
-> *Retry** (with **backoff** and **max attempts**): **timeouts**, **DNS/transient** failures, some **5xx** **GET**/**idempotent** reads.
----
-## How do you encrypt data in Java/Android?
-Use **`javax.crypto.Cipher`** with a **modern mode** (prefer **AEAD** such as **GCM**), a **random IV** every time, and **keys you do not hardcode** in source. Store keys in **Android Keystore** when possible.
-
-### Useful links
-
-- [Learn more](https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26)
-
-
-> **Mode + IV + key storage** matter more than naming a cipher on slides.
----
-- [Learn more](https://github.com/vamsitallapudi/Coderefer-Java-Projects/commit/443c4f7700fd68391da2ccf40f85a7e3bccd573d#diff-25a6634263c1b1f6fc4697a04e2b9904ea4b042a89af59dc93ec1f5d44848a26)
-
-Interview Answer:
-> Use **`javax.crypto.Cipher`** with a **modern mode** (prefer **AEAD** such as **GCM**), a **random IV** every time, and **keys you do not hardcode** in source.
----
-## OAuth2 + PKCE and JWT on mobile — what does the client actually do?
-Prefer **authorization code + PKCE** for third-party IdPs. **JWT** is often just the **access token shape**—**do not** “verify signature” with **embedded secrets** on device (secrets **extract**); **trust** **exp**/**nbf** only for **UX** hints, **enforce** authorization **server-side**. **Store** tokens in **EncryptedSharedPreferences** or equivalent (**android-storage.md**); **refresh** via **OkHttp `Authenticator`** with **single-flight** (**android-networking.md**). **Refresh failure** → **clear** session, **login** again—no **silent** loops.
-
-
-> Mobile client is **not** a **JWT authority**—**backend** is.
-
-Interview Answer:
-> Prefer **authorization code + PKCE** for third-party IdPs.
----
-## Exported components — common attack surface?
-**Services**, **receivers**, **activities** with **`exported=true`** (or **implicit** intents) can be **invoked** by other packages—**default** **`exported=false`** unless needed; **permission**-protect **IPC**; **explicit** intents. **Deep links** validate **hosts/paths**; **WebView** **URL** allowlists.
-
-
-> Every **export** is a **mini public API**—review like one.
-
-Interview Answer:
-> *Services**, **receivers**, **activities** with **`exported=true`** (or **implicit** intents) can be **invoked** by other packages—**default** **`exported=false`** unless needed; **permission**-protect **IPC**; **explicit** intents.
----
-## APK tampering and integrity — beyond root checks?
-**Play Integrity** / **SafetyNet** era patterns: **integrity** verdicts for **high-value** flows; **signature** checks for **debug** / **unexpected** installers where policy allows. **Expect** bypass on **root**—combine with **server** **risk** scoring, not **client-only** **block** unless compliance demands.
-
-
-> **Client integrity** is **signal**, not **proof**.
-
-Interview Answer:
-> *Play Integrity** / **SafetyNet** era patterns: **integrity** verdicts for **high-value** flows; **signature** checks for **debug** / **unexpected** installers where policy allows.
----
-## Google vs Amazon vs fintech — how do you pitch the same fact?
-**Google-style:** go **deeper** on **internals** (Keystore, cipher modes, **why** not verify JWT locally). **Amazon-style:** **STAR** with **your** **incident** and **owned** metrics. **Fintech-style:** **threat** walkthrough (**replay**, **MITM**, **repackaged** APK)—**mitigation** + **server** role. **Do not** memorize **fake** **PCI**/**audit** outcomes.
-
-
-> Match **depth**, **story**, or **attack** lens to the **panel**—same **engineering**, different **packaging**.
-
-Interview Answer:
-> *Google-style:** go **deeper** on **internals** (Keystore, cipher modes, **why** not verify JWT locally).
----
-## `apply()` vs `commit()` in `SharedPreferences`
-**`commit()`** writes **right away** (blocking) and returns **true/false** so you know if disk write succeeded. **`apply()`** saves **in the background**—better when you are on the **main thread** and do not need an immediate result.
-
-If an **`apply()`** is still in flight and you call **`commit()`**, the **`commit()`** can **wait**—worth knowing in hot paths.
-
-**Example:** Feature flags toggled from the UI → usually **`apply()`**. Tests that must read back immediately might use **`commit()`** in test doubles.
-
-
-> Prefer **`apply()`** for normal UI saves; know **`commit()`** when you need a **confirmed** write.
-
-Interview Answer:
-> *`commit()`** writes **right away** (blocking) and returns **true/false** so you know if disk write succeeded.
 ---
 ## Scoped storage & MediaStore strategy
 Avoid assuming **full filesystem** access. Use **MediaStore** for shared media, **SAF** when the user picks files, and **app-specific** directories for caches and internal files.
 
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
-
-
-> Separate **user-visible files** from **app-private cache**—privacy and UX depend on it.
----
-- [Learn more](https://blog.mindorks.com/understanding-the-scoped-storage-in-android)
-
-Interview Answer:
-> Avoid assuming **full filesystem** access.
----
-## Local storage threat model — why is “app sandbox” not enough for fintech / health?
-Assume **root**, **backup extraction**, **physical access**, **malware**, and **debuggable** builds. **Plaintext** prefs/files, **HTTP cache** of **PII**, and **world-readable** paths are common leaks. **Defense:** encrypt **meaningful** data, **disable** risky **backup** for sensitive prefs, treat **cache** as **untrusted**.
-
-
-> **Sandbox** stops normal apps—not **compromised** devices or **misconfig**.
-
-Interview Answer:
-> Assume **root**, **backup extraction**, **physical access**, **malware**, and **debuggable** builds.
----
-## EncryptedFile for sensitive PDFs / exports?
-Use **`EncryptedFile`** (AES-GCM, HKDF chunking) under **`filesDir`**, not **world-readable** external storage. **Delete** temp files after **share/upload**; **clear** on **logout**.
-
-
-> Encrypt **before** write; assume **copied** files are **hostile** if plaintext.
-
-Interview Answer:
-> Use **`EncryptedFile`** (AES-GCM, HKDF chunking) under **`filesDir`**, not **world-readable** external storage.
----
-## Cache vs persistent — what never belongs in cache?
-**Http** / **image** / **Coil** caches can hold **tokens**, **account numbers**, **PHI** in JSON—**TTL**, **encryption**, or **exclude** sensitive endpoints. **Logout:** `cacheDir` cleanup (and **coil**/`OkHttp` cache **evict** where applicable). **Persistent** structured data → **Room** with policy; **sensitive** → **encrypted**.
-
-
-> **Cache is readable**—design as if **postmortem** includes **strings** dump.
-
-Interview Answer:
-> *Http** / **image** / **Coil** caches can hold **tokens**, **account numbers**, **PHI** in JSON—**TTL**, **encryption**, or **exclude** sensitive endpoints.
----
-## Secure logout — what do you clear, and `apply()` vs `commit()`?
-**Server** revoke **refresh** first when possible; then **clear** **EncryptedSharedPreferences** (`commit()` if you must **guarantee** disk before showing logged-out UI), **delete** **Keystore** keys you use for local crypto, **clear** **Room**/encrypted DB or **user** tables, **cancel** **WorkManager** user jobs, **wipe** **cache**, drop **in-memory** singletons holding **PII**. **Partial** logout = **session restore** bugs and **audit** failures.
-
-
-> Logout is **data destruction**, not **NavController** pop.
-
-Interview Answer:
-> *Server** revoke **refresh** first when possible; then **clear** **EncryptedSharedPreferences** (`commit()` if you must **guarantee** disk before showing logged-out UI), **delete** **Keystore** keys you use for local crypto, **clear** **Room**/encrypted DB or **user** tables,…
 ---
 ## Scan works on one phone, not another — what do you check?
 - **Permissions** and **OS version** differences.
@@ -2137,14 +1220,8 @@ Interview Answer:
 - **Filter** too strict (wrong service UUID).
 - **Advertising interval** very long—user must wait.
 - OEM **BLE stack** bugs—always have a **second device** and **firmware** version in bug reports.
+- **Stop scanning** as soon as you have a target device to save **battery** and avoid **rate limits**.
 
-**Stop scanning** as soon as you have a target device to save **battery** and avoid **rate limits**.
-
-
-> **Permissions + scan settings + background limits + OEM**—verify on **real hardware matrix**.
-
-Interview Answer:
-> **Permissions** and **OS version** differences.
 ---
 ## Device found but connection fails — common causes?
 - Peripheral **already connected** elsewhere (phone, hub).
@@ -2153,47 +1230,9 @@ Interview Answer:
 - **Bonding** state mismatch or **encrypted** characteristic without bond.
 - Firmware **connection parameter** refusal—needs **logs** and **sniffer** (HCI snoop / nRF Connect).
 
-
-> **Connection** failures are often **bonding**, **transport**, **already connected**, or **stack/firmware**—prove with **logs** and a **second phone**.
-
-Interview Answer:
-> Peripheral **already connected** elsewhere (phone, hub).
----
-## MTU — default size, how you negotiate it, and why throughput still stinks.
-Default ATT MTU is **23 bytes** (effective payload **20 bytes** without negotiation). Call **`requestMtu(517)`** (or your max); handle **`onMtuChanged`**—the **negotiated** value is the **minimum** of what **both** sides support.
-
-Even with a higher MTU, **connection interval**, **data length extension**, **write type** (`WRITE_TYPE_NO_RESPONSE` vs default), and **firmware buffering** cap real throughput. For **bulk sync** (e.g. 1 MB history), you combine **MTU**, **interval/priority** where appropriate, **chunking**, and **application-level flow control** (ACK every N blocks).
-
-
-> **MTU** raises the ceiling; **interval**, **write mode**, and **firmware** determine actual **speed**.
-
-Interview Answer:
-> Default ATT MTU is **23 bytes** (effective payload **20 bytes** without negotiation).
----
-## Callbacks run on which thread? How do you update UI safely?
-**`BluetoothGattCallback`** methods run on a **Binder / background** thread **not** guaranteed to be main. **Marshal** to **Main** with **`Handler(Looper.getMainLooper())`**, **`runOnUiThread`**, or **coroutines** (`withContext(Main)`).
-
-**Do not** do heavy parsing on the callback thread if it contends with **GATT** sequencing—**hand off** to a **parser** queue.
-
-
-> Assume **callbacks ≠ main thread**; **hop** to **Main** for UI and keep **GATT** discipline.
-
-Interview Answer:
-> *`BluetoothGattCallback`** methods run on a **Binder / background** thread **not** guaranteed to be main.
----
-## Pairing vs bonding — why does it matter for medical devices?
-**Pairing** establishes keys for a session; **bonding** **persists** keys (e.g. **LTK**) so reconnects can **encrypt** without repeating UX. MedTech often needs **bonding** for **trusted** peripherals and **encrypted** characteristics.
-
-**Implementation detail:** bonding flows can **fail** across **OEM** stacks—test **forgot device**, **re-pair**, and **key rotation** policies.
-
-
-> **Bonding** = **encrypted reconnect** without constant user friction—critical for **regulated** products.
-
-Interview Answer:
-> *Pairing** establishes keys for a session; **bonding** **persists** keys (e.g.
 ---
 ## How do you securely store sensitive data in an Android app?
-Never store sensitive data (passwords, tokens, keys) in plain text.
+- Never store sensitive data (passwords, tokens, keys) in plain text.
 
 | Data Type | Correct Storage | Wrong Storage |
 |-----------|----------------|---------------|
@@ -2202,7 +1241,7 @@ Never store sensitive data (passwords, tokens, keys) in plain text.
 | Structured sensitive data | Encrypted Room (SQLCipher) | Plain Room / SQLite |
 | API keys | Server-side; `BuildConfig` for non-secret config | `strings.xml`, source code |
 
-**`EncryptedSharedPreferences` setup:**
+- **`EncryptedSharedPreferences` setup:**
 ```kotlin
 val masterKey = MasterKey.Builder(context)
     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
@@ -2212,254 +1251,8 @@ val prefs = EncryptedSharedPreferences.create(
     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
 )
 ```
+- **Android Keystore:** generates and stores keys inside secure hardware (TEE/SE). Keys never leave the hardware in plaintext — even a root-level attacker cannot extract them.
 
-**Android Keystore:** generates and stores keys inside secure hardware (TEE/SE). Keys never leave the hardware in plaintext — even a root-level attacker cannot extract them.
-
-**What to avoid:**
-- Internal/external storage files for secrets (accessible to root and USB debugging)
-- `Log.d` printing tokens (scraped from logcat)
-- Sending credentials in URL query params (server logs capture them)
-
-
-> Sensitive data storage = **Keystore for keys, EncryptedSharedPreferences for tokens, SQLCipher for structured data**. The rule: never plaintext, never in source code.
-
-Interview Answer:
-> Never store sensitive data (passwords, tokens, keys) in plain text.
----
-## ArrayMap / SparseArray vs HashMap on Android
-`ArrayMap` and `SparseArray` are Android collections tuned for **small maps** with fewer allocations than `HashMap`. That can mean less garbage collection pressure when you create and drop maps often.
-
-If the map grows **large**, the classic `HashMap` often wins on lookup and structure. So this is not a universal “always use ArrayMap” rule—you pick based on **size, churn, and whether you measured a problem**.
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/android-app-optimization-using-arraymap-and-sparsearray-f2b4e2e3dc47)
-- [Learn more](https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray)
-
-
-> **Measure** size and allocation churn before micro-optimizing map types.
----
-- [Learn more](https://amitshekhar.me/blog/optimization-using-arraymap-and-sparsearray)
-
-Interview Answer:
-> `ArrayMap` and `SparseArray` are Android collections tuned for **small maps** with fewer allocations than `HashMap`.
----
-## RenderScript vs NDK (legacy note)
-RenderScript was meant for heavy parallel work on the GPU/CPU. It is **deprecated**; new code should use other options (NDK, GPU APIs, or higher-level libraries) depending on the problem.
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
----
-- [Learn more](https://blog.mindorks.com/comparing-android-ndk-and-renderscript-1a718c01f6fe)
-
-Interview Answer:
-> RenderScript was meant for heavy parallel work on the GPU/CPU.
----
-## onTrimMemory — why implement it?
-The system calls **`onTrimMemory`** (and related callbacks) when memory is tight. It is your chance to **drop caches** (thumbnails, parsed JSON, extra bitmaps) so the process is less likely to be killed.
-
-Do **not** throw away data you need for correctness—only **recreatable** caches.
-
-### Useful links
-
-- [Learn more](https://developer.android.com/topic/performance/memory)
-
-
-> Trim **caches**, not essential user data or app state you cannot rebuild.
----
-- [Learn more](https://developer.android.com/topic/performance/memory)
-
-Interview Answer:
-> The system calls **`onTrimMemory`** (and related callbacks) when memory is tight.
----
-## Why apps exit — process death vs finish
-Android does not work like desktop “Quit.” The system may **kill your process** in the background under memory pressure. The user may also swipe the app away from recents, which behaves differently by version.
-
-Crashes and **low-memory killer** are normal topics in interviews—**do not rely** on a guaranteed “app exit” hook for business logic.
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)
-
-
-> There is **no reliable desktop-style “exit app”** model—design for **process death** and restoration.
----
-- [Learn more](https://blog.mindorks.com/reason-of-exit-in-android-application/)
-
-Interview Answer:
-> Android does not work like desktop “Quit.” The system may **kill your process** in the background under memory pressure.
----
-## Multi-touch
-Touch events carry **multiple pointers** (fingers). **`MotionEvent`** reports indices and IDs; pointer **indices** can change when fingers lift, so use **`getPointerId`** for tracking across events. **`GestureDetector`** helps with common patterns.
-
-### Useful links
-
-- [Learn more](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
-
-
-> Track **pointer IDs**, not only indices—they are not the same across events.
----
-- [Learn more](https://arjun-sna.github.io/android/2016/07/20/multi-touch-android/)
-
-Interview Answer:
-> Touch events carry **multiple pointers** (fingers).
----
-## Doze and App Standby — how do they affect your features?
-**Doze** (device **idle**, screen **off**, often **unplugged**): defers **network**, **jobs**, **alarms** except **maintenance windows**. **App Standby** buckets (**Active → … → Restricted**) tighten **per-app** **background** work. **FGS**, **high-priority FCM**, and **user-visible** flows get **exceptions**—everything else should assume **delay**.
-
-
-> Design **deferrable** work—**fight the OS** and users **uninstall**.
-
-Interview Answer:
-> *Doze** (device **idle**, screen **off**, often **unplugged**): defers **network**, **jobs**, **alarms** except **maintenance windows**.
----
-## Fastlane (or equivalent) — what do you automate for Android?
-**Fastlane** wraps **Gradle** (`bundleProdRelease`), **upload_to_play_store** (track, rollout %, AAB path), **metadata**, and **Slack/Teams** notifications. **Maturity signals:** separate **lanes** per track, **manual approval** for production, **rollback** playbook. Same ideas map to **pure** Gradle + **Play Developer API** in CI without Fastlane.
-
-### Code example
-
-```ruby
-lane :internal do
-  gradle(task: "bundleProdRelease")
-  upload_to_play_store(
-    track: "internal",
-    aab: "../app/build/outputs/bundle/prodRelease/app-prod-release.aab"
-  )
-end
-```
-
-
-> **Repeatable lane** + **staged rollout** beats **hand-upload** Friday night.
-
-Interview Answer:
-> *Fastlane** wraps **Gradle** (`bundleProdRelease`), **upload_to_play_store** (track, rollout %, AAB path), **metadata**, and **Slack/Teams** notifications.
----
-## Play Store rollout — how do you limit blast radius?
-**Internal/closed** first; **production** with **percentage rollout** (e.g. 5% → 20% → 100%); watch **crash-free users** and **ANR**; **halt** rollout on thresholds. Upload **mapping** file with release. **AAB** (not side-loaded APK) for Play distribution.
-
-
-> **Staged %** + **metrics** = production **judgment**, not hope.
-
-Interview Answer:
-> *Internal/closed** first; **production** with **percentage rollout** (e.g.
----
-## SDK initialization — when do you run it, and what must not live in `Application.onCreate()`?
-**Bucket SDKs:** (1) **crash/telemetry** you need from second one—init **early** but keep work **light**; (2) **feature** SDKs (maps, payments)—**lazy** init on first screen that needs them; (3) **analytics/marketing**—often **after** first frame or **after consent**. Use **App Startup** with explicit dependencies, **background** threads where safe, and **feature flags** to **disable** a bad SDK without shipping.
-
-**Main-thread block** in init shows up in **startup traces** / **StrictMode**—profile and defer.
-
-
-> **Default lazy**; **eager** only when the product truly needs it **before** first paint.
-
-Interview Answer:
-> *Bucket SDKs:** (1) **crash/telemetry** you need from second one—init **early** but keep work **light**; (2) **feature** SDKs (maps, payments)—**lazy** init on first screen that needs them; (3) **analytics/marketing**—often **after** first frame or **after consent**.
----
-## Failure isolation and SDK removal — how do staff teams treat churn?
-**Wrap** vendor APIs behind **your** interfaces; **try/catch** or **Result** at boundaries; **feature-flag** kill switch; **timeouts** on network SDKs. **Removing** an SDK: stop **new** usage, **dual-run** metrics if swapping analytics, delete **permissions** / **manifest** mergers / **init** code, verify **ProGuard** rules.
-
-
-> **Adapter + flag** = you can **survive** Tuesday’s bad SDK release.
-
-Interview Answer:
-> *Wrap** vendor APIs behind **your** interfaces; **try/catch** or **Result** at boundaries; **feature-flag** kill switch; **timeouts** on network SDKs.
----
-## Tips & curated resources for interview preparation
-Mix **consistent DSA practice**, **system design** drills, and **behavioral** stories with **real numbers** (latency saved, crash rate, team size). Use the links below as **starting points**, not a checklist to cram in one night.
-
-### Useful links
-
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7256556738038882304/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7246844257766981632/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7221106724919738369/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7220663449440161793/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7219036304691388418/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7217827106083266560/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7213379334311448576/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7194272210679705600/)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7177985319269502977/)
-- [Learn more](https://blog.sp3.in/dsa)
-- [STAR method:](https://www.testgorilla.com/blog/star-method-interviews/)
-
-
-> **STAR + metrics** beat a list of adjectives about how “passionate” you are.
----
-- [Learn more](https://www.testgorilla.com/blog/star-method-interviews/)
-
-Interview Answer:
-> Mix **consistent DSA practice**, **system design** drills, and **behavioral** stories with **real numbers** (latency saved, crash rate, team size).
----
-## Error monitoring & logging for post-mortems
-Use **structured logs** where they help, **Crashlytics** (or similar) for crashes and **non-fatals**, **breadcrumbs** around risky flows, **remote flags** to tune logging, and **PII scrubbing**. Dashboards should answer **“what broke for whom?”** not dump noise.
-
-
-> Logs and dashboards should drive **action**, not scroll fatigue.
-
-Interview Answer:
-> Use **structured logs** where they help, **Crashlytics** (or similar) for crashes and **non-fatals**, **breadcrumbs** around risky flows, **remote flags** to tune logging, and **PII scrubbing**.
----
-## Tell me about yourself / hobbies / not on resume (templates)
-Keep a **tight spine**: domains, tech, scale, impact. Add **one human detail** if asked—avoid **rambling** or unrelated life story unless they invite it.
-
-
-> Aim for about **two minutes**, clear structure.
-
-Interview Answer:
-> Keep a **tight spine**: domains, tech, scale, impact.
----
-## Code optimization impact (deep narrative)
-Walk through **profilers**, **structural** fixes, **data structures**, **caching**, and how you **measured before/after**.
-
-
-> Always close with **before/after** evidence.
-
-Interview Answer:
-> Walk through **profilers**, **structural** fixes, **data structures**, **caching**, and how you **measured before/after**.
----
-## Roles & responsibilities
-Align your story with **scope**, **leadership**, **cross-functional** work, and **quality ownership** at your level.
-
-
-> Match examples to the **job level** you are interviewing for.
-
-Interview Answer:
-> Align your story with **scope**, **leadership**, **cross-functional** work, and **quality ownership** at your level.
----
-## Design patterns in practice (Singleton/Observer/Factory)
-Name patterns you **actually used** and **why**—including **downsides** (singletons and tests, overuse of observers).
-
-
-> Patterns are **tools**, not tattoos.
-
-Interview Answer:
-> Name patterns you **actually used** and **why**—including **downsides** (singletons and tests, overuse of observers).
----
-## Difficult bug / intermittent crash
-**Crashlytics** breadcrumbs, **repro** harness, **fix root cause** vs papering over with retries only.
-
-
-> Intermittent bugs usually mean **missing signals**—add instrumentation.
-
-Interview Answer:
-> *Crashlytics** breadcrumbs, **repro** harness, **fix root cause** vs papering over with retries only.
----
-## Refactoring definition + legacy refactor story
-Refactoring changes **structure** without changing **behavior**—done in **small steps** with **tests** and **stakeholder** communication.
-
-
-> Big refactors need a **business sponsor** and a **plan**.
-
-Interview Answer:
-> Refactoring changes **structure** without changing **behavior**—done in **small steps** with **tests** and **stakeholder** communication.
----
-## Cross-team delivery — backend / QA / product blocked you. What do you do?
-**Early** alignment on **API contracts** and **mocks**; shared **ownership** of incidents, not blame ping-pong. If blocked: escalate with **context + options** (phased ship, temporary stub, scope cut)—not raw complaints. **Fintech/compliance:** release **checklists** (logging, monitoring, audit trail) as **gates**, not last-night panic.
-
-
-> Leads **unblock** with **options** and **written** alignment.
-
-Interview Answer:
-> *Early** alignment on **API contracts** and **mocks**; shared **ownership** of incidents, not blame ping-pong.
 ---
 ## What is a Class and Object in Android?
 #### Class
@@ -2478,112 +1271,14 @@ Interview Answer:
 *Key Points:*
 - Object is the actual entity created from the class blueprint.
 - You can create multiple objects from the same class, each with different data.
-
-Interview Answer:
-> A class is like a blueprint or template for creating objects.
----
-## Explain Inheritance in Android with an Example
-- Inheritance is an OOP concept where one class (child/subclass) inherits properties and behaviors of another class (parent/superclass).
-- Helps reuse code, reduce duplication, and create hierarchical relationships.
-
-#### How It Works in Android
-- Android apps are built using classes, so inheritance is common:
-  - Activities and Fragments extend `AppCompatActivity` or `Fragment`.
-  - Custom Views extend `View` or `TextView`.
-  - Adapters can extend `RecyclerView.Adapter`.
-
-Interview Answer:
-> Inheritance is an OOP concept where one class (child/subclass) inherits properties and behaviors of another class (parent/superclass).
----
-## Q4: What is Polymorphism in Android?
-- Polymorphism is an OOP concept that allows an object to take many forms.
-
-Interview Answer:
-> Polymorphism is an OOP concept that allows an object to take many forms.
 ---
 ## What is LiveData?
 - Lifecycle-aware observable data holder.
 - UI observes LiveData to get automatic updates.
 - Prevents memory leaks as it only updates when the UI is active.
 
-Interview Answer:
-> Lifecycle-aware observable data holder.
----
-## Explain SOLID Principles in Android with examples
-- SOLID is a set of five design principles that help in writing clean, scalable, and easy-to-maintain code.
-- Each letter in SOLID stands for one principle:
-  1. **S** – Single Responsibility
-  2. **O** – Open/Closed
-  3. **L** – Liskov Substitution
-  4. **I** – Interface Segregation
-  5. **D** – Dependency Inversion
-
-Let’s understand them one by one:
-
-#### S – Single Responsibility Principle (SRP)
-- A class should have only one reason to change, meaning it should do only one job.
-- *Example in Android:* Don’t mix UI logic and data logic inside an Activity. Use Activity for UI and ViewModel for business logic. Use Repository for data handling (API/Database). This makes code cleaner and easier to test or modify.
-
-#### O – Open/Closed Principle (OCP)
-- A class should be open for extension but closed for modification. You should add new features without changing existing code.
-- *Example in Android:* Suppose you have a PaymentProcessor class. Instead of editing it for every new payment method (UPI, Card, Wallet), create new classes like CardPayment, UPIPayment that implement a PaymentInterface. This keeps the original class safe from future changes.
-
-#### L – Liskov Substitution Principle (LSP)
-- Subclasses should be usable in place of their parent class without breaking the app.
-- *Example:* If you have a Bird class with fly() method, then any subclass like Sparrow or Eagle should also support flying. But if the Penguin can’t fly, it shouldn’t extend the bird. In Android, this means your subclasses should behave consistently with their base classes.
-
-#### I – Interface Segregation Principle (ISP)
-- Don’t create large, all-in-one interfaces. Instead, create smaller, specific interfaces that serve one purpose.
-- *Example in Android:* One big UserActions interface with methods login(), logout(), uploadPhoto(). Split into smaller interfaces like AuthActions, ProfileActions, MediaActions. This keeps code flexible — classes only implement what they need.
-
-#### D – Dependency Inversion Principle (DIP)
-- High-level modules (like ViewModel) shouldn’t depend on low-level modules (like RepositoryImpl). Both should depend on an abstraction (interface).
-- *Example in Android:* Create a UserRepository interface. Then have multiple implementations like RemoteUserRepo and LocalUserRepo. Inject it using Dagger/Hilt or manual dependency injection. This makes it easy to swap implementations (for example, in testing).
-
-#### Real Example
-Let’s say you have a User Profile Screen:
-- **SRP:** Separate classes for UI (Activity), business logic (ViewModel), and data (Repository).
-- **OCP:** Add a new API provider without changing existing data layer code.
-- **LSP:** Replace LocalUserRepository with RemoteUserRepository safely.
-- **ISP:** Create small interfaces for login, logout, and profile operations separately.
-- **DIP:** ViewModel depends on UserRepository interface, not a concrete class.
-
-Interview Answer:
-> SOLID is a set of five design principles that help in writing clean, scalable, and easy-to-maintain code.
----
-## How can you secure communication between app and server?
-- Always use HTTPS (SSL/TLS) to encrypt data in transit.
-- Use certificate pinning to verify the server.
-- Avoid logging sensitive data (e.g., tokens or passwords).
-- Use secure authentication methods like OAuth2 or JWT.
-
-Interview Answer:
-> Always use HTTPS (SSL/TLS) to encrypt data in transit.
----
-## How do you build responsive Android UI?
--   Avoid hardcoded dimensions where possible.
--   Support different screen sizes and orientations.
--   Use adaptive layouts and window size information.
--   Design for phones, tablets, foldables, and landscape.
-
-```text
-Phone
-  ↓
-Single-column layout
-
-Tablet
-  ↓
-Multi-pane layout
-```
-
-For XML, use resource qualifiers where appropriate.
-
-Interview Answer:
-> Avoid hardcoded dimensions where possible.
 ---
 ## What is CI/CD for Android?
-A typical pipeline is:
-
 ```text
 Pull Request
     ↓
@@ -2604,14 +1299,8 @@ Sign
 Release
 ```
 
-The exact stages depend on the organization.
-
-Interview Answer:
-> A typical pipeline is: The exact stages depend on the organization.
 ---
 ## How can you improve Android build time?
-Look at:
-
 -   Gradle configuration
 -   Build cache
 -   Configuration cache
@@ -2622,10 +1311,6 @@ Look at:
 -   Avoiding unnecessary annotation processing
 -   CI caching
 
-Measure before changing the build system.
-
-Interview Answer:
-> Look at: Gradle configuration Build cache Configuration cache Parallel execution Dependency graph Modularization Incremental builds Avoiding unnecessary annotation processing CI caching Measure before changing the build system.
 ---
 ## How should Android signing be handled in CI/CD?
 -   Keep signing credentials outside source control.
@@ -2633,7 +1318,6 @@ Interview Answer:
 -   Restrict access.
 -   Separate debug and release credentials where appropriate.
 -   Audit release access.
-
 ```text
 CI
  ↓
@@ -2643,32 +1327,8 @@ Signed AAB
  ↓
 Release
 ```
-
-Interview Answer:
-> Keep signing credentials outside source control.
----
-## What are build variants?
-Build variants allow different configurations such as:
-
-```text
-debug
-release
-staging
-production
-```
-
-They can use different API endpoints, logging settings, and feature
-configurations.
-
-Never allow development configuration to accidentally ship in
-production.
-
-Interview Answer:
-> Build variants allow different configurations such as: They can use different API endpoints, logging settings, and feature configurations.
 ---
 ## How would you improve app stability?
-Use a loop:
-
 ```text
 Monitor
  ↓
@@ -2685,33 +1345,11 @@ Release gradually
 Monitor again
 ```
 
-Avoid fixing only the visible symptom.
-
-Interview Answer:
-> Use a loop: Avoid fixing only the visible symptom.
----
-## What is release rollback?
-Rollback means stopping or reversing a problematic release.
-
-Use:
-
--   Phased rollout
--   Feature flags
--   Previous stable version
--   Server-side kill switches where available
-
-The safest rollback strategy depends on whether the problem is in the
-app, backend, or configuration.
-
-Interview Answer:
-> Rollback means stopping or reversing a problematic release.
 ---
 ## What is the difference between deployment and release?
 -   Deployment means code is made available to an environment.
 -   Release means functionality is made available to users.
-
-Feature flags allow:
-
+- Feature flags allow:
 ```text
 Code deployed
      ↓
@@ -2722,374 +1360,52 @@ Feature validated
 Feature enabled gradually
 ```
 
-This reduces release risk.
-
-Interview Answer:
-> Deployment means code is made available to an environment.
 ---
 ## What do you mean by Gradle wrapper?
-The Gradle wrapper is the most suitable way to initiate a Gradle build. A Gradle wrapper is a Window’s batch script which has a shell script for the OS (operating system). Once you start the Gradle build via the wrapper, you will see an auto download which runs the build.
+- The Gradle wrapper is the most suitable way to initiate a Gradle build. 
+- A Gradle wrapper is a Window’s batch script which has a shell script for the OS (operating system). 
+- Once you start the Gradle build via the wrapper, you will see an auto download which runs the build.
 
-
-
-> The Gradle wrapper is the most suitable way to initiate a Gradle build.
-
-Interview Answer:
-> The Gradle wrapper is the most suitable way to initiate a Gradle build.
----
-## What is ABI Management?
-Different Android handsets use different CPUs, which in turn support different instruction sets. Each combination of CPU and instruction sets has its own Application Binary Interface, or ABI. The ABI defines, with great precision, how an  application's machine code is supposed to interact with the system at runtime. You must specify an ABI for each CPU  architecture you want your app to work with. You can checkout the full specifcations [here](https://developer.android.com/ndk/guides/abis)<br>
-
-
-### Useful links
-
-- [here](https://developer.android.com/ndk/guides/abis)
-
-
-
-> Different Android handsets use different CPUs, which in turn support different instruction sets.
----
-- [Learn more](https://developer.android.com/ndk/guides/abis)
-
-Interview Answer:
-> Different Android handsets use different CPUs, which in turn support different instruction sets.
----
-## What is a BuildType in Gradle? And what can you use it for?
-* Build types define properties that Gradle uses when building and packaging your Android app.
-* A build type defines how a module is built, for example whether ProGuard is run.
-* A product flavor defines what is built, such as which resources are included in the build.
-* Gradle creates a build variant for every possible combination of your project’s product flavors and build types.<br>
-
-Interview Answer:
-> Build types define properties that Gradle uses when building and packaging your Android app.
----
-## Are you familiar with ProGuard/DexGuard/R8 Minification?
-ProGuard, DexGuard, and R8 are tools used in Android development to optimize and protect the application code. Here’s a brief overview of each:<br>
-
-**ProGuard:** It is an open-source tool that shrinks, optimizes, and obfuscates Java code. It removes unused code and resources, making the APK smaller. ProGuard also makes the code more difficult to reverse-engineer by renaming classes, fields, and methods with non-descriptive names.<br>
-
-**DexGuard:**: A commercial tool that offers more advanced protection features than ProGuard. It provides stronger encryption and obfuscation techniques, and it can also protect against static and dynamic analysis, making it harder for attackers to tamper with or reverse-engineer the application.<br>
-
-**R8:** The latest official code shrinker and minifier from Google, which is integrated into Android Studio. R8 combines shrinking, desugaring, dexing, and obfuscation into one step. It’s designed to be backward-compatible with ProGuard, meaning it can use ProGuard configuration files. R8 improves build times and results in smaller APK sizes compared to ProGuard.
-
-
-
-> ProGuard, DexGuard, and R8 are tools used in Android development to optimize and protect the application code.
-
-Interview Answer:
-> ProGuard, DexGuard, and R8 are tools used in Android development to optimize and protect the application code.
----
-## What is AAPT?
-AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources. AAPT2 parses, indexes, and compiles the resources into a binary format that is optimized for the Android platform.
-
-
-
-> AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources.
-
-Interview Answer:
-> AAPT2 (Android Asset Packaging Tool) is a build tool that Android Studio and Android Gradle Plugin use to compile and package your app’s resources.
 ---
 ## Explain the build process in Android:
-* First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
- * Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex.
- * The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.<br>
-
-Interview Answer:
-> First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool.
+- First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
+-  Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the "dx" tool, which is included in the sdk 'tools'. The output is classes.dex.
+-  The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.
 ---
 ## How to reduce apk size?
 * Enable proguard in your project by adding following lines to your release build type.
 * Enable shrinkResources.
 * Strip down all the unused locale resources by adding required resources name in “resConfigs”.
 * Convert all the images to the webp or vector drawables.
-     <br>
-
-
-### Useful links
-
-- [Learn more](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
----
-- [Learn more](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
-
-Interview Answer:
-> Enable proguard in your project by adding following lines to your release build type.
 ---
 ## How to reduce build time of an Android app?
 - Measure slow tasks with Gradle build scans or profiling.
 - Enable build caching, configuration cache, and parallel execution where safe.
 - Prefer incremental compilation and KSP where supported.
 - Reduce unnecessary dependencies and avoid a large shared module.
-
-
-### Useful links
-
-- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)
----
-- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)
-
-Interview Answer:
-> Measure Gradle bottlenecks, enable safe caching and parallelism, reduce dependencies, and improve module boundaries.
----
-## What is a ContentProvider — when do you still build one?
-A **ContentProvider** exposes **structured data** to other processes through **`content://` URIs** with **permissions**. The system routes queries/updates through **`ContentResolver`**.
-
-They are **verbose** to build. For **data only your app uses**, **Room** is simpler. Providers still matter when you **share data securely** with another app or need the old **CursorLoader**-style patterns.
-
-**Example:** Read-only health data shared with a partner app under a **signature-level** permission.
-
-### Useful links
-
-- [Learn more](https://medium.com/@sanjeevy133/an-idiots-guide-to-android-content-providers-part-1-970cba5d7b42)
-- [Learn more](https://developer.android.com/guide/topics/providers/content-provider-basics)
-- Diagram: `/assets/content-provider-diagram.png`
-
-
-> Think of a provider as a **small public API** with **access control**, not “free database.”
----
-- [Learn more](https://developer.android.com/guide/topics/providers/content-provider-basics)
-
-Interview Answer:
-> A **ContentProvider** exposes **structured data** to other processes through **`content://` URIs** with **permissions**.
----
-## Release build behaves differently from debug for BLE — why?
-**R8/ProGuard** can strip or rename code **reflectively** used by some SDKs—add **keep rules** for **Bluetooth** glue if needed. **Timing** changes (no debugger) expose **race** bugs: **service discovery** too early, **missing delay** before **`discoverServices()`** on some peripherals.
-
-
-> **Test BLE on `release`** with **minify on**—timing and **shrinking** both break **fragile** stacks.
-
-Interview Answer:
-> *R8/ProGuard** can strip or rename code **reflectively** used by some SDKs—add **keep rules** for **Bluetooth** glue if needed.
----
-## APK / app size reduction and build time improvements
-Smaller APKs download faster and use less storage. Common levers: **R8/ProGuard** (shrink code), **`shrinkResources`**, limit languages with **`resConfigs`**, use **WebP** or vectors where it helps, **dynamic feature modules** for rarely used pieces, and remove dead code. **APK Analyzer** shows what actually ships.
-
-Faster builds: Gradle **build cache**, fewer modules touching every change, sensible **`implementation` vs `api`**, and CI that caches dependencies.
-
-### Useful links
-
-- [Learn more](https://medium.com/exploring-code/how-you-can-decrease-application-size-by-60-in-only-5-minutes-47eff3e7874e)
-- [Learn more](https://blog.mindorks.com/how-to-reduce-apk-size-in-android-2f3713d2d662)
-- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)
-
-
-> App size and build speed are **ongoing hygiene**, not one-off tasks.
----
-- [Learn more](https://medium.com/exploring-code/how-to-decrease-your-gradle-build-time-by-65-310b572b0c43)
-
-Interview Answer:
-> Smaller APKs download faster and use less storage.
----
-## ProGuard vs R8 vs DexGuard
-**ProGuard** was the classic **shrink + obfuscate** toolchain. **R8** is the default now: it **shrinks**, **obfuscates**, and ties into **desugaring** with generally **faster** builds. **DexGuard** adds **commercial hardening** (extra obfuscation, tamper resistance)—buy it when your **threat model** justifies cost.
-
-**Example:** Turn on **R8 full mode** in release and maintain **keep rules** for **reflection** (Retrofit models, Gson types, etc.).
-
-
-> Shrinking **breaks reflection**—**ProGuard/R8 rules** are part of your source tree.
-
-Interview Answer:
-> *ProGuard** was the classic **shrink + obfuscate** toolchain.
 ---
 ## Build types vs product flavors vs build variants
-- **Build type:** **debug** vs **release** (minify, signing, debuggable).
-- **Product flavor:** different **products** (free/pro, region) along **dimensions**.
-- **Variant:** one **flavor** × one **build type** (e.g. `prodRelease`).
+|                   | **Build Type**                   | **Product Flavor**               | **Build Variant**                   |
+| ----------------- | -------------------------------- | -------------------------------- | ----------------------------------- |
+| **Purpose**       | How to build the app             | Which version/environment of app | Actual combination of type + flavor |
+| **Common values** | `debug`, `release`               | `free`, `paid`, `dev`, `prod`    | `devDebug`, `prodRelease`           |
+| **Controls**      | Debugging, signing, minification | App-specific features/config     | Final APK/AAB configuration         |
+| **Example**       | `release`                        | `UK`                             | `UKRelease`                         |
 
-
-> Many variants multiply **CI time**—delete what you do not ship.
-
-Interview Answer:
-> **Build type:** **debug** vs **release** (minify, signing, debuggable).
 ---
 ## Gradle `implementation` vs `api`
-**`implementation`** hides **transitive types** from **consumers** of your library → **faster compiles**. **`api`** **exports** those types → consumers see them on their classpath.
+|                               | `implementation`   | `api`                           |
+| ----------------------------- | ------------------ | ------------------------------- |
+| Dependency visibility         | Internal to module | Exposed to consumers            |
+| Consumer can directly use it? | ❌ No               | ✅ Yes                           |
+| Build performance             | ✅ Better           | ❌ Can be slower                 |
+| Recommended                   | ✅ Default choice   | When dependency must be exposed |
 
-### Useful links
-
-- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)
-
-
-> In libraries, default to **`implementation`** unless you intentionally expose types.
----
-- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)
-
-Interview Answer:
-> *`implementation`** hides **transitive types** from **consumers** of your library → **faster compiles**.
----
-## Gradle wrapper purpose
-The **wrapper** (`gradlew` + properties) pins the **Gradle version** so **CI** and every developer use the **same** build tool.
-
-
-> **Commit the wrapper**—do not rely on “whatever Gradle is installed.”
-
-Interview Answer:
-> The **wrapper** (`gradlew` + properties) pins the **Gradle version** so **CI** and every developer use the **same** build tool.
----
-## AAPT2 / build pipeline (high level)
-**Resources** compile to **binary tables**; **Java/Kotlin** compiles to **DEX** via **D8/R8**; everything packs into **APK/AAB**. Incremental steps exist so small edits do not rebuild the world.
-
-Interview Answer:
-> *Resources** compile to **binary tables**; **Java/Kotlin** compiles to **DEX** via **D8/R8**; everything packs into **APK/AAB**.
----
-## ABI splits / ABI filters
-**Native** `.so` files are **per CPU architecture**. **App Bundles** let Play deliver **split APKs** per ABI. Understand **which ABIs** you support—dropping **x86** in dev builds can speed iteration.
-
-### Useful links
-
-- [Learn more](https://developer.android.com/ndk/guides/abis)
-
-
-> Native SDKs inflate **download size**—split and filter with intent.
----
-- [Learn more](https://developer.android.com/ndk/guides/abis)
-
-Interview Answer:
-> *Native** `.so` files are **per CPU architecture**.
----
-## CI/CD for Android
-Typical pieces: **GitHub Actions**, **Jenkins + Docker**, **Bitrise**, **Gradle caching**, **secure signing**, **Play internal tracks**, and **automated tests** (including **Firebase Test Lab**).
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/github-actions-for-android/)
-- [Learn more](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/)
-
-
-> Cache **dependencies** and **build cache**—Android CI is I/O heavy.
----
-- [Learn more](https://www.unosquare.com/blog/how-to-setup-a-ci-cd-pipeline-for-android-using-jenkins-and-docker-part-2/)
-
-Interview Answer:
-> Typical pieces: **GitHub Actions**, **Jenkins + Docker**, **Bitrise**, **Gradle caching**, **secure signing**, **Play internal tracks**, and **automated tests** (including **Firebase Test Lab**).
 ---
 ## CI/CD benefits & feature branching
-Automation gives **faster releases**, **consistent quality gates**, and **smaller rollout risk**. **Trunk-based** development with **feature flags** usually scales better than long-lived branches.
+- Automation gives **faster releases**, **consistent quality gates**, and **smaller rollout risk**. **Trunk-based** development with **feature flags** usually scales better than long-lived branches.
+- **Short-lived branches + flags** beat months-long **integration branches**.
 
-
-> **Short-lived branches + flags** beat months-long **integration branches**.
-
-Interview Answer:
-> Automation gives **faster releases**, **consistent quality gates**, and **smaller rollout risk**.
----
-## Signing, Play App Signing, key rotation
-Use **Play App Signing** so Google holds the **app signing key** and you manage an **upload key**. Document **recovery** if an upload key is lost.
-
-
-> Losing **signing keys** is a **business continuity** problem—treat it seriously.
-
-Interview Answer:
-> Use **Play App Signing** so Google holds the **app signing key** and you manage an **upload key**.
----
-## How do you add automated review gates to CI/CD (lint, analysis, tests, coverage)—and where does an LLM fit without blocking merges on hallucinations?
-**Gates (typical order, fail fast):** formatting (**ktlint** / **Spotless**), **Android Lint** + **Detekt**, **unit tests**, **coverage floor** (**JaCoCo** `jacocoTestCoverageVerification`), optional **instrumentation** on a **schedule** or **nightly** if full **`connectedCheck`** is too slow for every PR. **Static analysis** (**SonarQube** / **SonarCloud**, **CodeQL**) catches smells and security patterns **deterministically**. **Dependency** scanners (**OWASP Dependency-Check**, **Snyk**, **Dependabot**) belong in the same “hard gate” family as your policy allows.
-
-**Branch protection:** require **green checks**, **at least one human** reviewer, **no direct push** to default branch—CI enforces **standards**, people judge **product risk**.
-
-**LLM-assisted review:** Treat it as a **soft** layer after deterministic checks pass. Feed a **trimmed diff**, **title/description**, and **short team rules** (e.g. “no business logic in Composables”). Ask for **severity**, **actionable** bullets, and **missing tests**—post as **PR comments**. **Do not** fail the build solely on LLM output (noise, **hallucinations**, **secrets** in diffs—**redact** before sending). Cap **tokens** (skip generated files, limit lines), run **on PR** not every push, and use a **cheaper** model for huge diffs if cost matters.
-
-
-> **Lint + tests + SCA** = **hard gates**; **LLM** = **extra reviewer voice**, not the **merge** decision by itself.
-
-Interview Answer:
-> *Gates (typical order, fail fast):** formatting (**ktlint** / **Spotless**), **Android Lint** + **Detekt**, **unit tests**, **coverage floor** (**JaCoCo** `jacocoTestCoverageVerification`), optional **instrumentation** on a **schedule** or **nightly** if full…
----
-## End-to-end release from merge to Play — what are the control points?
-**Merge** to protected branch → **CI** (lint, unit tests, optional instrumentation) → **versionCode** / **versionName** policy → **build variant** (flavor + type) → **sign** release **AAB** → archive **`mapping.txt`** / **native symbols** → **upload** (internal → closed → production) with **release notes** → **monitor** Crashlytics / ANR → **staged rollout** with **pause** plan. **Determinism:** pinned deps, same **JDK/AGP** on CI, no **manual** “works on my laptop” releases for prod.
-
-
-> Interviewers listen for **artifact integrity**, **symbol upload**, and **blast-radius** control.
-
-Interview Answer:
-> *Merge** to protected branch → **CI** (lint, unit tests, optional instrumentation) → **versionCode** / **versionName** policy → **build variant** (flavor + type) → **sign** release **AAB** → archive **`mapping.txt`** / **native symbols** → **upload** (internal → closed →…
----
-## buildTypes vs productFlavors — how do you avoid a variant explosion?
-**buildTypes** = *how* built (**debug**, **release**, maybe **staging** with different minify/logging). **productFlavors** = *what* product (**dev** / **qa** / **prod** API, branding). **Dimensions** combine into variants (`devDebug`, `prodRelease`)—keep **matrix** small; use **remote config** for switches that do not need a separate APK.
-
-### Code example
-
-```kotlin
-android {
-    flavorDimensions += "env"
-    productFlavors {
-        create("dev") {
-            dimension = "env"
-            applicationIdSuffix = ".dev"
-        }
-        create("prod") {
-            dimension = "env"
-        }
-    }
-}
-```
-
-
-> Flavors for **environment/product**; build types for **build behavior**—don’t multiply both without reason.
-
-Interview Answer:
-> *buildTypes** = *how* built (**debug**, **release**, maybe **staging** with different minify/logging).
----
-## Environment config (`buildConfigField`, resources) vs secrets — what is safe to embed?
-**Non-secret** endpoints and feature flags can go in **`buildConfigField`** or **flavor resources**, often fed by **CI env**. **Assume APK is extracted**: **API keys** should be **restricted** (package + signing cert), **rate-limited** server-side, and **never** the sole security control. **Fintech:** **mTLS**, **request signing**, **device binding**—not “hidden” base URLs.
-
-
-> **Obfuscation ≠ secrecy**—backend must **assume** the client is **hostile**.
-
-Interview Answer:
-> *Non-secret** endpoints and feature flags can go in **`buildConfigField`** or **flavor resources**, often fed by **CI env**.
----
-## Can two builds from the same commit differ? Should they?
-**Reproducible builds** aim for **bit-identical** or **functionally identical** artifacts: pinned **dependencies**, documented **JDK**, avoid **non-deterministic** steps in release (timestamp in `BuildConfig` if you care). **Practical:** same **inputs** → same **AAB** except where Play injects **signing**. Teams that need **supply-chain** proof track **hashes** and **SBOM**.
-
-
-> Staff answers mention **pinning** and **traceability**, not “Gradle magic.”
-
-Interview Answer:
-> *Reproducible builds** aim for **bit-identical** or **functionally identical** artifacts: pinned **dependencies**, documented **JDK**, avoid **non-deterministic** steps in release (timestamp in `BuildConfig` if you care).
----
-## Version management — BOMs, conflicts, and release discipline?
-Centralize versions (**Gradle Version Catalog**, **Firebase BOM**). Read **changelogs** before bumps; **pin** hotfix branches; resolve **transitive** conflicts with **`constraints`**, **`exclude`**, or **isolation** (separate module / dynamic feature) when two vendors fight. Never **auto-upgrade** all SDKs the week before **freeze**.
-
-
-> **One catalog** + **reviewed bumps** beats **mystery classpath**.
-
-Interview Answer:
-> Centralize versions (**Gradle Version Catalog**, **Firebase BOM**).
----
-## Code optimization / APK size narrative (25% claim in source)
-Use **numbers you can defend**. Mention **R8**, **resource shrink**, **dynamic delivery**, and **profiling**—never invent **25%** without a real measurement.
-
-
-> Do not quote **metrics** you cannot explain under follow-up questions.
-
-Interview Answer:
-> Use **numbers you can defend**.
----
-## gradle.properties
-org.gradle.caching=true
-org.gradle.parallel=true
-org.gradle.configureondemand=true
-```
-- Set up a **remote build cache** (Gradle Enterprise / self-hosted) so CI and developers share cached outputs
-
-**7. Parallel Execution & Workers**
-- `org.gradle.parallel=true` — build independent modules simultaneously
-- Increase daemon heap: `org.gradle.jvmargs=-Xmx4g -XX:+UseParallelGC`
-
-**8. Dependency Optimization**
-- Audit with `./gradlew :app:dependencies` — remove unused transitive deps
-- Avoid pulling in large libraries (e.g. full Guava) when you use 3 methods
-
-**9. CI-Specific Optimization**
-- Enable remote build cache (CI writes; developers read)
-- Affected module detection — only run tests for changed modules (Gradle's `--affected` or custom scripts)
-- Run full test suite nightly; PR builds run only affected-module tests
-
-
-> Slow builds = **poor modular boundaries + missing incremental/caching config**. Fix both: architecture (module graph) and tooling (KSP, cache, parallel). Measure with Build Scan before every change.
-
-```
-Interview Answer:
-> org.gradle.caching=true org.gradle.parallel=true org.gradle.configureondemand=true ``` Set up a **remote build cache** (Gradle Enterprise / self-hosted) so CI and developers share cached outputs *7.
 ---
 ## What is CI/CD in Android development and why does it matter?
 **CI (Continuous Integration):** Every code push to the shared repo automatically triggers a build and test run. Catches regressions before they reach other developers.
@@ -3114,14 +1430,9 @@ Interview Answer:
 | **Gradle Build Scan** | Build performance analysis |
 | **Detekt / Ktlint** | Static analysis quality gates |
 
-
-> CI/CD is not optional on team projects — it is the **safety net that makes refactoring and feature flags safe to ship**.
-
-Interview Answer:
-> *CI (Continuous Integration):** Every code push to the shared repo automatically triggers a build and test run.
 ---
 ## What is Gradle and how does project-level vs module-level `build.gradle` differ?
-**Gradle** is Android's build system: compiles Kotlin/Java, packages resources, runs ProGuard/R8, and resolves dependencies. Defined via `build.gradle` (Groovy) or `build.gradle.kts` (Kotlin DSL).
+- **Gradle** is Android's build system: compiles Kotlin/Java, packages resources, runs ProGuard/R8, and resolves dependencies. Defined via `build.gradle` (Groovy) or `build.gradle.kts` (Kotlin DSL).
 
 | | `build.gradle` (Project-level) | `build.gradle` (Module-level) |
 |--|-------------------------------|-------------------------------|
@@ -3129,62 +1440,12 @@ Interview Answer:
 | **Contains** | Plugin classpath, repo URLs, Gradle version | `compileSdk`, `dependencies`, build types, product flavors |
 | **Changes affect** | All modules | Only this module |
 
-**Build Variants = Build Type + Product Flavor**
-- **Build types:** `debug` (debuggable, no shrink) · `release` (minified, signed)
-- **Product flavors:** `free` / `paid` · `staging` / `production`
-- **Variant:** `freeDebug`, `paidRelease`
+-  **Build Variants = Build Type + Product Flavor**
+    1.  **Build types:** `debug` (debuggable, no shrink) · `release` (minified, signed)
+    2.  **Product flavors:** `free` / `paid` · `staging` / `production`
+    3. **Variant:** `freeDebug`, `paidRelease`
+- Use flavors for: different API base URLs · feature flags · white-label apps.
 
-Use flavors for: different API base URLs · feature flags · white-label apps.
-
-
-> Project-level = global plumbing; module-level = feature-specific wiring. Build variants = the matrix of every shipping artifact your pipeline must validate.
----
-<!-- Source: docs/android/real-world-scenarios.md -->
-
-Interview Answer:
-> *Gradle** is Android's build system: compiles Kotlin/Java, packages resources, runs ProGuard/R8, and resolves dependencies.
----
-## What are the core building blocks of an Android application?
-Android apps are built using several essential components provided by the Android framework. These components work together to handle UI, background tasks, user interactions, and data sharing.
-
-#### Core Building Blocks of an Android Application:
-1. **Activities**
-   - Represents a single screen with a user interface.
-   - Acts as the entry point for user interaction.
-   - Every screen in an app is usually an Activity.
-2. **Fragments**
-   - A modular piece of UI that lives inside an Activity.
-   - Can be reused in multiple activities.
-   - Useful for responsive layouts (e.g., tablets vs phones).
-3. **Services**
-   - Runs background operations without user interaction.
-   - Useful for long-running tasks like downloading files, playing music, etc.
-4. **Broadcast Receivers**
-   - Listens to system-wide or app-wide broadcast messages.
-   - Useful for responding to events like battery low, Wi-Fi connected, etc.
-5. **Content Providers**
-   - Used to share data between apps.
-   - Acts as a data access interface, like a database that can be queried using URI.
-6. **View:**
-   - Every UI component like Button, TextView, etc.
-   - Created in XML or code using Jetpack Compose.
-7. **Layouts:**
-   - Organize UI views. Examples: LinearLayout, ConstraintLayout, Compose Column/Row.
-8. **Manifest File:**
-   - Declares all components, permissions, and metadata.
-   - It’s like the blueprint of your app.
-
-Interview Answer:
-> Android apps are built using several essential components provided by the Android framework.
----
-## What is the use of ProGuard/R8 in Android?
-ProGuard (now replaced by R8) is a tool that:
-- Minifies code (removes unused code).
-- Obfuscates names (changes class/method names to random characters).
-- Makes it harder for attackers to reverse engineer the app.
-
-Interview Answer:
-> ProGuard (now replaced by R8) is a tool that: Minifies code (removes unused code).
 ---
 ## What is WorkManager?
 -   WorkManager is used for deferrable, persistent background work.
@@ -3197,48 +1458,18 @@ Sync database
 Upload logs
 Periodic refresh
 ```
-
-Do not use it for immediate UI-bound work.
-
-Interview Answer:
-> WorkManager is used for deferrable, persistent background work.
+- Do not use it for immediate UI-bound work.
 ---
 ## Service vs WorkManager?
 -   Service is for specific foreground/background service use cases.
 -   WorkManager is for persistent deferrable work.
 -   Foreground services require appropriate Android restrictions and
     user-visible notifications.
-
-Choose based on the actual background execution requirement.
-
-Interview Answer:
-> Service is for specific foreground/background service use cases.
 ---
 ## BroadcastReceiver / LocalBroadcastManager legacy note
 - System broadcasts for many OS events; **implicit broadcasts** heavily restricted.
 - **LocalBroadcastManager** deprecated—use in-process flows (`Flow`, direct listeners, `LiveData` scoped properly).
 
-### Useful links
-
-- [BroadcastReceiver primer:](https://stackoverflow.com/questions/5296987/what-is-broadcastreceiver-and-when-we-use-it)
-- [LocalBroadcastManager (deprecated reference):](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
-
-
-> Avoid **broadcast-as-eventbus** in new code.
----
-- [Learn more](https://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
-
-Interview Answer:
-> System broadcasts for many OS events; **implicit broadcasts** heavily restricted.
----
-## Loader API?
-- Deprecated; use **ViewModel + coroutines/Flow + repository**.
-
-
-> If you maintain legacy loaders, plan **migration**.
-
-Interview Answer:
-> Deprecated; use **ViewModel + coroutines/Flow + repository**.
 ---
 ## What is RecyclerView optimization?
 Important practices include:
@@ -3255,39 +1486,6 @@ submitList(newUsers)
 ```
 
 `DiffUtil` calculates changes instead of blindly refreshing everything.
-
-Interview Answer:
-> Important practices include: Use `ListAdapter` and `DiffUtil`.
----
-## View hierarchy & custom views & layouts
-- `View` leaf, `ViewGroup` container; `ConstraintLayout` reduces depth; `FrameLayout` for overlays; `LinearLayout`/`RelativeLayout` legacy trade-offs.
-- Custom view steps (attrs → constructors → measure/layout/draw) are covered in the legacy section below.
-- **Links:**
-  - [ConstraintLayout:](https://blog.mindorks.com/using-constraint-layout-in-android-531e68019cd)
-  - [Sample:](https://github.com/anitaa1990/ConstraintLayout-Sample)
-  - [Article:](https://android.jlelse.eu/learning-to-implement-constraintlayout-in-android-8ddc69fe0a1a)
-  - [Custom views tutorial:](https://code.tutsplus.com/tutorials/android-sdk-creating-custom-views--mobile-14548)
-
-
-> Depth == **measure/layout cost**—flatten aggressively.
-
-Interview Answer:
-> `View` leaf, `ViewGroup` container; `ConstraintLayout` reduces depth; `FrameLayout` for overlays; `LinearLayout`/`RelativeLayout` legacy trade-offs.
----
-## ViewPager vs ViewPager2
-- ViewPager2 built on RecyclerView; better for RTL + orientation + fragments.
-
-### Useful links
-
-- [Official migration:](https://developer.android.com/develop/ui/views/animations/vp2-migration)
-
-
-> All new code: **ViewPager2**.
----
-- [Learn more](https://developer.android.com/develop/ui/views/animations/vp2-migration)
-
-Interview Answer:
-> ViewPager2 built on RecyclerView; better for RTL + orientation + fragments.
 ---
 ## How to handle multiple screen sizes?
 It's a long debate but in a very nutshell, you can do it in these ways:
@@ -3295,29 +1493,11 @@ It's a long debate but in a very nutshell, you can do it in these ways:
 - Provide different bitmap drawables for different screen densities or use vector assets.
 - Be aware of the screen orientation change approach in your application.
 If you don't want to handle it enforce to use just one orientation (portrait or landscape) through declaring it in the manifest file.
-
-for complete reading, see the [official documentation](https://developer.android.com/training/multiscreen/screensizes).
-
-
-### Useful links
-
-- [official documentation](https://developer.android.com/training/multiscreen/screensizes)
-
-
-
-> It's a long debate but in a very nutshell, you can do it in these ways: - Use flexible layout like `ConstraintLayout` unless create alternative layout in different layout folders.
----
-- [Learn more](https://developer.android.com/training/multiscreen/screensizes)
-
-Interview Answer:
-> It's a long debate but in a very nutshell, you can do it in these ways: Use flexible layout like `ConstraintLayout` unless create alternative layout in different layout folders.
 ---
 ## What is the difference between margin and padding?
 - **Padding** is space inside a view, between its content and its edge.
 - **Margin** is space outside a view, between it and neighboring views.
 
-Interview Answer:
-> Padding is inside the view; margin is outside the view.
 ---
 ## What do `sw`, `w`, and `h` mean in Android resource qualifiers?
 - `layout-sw600dp` means the smallest available width is at least 600dp.
@@ -3325,16 +1505,11 @@ Interview Answer:
 - `layout-h600dp` checks the current available height.
 - Prefer `sw` for layouts that should work across orientation changes.
 
-Interview Answer:
-> Use `sw` for stable device-size layouts, and `w` or `h` for the current available dimension.
 ---
 ## What are the major differences between `ListView` and `RecyclerView`?
 - `RecyclerView` uses a `ViewHolder` by design and supports layout managers.
 - It gives better control over animations, item decoration, and list types.
 - `ListView` is simpler but is a legacy choice for most new screens.
-
-Interview Answer:
-> `RecyclerView` is more flexible and efficient for modern, changing lists.
 ---
 ## How do `Handler`, `Looper`, `MessageQueue`, and `HandlerThread` work together?
 - A `Looper` reads work from a `MessageQueue`.
@@ -3347,9 +1522,6 @@ val thread = HandlerThread("worker").apply { start() }
 val handler = Handler(thread.looper)
 handler.post { /* background work */ }
 ```
-
-Interview Answer:
-> A looper processes a message queue, and a handler adds work to it; `HandlerThread` provides this on a background thread.
 ---
 ## What are `ExecutorService` and thread pools, and when should you use them?
 - `ExecutorService` runs tasks using reusable worker threads.
@@ -3361,43 +1533,28 @@ val executor = Executors.newFixedThreadPool(2)
 executor.execute { /* background work */ }
 executor.shutdown()
 ```
-
-Interview Answer:
-> Use a bounded executor to reuse threads safely; use coroutines when structured cancellation is more suitable.
 ---
 ## How do started, bound, foreground, and background services differ?
 - A **started service** continues until stopped or terminated.
 - A **bound service** exposes work while a client is connected.
 - A **foreground service** shows a notification and is used for user-visible ongoing work.
 - Deferrable work should normally use WorkManager; `IntentService` is deprecated.
-
-Interview Answer:
-> Choose a service only for work that needs service behavior; use WorkManager for reliable deferrable work.
 ---
 ## When should you use a service, a thread, `AsyncTask`, or WorkManager?
 - Use a thread or coroutine for short work owned by a current screen or scope.
 - Do not use `AsyncTask` in new code; it is deprecated and not lifecycle-safe.
 - Use a foreground service for user-visible ongoing work.
-- Use WorkManager for deferrable, persistent work that should survive app restarts.
-
-Interview Answer:
-> Match the tool to lifetime: coroutine for scoped work, foreground service for visible ongoing work, and WorkManager for persistent deferrable work.
+- Use WorkManager for deferrable, persistent work that should survive app restarts.WorkManager for persistent deferrable work.
 ---
 ## What is the Adapter pattern, and when is it useful outside lists?
 - An Adapter converts one interface into another expected by the caller.
 - It is useful when integrating a legacy API, SDK, or incompatible data model.
 - A `RecyclerView.Adapter` is a UI-specific use, but the design pattern is broader.
-
-Interview Answer:
-> Use an Adapter to hide an incompatible interface behind the interface your code expects.
 ---
 ## What is `SnapHelper` in `RecyclerView`?
 - `SnapHelper` aligns an item after scrolling stops.
 - `PagerSnapHelper` makes a list behave like a page-by-page carousel.
 - It is useful for horizontal cards, onboarding, and media carousels.
-
-Interview Answer:
-> `SnapHelper` automatically aligns the nearest item after a scroll.
 ---
 ## What are WorkManager states, constraints, periodic work, and observation?
 - Work can be `ENQUEUED`, `RUNNING`, `SUCCEEDED`, `FAILED`, `BLOCKED`, or `CANCELLED`.
@@ -3414,9 +1571,6 @@ val request = PeriodicWorkRequestBuilder<SyncWorker>(
         .build()
 ).build()
 ```
-
-Interview Answer:
-> WorkManager runs constrained, persistent jobs and exposes their state so the app can show progress or errors.
 ---
 ## What are the important Dagger/Hilt annotations?
 - `@Inject` marks a constructor or field for injection.
@@ -3424,9 +1578,6 @@ Interview Answer:
 - `@Component` connects modules and injection targets.
 - `@Scope` controls lifetime; `@Qualifier` distinguishes two objects of the same type.
 - `@BindsInstance` supplies a runtime value when creating a component.
-
-Interview Answer:
-> Dagger/Hilt annotations describe how dependencies are created, connected, distinguished, and scoped.
 ---
 ## How do you upload multipart form data or an image with Retrofit?
 - Use `@Multipart` and `MultipartBody.Part` for the file.
@@ -3442,16 +1593,11 @@ suspend fun uploadPhoto(
 ): Response<Unit>
 ```
 
-Interview Answer:
-> Retrofit uploads files with a multipart request containing a file part and optional text parts.
 ---
 ## How do `FLAG_ACTIVITY_CLEAR_TOP` and `FLAG_ACTIVITY_CLEAR_TASK` differ?
 - `CLEAR_TOP` returns to an existing activity and removes activities above it.
 - `CLEAR_TASK` clears the whole task and must be used with `NEW_TASK` when starting the replacement activity.
 - Use them deliberately for logout, deep links, and authentication flows.
-
-Interview Answer:
-> `CLEAR_TOP` trims part of the stack; `CLEAR_TASK` removes the complete task stack.
 ---
 ## How do you access data through a `ContentProvider`?
 - A provider exposes data through URI-based `query`, `insert`, `update`, and `delete` operations.
@@ -3461,17 +1607,11 @@ Interview Answer:
 ```kotlin
 val cursor = contentResolver.query(uri, projection, null, null, null)
 ```
-
-Interview Answer:
-> A client uses `ContentResolver` to access a provider through secure, URI-based operations.
 ---
 ## How do `FragmentPagerAdapter` and `FragmentStatePagerAdapter` differ?
 - `FragmentPagerAdapter` keeps visited fragment instances and is suited to a small, mostly fixed number of pages.
 - `FragmentStatePagerAdapter` saves state and removes fragment instances that are not needed, so it scales better for many pages.
 - In new code, prefer ViewPager2 with its current adapter APIs.
-
-Interview Answer:
-> Keep fragment instances for a small fixed pager; save and recreate state for a large or changing pager.
 ---
 ## How do `ConstraintLayout`, `LinearLayout`, `RelativeLayout`, and `FrameLayout` differ?
 - `ConstraintLayout` expresses relationships with constraints and can reduce nested layout depth.
@@ -3479,45 +1619,16 @@ Interview Answer:
 - `RelativeLayout` is a legacy relationship-based layout; use it mainly when maintaining old code.
 - `FrameLayout` is useful for a single child or overlays such as a loading layer.
 
-Interview Answer:
-> Choose the simplest layout that keeps the hierarchy shallow; use `FrameLayout` for overlays and `ConstraintLayout` for complex relationships.
----
-## What are the main Android coding-problem topics in the source material?
-The source also contains practice areas rather than Android framework questions:
-
-- Arrays: two-sum, rotation, missing values, intervals, and maximum profit.
-- Dynamic programming: Fibonacci, largest subarray sum, coin change, and edit distance.
-- Queues and stacks: sliding-window maximum, queue using stacks, and expression evaluation.
-- Linked lists: reversal, cycles, merging, sorting, and intersections.
-- Backtracking: Boggle, N-Queens, parentheses, and subset-sum problems.
-- Graphs and trees: cloning, traversal, spanning trees, BST checks, and serialization.
-- Strings and integers: reversal, palindrome, anagrams, permutations, factorial, and Armstrong numbers.
-
-Interview Answer:
-> The coding section covers common array, dynamic-programming, queue, stack, linked-list, graph, tree, string, integer, and backtracking patterns.
 ---
 ## Handler, Looper, MessageQueue, HandlerThread
 - **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
 - **HandlerThread** is a long-lived thread with its own looper—great for camera/pipeline work with explicit quit.
 
-### Useful links
-
-- [Looper/Handler deep dive:](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
-- [Mindorks core article:](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
-
-
-> Prefer **structured concurrency** for new code; understand Handlers to debug legacy.
----
-- [Learn more](https://blog.mindorks.com/android-core-looper-handler-and-handlerthread-bd54d69fe91a)
-
-Interview Answer:
-> **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
 ---
 # Networking
 ---
 ## How should API errors be handled?
-Different errors should have different behavior.
-
+- Different errors should have different behavior.
 ```text
 401 → authentication problem
 403 → authorization problem
@@ -3527,23 +1638,17 @@ Different errors should have different behavior.
 timeout → network problem
 ```
 
-For an initial load with no cache, show an error and retry.
-
-For a refresh with cached data, keep existing data and show a
+- For an initial load with no cache, show an error and retry.
+- For a refresh with cached data, keep existing data and show a
 non-blocking error.
-
-Interview Answer:
-> Different errors should have different behavior.
 ---
 ## What happens when an API request times out?
 -   The client does not necessarily know whether the server processed
     the request.
 -   Retrying blindly can duplicate operations.
 -   This is especially dangerous for payments.
-
-For financial transactions, use an idempotency key or transaction
+- For financial transactions, use an idempotency key or transaction
 identifier.
-
 ```text
 Client → Payment(idempotencyKey=ABC)
         ↓
@@ -3555,12 +1660,6 @@ Client retries with same key
         ↓
 Server recognizes duplicate
 ```
-
-This prevents accidental duplicate processing when supported by the
-backend design.
-
-Interview Answer:
-> The client does not necessarily know whether the server processed the request.
 ---
 ## What is REST?
 -   REST commonly exposes resources through HTTP.
