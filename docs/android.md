@@ -1202,16 +1202,27 @@ public static RESTService getInstance(Context context) {
 
 ---
 ## HTTP polling vs WebSocket vs SSE
-- **Polling:** simple but **wakes the radio** often—bad for battery if frequent.
-- **WebSocket:** **two-way** channel; good for chat or live control—needs **reconnect** logic.
-- **SSE:** **server → client** stream over HTTP; one-way updates.
+|                  | **HTTP Polling**           | **WebSocket**                   | **SSE**                    |
+| ---------------- | -------------------------- | ------------------------------- | -------------------------- |
+| Communication    | Client repeatedly requests | Two-way communication           | Server → Client            |
+| Real-time        | ❌ Less efficient           | ✅ Yes                           | ✅ Yes                      |
+| Connection       | Repeated HTTP requests     | Persistent connection           | Persistent HTTP connection |
+| Server can push? | ❌ No                       | ✅ Yes                           | ✅ Yes                      |
+| Client can send? | ✅ Yes                      | ✅ Yes                           | ⚠️ Via normal HTTP         |
+| Best for         | Occasional updates         | Chat, trading, live interaction | Notifications, live feeds  |
+
 ---
 ## Geofences
 **Geofencing** fires when the user enters or leaves regions. Triggers can be **delayed** or **missed** by OS optimization—design **confirmation UX** (e.g. open app to refresh) instead of assuming perfect firing.
 
 ---
 ## Scoped storage & MediaStore strategy
-Avoid assuming **full filesystem** access. Use **MediaStore** for shared media, **SAF** when the user picks files, and **app-specific** directories for caches and internal files.
+|                   | **Scoped Storage**                     | **MediaStore**                            |
+| ----------------- | -------------------------------------- | ----------------------------------------- |
+| Purpose           | Restricts app access to shared storage | Access shared media                       |
+| Introduced        | Android 10                             | Older API, modernized with scoped storage |
+| App files         | Use app-specific storage               | Use for shared media                      |
+| Other apps' files | Limited access                         | Controlled access through MediaStore      |
 
 ---
 ## Scan works on one phone, not another — what do you check?
@@ -1252,23 +1263,18 @@ val prefs = EncryptedSharedPreferences.create(
 )
 ```
 - **Android Keystore:** generates and stores keys inside secure hardware (TEE/SE). Keys never leave the hardware in plaintext — even a root-level attacker cannot extract them.
-
 ---
 ## What is a Class and Object in Android?
 #### Class
 - A class is like a blueprint or template for creating objects.
 - It defines properties (variables) and behaviors (functions/methods).
 - In Android (Kotlin/Java), you use classes to structure your app.
-
-*Key Points:*
 - Defines what an object will have and do.
 - Doesn’t occupy memory by itself until an object is created.
 
 #### Object
 - An object is a real instance of a class.
 - It occupies memory and can use the properties and functions defined in the class.
-
-*Key Points:*
 - Object is the actual entity created from the class blueprint.
 - You can create multiple objects from the same class, each with different data.
 ---
@@ -1327,6 +1333,7 @@ Signed AAB
  ↓
 Release
 ```
+
 ---
 ## How would you improve app stability?
 ```text
@@ -1373,10 +1380,10 @@ Feature enabled gradually
 -  The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.
 ---
 ## How to reduce apk size?
-* Enable proguard in your project by adding following lines to your release build type.
-* Enable shrinkResources.
-* Strip down all the unused locale resources by adding required resources name in “resConfigs”.
-* Convert all the images to the webp or vector drawables.
+- Enable proguard in your project by adding following lines to your release build type.
+- Enable shrinkResources.
+- Strip down all the unused locale resources by adding required resources name in “resConfigs”.
+- Convert all the images to the webp or vector drawables.
 ---
 ## How to reduce build time of an Android app?
 - Measure slow tasks with Gradle build scans or profiling.
@@ -1674,9 +1681,6 @@ DELETE /saved-payee/123
 ```
 
 REST is simple and widely supported.
-
-Interview Answer:
-> REST commonly exposes resources through HTTP.
 ---
 ## What is GraphQL?
 -   GraphQL allows clients to request the fields they need.
@@ -1696,9 +1700,6 @@ query {
     }
 }
 ```
-
-Interview Answer:
-> GraphQL allows clients to request the fields they need.
 ---
 ## What is secure networking?
 -   Use HTTPS/TLS.
@@ -1713,13 +1714,8 @@ App
  ↓ HTTPS/TLS
 API
 ```
-
-Interview Answer:
-> Use HTTPS/TLS.
 ---
 ## How do you prevent duplicate API requests?
-Possible approaches:
-
 -   `distinctUntilChanged`
 -   `debounce`
 -   `flatMapLatest`
@@ -1728,11 +1724,6 @@ Possible approaches:
 -   Coordinated token refresh
 -   Idempotency on server-side write operations
 
-The solution depends on whether the requests are reads, writes, or user
-actions.
-
-Interview Answer:
-> Possible approaches: `distinctUntilChanged` `debounce` `flatMapLatest` Request deduplication Caching Coordinated token refresh Idempotency on server-side write operations The solution depends on whether the requests are reads, writes, or user actions.
 ---
 ## You have two API calls that must run in parallel and update UI when both complete. How do you implement this?
 Use Kotlin Coroutines with `async` and `await`.
@@ -1746,255 +1737,27 @@ viewModelScope.launch {
     _uiState.value = Success(user, posts)
 }
 ```
-This way, both calls run in parallel and UI updates after both are done.
 
-Interview Answer:
-> Use Kotlin Coroutines with `async` and `await`.
 ---
 ## What is onSavedInstanceState() and onRestoreInstanceState() in activity?
 - **onSavedInstanceState()** - This method is used to store data before pausing the activity.
-- **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. Both the ```onCreate()``` and ```onRestoreInstanceState()``` callback methods receive the same Bundle that contains the instance state information. But because the ```onCreate()``` method is called whether the system is creating a new instance of your activity or recreating a previous one, you must check whether the state Bundle is null before you attempt to read it. If it is null, then the system is creating a new instance of the activity, instead of restoring a previous one that was destroyed.
+- **onRestoreInstanceState()** - This method is used to recover the saved state of an activity when the activity is recreated after destruction. 
 
-Interview Answer:
-> **onSavedInstanceState()** - This method is used to store data before pausing the activity.
----
-## How do we save and restore an activity's state during screen rotation?
-We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle. Then we can use onRestoreInstanceState(bundle) to restore the state of activity.
-
-
-
-> We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle.
-
-Interview Answer:
-> We can use onSavedInstanceState(bundle:Bundle) to save the activity's state inside a bundle.
----
-## What is the difference between `implementation` and `api`?
-These two keywords work the same when you want to add a new library but the main difference occurs when using it in the internal library. Let's explain it with an example. Consider your app has a library called 'libraryA'. This library is also dependant on another library called 'libraryB'. the dependency flow will be : `app -> libraryA -> libraryB` . If the libraryB is declared in libraryA with keyword `implementation`, so your app module does not know anything about the classes of libraryB. So you can't access and use any classes of libraryB. If you want to do that, you must declare libraryB in the libraryA Gradle file with keyword `api`. For more information read [this medium link]("https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa").
-
-
-### Useful links
-
-- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)
-
-
-
-> These two keywords work the same when you want to add a new library but the main difference occurs when using it in the internal library.
----
-- [Learn more](https://medium.com/mindorks/implementation-vs-api-in-gradle-3-0-494c817a6fa)
-
-Interview Answer:
-> These two keywords work the same when you want to add a new library but the main difference occurs when using it in the internal library.
----
-## What is the advantage of using Retrofit over AsyncTask?
-- **Lead:** [Stackoverflow](https://stackoverflow.com/a/16903205/3424919)
-Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means - it checks if wrong data type is assigned to variables at compilation time itself.
-
-
-### Useful links
-
-- [Stackoverflow](https://stackoverflow.com/a/16903205/3424919)
-
-
-
-> [Stackoverflow](https://stackoverflow.com/a/16903205/3424919) Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically. trofit is a type safe library. This means…
----
-- [Learn more](https://stackoverflow.com/a/16903205/3424919)
-
-Interview Answer:
-> **Lead:** [Stackoverflow](https://stackoverflow.com/a/16903205/3424919) Retrofit reduces boiler plate code by internally using GSON library which helps parsing the json file automatically.
----
-## Advantage of Retrofit over Volley?
-Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
-
-
-
-> Retrofit is type-safe. Type safety means that the compiler will validate request and response objects' variable types while compiling, and throw an error if you try to assign the wrong type to a variable.
-
-Interview Answer:
-> Retrofit is type-safe.
----
-## Advantage of Volley over Retrofit?
-Android Volley has a very elaborate and flexible cache mechanism. When a request is made through Volley, first the cache is checked for Response. If it is found, then it is fetched and parsed, else, it will hit Network to fetch the data. Retrofit does not support cache by default.
-
-
-
-> Android Volley has a very elaborate and flexible cache mechanism.
-
-Interview Answer:
-> Android Volley has a very elaborate and flexible cache mechanism.
----
-## How to handle multiple network calls using Retrofit?
-In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method. In addition, we can use zip() operator from RxJava to perform multiple network calls using Retrofit library.
-
-
-
-> In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method.
-
-Interview Answer:
-> In Retrofit, we can call the operations asynchronously by using enqueue() method where as to call operations synchronously, we can use execute() method.
 ---
 ## How to upload an image file in Retrofit 2?
 - Use a `@Multipart` endpoint and send the image as `MultipartBody.Part`.
 - Set the correct media type and validate size before upload.
 - Handle progress, cancellation, authentication, and retry behavior.
 
-
-### Useful links
-
-- [Learn more](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)
----
-- [Learn more](https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2)
-
-Interview Answer:
-> Retrofit uploads an image as a multipart file part with the correct media type and request validation.
----
-## Retrofit vs AsyncTask — why Retrofit?
-**AsyncTask** is deprecated and was never great for **cancellation**, **errors**, or **composition** of multiple calls. **Retrofit** gives you a **typed API** (interfaces), plugs into **OkHttp** (timeouts, interceptors, caching), and works cleanly with **coroutines** or **RxJava**.
-
-### Useful links
-
-- [Learn more](https://stackoverflow.com/a/16903205/3424919)
-
-
-> Prefer **structured concurrency** and **cancellable** network calls—not **AsyncTask**.
----
-- [Learn more](https://stackoverflow.com/a/16903205/3424919)
-
-Interview Answer:
-> *AsyncTask** is deprecated and was never great for **cancellation**, **errors**, or **composition** of multiple calls.
----
-## Retrofit vs Volley
-**Retrofit** pairs with **OkHttp** and shines when you want **typed endpoints**, **interceptors**, and modern **async** styles. **Volley** historically had a stronger **default cache story** for some workloads.
-
-For **new apps**, Retrofit + OkHttp (with explicit cache policy) is the common default.
-
-
-> In interviews, mention **caching** and **timeouts**, not only “we use Retrofit.”
-
-Interview Answer:
-> *Retrofit** pairs with **OkHttp** and shines when you want **typed endpoints**, **interceptors**, and modern **async** styles.
----
-## Multiple network calls with Retrofit
-With **coroutines**, use **`async`/`await`** or **`coroutineScope { awaitAll(...) }`** so calls run in parallel when safe, and still **cancel** with the same scope. With **RxJava**, **`zip`** is the classic pattern.
-
-Always set **timeouts** and **cancellation** per screen so a slow endpoint does not strand the user.
-
-**Example:** A dashboard that needs three endpoints—launch them together, fail fast with clear UX if one is required.
-
-
-> Every screen should define **timeout + cancellation** for its network work.
-
-Interview Answer:
-> With **coroutines**, use **`async`/`await`** or **`coroutineScope { awaitAll(...) }`** so calls run in parallel when safe, and still **cancel** with the same scope.
----
-## OkHttp interceptors — use cases
-**Interceptors** sit in the OkHttp chain. Common uses: add **auth headers**, **retry** with backoff, **pinning**, **metrics**, and **debug logging** (usually **debug-only** or heavily redacted).
-
-### Useful links
-
-- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)
-
-
-> Do not ship **verbose logging** of bodies/headers to production without **redaction**.
----
-- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)
-
-Interview Answer:
-> *Interceptors** sit in the OkHttp chain.
----
-## OkHttp `Interceptor` vs `Authenticator` — when do you refresh tokens, and how do you avoid infinite 401 loops?
-**Interceptors** run on **every** request/response and are ideal for **adding** headers (e.g. `Authorization: Bearer …`), **logging** (redacted), **metrics**, and **generic** retries you fully control.
-
-**`Authenticator`** is invoked when a response is **unauthorized** (typically **401**) so you can **obtain a new access token** and **retry the failed request** with a fresh header—this keeps **refresh** logic **centralized** instead of scattering it across call sites.
-
-**Production safeguards:**
-- **Single-flight refresh:** if ten calls get 401, only **one** refresh runs (mutex / synchronized / actor); others await the same result.
-- **Retry cap:** if refresh fails or the **same** request already retried once, **stop**—return **`null`** from `Authenticator` or bubble **logout**.
-- **Detect auth loops:** track **`responseCount`** / custom flag so you never apply a **new** token to the **same** failing endpoint forever.
-
-**OkHttp cache:** attach a **`Cache`** to the client for **GET** responses honoring **`Cache-Control`** / **`ETag`**; separate **auth** from **cache policy** (many APIs disable caching on private resources).
-
-
-> Use **`Authenticator`** for **401 refresh**, **`Interceptor`** for **always-on** headers; **single-flight** refresh + **hard stop** prevents **retry storms**.
-
-Interview Answer:
-> *Interceptors** run on **every** request/response and are ideal for **adding** headers (e.g.
 ---
 ## Retrofit — why return `Response<T>` (or `Result`) instead of bare `T`?
-**`Response<T>`** exposes **HTTP status**, **headers**, and **error body**—needed when **200 ≠ business success** (envelope: `{ "success": false, "errorCode": "…" }`). Parse the body in the **data layer** and map to **`Result`/sealed** types; never push **raw HTTP** exceptions to Compose.
-
-### Code example
-
+- **`Response<T>`** exposes **HTTP status**, **headers**, and **error body**—needed when **200 ≠ business success** (envelope: `{ "success": false, "errorCode": "…" }`). Parse the body in the **data layer** and map to **`Result`/sealed** types; never push **raw HTTP** exceptions to Compose.
+- Example:
 ```kotlin
 @GET("user/{id}")
 suspend fun getUser(@Path("id") id: String): Response<UserDto>
 ```
 
-
-> Fintech and enterprise APIs often **lie in the body**—the **status code** is not enough.
-
-Interview Answer:
-> *`Response<T`** exposes **HTTP status**, **headers**, and **error body**—needed when **200 ≠ business success** (envelope: `{ "success": false, "errorCode": "…" }`).
----
-## Application vs network interceptors — when does each run?
-**Application interceptors** see the request first and the response last—good for **auth headers**, **logging**, **metrics**. **Network interceptors** sit closest to the wire—good for **rewriting cache headers**, **SSL pinning** visibility, sometimes **retry** (use carefully). **Token refresh** belongs in **`Authenticator`** (401 path) with **single-flight**, not an unbounded **interceptor** loop—see earlier **`Authenticator`** card.
-
-
-> **Add headers** early; **pin/cache at the network edge**; **refresh** via **`Authenticator`**, not spaghetti **intercept** chains.
-
-Interview Answer:
-> *Application interceptors** see the request first and the response last—good for **auth headers**, **logging**, **metrics**.
----
-## How do you map API errors for the UI (without leaking Retrofit)?
-Catch **`IOException`** (no network), **`HttpException`** (4xx/5xx), **parse timeouts**, and map to a **domain sealed** type (`NoNetwork`, `Timeout`, `ApiError(code, message)`, `Unknown`). **Repository** returns **`Result`** or **`Flow`** of domain states; **ViewModel** turns that into **`UiState`**. For **business errors** inside **200**, parse the envelope and emit **`DomainError.InsufficientBalance`** etc.
-
-
-> One **mapping function** at the repository boundary keeps **UI** stable when **transport** changes.
-
-Interview Answer:
-> Catch **`IOException`** (no network), **`HttpException`** (4xx/5xx), **parse timeouts**, and map to a **domain sealed** type (`NoNetwork`, `Timeout`, `ApiError(code, message)`, `Unknown`).
----
-## Pagination with Retrofit — `PagingSource` and duplicate loads?
-Use **backend-driven** pages or **cursors** (prefer **cursor** when lists are huge/unstable). **`PagingSource`** loads **`LoadParams`** and returns **`LoadResult.Page`**; **Paging 3** manages **prefetch** and **invalidation**. Avoid **double fetches** by not firing **manual** loads while **`LoadState`** is **`Loading`**, and design **idempotent** APIs where **retry** is safe.
-
-
-> **Paging library** + **stable keys** beat hand-rolled “page++” **race** bugs.
-
-Interview Answer:
-> Use **backend-driven** pages or **cursors** (prefer **cursor** when lists are huge/unstable).
----
-## Layered defense — how do you protect sensitive data at rest, in memory, and in transit?
-**In transit:** **HTTPS** only, **TLS** modern config, **`networkSecurityConfig`** to block **cleartext**; consider **pinning** for high-risk apps. **Tokens** short-lived; **refresh** on server patterns you trust.
-
-**At rest:** no secrets in **plain** `SharedPreferences` or world-readable files—**EncryptedSharedPreferences** / **EncryptedFile** (AndroidX Security) with **Keystore-backed** keys; **Room** encryption (**SQLCipher** / supported APIs) when the DB holds **PII**.
-
-**In memory:** avoid logging **tokens**; clear **sensitive** buffers when done; be careful with **screenshots** on sensitive screens (`FLAG_SECURE`) in regulated UX.
-
-**Third-party SDKs:** they often cause **leaks**—audit **data collection**, **init** timing, and **ProGuard** rules.
-
-
-> Security is **layers**—**TLS + encrypted storage + no logging + SDK audit**, not one checkbox.
-
-Interview Answer:
-> *In transit:** **HTTPS** only, **TLS** modern config, **`networkSecurityConfig`** to block **cleartext**; consider **pinning** for high-risk apps.
----
-## HTTP caching for authenticated APIs — rules?
-Use **`Cache-Control: no-store`** (or equivalent) on **auth** and **PII** responses when **OkHttp** disk cache is enabled; **never** cache **refresh** endpoints. For **safe** public **GET**s, respect **server** **ETag**/**max-age**. **Sensitive** offline copies belong in **encrypted** storage you control, not **shared** HTTP cache dirs.
-
-
-> **Disk cache** = **another** data store—**classify** endpoints.
-
-Interview Answer:
-> Use **`Cache-Control: no-store`** (or equivalent) on **auth** and **PII** responses when **OkHttp** disk cache is enabled; **never** cache **refresh** endpoints.
----
-## Staying current with API integration trends
-**RFCs**, **conferences**, **secure coding** practice, **internal guilds**—learning should be **scheduled**, not vague “I read sometimes.”
-
-
-> Show **habits**, not a one-time course list.
-
-Interview Answer:
-> *RFCs**, **conferences**, **secure coding** practice, **internal guilds**—learning should be **scheduled**, not vague “I read sometimes.” Show **habits**, not a one-time course list.
 ---
 # Android Security
 ---
@@ -2017,9 +1780,6 @@ It can reduce certain MITM risks.
 
 The trade-off is operational complexity during certificate rotation. It
 should be used according to the threat model and security policy.
-
-Interview Answer:
-> TLS normally validates the server certificate chain.
 ---
 ## What is the Android Keystore?
 -   Android Keystore provides a secure mechanism for managing
@@ -2027,190 +1787,32 @@ Interview Answer:
 -   Keys can be hardware-backed on supported devices.
 -   Applications can use it for encryption/signing operations without
     exposing key material directly.
-
-It is not a general database. It is a key-management mechanism.
-
-Interview Answer:
-> Android Keystore provides a secure mechanism for managing cryptographic keys.
 ---
 ## What is certificate transparency?
 -   Certificate Transparency provides public logs of issued
     certificates.
 -   It helps detect improperly issued certificates.
 -   It complements, rather than replaces, normal TLS validation.
-
-Interview Answer:
-> Certificate Transparency provides public logs of issued certificates.
 ---
 ## Why do android apps need to ask permission like `INTERNET` or `LOCATION`?
-The Android platform takes advantage of the Linux user-based protection to identify and isolate app resources called sandbox. This isolates apps from each other and protects apps and the system from malicious apps. If an app needs to use some system resources (like internet, or location sensor,..) or needs to connect other apps (like IAB library), it should request this access. Then android OS give this request and get permission to access the resource. If you want to use system resources, request the permission under the `<uses-permission>` tag in the `android-manifest.xml` file.
+- Android permissions protect sensitive resources and user privacy. Apps must declare what they need in the manifest, and some permissions also require runtime user approval.
+- Compare:
+| Permission             | Why needed                                         |
+| ---------------------- | -------------------------------------------------- |
+| `INTERNET`             | Allows the app to communicate with network servers |
+| `ACCESS_FINE_LOCATION` | Allows precise device location                     |
+| `CAMERA`               | Allows camera access                               |
+| `READ_MEDIA_IMAGES`    | Allows access to user photos                       |
 
 
-
-> The Android platform takes advantage of the Linux user-based protection to identify and isolate app resources called sandbox.
-
-Interview Answer:
-> The Android platform takes advantage of the Linux user-based protection to identify and isolate app resources called sandbox.
 ---
 ## What are the permission protection levels in Android?
-* **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user. The system automatically grants this type of permission to a requesting application at installation, without asking for the user's explicit approval.
-* **Dangerous** - A higher-risk permission. Any dangerous permissions requested by an application may be displayed to the user and require confirmation before proceeding, or some other approach may be taken to avoid the user automatically allowing the use of such facilities.
-* **Signature** - A permission that the system grants only if the requesting application is signed with the same certificate as the application that declared the permission. If the certificates match, the system automatically grants the permission without notifying the user or asking for the user's explicit approval.
-* **SignatureOrSystem** - A permission that the system grants only to applications that are in the Android system image or that are signed with the same certificate as the application that declared the permission.<br>
+| Protection Level | Meaning                                                                                               | Example                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------- |
+| **Normal**       | Low-risk permission, automatically granted                                                            | `INTERNET`                       |
+| **Dangerous**    | Accesses sensitive data/features, requires runtime user approval                                      | `CAMERA`, `ACCESS_FINE_LOCATION` |
+| **Signature**    | Granted only if requesting app is signed with the same certificate as the app defining the permission | Custom IPC permission            |
 
-Interview Answer:
-> **Normal** - A lower-risk permission that gives requesting applications access to isolated application-level features, with minimal risk to other applications, the system, or the user.
----
-## Uses permission vs Permission
-- `<uses-permission>` in the manifest requests an app capability.
-- A runtime permission is requested from the user for dangerous permissions.
-- Declare the permission, check its current state, request it when needed, and handle denial.
-
-
-### Useful links
-
-- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
----
-- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
-
-Interview Answer:
-> `<uses-permission>` declares access in the manifest; dangerous permissions also require a runtime user decision.
----
-## Why Do You Need SSL Certificate Pinning? How it works?
-- [Learn more](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)
-    - [Learn more](https://dzone.com/articles/encryption-and-signing)
-    - [Learn more](https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android)
-    - [Learn more](https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android)
-    - [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
-
-
-### Useful links
-
-- [Learn more](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)
-- [Learn more](https://dzone.com/articles/encryption-and-signing)
-- [Learn more](https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android)
-- [Learn more](https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android)
-- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
----
-- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
-
-Interview Answer:
-> [Learn more](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109) [Learn more](https://dzone.com/articles/encryption-and-signing) [Learn more](https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android) [Learn…
----
-## How do you know if the device is rooted?
-We can check if superUser apk is installed in the device or if it contains su file or xbin folder. <br>
-  Alternatively you can use [RootBeer](https://github.com/scottyab/rootbeer) library available in GitHub. For code part, click [Here](https://stackoverflow.com/a/35628977/3424919).
-
-
-### Useful links
-
-- [RootBeer](https://github.com/scottyab/rootbeer)
-- [Here](https://stackoverflow.com/a/35628977/3424919)
-
-
-
-> We can check if superUser apk is installed in the device or if it contains su file or xbin folder.
----
-- [Learn more](https://stackoverflow.com/a/35628977/3424919)
-
-Interview Answer:
-> We can check if superUser apk is installed in the device or if it contains su file or xbin folder.
----
-## What is Symmetric Encryption?
-Symmetric encryption deals with creating a passphrase and encrypting the file with it. Then the server needs to send this passphrase(key) to the client so that the client can decrypt. Here the problem is sending that key to decrypt the file. If Hackers can access that key, they can misuse the data.
-
-
-
-> Symmetric encryption deals with creating a passphrase and encrypting the file with it.
-
-Interview Answer:
-> Symmetric encryption deals with creating a passphrase and encrypting the file with it.
----
-## What is Asymmetric Encryption?
-Using algorithms like RSA, AES256, etc., the server generates 2 keys - public key and private key. The server then gives public key to clients. Client then encrypts the sensitive data with that public key and send it back to server. Now as the server alone has the private key, only it can decrypt the data. This is the most efficient way of sending data across the client and server.
-
-  Example of this Asymmetric encryption are HTTPS using SSL certificate, Blockchain technologies like Bitcoin, etc.
-
-  For more info, refer to this [video](https://youtu.be/AQDCe585Lnc)
-
-
-### Useful links
-
-- [video](https://youtu.be/AQDCe585Lnc)
-
-
-
-> Using algorithms like RSA, AES256, etc., the server generates 2 keys - public key and private key. The server then gives public key to clients. Client then encrypts the sensitive data with that public key and send it bac…
----
-- [Learn more](https://youtu.be/AQDCe585Lnc)
-
-Interview Answer:
-> Using algorithms like RSA, AES256, etc., the server generates 2 keys - public key and private key.
----
-## App Data encryption
-- Use HTTPS/TLS for data in transit.
-- Use Android Keystore-backed keys for encryption keys.
-- Protect small secrets with Jetpack Security and encrypt sensitive files or databases when required.
-- Minimize stored data and clear it during secure logout.
-
-
-### Useful links
-
-- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
----
-- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
-
-Interview Answer:
-> Encrypt sensitive data with Keystore-backed keys, minimize retention, and protect both transport and local storage.
----
-## Certificate pinning with OkHttp — what breaks in production?
-Pin **SPKI hashes** (not only full cert) when possible and plan **rotation** (multiple pins, overlap with backend). A bad pin bricks **all** installs until an app update—**monitor** TLS changes and keep an **escape hatch** (remote config to disable pinning only if your threat model allows).
-
-
-> Pinning is **strong MITM defense** with **operational risk**—design **rotation**, not a single hash forever.
-
-Interview Answer:
-> Pin **SPKI hashes** (not only full cert) when possible and plan **rotation** (multiple pins, overlap with backend).
----
-## Why SSL certificate pinning — and how does it work?
-**Pinning** means your app remembers the **expected server certificate** (or public key hash) and **rejects** connections if someone presents a different one—even if a **rogue certificate authority** on a compromised device would otherwise trust it.
-
-You configure pins in the network stack (for example **OkHttp `CertificatePinner`**). You need a **rotation plan**: **backup pins** and a way to **update** pins (remote config, app update) so you do not brick clients when certs change.
-
-**Example:** Banking apps often pin API gateways while still keeping **normal TLS** hygiene and **auth** strong.
-
-### Useful links
-
-- [Learn more](https://medium.com/@anuj.rai2489/ssl-pinning-254fa8ca2109)
-- [Learn more](https://dzone.com/articles/encryption-and-signing)
-- [Learn more](https://www.netguru.com/codestories/3-ways-how-to-implement-certificate-pinning-on-android)
-- [Learn more](https://www.raywenderlich.com/10056112-securing-network-data-tutorial-for-android)
-- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
-
-
-> Pinning is **extra defense**—it does not replace **good auth** and **solid server design**.
----
-- [Learn more](https://appmattus.medium.com/android-security-ssl-pinning-1db8acb6621e)
-
-Interview Answer:
-> *Pinning** means your app remembers the **expected server certificate** (or public key hash) and **rejects** connections if someone presents a different one—even if a **rogue certificate authority** on a compromised device would otherwise trust it.
----
-## Symmetric vs asymmetric encryption — where does each belong?
-**Symmetric** encryption uses one shared key; it is **fast** for bulk data but you must solve **how both sides get the key safely**. **Asymmetric** uses a public/private pair—great for **key exchange** and **signatures**, slower for huge payloads.
-
-Real systems (like **TLS**) are usually **hybrid**: asymmetric to set up a session, symmetric for the heavy lifting.
-
-### Useful links
-
-- [Learn more](https://youtu.be/AQDCe585Lnc)
-
-
-> Production setups are almost always **hybrid**, not “only RSA” or “only AES.”
----
-- [Learn more](https://youtu.be/AQDCe585Lnc)
-
-Interview Answer:
-> *Symmetric** encryption uses one shared key; it is **fast** for bulk data but you must solve **how both sides get the key safely**.
 ---
 ## Android Keystore — how do you store passwords/secrets?
 Put **keys** in the **Android Keystore** so raw key material is harder to extract. For **small secrets** at rest, use **EncryptedSharedPreferences** or **EncryptedFile** (AndroidX Security) instead of **plain SharedPreferences**.
