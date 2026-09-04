@@ -21,9 +21,6 @@ Data Sources
 
 For a small feature, several layers may be unnecessary. For a large
 banking application, clear boundaries become more valuable.
-
-Interview Answer:
-> Clean Architecture separates responsibilities into layers.
 ---
 ## What is the Repository pattern?
 -   A Repository hides where data comes from.
@@ -37,9 +34,6 @@ interface UserRepository {
 
 The ViewModel does not need to know whether data came from Room, REST,
 GraphQL, or memory.
-
-Interview Answer:
-> A Repository hides where data comes from.
 ---
 ## What is a UseCase?
 -   A UseCase represents a business operation.
@@ -59,9 +53,6 @@ class TransferMoneyUseCase(
 
 Do not create a UseCase for every trivial getter just to follow a
 pattern.
-
-Interview Answer:
-> A UseCase represents a business operation.
 ---
 ## What is dependency injection?
 -   Dependency Injection means an object receives dependencies instead
@@ -75,12 +66,9 @@ class UserViewModel(
 ```
 
 The ViewModel does not create `UserRepository()` itself.
-
-Interview Answer:
-> Dependency Injection means an object receives dependencies instead of constructing them internally.
 ---
 ## What are Hilt scopes?
-Common scopes include:
+The scope should match the required lifetime. Common scopes include:
 
 ```text
 SingletonComponent
@@ -90,53 +78,38 @@ ActivityComponent
 FragmentComponent
 ```
 
-The scope should match the required lifetime.
-
 A dependency that is only needed by one ViewModel should not
 automatically become a global singleton.
-
-Interview Answer:
-> Common scopes include: The scope should match the required lifetime.
 ---
 ## How do you test Flow and StateFlow?
-Use a Flow testing library such as Turbine where appropriate.
-
+- Use a Flow testing library such as Turbine where appropriate.
+- Test important state transitions rather than internal implementation details.
+- Example:
 ```kotlin
 viewModel.state.test {
     assertEquals(Loading, awaitItem())
     assertEquals(Success(user), awaitItem())
 }
 ```
-
-Test important state transitions rather than internal implementation
-details.
-
-Interview Answer:
-> Use a Flow testing library such as Turbine where appropriate.
 ---
 ## You need to fetch data from both the local Room database and network. How do you design this?
 Use Repository with a fallback logic:
+
 -   First try Room DB (cached data).
 -   If data is old/missing, fetch from API.
 -   Save new data in the Room.
 
 This ensures:
+
 -   Fast response (local DB)
 -   Always fresh data (network)
-
-Interview Answer:
-> Use Repository with a fallback logic: First try Room DB (cached data).
 ---
 ## In MVVM, who should handle click events and why?
-The ViewModel should handle logic, not the Activity/Fragment.
--   UI calls `viewModel.onLoginClicked()`
--   ViewModel checks input, performs API call
--   Emits success/error state via LiveData or StateFlow
-
-Keeps code testable and follows separation of concerns.
-
-Interview Answer:
-> The ViewModel should handle logic, not the Activity/Fragment.
+- The ViewModel should handle logic, not the Activity/Fragment.
+- Keeps code testable and follows separation of concerns.
+- UI calls `viewModel.onLoginClicked()`
+- ViewModel checks input, performs API call
+- Emits success/error state via LiveData or StateFlowx
 ---
 ## How would you secure a local database?
 -   Minimize sensitive data.
@@ -146,13 +119,12 @@ Interview Answer:
 -   Restrict access.
 -   Avoid logging database contents.
 -   Consider backup behavior and logout/data-retention requirements.
-
-Interview Answer:
-> Minimize sensitive data.
 ---
 ## How do you handle search in a ViewModel?
-For a suspend search function:
-
+- `mapLatest` cancels the previous suspend search when a newer query
+arrives.
+- For a Flow-returning search function, use `flatMapLatest`.
+- Example:
 ```kotlin
 private val query = MutableStateFlow("")
 
@@ -163,19 +135,12 @@ val results = query
         repository.search(text)
     }
 ```
-
-`mapLatest` cancels the previous suspend search when a newer query
-arrives.
-
-For a Flow-returning search function, use `flatMapLatest`.
-
-Interview Answer:
-> For a suspend search function: `mapLatest` cancels the previous suspend search when a newer query arrives.
 ---
 ## What is a database transaction?
--   A transaction groups operations so they succeed or fail together
+-  A transaction groups operations so they succeed or fail together
     according to the database's transaction guarantees.
-
+- This is important when multiple pieces of local state must remain
+consistent.
 ```text
 Update account
 Update transaction
@@ -183,189 +148,65 @@ Update balance
         ↓
     Transaction
 ```
-
-This is important when multiple pieces of local state must remain
-consistent.
-
-Interview Answer:
-> A transaction groups operations so they succeed or fail together according to the database's transaction guarantees.
 ---
 ## Why we should use MVP / MVVM architectures?
-- to avoid too much logic code in the UI layer and god activities
-     - reusable code that's easier to test
-     - avoid duplicated code between common views
-     - Easier to maintain
-     - we can test logic without using instrumentation tests
-
-Interview Answer:
-> to avoid too much logic code in the UI layer and god activities reusable code that's easier to test avoid duplicated code between common views Easier to maintain we can test logic without using instrumentation tests
+- To avoid too much logic code in the UI layer and god activities
+- Reusable code that's easier to test
+- Avoid duplicated code between common views
+- Easier to maintain
+- We can test logic without using instrumentation tests.
 ---
 ## Why the View should be implemented with an interface in MVP?
-- Because we want to decouple the code from the implementation view.
-     - We want to abstract the framework used to write our presentation layer, regardless of any external dependency.
-     - We want to be able to easily change the implementation of view if needed.
-     - We want to follow the SOLID dependency rule to improve unit testability and in order to follow the dependency rule, high-level concepts (such as the presenter implementation) can't depend on low-level details (like the implementation view).
-
-Interview Answer:
-> Because we want to decouple the code from the implementation view.
+- To decouple the code from the implementation view.
+- To abstract the framework used to write our presentation layer, regardless of any external dependency.
+- To be able to easily change the implementation of view if needed.
+- To follow the SOLID dependency rule to improve unit testability and in order to follow the dependency rule, high-level concepts (such as the presenter implementation) can't depend on low-level details (like the implementation view).
 ---
-## Difference between MVC & MVP & MVVM?
-* **MVC** is the Model-View-Controller architecture where model refers to the data model classes. The view refers to the xml files and the controller handles the business logic. The issue with this architecture is unit testing. The model can be easily tested since it is not tied to anything. The controller is tightly coupled with the android apis making it difficult to unit test. Modularity & flexibility is a problem since the view and the controller are tightly coupled. If we change the view, the controller logic should also be changed. Maintenance is also an issues.
-* **MVP architecture**: Model-View-Presenter architecture. The View includes the xml and the activity/fragment classes. So the activity would ideally implement a view interface making it easier for unit testing (since this will work without a view). [Sample Implementation](https://github.com/anitaa1990/Inshorts)
-* **MVVM**: Model-View-ViewModel Architecture. The Model comprises data, tools for data processing, business logic.  The View Model is responsible for wrapping the model data and preparing the data for the view. IT also provides a hook to pass events from the view to the model.  [Sample Implementation](https://github.com/anitaa1990/Trailers)
-* **MVI**: [Link](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
+## Difference between MVC & MVP & MVVM & MVI?
+| Factor | MVC | MVP | MVVM | MVI |
+|---|---|---|---|---|
+| Full Name | Model-View-Controller | Model-View-Presenter | Model-View-ViewModel | Model-View-Intent |
+| Main Goal | Separate UI, input handling, and data | Move presentation logic out of View | Separate UI from presentation state/logic | Unidirectional, predictable state management |
+| Data Flow | Usually mixed / flexible | View ↔ Presenter ↔ Model | View ↔ ViewModel ↔ Model | Intent → ViewModel/Reducer → State → View |
+| Direction | Often bidirectional | Mostly bidirectional | Mostly View → VM → View | Strictly unidirectional |
+| UI State | Usually held by View | Presenter manages some state | ViewModel owns UI state | Single source of truth in State |
+| Business/UI Logic | Controller/View | Presenter | ViewModel | ViewModel + Reducer/State logic |
+| Android Fit | Legacy/simple apps | Legacy Android apps | Very common | Excellent for complex stateful UIs |
+| Lifecycle Handling | Usually manual | Presenter lifecycle must be handled | ViewModel survives configuration changes | ViewModel + StateFlow handles lifecycle well |
+| Testability | Low to medium | High | High | Very high |
+| Complexity | Low | Medium | Medium | Higher |
+| Boilerplate | Low | Medium | Medium | Medium to high |
+| Predictability | Low to medium | Medium | High | Very high |
+| State Management | Weak | Manual | Strong | Very strong |
+| Recommended for New Android Apps | Usually no | Usually no | Yes | Yes for complex state |
+| Best For | Small/legacy applications | Separating presentation logic | Most modern Android apps | Complex state-driven applications |
 
-
-### Useful links
-
-- [Sample Implementation](https://github.com/anitaa1990/Inshorts)
-- [Sample Implementation](https://github.com/anitaa1990/Trailers)
-- [Learn more](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
----
-- [Learn more](https://proandroiddev.com/android-model-view-intent-with-kotlin-flow-ca5945316ec)
-
-Interview Answer:
-> **MVC** is the Model-View-Controller architecture where model refers to the data model classes.
----
-## What is the role of Presenter in MVP?
-The Presenter is responsible to act as the middle man between View and Model. It retrieves data from the Model and returns it formatted to the View. But unlike the typical MVC, it also decides what happens when you interact with the View.
-
-
-
-> The Presenter is responsible to act as the middle man between View and Model.
-
-Interview Answer:
-> The Presenter is responsible to act as the middle man between View and Model.
----
-## What is the advantage of MVVM over MVP?
-In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View. It is the View's responsibility to pick the changes from ViewModel. This helps in writing more maintainable test cases since ViewModel does not depend upon View.
-
-
-
-> In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View.
-
-Interview Answer:
-> In MVP, Presenter is responsible for view data updates as well as data operations where as in MVVM, ViewModel does not hold any reference to View.
 ---
 ## Usecases of OkHttp Interceptor
 - **Application interceptors** add headers, logging, or common request behavior.
 - **Network interceptors** observe the actual network request and response.
 - Keep authentication refresh logic in an `Authenticator` when a `401` response should trigger a token refresh.
-
-
-### Useful links
-
-- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)
----
-- [Learn more](https://outcomeschool.com/blog/okhttp-interceptor)
-
-Interview Answer:
-> An OkHttp interceptor can modify, inspect, log, or retry HTTP requests and responses.
 ---
 ## Usecases of HTTP Polling and WebSocket
 - **Polling** repeatedly asks the server for updates and is simple but wasteful.
 - **WebSocket** keeps a two-way connection for near real-time updates.
 - Use **SSE** when the server mainly sends one-way events.
 - Choose based on latency, battery, scale, and reconnect behavior.
-
-
-### Useful links
-
-- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
----
-- [Learn more](https://outcomeschool.com/blog/http-request-long-polling-websocket-sse)
-
-Interview Answer:
-> Use polling for simple periodic updates, WebSocket for two-way real-time communication, and SSE for one-way server events.
----
-## Why use MVP / MVVM / MVI instead of “god Activities”?
-When all logic lives inside huge **Activities**, tests are painful, reviews are noisy, and teams step on each other. Splitting **UI**, **presentation logic**, and **data** makes changes safer and lets you **unit test** without spinning up the full framework.
-
-The cost is more **files and wiring**—and **MVI** can feel heavy on small screens. Pick a style that matches team size and how complex the screen state really is.
-
-**Example:** A banking app keeps payment rules out of Activities so compliance-friendly tests can run on the JVM without Espresso for every rule.
-
-Interview Answer:
-> When all logic lives inside huge **Activities**, tests are painful, reviews are noisy, and teams step on each other.
----
-## What is the role of Presenter in MVP and advantage of MVVM over MVP?
-In **MVP**, the **presenter** handles user actions, talks to the model, and tells the **view interface** what to render. Some teams also put **navigation** decisions there.
-
-**MVVM** usually means the **ViewModel does not hold a reference to the view**, which **reduces leak risk** and fits **LiveData/Flow** observation. Rotation is easier when state lives in a **scoped ViewModel** instead of a presenter that must reattach.
-
-Interview Answer:
-> In **MVP**, the **presenter** handles user actions, talks to the model, and tells the **view interface** what to render.
----
-## Networking layer with Retrofit — how do you wire Clean Architecture end-to-end?
-**UI** → **ViewModel** → **use case** (optional) → **repository** → **remote data source** (Retrofit service) backed by a **shared `OkHttpClient`**. The UI never sees **Retrofit** types; the repository maps **DTO → domain** and decides **cache vs network**. One **`OkHttpClient`** (timeouts, interceptors, cache, SSL) can feed **multiple `Retrofit` instances** only when **base URLs** truly differ—usually inject a **single** Retrofit via **DI**.
-
-
-> **Repository** owns **policy**; **Retrofit** is a **transport** detail behind an interface.
-
-Interview Answer:
-> *UI** → **ViewModel** → **use case** (optional) → **repository** → **remote data source** (Retrofit service) backed by a **shared `OkHttpClient`**.
----
-## Architecture — how do you structure BLE in a Clean / MVVM app?
-**UI** → **ViewModel** (intents, UI state) → **use cases** → **`BleManager` / repository** owning **GATT**, **queue**, **reconnect policy**, parsing. **Expose** domain models via **`Flow`/`StateFlow`**; **never** leak **`Activity` Context** into long-lived BLE holders—use **`Application`** context with **care**.
-
-**Single responsibility:** scanning, connection lifecycle, and **byte protocol** parsing are **separate** test seams where possible.
-
-
-> **`BleManager` + queue + domain streams** keeps **UI** thin and **testable**.
-
-Interview Answer:
-> *UI** → **ViewModel** (intents, UI state) → **use cases** → **`BleManager` / repository** owning **GATT**, **queue**, **reconnect policy**, parsing.
----
-## Testing MVP/MVVM/MVI — strategy differences
-**MVP:** test the **presenter** with a fake **view**. **MVVM:** test **ViewModel outputs** and fakes for repos. **MVI:** test **pure reducers** and **snapshots** of state where it helps.
-
-
-> Your architecture picks **what you mock** and **what you assert**.
-
-Interview Answer:
-> *MVP:** test the **presenter** with a fake **view**.
----
-## MVP/MVVM/MVI project examples (banking/clinician/bus tracker narratives)
-Prepare **a few real projects** with **different metrics** (latency, MAU, compliance, offline). Avoid repeating the **same story** with different buzzwords.
-
-
-> Have **three solid stories**: scale, conflict, ambiguity.
-
-Interview Answer:
-> Prepare **a few real projects** with **different metrics** (latency, MAU, compliance, offline).
 ---
 ## What is Android Architecture?
 - It defines a way to structure code into layers.
 - Helps separate UI, data, and business logic.
 - Makes the code easy to maintain, test, and scale.
-
-Interview Answer:
-> It defines a way to structure code into layers.
----
-## What is MVVM Architecture?
-- MVVM stands for Model-View-ViewModel.
-- **Model:** Manages data (e.g., from API or database).
-- **View:** UI layer (Activity, Fragment, or Compose).
-- **ViewModel:** Holds UI data and business logic, survives screen rotation.
-- Helps reduce code in Activity/Fragment.
-
-Interview Answer:
-> MVVM stands for Model-View-ViewModel.
 ---
 ## What is Repository in MVVM?
-The Repository is responsible for fetching data. It abstracts the data sources (API, Room database, Firebase, etc.) from the ViewModel. This separation makes it easy to manage and test data logic.
-
-Interview Answer:
-> The Repository is responsible for fetching data.
+- The Repository is responsible for fetching data.
+- It abstracts the data sources (API, Room database, Firebase, etc.) from the ViewModel. This separation makes it easy to manage and test data logic.
 ---
 ## What are UseCases in Clean Architecture?
 - A UseCase contains a single specific business logic (e.g., GetUserDetails).
 - Keeps the ViewModel clean by handling complex logic inside it.
 - Lies in the domain layer in Clean Architecture.
 - Reusable and testable units of code.
-
-Interview Answer:
-> A UseCase contains a single specific business logic (e.g., GetUserDetails).
 ---
 # Android Fundamentals
 ---
@@ -404,30 +245,13 @@ Idempotency
       ↓
 Retry + Exponential Backoff
 ```
-
-The key distinction interviewers usually look for: simply saying "save locally and sync when online" is not enough. The strong answer explains how writes are queued, how conflicts are detected, how retries are made safe, and what happens when two offline clients modify the same record.
-
-```text
-API
- ↓
-Room
- ↓
-UI
-```
-
-If refresh fails but cached data exists, keep showing cached data and
-expose a refresh error.
-
-Do not cache sensitive financial data unless there is a clear
-requirement.
-
-Interview Answer:
-> I would design the application as offline-first, where Room acts as the local source of truth and the UI observes it using Flow.
 ---
 ## What is an HTTP interceptor?
--   An interceptor can inspect or modify requests and responses.
--   Common uses include headers, authentication, logging, and metrics.
-
+- An interceptor can inspect or modify requests and responses.
+- Common uses include headers, authentication, logging, and metrics.
+- Never log authorization headers, tokens, or sensitive customer
+information.
+- Example:
 ```text
 Request
   ↓
@@ -437,12 +261,6 @@ Network
   ↓
 Response
 ```
-
-Never log authorization headers, tokens, or sensitive customer
-information.
-
-Interview Answer:
-> An interceptor can inspect or modify requests and responses.
 ---
 ## How should authentication tokens be stored?
 -   Avoid plain SharedPreferences for sensitive credentials.
@@ -463,12 +281,6 @@ Secure storage
  ↓
 API request
 ```
-
-The exact storage approach should follow the application's security
-requirements and organizational standards.
-
-Interview Answer:
-> Avoid plain SharedPreferences for sensitive credentials.
 ---
 ## What is the difference between 401 and 403?
 -   `401 Unauthorized` generally means authentication is missing or
@@ -480,132 +292,32 @@ Interview Answer:
 401 → "Who are you?"
 403 → "I know who you are, but you cannot do this."
 ```
-
-Interview Answer:
-> `401 Unauthorized` generally means authentication is missing or invalid.
----
-## What is OWASP MASVS?
--   OWASP MASVS is a security standard for mobile applications.
--   It covers areas such as secure storage, authentication, network
-    communication, cryptography, platform interaction, and resilience.
-
-For an Android banking application, use it as a security checklist
-rather than treating security as a final testing step.
-
-Interview Answer:
-> OWASP MASVS is a security standard for mobile applications.
----
-## How do you protect secrets?
-Never commit secrets to Git.
-
-Avoid:
-
-```kotlin
-const val API_SECRET = "real-secret"
-```
-
-Prefer secure CI/CD secret management and server-side handling where
-possible.
-
-Remember that anything shipped inside an APK should generally be
-considered potentially discoverable.
-
-Interview Answer:
-> Never commit secrets to Git.
 ---
 ## What is `collectAsStateWithLifecycle()`?
 -   It collects a Flow from Compose while respecting the lifecycle.
 -   It avoids unnecessary collection while the UI is not active.
-
+- It is generally preferred over manually collecting a Flow directly from
+composition.
+- Example:
 ```kotlin
 val state by viewModel.state
     .collectAsStateWithLifecycle()
 ```
-
-It is generally preferred over manually collecting a Flow directly from
-composition.
-
-Interview Answer:
-> It collects a Flow from Compose while respecting the lifecycle.
----
-## What is the Activity lifecycle?
-<img src="../assets/activity_lifecycle.png" width="350" alt="Android Activity lifecycle">
-
-Important callbacks include:
-
-```text
-onCreate
- ↓
-onStart
- ↓
-onResume
- ↓
-onPause
- ↓
-onStop
- ↓
-onDestroy
-```
-
-`onCreate` is used for initialization.
-
-`onStart` means visible.
-
-`onResume` means the Activity is in the foreground and interactive.
-
-`onStop` means it is no longer visible.
-
-Interview Answer:
-> Important callbacks include: `onCreate` is used for initialization.
----
-## What happens during configuration change?
-For example, during rotation:
-
-```text
-Activity
- ↓
-destroyed
- ↓
-recreated
-```
-
-The ViewModel normally survives the configuration change.
-
-UI state should be stored in the appropriate place:
-
-```text
-remember          → recomposition
-rememberSaveable  → saved UI state
-ViewModel         → screen/business state
-SavedStateHandle  → state that should survive process recreation where supported
-```
-
-Interview Answer:
-> For example, during rotation: The ViewModel normally survives the configuration change.
 ---
 ## What is process death?
 -   Android can kill the application process when resources are needed.
 -   A ViewModel does not survive process death.
 -   Important state must be restored through saved-state mechanisms or
     recreated from persistent storage.
-
-Do not assume ViewModel means permanent state.
-
-Interview Answer:
-> Android can kill the application process when resources are needed.
+- Do not assume ViewModel means permanent state.
 ---
 ## What is the difference between Activity context and Application context?
 -   Activity context is tied to an Activity lifecycle.
 -   Application context lives as long as the application process.
-
-Do not store an Activity context in a long-lived singleton because it
+- Do not store an Activity context in a long-lived singleton because it
 can cause a memory leak.
-
-Use Application context for application-wide dependencies when
+- Use Application context for application-wide dependencies when
 appropriate.
-
-Interview Answer:
-> Activity context is tied to an Activity lifecycle.
 ---
 ## How do you handle flaky tests?
 -   Find the root cause instead of repeatedly rerunning.
@@ -627,9 +339,6 @@ Product bug?
    ↓
 Fix root cause
 ```
-
-Interview Answer:
-> Find the root cause instead of repeatedly rerunning.
 ---
 ## What are CI quality gates?
 Possible gates include:
@@ -645,15 +354,13 @@ Possible gates include:
 
 A quality gate should prevent known high-risk problems from reaching
 release.
-
-Interview Answer:
-> Possible gates include: Compilation Unit tests Instrumentation tests Lint Static analysis Security scanning Dependency checks Required code review A quality gate should prevent known high-risk problems from reaching release.
 ---
 ## What is modularization?
 -   Modularization divides a large codebase into meaningful modules.
 -   It improves ownership, dependency boundaries, build performance, and
     reuse.
-
+- Do not create modules for every small class.
+- Example:
 ```text
 :app
 
@@ -666,18 +373,13 @@ Interview Answer:
 :core-ui
 :core-security
 ```
-
-Do not create modules for every small class.
-
-Interview Answer:
-> Modularization divides a large codebase into meaningful modules.
 ---
 ## What are shared libraries in Android?
-Shared libraries contain functionality used by multiple features or
+- Shared libraries contain functionality used by multiple features or
 teams.
-
-Examples:
-
+- They should have stable APIs and avoid unnecessary feature-specific
+dependencies.
+- Examples:
 ```text
 Design system
 Networking
@@ -686,36 +388,24 @@ Logging
 Analytics
 Security utilities
 ```
-
-They should have stable APIs and avoid unnecessary feature-specific
-dependencies.
-
-Interview Answer:
-> Shared libraries contain functionality used by multiple features or teams.
 ---
 ## What is Android startup performance?
-Startup performance is the time needed before the application becomes
+- Startup performance is the time needed before the application becomes
 usable.
-
-Common problems:
-
--   Heavy Application initialization
--   Synchronous disk I/O
--   Large dependency initialization
--   Unnecessary SDK initialization
--   Expensive database work
-
-Use profiling and startup metrics before optimizing.
-
-Interview Answer:
-> Startup performance is the time needed before the application becomes usable.
+- Common problems:
+    1.   Heavy Application initialization
+    2.   Synchronous disk I/O
+    3.   Large dependency initialization
+    4.   Unnecessary SDK initialization
+    5.   Expensive database work
+- Use profiling and startup metrics before optimizing.
 ---
 ## What is Macrobenchmark?
 -   Macrobenchmark measures larger user journeys on real Android devices
     or emulators.
 -   It is useful for startup, scrolling, and other performance
     scenarios.
-
+- Example:
 ```text
 Launch app
  ↓
@@ -725,16 +415,12 @@ Scroll
  ↓
 Measure performance
 ```
-
-It complements unit and UI tests.
-
-Interview Answer:
-> Macrobenchmark measures larger user journeys on real Android devices or emulators.
 ---
 ## What is feature flagging?
--   A feature flag controls whether functionality is enabled.
--   It allows deployment and release to be separated.
-
+-  A feature flag controls whether functionality is enabled.
+-  It allows deployment and release to be separated.
+-  It supports gradual rollout and quick disablement
+- Example:
 ```kotlin
 if (featureFlags.newPaymentFlow) {
     NewPaymentScreen()
@@ -742,15 +428,9 @@ if (featureFlags.newPaymentFlow) {
     OldPaymentScreen()
 }
 ```
-
-It supports gradual rollout and quick disablement.
-
-Interview Answer:
-> A feature flag controls whether functionality is enabled.
 ---
 ## What is a phased rollout?
-Instead of releasing to everyone immediately:
-
+- Instead of releasing to everyone immediately:
 ```text
 1%
  ↓
@@ -764,39 +444,27 @@ Instead of releasing to everyone immediately:
  ↓
 100%
 ```
-
-Monitor:
-
--   Crash rate
--   ANR
--   API errors
--   Performance
--   Business metrics
-
-Stop or roll back if important metrics degrade.
-
-Interview Answer:
-> Instead of releasing to everyone immediately: Monitor: Crash rate ANR API errors Performance Business metrics Stop or roll back if important metrics degrade.
+- Monitor:
+    1.   Crash rate
+    2.   ANR
+    3.   API errors
+    4.   Performance
+    5.   Business metrics
+- Stop or roll back if important metrics degrade.
 ---
 ## What is operational readiness?
-Before release, define:
-
--   Monitoring
--   Alerts
--   Rollback process
--   Feature flag strategy
--   Ownership
--   Runbook
--   Known failure modes
-
-A feature is not production-ready simply because the code works locally.
-
-Interview Answer:
-> Before release, define: Monitoring Alerts Rollback process Feature flag strategy Ownership Runbook Known failure modes A feature is not production-ready simply because the code works locally.
+- Before release, define:
+    1.   Monitoring
+    2.   Alerts
+    3.   Rollback process
+    4.   Feature flag strategy
+    5.   Ownership
+    6.   Runbook
+    7.   Known failure modes
+- A feature is not production-ready simply because the code works locally.
 ---
 ## What is a runbook?
-A runbook explains what to do when an operational problem occurs.
-
+- A runbook explains what to do when an operational problem occurs.
 ```text
 Problem
  ↓
@@ -810,19 +478,12 @@ Rollback
  ↓
 Recovery
 ```
-
-For example, a crash spike after release should have a documented
-rollback or feature-disable procedure.
-
-Interview Answer:
-> A runbook explains what to do when an operational problem occurs.
+- For example, a crash spike after release should have a documented rollback or feature-disable procedure.
 ---
 ## What is crash-free rate?
 -   It measures how many users or sessions complete without crashes.
 -   It is a useful stability metric.
-
-Track it by:
-
+- Track it by:
 ```text
 App version
 Device
@@ -830,24 +491,17 @@ OS version
 Feature
 Release cohort
 ```
-
-A single overall percentage can hide problems affecting a specific
+- A single overall percentage can hide problems affecting a specific
 group.
-
-Interview Answer:
-> It measures how many users or sessions complete without crashes.
 ---
 ## How do you handle pagination?
-For simple offset pagination:
-
+- For simple offset pagination:
 ```text
 page=1
 page=2
 page=3
 ```
-
-For more reliable APIs, cursor pagination can be better:
-
+- For more reliable APIs, cursor pagination can be better:
 ```text
 cursor=A
  ↓
@@ -855,16 +509,12 @@ nextCursor=B
  ↓
 nextCursor=C
 ```
-
-For Android, Paging 3 can manage loading, retry, refresh, and
+- For Android, Paging 3 can manage loading, retry, refresh, and
 presentation state.
-
-Interview Answer:
-> For simple offset pagination: For more reliable APIs, cursor pagination can be better: For Android, Paging 3 can manage loading, retry, refresh, and presentation state.
 ---
 ## How do you handle configuration changes (like screen rotation) in Android without losing data?
-ViewModel stores UI-related data across configuration changes.
-When screen rotates:
+- ViewModel stores UI-related data across configuration changes.
+- When screen rotates:
 ```text
 Activity/Fragment is destroyed and recreated
  ↓
@@ -872,49 +522,25 @@ ViewModel is not destroyed
  ↓
 ViewModel retains the data and passes it again to the UI.
 ```
-Example: In a profile screen, if user scrolls halfway and rotates the screen, without ViewModel the screen will reload from start. But with ViewModel, the profile data and scroll position can be restored smoothly.
-
-Interview Answer:
-> ViewModel stores UI-related data across configuration changes.
----
-## A user opens an app with no internet. How do you show offline data?
-Use Room as the local cache.
--   Repository checks connectivity.
--   If offline, fetch from Room.
--   If online, fetch from API and update Room.
-
-Show “You’re offline” toast/snackbar while loading cached data.
-
-Interview Answer:
-> Use Room as the local cache.
+- Example: In a profile screen, if user scrolls halfway and rotates the screen, without ViewModel the screen will reload from start. But with ViewModel, the profile data and scroll position can be restored smoothly.
 ---
 ## What is the difference between retry and refresh?
 -   Retry repeats a failed operation.
 -   Refresh requests the latest state/data again.
-
-A retry should be used carefully with writes.
-
-For financial operations, use idempotency and server-side transaction
+- A retry should be used carefully with writes.
+- For financial operations, use idempotency and server-side transaction
 semantics before retrying.
-
-Interview Answer:
-> Retry repeats a failed operation.
 ---
 ## What is idempotency?
 -   An operation is idempotent when repeating the same request does not
     create additional unintended effects.
 -   It is critical for payment and transaction workflows.
-
 ```text
 POST payment + idempotencyKey=ABC
 POST payment + idempotencyKey=ABC
 ```
-
-The server can recognize that both requests represent the same
+- The server can recognize that both requests represent the same
 operation.
-
-Interview Answer:
-> An operation is idempotent when repeating the same request does not create additional unintended effects.
 ---
 ## How do you use AI coding assistants safely?
 -   Use only organization-approved AI tools.
@@ -925,7 +551,6 @@ Interview Answer:
 -   Run tests.
 -   Run static analysis and security checks.
 -   Validate behavior against requirements.
-
 ```text
 AI suggestion
     ↓
@@ -939,29 +564,20 @@ Code review
     ↓
 Merge
 ```
-
-Interview Answer:
-> Use only organization-approved AI tools.
 ---
 ## What are the risks of AI-generated code?
-Possible risks:
-
--   Incorrect APIs
--   Security vulnerabilities
--   Poor architecture
--   Hallucinated behavior
--   License/IP concerns
--   Sensitive data exposure
--   Hidden edge cases
-
-The developer remains responsible for the final code.
-
-Interview Answer:
-> Possible risks: Incorrect APIs Security vulnerabilities Poor architecture Hallucinated behavior License/IP concerns Sensitive data exposure Hidden edge cases The developer remains responsible for the final code.
+- Possible risks:
+    1.   Incorrect APIs
+    2.   Security vulnerabilities
+    3.   Poor architecture
+    4.   Hallucinated behavior
+    5.   License/IP concerns
+    6.   Sensitive data exposure
+    7.   Hidden edge cases
+- The developer remains responsible for the final code.
 ---
 ## How would you respond if AI generated insecure token storage?
-Do not merge it.
-
+- Do not merge it.
 ```text
 Generated code
  ↓
@@ -977,12 +593,8 @@ Run security/static checks
  ↓
 Code review
 ```
-
-AI can accelerate implementation but cannot replace engineering
+- AI can accelerate implementation but cannot replace engineering
 judgment.
-
-Interview Answer:
-> Do not merge it.
 ---
 ## How do you handle an architecture disagreement?
 -   Understand the other proposal.
@@ -991,31 +603,21 @@ Interview Answer:
 -   Prototype when uncertainty is high.
 -   Align with the team.
 -   Document important decisions.
-
-Avoid making the discussion about who is technically right.
-
-Interview Answer:
-> Understand the other proposal.
+- Avoid making the discussion about who is technically right.
 ---
 ## What delivery metrics matter for an Android team?
-Important metrics include:
-
--   Cycle time
--   Deployment frequency
--   Defect escape rate
--   Crash-free users
--   ANR rate
--   Build duration
--   Test stability
--   Release rollback rate
-
-Do not optimize one metric alone.
-
-For example, reducing cycle time by skipping tests can increase
+- Important metrics include:
+    1.   Cycle time
+    2.   Deployment frequency
+    3.   Defect escape rate
+    4.   Crash-free users
+    5.   ANR rate
+    6.   Build duration
+    7.   Test stability
+    8.   Release rollback rate
+- Do not optimize one metric alone.
+- For example, reducing cycle time by skipping tests can increase
 production defects.
-
-Interview Answer:
-> Important metrics include: Cycle time Deployment frequency Defect escape rate Crash-free users ANR rate Build duration Test stability Release rollback rate Do not optimize one metric alone.
 ---
 ## How would you reduce Android app startup time?
 -   Remove unnecessary initialization from `Application`.
@@ -1024,15 +626,10 @@ Interview Answer:
 -   Defer analytics/SDK initialization where allowed.
 -   Use Baseline Profiles.
 -   Measure using startup benchmarks and production telemetry.
-
-The first step should be profiling, not guessing.
-
-Interview Answer:
-> Remove unnecessary initialization from `Application`.
+- The first step should be profiling, not guessing.
 ---
 ## How do you handle sensitive data in logs?
-Never log:
-
+- Never log:
 ```text
 Passwords
 Access tokens
@@ -1041,30 +638,20 @@ PINs
 Full account numbers
 Sensitive customer data
 ```
-
-Use safe identifiers and structured logging where appropriate.
-
-Production logging should follow security and privacy policies.
-
-Interview Answer:
-> Never log: Use safe identifiers and structured logging where appropriate.
+- Use safe identifiers and structured logging where appropriate.
+- Production logging should follow security and privacy policies.
 ---
 ## What is screenshot protection?
-Android can restrict screenshots for sensitive screens using appropriate
+- Android can restrict screenshots for sensitive screens using appropriate
 window flags.
-
 ```kotlin
 window.setFlags(
     WindowManager.LayoutParams.FLAG_SECURE,
     WindowManager.LayoutParams.FLAG_SECURE
 )
 ```
-
-Use it where the security requirement calls for preventing screenshots
+- Use it where the security requirement calls for preventing screenshots
 or screen capture.
-
-Interview Answer:
-> Android can restrict screenshots for sensitive screens using appropriate window flags.
 ---
 ## How do you reduce memory usage?
 -   Avoid holding Activity/View references in long-lived objects.
@@ -1073,11 +660,9 @@ Interview Answer:
 -   Close resources appropriately.
 -   Use lifecycle-aware components.
 -   Profile before optimizing.
-
-Interview Answer:
-> Avoid holding Activity/View references in long-lived objects.
 ---
 ## What is a good Android testing strategy?
+
 ```text
 Unit tests
    ↓
@@ -1092,14 +677,8 @@ UI tests
 Critical user journeys
 ```
 
-This gives good confidence without making the entire suite slow and
-fragile.
-
-Interview Answer:
-> This gives good confidence without making the entire suite slow and fragile.
 ---
 ## What is a quality gate you would add to CI?
-A practical PR gate could be:
 
 ```text
 Compile
@@ -1114,7 +693,6 @@ Security/dependency checks
 ```
 
 For release:
-
 ```text
 Instrumentation/UI tests
  ↓
@@ -1127,11 +705,8 @@ Artifact verification
 Deployment
 ```
 
-Interview Answer:
-> A practical PR gate could be: For release:
 ---
 ## How do you avoid overengineering?
-Ask:
 
 ```text
 What problem does this abstraction solve?
@@ -1140,15 +715,9 @@ Does it improve testability or maintainability?
 Does the complexity justify the benefit?
 ```
 
-A simple feature does not need five architectural layers just because a
-pattern exists.
-
-Interview Answer:
-> Ask: A simple feature does not need five architectural layers just because a pattern exists.
 ---
 ## How do you handle one-time events such as navigation?
-Keep durable screen state separate from transient events.
-
+- Keep durable screen state separate from transient events.
 ```kotlin
 data class UiState(
     val account: Account? = null,
@@ -1160,27 +729,16 @@ sealed interface UiEvent {
     data class ShowMessage(val text: String) : UiEvent
 }
 ```
-
-Use an appropriate event stream such as SharedFlow and collect it
+- Use an appropriate event stream such as SharedFlow and collect it
 lifecycle-safely.
-
-Interview Answer:
-> Keep durable screen state separate from transient events.
 ---
 ## How do you prevent duplicate navigation events after rotation?
 -   Do not model navigation as a simple persistent Boolean.
 -   Treat navigation as a transient event or derive navigation from
     durable state.
 -   Ensure the event consumption model is lifecycle-aware.
-
-The exact implementation depends on the navigation architecture.
-
-Interview Answer:
-> Do not model navigation as a simple persistent Boolean.
 ---
 ## What is the role of Android SDK knowledge in modern Android?
-Even with Compose, developers need to understand:
-
 -   Lifecycle
 -   Context
 -   Activity
@@ -1191,12 +749,6 @@ Even with Compose, developers need to understand:
 -   Notifications
 -   Configuration changes
 -   OS behavior
-
-Compose changes UI development, not the underlying Android platform
-model.
-
-Interview Answer:
-> Even with Compose, developers need to understand: Lifecycle Context Activity Services Permissions Saved state Background execution Notifications Configuration changes OS behavior Compose changes UI development, not the underlying Android platform model.
 ---
 ## What is your approach when supporting multiple Android OS versions?
 -   Use supported APIs according to min/target SDK.
