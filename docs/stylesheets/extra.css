@@ -1,26 +1,41 @@
-/* Main categories */
+/* =========================================
+   Main Categories
+   ========================================= */
+
 .md-nav--primary
 > .md-nav__list
-> .md-nav__item--nested
+> .md-nav__item--section
 > .md-nav__link {
     display: flex !important;
     align-items: center;
     width: 100%;
+
     font-size: 0.85rem;
     font-weight: 800;
+
     color: var(--md-accent-fg-color);
+
     cursor: pointer !important;
+
+    user-select: none !important;
+    -webkit-user-select: none !important;
 }
 
+
 /* Hover */
+
 .md-nav--primary
 > .md-nav__list
-> .md-nav__item--nested
+> .md-nav__item--section
 > .md-nav__link:hover {
     color: var(--md-accent-fg-color);
 }
 
-/* Arrow */
+
+/* =========================================
+   Arrow
+   ========================================= */
+
 .custom-nav-toggle {
     display: inline-flex;
     align-items: center;
@@ -37,25 +52,46 @@
     background: transparent;
 
     color: var(--md-accent-fg-color);
+
     cursor: pointer;
     pointer-events: auto;
+
+    user-select: none;
 }
 
-/* Child navigation */
+
+/* =========================================
+   Child Navigation
+   ========================================= */
+
 .md-nav--primary
 > .md-nav__list
-> .md-nav__item--nested
+> .md-nav__item--section
 > .md-nav {
     padding-left: 30px;
 }
 
-/* Child items */
+
+/* =========================================
+   Child Items
+   ========================================= */
+
 .md-nav--primary
-.md-nav__item--nested
+.md-nav__item--section
 .md-nav
 .md-nav__link {
     font-size: 0.70rem;
     font-weight: 400;
+}
+
+
+/* Prevent selection */
+
+.md-nav--primary
+.md-nav__item--section
+.md-nav__link * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
 }
 
 
@@ -70,13 +106,15 @@
 
 
 /* H1 */
+
 .md-content h1 {
     font-weight: 800;
     letter-spacing: -0.02em;
 }
 
 
-/* H2 - Main question / topic */
+/* H2 */
+
 .md-content h2 {
     font-weight: 700;
     letter-spacing: -0.01em;
@@ -86,31 +124,36 @@
 
 
 /* H3 */
+
 .md-content h3 {
     font-weight: 650;
 }
 
 
 /* H4 */
+
 .md-content h4 {
     font-weight: 600;
 }
 
 
-/* Body text */
+/* Body */
+
 .md-content p,
 .md-content li {
     font-weight: 400;
 }
 
 
-/* Strong / bold text */
+/* Bold */
+
 .md-content strong {
     font-weight: 700;
 }
 
 
 /* Code */
+
 .md-content code,
 .md-content pre {
     font-family: "JetBrains Mono", monospace;

@@ -4,7 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getExpandedSections() {
         try {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            return JSON.parse(
+                localStorage.getItem(STORAGE_KEY)
+            ) || {};
         } catch (e) {
             return {};
         }
@@ -39,12 +41,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 ":scope > .md-nav"
             );
 
-            if (!link || !childNav) {
+            const toggle = section.querySelector(
+                ":scope > .md-nav__toggle"
+            );
+
+            if (!link || !childNav || !toggle) {
                 return;
             }
 
             /*
-             * Avoid creating the arrow multiple times
+             * Create arrow only once
              */
             let arrow = link.querySelector(
                 ":scope > .custom-nav-toggle"
@@ -60,26 +66,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 link.prepend(arrow);
             }
 
-            const title =
-                section.querySelector(":scope > .md-nav__link")
-                    ?.textContent
-                    .replace("▶", "")
-                    .replace("▼", "")
-                    .trim();
+            /*
+             * Get section title without arrow
+             */
+            const title = link.textContent
+                .replace("▶", "")
+                .replace("▼", "")
+                .trim();
 
             /*
-             * Restore previous state
+             * Restore saved state
              */
-            const expanded = savedSections[title] === true;
+            const savedState =
+                savedSections[title] === true;
 
+            toggle.checked = savedState;
+
+            /*
+             * Keep desktop inline state synchronized
+             */
             childNav.style.display =
-                expanded ? "block" : "none";
+                savedState ? "block" : "none";
 
             arrow.textContent =
-                expanded ? "▼" : "▶";
+                savedState ? "▼" : "▶";
 
             /*
-             * Prevent duplicate click listeners
+             * Prevent duplicate listeners
              */
             if (link.dataset.clickInitialized === "true") {
                 return;
@@ -95,20 +108,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 event.preventDefault();
                 event.stopPropagation();
 
-                const currentlyExpanded =
-                    childNav.style.display === "block";
+                /*
+                 * Material uses this checkbox to control
+                 * nested navigation, especially on mobile.
+                 */
+                const expanded = !toggle.checked;
 
-                const newState = !currentlyExpanded;
+                toggle.checked = expanded;
 
+                /*
+                 * Desktop fallback
+                 */
                 childNav.style.display =
-                    newState ? "block" : "none";
+                    expanded ? "block" : "none";
 
+                /*
+                 * Arrow
+                 */
                 arrow.textContent =
-                    newState ? "▼" : "▶";
+                    expanded ? "▼" : "▶";
 
+                /*
+                 * Remember state
+                 */
                 saveExpandedSection(
                     title,
-                    newState
+                    expanded
                 );
 
             }, true);
@@ -116,18 +141,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-     * Initial setup
+     * Initial load
      */
     setupNavigation();
 
     /*
-     * Material for MkDocs instant navigation
+     * Material instant navigation
      */
     if (typeof document$ !== "undefined") {
 
         document$.subscribe(function () {
             setupNavigation();
         });
-
     }
 });
