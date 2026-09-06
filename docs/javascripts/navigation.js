@@ -1,83 +1,133 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    const STORAGE_KEY = "mkdocs-expanded-sections";
+
+    function getExpandedSections() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveExpandedSection(title, expanded) {
+        const sections = getExpandedSections();
+
+        sections[title] = expanded;
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(sections)
+        );
+    }
+
     function setupNavigation() {
 
         const sections = document.querySelectorAll(
-            ".md-nav--primary > .md-nav__list > .md-nav__item--nested"
+            ".md-nav--primary > .md-nav__list > .md-nav__item--section"
         );
+
+        const savedSections = getExpandedSections();
 
         sections.forEach(function (section) {
 
-            if (section.dataset.collapsibleInitialized) {
-                return;
-            }
+            const link = section.querySelector(
+                ":scope > .md-nav__link"
+            );
 
-            const link = section.querySelector(":scope > .md-nav__link");
-            const childNav = section.querySelector(":scope > .md-nav");
+            const childNav = section.querySelector(
+                ":scope > .md-nav"
+            );
 
             if (!link || !childNav) {
                 return;
             }
 
-            section.dataset.collapsibleInitialized = "true";
+            /*
+             * Avoid creating the arrow multiple times
+             */
+            let arrow = link.querySelector(
+                ":scope > .custom-nav-toggle"
+            );
 
-            // Create arrow
-            const arrow = document.createElement("button");
+            if (!arrow) {
 
-            arrow.type = "button";
-            arrow.className = "custom-nav-toggle";
-            arrow.setAttribute("aria-expanded", "false");
-            arrow.setAttribute("aria-label", "Expand section");
-            arrow.textContent = "▶";
+                arrow = document.createElement("span");
 
-            // Put arrow inside the existing Material link
-            link.prepend(arrow);
+                arrow.className = "custom-nav-toggle";
+                arrow.setAttribute("aria-hidden", "true");
 
-            // Start collapsed
-            childNav.style.display = "none";
+                link.prepend(arrow);
+            }
 
-            function toggleSection(event) {
+            const title =
+                section.querySelector(":scope > .md-nav__link")
+                    ?.textContent
+                    .replace("▶", "")
+                    .replace("▼", "")
+                    .trim();
+
+            /*
+             * Restore previous state
+             */
+            const expanded = savedSections[title] === true;
+
+            childNav.style.display =
+                expanded ? "block" : "none";
+
+            arrow.textContent =
+                expanded ? "▼" : "▶";
+
+            /*
+             * Prevent duplicate click listeners
+             */
+            if (link.dataset.clickInitialized === "true") {
+                return;
+            }
+
+            link.dataset.clickInitialized = "true";
+
+            /*
+             * Entire section title is clickable
+             */
+            link.addEventListener("click", function (event) {
 
                 event.preventDefault();
                 event.stopPropagation();
 
-                const expanded =
-                    arrow.getAttribute("aria-expanded") === "true";
+                const currentlyExpanded =
+                    childNav.style.display === "block";
 
-                arrow.setAttribute(
-                    "aria-expanded",
-                    String(!expanded)
-                );
-
-                arrow.setAttribute(
-                    "aria-label",
-                    expanded
-                        ? "Expand section"
-                        : "Collapse section"
-                );
-
-                arrow.textContent = expanded ? "▶" : "▼";
+                const newState = !currentlyExpanded;
 
                 childNav.style.display =
-                    expanded ? "none" : "block";
-            }
+                    newState ? "block" : "none";
 
-            // Arrow click
-            arrow.addEventListener("click", toggleSection);
+                arrow.textContent =
+                    newState ? "▼" : "▶";
 
-            // Title click
-            link.addEventListener("click", function (event) {
-
-                // Ignore arrow click because arrow already handles it
-                if (event.target === arrow) {
-                    return;
-                }
-
-                toggleSection(event);
+                saveExpandedSection(
+                    title,
+                    newState
+                );
 
             }, true);
         });
     }
 
+    /*
+     * Initial setup
+     */
     setupNavigation();
+
+    /*
+     * Material for MkDocs instant navigation
+     */
+    if (typeof document$ !== "undefined") {
+
+        document$.subscribe(function () {
+            setupNavigation();
+        });
+
+    }
 });
