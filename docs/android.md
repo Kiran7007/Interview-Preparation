@@ -90,6 +90,7 @@ viewModel.state.test {
     assertEquals(Success(user), awaitItem())
 }
 ```
+
 ---
 ## You need to fetch data from both the local Room database and network. How do you design this?
 Use Repository with a fallback logic:
@@ -133,6 +134,7 @@ val results = query
         repository.search(text)
     }
 ```
+
 ---
 ## What is a database transaction?
 -  A transaction groups operations so they succeed or fail together
@@ -146,6 +148,7 @@ Update balance
         ↓
     Transaction
 ```
+
 ---
 ## Why we should use MVP / MVVM architectures?
 - To avoid too much logic code in the UI layer and god activities
@@ -243,6 +246,7 @@ Idempotency
       ↓
 Retry + Exponential Backoff
 ```
+
 ---
 ## What is an HTTP interceptor?
 - An interceptor can inspect or modify requests and responses.
@@ -258,6 +262,7 @@ Network
   ↓
 Response
 ```
+
 ---
 ## How should authentication tokens be stored?
 -   Avoid plain SharedPreferences for sensitive credentials.
@@ -278,6 +283,7 @@ Secure storage
  ↓
 API request
 ```
+
 ---
 ## What is the difference between 401 and 403?
 -   `401 Unauthorized` generally means authentication is missing or
@@ -289,6 +295,7 @@ API request
 401 → "Who are you?"
 403 → "I know who you are, but you cannot do this."
 ```
+
 ---
 ## What is `collectAsStateWithLifecycle()`?
 -   It collects a Flow from Compose while respecting the lifecycle.
@@ -299,6 +306,7 @@ composition.
 val state by viewModel.state
     .collectAsStateWithLifecycle()
 ```
+
 ---
 ## What is process death?
 -   Android can kill the application process when resources are needed.
@@ -335,6 +343,7 @@ Product bug?
    ↓
 Fix root cause
 ```
+
 ---
 ## What are CI quality gates?
 Possible gates include:
@@ -368,6 +377,7 @@ release.
 :core-ui
 :core-security
 ```
+
 ---
 ## What are shared libraries in Android?
 - Shared libraries contain functionality used by multiple features or
@@ -382,6 +392,7 @@ Logging
 Analytics
 Security utilities
 ```
+
 ---
 ## What is Android startup performance?
 - Startup performance is the time needed before the application becomes
@@ -408,6 +419,7 @@ Scroll
  ↓
 Measure performance
 ```
+
 ---
 ## What is feature flagging?
 -  A feature flag controls whether functionality is enabled.
@@ -420,6 +432,7 @@ if (featureFlags.newPaymentFlow) {
     OldPaymentScreen()
 }
 ```
+
 ---
 ## What is a phased rollout?
 - Instead of releasing to everyone immediately:
@@ -556,6 +569,7 @@ Code review
     ↓
 Merge
 ```
+
 ---
 ## What are the risks of AI-generated code?
 - Possible risks:
@@ -874,6 +888,7 @@ synchronized(lock) {
     count++
 }
 ```
+
 ---
 ## Parcelable vs Serializable (performance & security framing)
 #### Parcelable
@@ -889,6 +904,7 @@ data class User(val id: Int, val name: String) : Parcelable
 ```kotlin
 data class User(val id: Int, val name: String) : Serializable
 ```
+
 ---
 ## compileSdk vs targetSdk vs minSdk
 |                               | `compileSdk`                  | `targetSdk`                     | `minSdk`                                 |
@@ -966,6 +982,7 @@ PendingIntent.getActivity();   // Retrieves a PendingIntent to start an Activity
 PendingIntent.getBroadcast(); // Retrieves a PendingIntent to perform a Broadcast
 PendingIntent.getService();  // Retrieves a PendingIntent to start a Service
 ```
+
 ---
 ## How to know `configChange` happens in `onDestroy()` function?
 Once an activity is in the process of finishing then `isFinishing()` method is returned `true` value, otherwise `false` when the system is temporarily destroying the instance of the activity.
@@ -1456,7 +1473,9 @@ Sync database
 Upload logs
 Periodic refresh
 ```
+
 - Do not use it for immediate UI-bound work.
+
 ---
 ## Service vs WorkManager?
 -   Service is for specific foreground/background service use cases.
@@ -1487,6 +1506,7 @@ submitList(newUsers)
 ---
 ## How to handle multiple screen sizes?
 It's a long debate but in a very nutshell, you can do it in these ways:
+
 - Use flexible layout like `ConstraintLayout` unless create alternative layout in different layout folders. (e.g. layout-sw480, layout-sw600, layout-sw720 ...)
 - Provide different bitmap drawables for different screen densities or use vector assets.
 - Be aware of the screen orientation change approach in your application.
@@ -1520,6 +1540,7 @@ val thread = HandlerThread("worker").apply { start() }
 val handler = Handler(thread.looper)
 handler.post { /* background work */ }
 ```
+
 ---
 ## What are `ExecutorService` and thread pools, and when should you use them?
 - `ExecutorService` runs tasks using reusable worker threads.
@@ -1531,6 +1552,7 @@ val executor = Executors.newFixedThreadPool(2)
 executor.execute { /* background work */ }
 executor.shutdown()
 ```
+
 ---
 ## How do started, bound, foreground, and background services differ?
 - A **started service** continues until stopped or terminated.
@@ -1569,6 +1591,7 @@ val request = PeriodicWorkRequestBuilder<SyncWorker>(
         .build()
 ).build()
 ```
+
 ---
 ## What are the important Dagger/Hilt annotations?
 - `@Inject` marks a constructor or field for injection.
@@ -1605,6 +1628,7 @@ suspend fun uploadPhoto(
 ```kotlin
 val cursor = contentResolver.query(uri, projection, null, null, null)
 ```
+
 ---
 ## How do `FragmentPagerAdapter` and `FragmentStatePagerAdapter` differ?
 - `FragmentPagerAdapter` keeps visited fragment instances and is suited to a small, mostly fixed number of pages.
@@ -1658,6 +1682,7 @@ Client retries with same key
         ↓
 Server recognizes duplicate
 ```
+
 ---
 ## What is REST?
 -   REST commonly exposes resources through HTTP.
@@ -1691,6 +1716,7 @@ query {
     }
 }
 ```
+
 ---
 ## What is secure networking?
 -   Use HTTPS/TLS.
@@ -1705,6 +1731,7 @@ App
  ↓ HTTPS/TLS
 API
 ```
+
 ---
 ## How do you prevent duplicate API requests?
 -   `distinctUntilChanged`
@@ -1788,13 +1815,13 @@ should be used according to the threat model and security policy.
 ## Why do android apps need to ask permission like `INTERNET` or `LOCATION`?
 - Android permissions protect sensitive resources and user privacy. Apps must declare what they need in the manifest, and some permissions also require runtime user approval.
 - Compare:
+
 | Permission             | Why needed                                         |
 | ---------------------- | -------------------------------------------------- |
 | `INTERNET`             | Allows the app to communicate with network servers |
 | `ACCESS_FINE_LOCATION` | Allows precise device location                     |
 | `CAMERA`               | Allows camera access                               |
 | `READ_MEDIA_IMAGES`    | Allows access to user photos                       |
-
 
 ---
 ## What are the permission protection levels in Android?
@@ -1803,6 +1830,7 @@ should be used according to the threat model and security policy.
 | **Normal**       | Low-risk permission, automatically granted                                                            | `INTERNET`                       |
 | **Dangerous**    | Accesses sensitive data/features, requires runtime user approval                                      | `CAMERA`, `ACCESS_FINE_LOCATION` |
 | **Signature**    | Granted only if requesting app is signed with the same certificate as the app defining the permission | Custom IPC permission            |
+
 ---
 ## How do you protect API keys and prevent reverse engineering?
 #### API Key Protection - layers of defense:
@@ -1982,6 +2010,7 @@ fun Greeting(name: String) {
     Text(text = "Hello, $name")
 }
 ```
+
 ---
 ## What is recomposition in Jetpack Compose?
 - Recomposition is when Compose redraws parts of the UI because data/state has changed.
