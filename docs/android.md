@@ -65,7 +65,6 @@ class UserViewModel(
 )
 ```
 
-The ViewModel does not create `UserRepository()` itself.
 ---
 ## What are Hilt scopes?
 The scope should match the required lifetime. Common scopes include:
