@@ -2,6 +2,9 @@ site_name: Kiran's Interview Preparation
 site_url: https://kiran7007.github.io/Interview-Preparation/
 site_description: Android, Kotlin and Software Engineering Interview Preparation
 
+hooks:
+  - hooks.py
+
 theme:
   name: material
 
@@ -11,8 +14,8 @@ theme:
 
   features:
     - navigation.sections
-    - navigation.expand
     - navigation.top
+    - toc.follow
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -21,12 +24,16 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
+      primary: indigo
+      accent: light-blue
       toggle:
         icon: material/weather-sunny
         name: Dark mode
 
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      primary: indigo
+      accent: light-blue
       toggle:
         icon: material/weather-night
         name: Light mode
@@ -43,29 +50,24 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
+
   - pymdownx.superfences
 
   - pymdownx.tabbed:
       alternate_style: true
-  - toc:
-      permalink: true
 
 nav:
   - Android: android.md
-
   - Java: java.md
-
   - Kotlin: kotlin.md
-
   - JPMorganChase: jpmorgan.md
-
   - Career: career.md
-
   - Cross-platform: cross-platform.md
-
   - DSA: dsa.md
-
   - System Design: system-design.md
 
 extra_css:
   - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/navigation.js
