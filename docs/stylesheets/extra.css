@@ -57,3 +57,61 @@
     font-size: 0.70rem;
     font-weight: 400;
 }
+
+
+/* =========================================
+   Typography
+   ========================================= */
+
+.md-content {
+    font-family: "Inter", sans-serif;
+    line-height: 1.65;
+}
+
+
+/* H1 */
+.md-content h1 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+
+/* H2 - Main question / topic */
+.md-content h2 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-top: 2rem;
+    margin-bottom: 0.8rem;
+}
+
+
+/* H3 */
+.md-content h3 {
+    font-weight: 650;
+}
+
+
+/* H4 */
+.md-content h4 {
+    font-weight: 600;
+}
+
+
+/* Body text */
+.md-content p,
+.md-content li {
+    font-weight: 400;
+}
+
+
+/* Strong / bold text */
+.md-content strong {
+    font-weight: 700;
+}
+
+
+/* Code */
+.md-content code,
+.md-content pre {
+    font-family: "JetBrains Mono", monospace;
+}
