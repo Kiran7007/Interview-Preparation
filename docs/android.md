@@ -84,7 +84,6 @@ automatically become a global singleton.
 ## How do you test Flow and StateFlow?
 - Use a Flow testing library such as Turbine where appropriate.
 - Test important state transitions rather than internal implementation details.
-- Example:
 ```kotlin
 viewModel.state.test {
     assertEquals(Loading, awaitItem())
@@ -124,7 +123,6 @@ This ensures:
 - `mapLatest` cancels the previous suspend search when a newer query
 arrives.
 - For a Flow-returning search function, use `flatMapLatest`.
-- Example:
 ```kotlin
 private val query = MutableStateFlow("")
 
@@ -251,7 +249,6 @@ Retry + Exponential Backoff
 - Common uses include headers, authentication, logging, and metrics.
 - Never log authorization headers, tokens, or sensitive customer
 information.
-- Example:
 ```text
 Request
   ↓
@@ -298,7 +295,6 @@ API request
 -   It avoids unnecessary collection while the UI is not active.
 - It is generally preferred over manually collecting a Flow directly from
 composition.
-- Example:
 ```kotlin
 val state by viewModel.state
     .collectAsStateWithLifecycle()
@@ -360,7 +356,6 @@ release.
 -   It improves ownership, dependency boundaries, build performance, and
     reuse.
 - Do not create modules for every small class.
-- Example:
 ```text
 :app
 
@@ -379,7 +374,6 @@ release.
 teams.
 - They should have stable APIs and avoid unnecessary feature-specific
 dependencies.
-- Examples:
 ```text
 Design system
 Networking
@@ -405,7 +399,6 @@ usable.
     or emulators.
 -   It is useful for startup, scrolling, and other performance
     scenarios.
-- Example:
 ```text
 Launch app
  ↓
@@ -420,7 +413,6 @@ Measure performance
 -  A feature flag controls whether functionality is enabled.
 -  It allows deployment and release to be separated.
 -  It supports gradual rollout and quick disablement
-- Example:
 ```kotlin
 if (featureFlags.newPaymentFlow) {
     NewPaymentScreen()
@@ -806,7 +798,6 @@ Post-release review
 - Application is the process-level entry point of an Android app. Android creates one Application instance when the app process starts.
 - Use if for global initialization such as DI, logging, analytics, database, or networking.
 - Avoid storing mutable UI/business state in it.
-- Example:
 ```text
 class MyApplication : Application() {
 
@@ -873,13 +864,11 @@ class MyApplication : Application() {
 ## Thread safety primitives (volatile/synchronized caveat)
 #### volatile
 - Ensures changes are visible across threads, but does not guarantee atomicity.
-- Example:
 ```kotlin
 @Volatile var isRunning = true
 ```
 #### synchronized
 - Allows only one thread at a time to access a critical section.
-- Example:
 ```kotlin
 synchronized(lock) {
     count++
@@ -889,7 +878,7 @@ synchronized(lock) {
 ## Parcelable vs Serializable (performance & security framing)
 #### Parcelable
 - Android-specific, generally faster and more efficient because it manually writes data to a Parcel.
-- Example:
+
 ```kotlin
 @Parcelize
 data class User(val id: Int, val name: String) : Parcelable
@@ -897,7 +886,6 @@ data class User(val id: Int, val name: String) : Parcelable
 
 #### Serializable
 - Standard Java mechanism, easier but slower due to reflection/object serialization overhead.
-- Example:
 ```kotlin
 data class User(val id: Int, val name: String) : Serializable
 ```
@@ -961,7 +949,6 @@ Here is how Activity's and Fragment's lifecyle are called together:<br/>
 - Pending Intent is an intent which you want to trigger at some time in future, even when your application is not alive. 
 - This intent can be used by other application which allows it to execute that intent with the same permissions as of our application.
 - PendingIntent uses the following methods to handle the different types of intents:
-- Example:
 ```kotlin
 Intent intent = new Intent(this, AnyActivity.class);
 
@@ -992,12 +979,13 @@ Once an activity is in the process of finishing then `isFinishing()` method is r
     3. Use thread-safe collections
     4. Prefer immutable data
     5. Use Kotlin coroutines with proper synchronization
-- Example:
+
 ```kotlin
 synchronized(lock) {
     count++
 }
 ```
+
 ---
 ## AIDL vs Messenger Queue
 |               | **AIDL**                           | **Messenger**                  |
@@ -1023,17 +1011,19 @@ Client → Request 1 → Request 2 → Request 3 → Service
 ---
 ## What is a ThreadPool? And is it more effective than using several separate Threads?
 - A ThreadPool is a group of reusable threads that execute tasks from a queue.
+
 ```text
 Tasks → Queue → ThreadPool → Threads
           ↓
        Reuse threads
 ```
+
 - ThreadPool is usually better than creating separate threads because it:
     1. Reuses threads
     2. Reduces thread creation overhead
     3. Controls the number of concurrent tasks
     4. Prevents creating too many threads
-- Example:
+
 ```kotlin
 val executor = Executors.newFixedThreadPool(4)
 executor.submit { doWork() }
@@ -1116,7 +1106,7 @@ The preferred way to prevent creating another instance of a singleton is by not 
 ---
 ## What is the onTrimMemory() method?
 - onTrimMemory() is a callback that tells your app the system is under memory pressure and your app should release unnecessary memory.
-- Example: 
+
 ```kotlin
 override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)
@@ -1153,7 +1143,7 @@ Android Toast can be used to display information for the short period of time. A
 ---
 ## What is a singleton class in Android?
 - A singleton class is a class which can create only an object that can be shared all other classes.
-- Example:
+
 ```kotlin
 private static volatile RESTService instance;
 
@@ -1213,7 +1203,7 @@ public static RESTService getInstance(Context context) {
 
 ---
 ## Geofences
-**Geofencing** fires when the user enters or leaves regions. Triggers can be **delayed** or **missed** by OS optimization—design **confirmation UX** (e.g. open app to refresh) instead of assuming perfect firing.
+**Geofencing** fires when the user enters or leaves regions. Triggers can be **delayed** or **missed** by OS optimization-design **confirmation UX** (e.g. open app to refresh) instead of assuming perfect firing.
 
 ---
 ## Scoped storage & MediaStore strategy
@@ -1225,21 +1215,21 @@ public static RESTService getInstance(Context context) {
 | Other apps' files | Limited access                         | Controlled access through MediaStore      |
 
 ---
-## Scan works on one phone, not another — what do you check?
+## Scan works on one phone, not another - what do you check?
 - **Permissions** and **OS version** differences.
 - **Scan mode** (`LOW_LATENCY` vs `LOW_POWER`) and **throttling** (especially **background**).
 - **Filter** too strict (wrong service UUID).
-- **Advertising interval** very long—user must wait.
-- OEM **BLE stack** bugs—always have a **second device** and **firmware** version in bug reports.
+- **Advertising interval** very long-user must wait.
+- OEM **BLE stack** bugs-always have a **second device** and **firmware** version in bug reports.
 - **Stop scanning** as soon as you have a target device to save **battery** and avoid **rate limits**.
 
 ---
-## Device found but connection fails — common causes?
+## Device found but connection fails - common causes?
 - Peripheral **already connected** elsewhere (phone, hub).
 - **Stale GATT** / need fresh **`connectGatt`** after **`close()`**.
 - Wrong **transport** (LE vs dual-mode confusion).
 - **Bonding** state mismatch or **encrypted** characteristic without bond.
-- Firmware **connection parameter** refusal—needs **logs** and **sniffer** (HCI snoop / nRF Connect).
+- Firmware **connection parameter** refusal-needs **logs** and **sniffer** (HCI snoop / nRF Connect).
 
 ---
 ## How do you securely store sensitive data in an Android app?
@@ -1262,7 +1252,7 @@ val prefs = EncryptedSharedPreferences.create(
     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
 )
 ```
-- **Android Keystore:** generates and stores keys inside secure hardware (TEE/SE). Keys never leave the hardware in plaintext — even a root-level attacker cannot extract them.
+- **Android Keystore:** generates and stores keys inside secure hardware (TEE/SE). Keys never leave the hardware in plaintext - even a root-level attacker cannot extract them.
 ---
 ## What is a Class and Object in Android?
 #### Class
@@ -1419,13 +1409,14 @@ Feature enabled gradually
 
 **CD (Continuous Delivery):** Once code passes CI, it is automatically packaged (APK/AAB) and distributed to test environments (e.g. Firebase App Distribution, internal Play track).
 
-**Continuous Deployment:** Automatically publishes to production (Google Play) after all quality checks pass — rare in mobile due to review cycles.
+**Continuous Deployment:** Automatically publishes to production (Google Play) after all quality checks pass - rare in mobile due to review cycles.
 
 **Why it matters:**
-- Faster feedback loops — broken builds caught in minutes, not at code review
-- Consistent builds — no "it works on my machine"; scripted and version-controlled
-- Reduced manual work — no manual test runs, APK generation, or Play uploads
-- Early bug detection — tests run on every PR, not just before release
+
+- Faster feedback loops - broken builds caught in minutes, not at code review
+- Consistent builds - no "it works on my machine"; scripted and version-controlled
+- Reduced manual work - no manual test runs, APK generation, or Play uploads
+- Early bug detection - tests run on every PR, not just before release
 
 **Common Android CI/CD stack:**
 
@@ -1475,7 +1466,7 @@ Periodic refresh
 ---
 ## BroadcastReceiver / LocalBroadcastManager legacy note
 - System broadcasts for many OS events; **implicit broadcasts** heavily restricted.
-- **LocalBroadcastManager** deprecated—use in-process flows (`Flow`, direct listeners, `LiveData` scoped properly).
+- **LocalBroadcastManager** deprecated-use in-process flows (`Flow`, direct listeners, `LiveData` scoped properly).
 
 ---
 ## What is RecyclerView optimization?
@@ -1629,7 +1620,7 @@ val cursor = contentResolver.query(uri, projection, null, null, null)
 ---
 ## Handler, Looper, MessageQueue, HandlerThread
 - **Main looper** pumps UI messages; `Handler` posts runnables/messages; misuse leaks activities via non-static inner classes.
-- **HandlerThread** is a long-lived thread with its own looper—great for camera/pipeline work with explicit quit.
+- **HandlerThread** is a long-lived thread with its own looper-great for camera/pipeline work with explicit quit.
 
 ---
 # Networking
@@ -1750,9 +1741,9 @@ viewModelScope.launch {
 - Handle progress, cancellation, authentication, and retry behavior.
 
 ---
-## Retrofit — why return `Response<T>` (or `Result`) instead of bare `T`?
-- **`Response<T>`** exposes **HTTP status**, **headers**, and **error body**—needed when **200 ≠ business success** (envelope: `{ "success": false, "errorCode": "…" }`). Parse the body in the **data layer** and map to **`Result`/sealed** types; never push **raw HTTP** exceptions to Compose.
-- Example:
+## Retrofit - why return `Response<T>` (or `Result`) instead of bare `T`?
+- **`Response<T>`** exposes **HTTP status**, **headers**, and **error body**-needed when **200 ≠ business success** (envelope: `{ "success": false, "errorCode": "…" }`). Parse the body in the **data layer** and map to **`Result`/sealed** types; never push **raw HTTP** exceptions to Compose.
+
 ```kotlin
 @GET("user/{id}")
 suspend fun getUser(@Path("id") id: String): Response<UserDto>
@@ -1812,201 +1803,19 @@ should be used according to the threat model and security policy.
 | **Normal**       | Low-risk permission, automatically granted                                                            | `INTERNET`                       |
 | **Dangerous**    | Accesses sensitive data/features, requires runtime user approval                                      | `CAMERA`, `ACCESS_FINE_LOCATION` |
 | **Signature**    | Granted only if requesting app is signed with the same certificate as the app defining the permission | Custom IPC permission            |
-
----
-## Android Keystore — how do you store passwords/secrets?
-Put **keys** in the **Android Keystore** so raw key material is harder to extract. For **small secrets** at rest, use **EncryptedSharedPreferences** or **EncryptedFile** (AndroidX Security) instead of **plain SharedPreferences**.
-
-### Useful links
-
-- [Learn more](https://developer.android.com/privacy-and-security/keystore)
-- [Learn more](https://medium.com/@josiassena/using-the-android-keystore-system-to-store-sensitive-information-3a56175a454b)
-- [Learn more](https://source.android.com/docs/security/features/keystore)
-- [Learn more](https://www.linkedin.com/feed/update/urn:li:activity:7240434808684716032/)
-- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
-
-
-> Keep **keys out of app data dirs**; add **biometric / passcode** gates when the threat model says so.
----
-- [Learn more](https://blog.mindorks.com/how-to-encrypt-data-safely-on-device-and-use-the-androidkeystore)
-
-Interview Answer:
-> Put **keys** in the **Android Keystore** so raw key material is harder to extract.
----
-## Detecting rooted/tampered devices?
-**Heuristics** (e.g. **`su`**, unusual partitions) plus libraries like **RootBeer** can hint at **root** or **tampering**. Expect **false positives** and **false negatives**—many teams treat this as **risk scoring** on the server, not a hard block, unless policy requires otherwise.
-
-### Useful links
-
-- [Learn more](https://github.com/scottyab/rootbeer)
-- [Learn more](https://stackoverflow.com/a/35628977/3424919)
-
-
-> Root detection is usually **risk scoring**, not a perfect gate.
----
-- [Learn more](https://stackoverflow.com/a/35628977/3424919)
-
-Interview Answer:
-> *Heuristics** (e.g.
----
-## Permission protection levels (`normal`, `dangerous`, `signature`, `signature|privileged`)
-- **Normal:** granted at install; low risk.
-- **Dangerous:** needs **runtime** prompt and a **clear UX** reason.
-- **Signature / privileged:** for **same signing key** or **system** partners—not for random third-party apps.
-
-Know the difference between **`<uses-permission>`** (your app requests) and declaring a **custom `<permission>`** for other apps.
-
-### Useful links
-
-- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
-
-
-> **Dangerous** permissions need **user trust** and a **fallback** if denied.
----
-- [Learn more](https://stackoverflow.com/questions/14450839/uses-permission-vs-permission-for-android-permissions-in-the-manifest-xml-file)
-
-Interview Answer:
-> **Normal:** granted at install; low risk.
----
-## WebView security checklist
-Treat **WebView** like a small browser: **disable JavaScript bridges** you do not need, **validate** URLs before loading, avoid **mixed content**, **update** WebView/System WebView, and keep **file access** off unless required.
-
-
-> WebView is a **real attack surface**—lock it down by default.
-
-Interview Answer:
-> Treat **WebView** like a small browser: **disable JavaScript bridges** you do not need, **validate** URLs before loading, avoid **mixed content**, **update** WebView/System WebView, and keep **file access** off unless required.
----
-## Supply chain security for Gradle dependencies
-Use **dependency locking** or reproducible resolution, verify **checksums** where possible, **private** artifact repos, bots for **updates**, and treat **R8 mapping** as sensitive. Know what **transitive** libraries you ship.
-
-
-> Your **dependency graph** is part of the **threat model**.
-
-Interview Answer:
-> Use **dependency locking** or reproducible resolution, verify **checksums** where possible, **private** artifact repos, bots for **updates**, and treat **R8 mapping** as sensitive.
----
-## Can you stop reverse engineering of an Android app?
-You **cannot** make an APK impossible to inspect—you **raise cost**: **R8/ProGuard** (real rules, tested on release), **remove debug logs** in release, **no hardcoded secrets** (assume extraction), **server-side** validation of business rules, optional **tamper / signature checks** for **high-risk** apps knowing **false positives**.
-
-
-> Goal is **deterrence + server truth**, not **perfect secrecy** on the client.
-
-Interview Answer:
-> You **cannot** make an APK impossible to inspect—you **raise cost**: **R8/ProGuard** (real rules, tested on release), **remove debug logs** in release, **no hardcoded secrets** (assume extraction), **server-side** validation of business rules, optional **tamper / signature…
----
-## Android Keystore — KeyMint/Keymaster, TEE, StrongBox, and how do you know a key is hardware-backed?
-Keystore is an API over **KeyMint/Keymaster**; crypto may run in **software**, **TEE**, or **StrongBox** (dedicated chip). **Hardware-backed** means key material does not leave that boundary for **private** ops. **Do not assume:** query **`KeyInfo.isInsideSecureHardware`** (and **StrongBox** availability if you require it) after creation; **telemetry** fragmentation on low-end devices. **Trade-off:** HW keys can be **slower** and **limited** count; handle **fallback** product policy.
-
-
-> **Verify** backing—Android may **silently** use **software**.
-
-Interview Answer:
-> Keystore is an API over **KeyMint/Keymaster**; crypto may run in **software**, **TEE**, or **StrongBox** (dedicated chip).
----
-## Keystore mistakes and biometric / lock screen changes?
-Storing **tokens** in **plain** prefs; treating Keystore as “**storage**” instead of **crypto provider**; ignoring **invalidation**. Keys can be **invalidated** when biometrics **re-enroll** or policy changes—expect **`KeyPermanentlyInvalidatedException`**, **delete** alias, **wipe** dependent ciphertext, **force** re-auth. Use **`setInvalidatedByBiometricEnrollment`** / **`setUserAuthenticationRequired`** when product demands **step-up**.
-
-
-> Keys can **disappear**—design **recovery**, not **crash**.
----
-## MITM beyond TLS — what layers do high-risk apps add?
-**Certificate pinning** (with **backup pins**—see earlier card). Optional **request signing** (**HMAC**, **nonce**, **timestamp**) for **anti-replay**—**server** validates. **Device binding** / **integrity** signals (**Play Integrity**) feed **risk** decisions **server-side**. **Cleartext** blocked in **`networkSecurityConfig`**.
-
-
-> **TLS** is **baseline**, not the whole **fraud** story.
----
-## Permissions — secure runtime habits?
-**Just-in-time** requests with **clear** rationale; **re-check** before **sensitive** ops (user can **revoke** in settings); **degrade** gracefully. **Custom** permissions for **signature** **partners** only with **clear** docs.
-
-
-> **Grant** state is **volatile**—never **cache “forever granted”** in your head.
----
-## Android security strategy in one layered picture?
-**Keystore** + **encrypted** prefs/files/DB → **TLS** + optional **pinning** → **minimal** **secrets** on device → **R8** + **runtime** **hardening** where justified → **logout** and **revocation** → **manifest** **hygiene** → **server** **truth** for **money** and **authorization**. **Blast radius** reduction beats **perfect** **client**.
-
-
-> Say **layers + failure modes**—staff interviews reward **honesty** about **limits**.
----
-## How do you ensure DB security & integrity (health/finance examples)?
-Use **encryption at rest** when required, **validate** inputs and schemas, enforce **auth** on the server (never trust the client alone), **encrypt backups**, and use **least privilege** for any shared providers.
-
-
-> **Client-side encryption** pairs with **server authorization**—one without the other is weak.
----
-## EncryptedSharedPreferences — when and how (Jetpack Security)?
-For **small** secrets (tokens, flags) under ~**1–2 MB** total. **MasterKey** lives in **Android Keystore**; values use **AES-GCM** with random IVs; **keys** of entries use **SIV-style** deterministic encryption for lookup. **Slower** than plain prefs—do not store **large** blobs. **Never** log values.
-
-### Code example
-
-```kotlin
-val masterKey = MasterKey.Builder(context)
-    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-    .build()
-
-val securePrefs = EncryptedSharedPreferences.create(
-    context,
-    "secure_prefs",
-    masterKey,
-    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
-)
-```
-
-
-> Jetpack Crypto = **Keystore-wrapped keys** + **AES**—not a separate “magic vault.”
----
-## Key rotation for local encryption?
-**Version** key aliases (`storage_v2`); on upgrade **re-encrypt** data with **new** key or **wipe** and **resync** from server. Plan **Keystore** cleared (user cleared credentials)—**force** re-login and **reprovision**.
-
-
-> Rotation is a **migration**—test **upgrade** path like any **schema** change.
----
-## BLE permissions on Android 12+ — what breaks if you forget them?
-You need runtime **`BLUETOOTH_SCAN`** and **`BLUETOOTH_CONNECT`** (and sometimes **`BLUETOOTH_ADVERTISE`** if you advertise). On **older** OS versions, **fine location** was often required for **scanning** because scan results could be abused for location—**know the version matrix** for your `targetSdk`.
-
-**Manifest + runtime request** must match your use case (never scan on a permission you do not hold). **`neverForLocation`** flag on scan when applicable documents intent.
-
-
-> **Android 12+** = explicit **`BLUETOOTH_*`** runtime grants; do not assume “location permission” alone.
----
-## What is certificate pinning and when do you use it?
-**Certificate pinning** hardcodes your server's public key (or certificate hash) in the app so it only trusts *your* server, ignoring any CA-signed certificate that doesn't match.
-
-**Without pinning:** A compromised CA or MITM proxy (even Burp Suite in corporate networks) can present a valid-looking certificate → your app accepts it → traffic decrypted.
-
-**With pinning:** Even a valid CA-signed certificate from an attacker is rejected if the public key doesn't match the pinned value.
-
-```kotlin
-// OkHttp CertificatePinner
-val pinner = CertificatePinner.Builder()
-    .add("api.yourapp.com", "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
-    .add("api.yourapp.com", "sha256/BBBBBBBBB...") // backup pin
-    .build()
-OkHttpClient.Builder().certificatePinner(pinner).build()
-```
-
-**Trade-offs to discuss in interviews:**
-- **Pro:** Strong MITM protection in hostile networks
-- **Con:** Certificate rotation requires app update or remote config for new pins; breaking change if not managed carefully
-- **When to use:** Financial apps, healthcare, apps processing PII — when MITM is a real threat model
-- **Alternative:** Network Security Config (`res/xml/network_security_config.xml`) for simpler pinning without code changes
-
-
-> Pin the **public key hash** (not full cert) with a **backup pin** and a **rotation plan** — pinning without rotation is a future outage waiting to happen.
 ---
 ## How do you protect API keys and prevent reverse engineering?
-**API Key Protection — layers of defense:**
-1. **Don't hardcode in source** — never in `strings.xml`, Kotlin constants, or git-committed config
-2. **`BuildConfig` + Gradle** — inject from environment variables in CI; not in source control
-3. **Server-side proxying** — app calls your backend; backend holds the real third-party key
-4. **NDK (native code)** — harder to reverse than JVM bytecode, not impossible
+#### API Key Protection - layers of defense:
+- **Don't hardcode in source** - never in `strings.xml`, Kotlin constants, or git-committed config
+- **`BuildConfig` + Gradle** - inject from environment variables in CI; not in source control
+- **Server-side proxying** - app calls your backend; backend holds the real third-party key
+- **NDK (native code)** - harder to reverse than JVM bytecode, not impossible
 
-**Prevent Reverse Engineering:**
-- **ProGuard / R8** — obfuscates class/method names, removes dead code, shrinks APK
-- **R8 full mode** — more aggressive than ProGuard; enabled in release builds by default in modern AGP
-- **Tamper detection** — verify APK signature at runtime; detect rooted devices (SafetyNet → Play Integrity API)
-- **Root detection** — use Play Integrity API; don't implement basic `su` file checks alone (trivially bypassed)
+#### Prevent Reverse Engineering:
+- **ProGuard / R8** - obfuscates class/method names, removes dead code, shrinks APK
+- **R8 full mode** - more aggressive than ProGuard; enabled in release builds by default in modern AGP
+- **Tamper detection** - verify APK signature at runtime; detect rooted devices (SafetyNet → Play Integrity API)
+- **Root detection** - use Play Integrity API; don't implement basic `su` file checks alone (trivially bypassed)
 
 ```kotlin
 // build.gradle release block
@@ -2019,54 +1828,15 @@ buildTypes {
 }
 ```
 
-**What ProGuard/R8 does NOT protect:**
-- Logic that is still present in bytecode (just renamed)
-- Plaintext strings, URLs, keys embedded in code
-- SSL traffic before reaching your server
-
-
-> API key security = **never in source + server proxying + obfuscation**. R8 is obfuscation, not encryption — pair it with key management and Play Integrity for defense-in-depth.
----
-## Keystores in CI — how do mature teams avoid leaking signing material?
-Prefer **Play App Signing**: Google holds **app signing key**; your **upload key** lives in **CI secrets** (Vault, GitHub Actions secrets, etc.), injected as **env vars** or **ephemeral** files—**never** commit. **Rotate** upload key on compromise without breaking installed apps. **Least privilege:** only release jobs can decrypt.
-
-### Code example
-
-```kotlin
-signingConfigs {
-    create("release") {
-        storeFile = file(System.getenv("KEYSTORE_PATH") ?: error("KEYSTORE_PATH"))
-        storePassword = System.getenv("KEYSTORE_PASSWORD")
-        keyAlias = System.getenv("KEY_ALIAS")
-        keyPassword = System.getenv("KEY_PASSWORD")
-    }
-}
-```
-
-
-> **Upload key** in secrets; **app signing key** with Play—know **what leaks** vs what **revokes**.
----
-## API security with sensitive data
-Cover **TLS**, **pinning** if needed, **token lifecycle**, **least privilege** scopes, **encryption at rest** on device, **OWASP Mobile** awareness, **key rotation**, and **abuse detection** on the server.
-
-
-> Security is **process + design**, not one library you drop in once.
----
-## Data security in databases
-Discuss **encryption**, **integrity**, **authenticated APIs**, **backup** protection, and **least privilege** access—on **client and server**.
-
-
-> Defense in depth across **device + backend**.
 ---
 ## What is Android Keystore and why is it used?
-Android Keystore is a secure container that helps store cryptographic keys. These keys can be used for encryption, decryption, or signing without exposing them directly to the app.
-It ensures that:
-- Keys cannot be extracted.
-- Operations happen in secure hardware (if available).
-- Your app remains safe even if rooted.
+- Android Keystore is a secure container that helps store cryptographic keys. These keys can be used for encryption, decryption, or signing without exposing them directly to the app.
+- It ensures that:
+    1. Keys cannot be extracted.
+    2. Operations happen in secure hardware (if available).
+    3. Your app remains safe even if rooted.
 ---
 ## What are common security risks in Android apps?
-Some common risks:
 - Storing data in plain text.
 - Using HTTP instead of HTTPS.
 - Hardcoding API keys in code.
@@ -2094,8 +1864,7 @@ Some common risks:
 -   Stable parameters can help Compose skip unnecessary recomposition.
 -   Mutable or poorly designed types can make stability harder to
     determine.
-
-Prefer immutable UI models where possible.
+- Prefer immutable UI models where possible.
 
 ```kotlin
 data class UserUiModel(
@@ -2104,8 +1873,9 @@ data class UserUiModel(
 )
 ```
 
-The goal is not to add annotations blindly. The data model should
+- The goal is not to add annotations blindly. The data model should
 actually satisfy the stability contract.
+
 ---
 ## How do you make a Compose screen accessible?
 Use:
@@ -2133,31 +1903,15 @@ Use `rememberLazyListState()` in Composable:
 val listState = rememberLazyListState()
 LazyColumn(state = listState) { ... }
 ```
-
-Interview Answer:
-> Use `rememberLazyListState()` in Composable:
----
-## Jetpack Compose — declarative UI, recomposition, state, navigation, performance, testing
-- **Compose** builds UI from **`@Composable`** functions that describe the screen from **state**. When state changes, Compose **recomposes** (re-runs) the affected parts of the tree—not the whole app.
-- **State:** `remember` / `rememberSaveable` for local UI; **ViewModel + StateFlow** for screen truth. Keep **business rules** out of composables when possible.
-- **Modifiers:** Ordered chains describe layout, clicks, semantics—order matters.
-- **Interop:** `AndroidView` / `ComposeView` bridges **Views** and **Compose**.
-- **Navigation:** Navigation-Compose with **routes** and **deep links**.
-- **Performance:** Stable parameters, **keys** in lazy lists, **`derivedStateOf`**, and **recomposition counts** in debug.
-- **Side effects:** `LaunchedEffect`, `DisposableEffect`, `SideEffect` tie work to lifecycle.
-- **Theming:** `MaterialTheme` and composition locals.
-- **A11y:** semantics, content descriptions, focus order.
-- **Testing:** Compose test APIs and **semantics** (prefer **`testTag`** discipline).=
----
-## Jetpack Compose Performance Issue — Excessive Recompositions
+## Jetpack Compose Performance Issue - Excessive Recompositions
 Modern app fully built in Jetpack Compose. Users report: UI feels laggy during interactions, animations stutter, CPU spikes during scrolling. Recomposition count is very high; even small state updates trigger full-screen recomposition. Recent changes: shared UI state in ViewModel, large data objects passed to composables, multiple `collectAsState()` calls added. **How would you debug and fix?**
 
 > Treat this as a **state architecture problem**, not a UI rendering problem. Compose performance is directly tied to how state is structured and consumed.
 
 #### Measure Recompositions Before Changing Code
-- **Layout Inspector** (Android Studio) → "Recomposition counts" view — shows how many times each composable recomposed in a session
-- **Composition tracing** — `Trace` calls + Perfetto to see recompositions in system trace
-- **CPU Profiler** — confirm CPU spikes correlate with scrolls/interactions
+- **Layout Inspector** (Android Studio) → "Recomposition counts" view - shows how many times each composable recomposed in a session
+- **Composition tracing** - `Trace` calls + Perfetto to see recompositions in system trace
+- **CPU Profiler** - confirm CPU spikes correlate with scrolls/interactions
 - Goal: identify *which* composables recompose, and whether it is **localized** (good) or **cascading** (bad)
 
 #### Identify Root Causes in This Scenario
@@ -2219,19 +1973,18 @@ Use:
 - Offers less boilerplate, better state handling, and Kotlin-first approach.
 ---
 ## What is a Composable function?
-A Composable is a special Kotlin function marked with `@Composable` that describes part of the UI.
+- A Composable is a special Kotlin function marked with `@Composable` that describes part of the UI.
+- You can call one composable inside another to build complex UIs.
 
-*Example:*
 ```kotlin
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello, $name")
 }
 ```
-You can call one composable inside another to build complex UIs.
 ---
 ## What is recomposition in Jetpack Compose?
-Recomposition is when Compose redraws parts of the UI because data/state has changed.
+- Recomposition is when Compose redraws parts of the UI because data/state has changed.
 - Only the part of the UI where data changed is recomposed.
 - Compose optimizes this to avoid redrawing everything.
 - Example: If you update a count value shown in a Text, only that Text composable will recompose
@@ -2243,15 +1996,17 @@ Recomposition is when Compose redraws parts of the UI because data/state has cha
 ```kotlin
 val count = remember { mutableStateOf(0) }
 ```
+
 - When `count.value` changes, any UI that depends on it will update automatically.
+
 ---
 ## What is remember and rememberSaveable?
 - `remember` stores state during recomposition but resets on configuration changes (like rotation).
 - `rememberSaveable` stores state across recomposition and configuration changes using Bundle.
 ---
 ## What is Modifier in Jetpack Compose?
-- Modifier is used to modify or decorate a composable — like setting padding, background, size, click behavior, etc.
-- Example:
+- Modifier is used to modify or decorate a composable - like setting padding, background, size, click behavior, etc.
+
 ```kotlin
 Text(
     text = "Hello",
@@ -2260,16 +2015,16 @@ Text(
         .background(Color.Yellow)
 )
 ```
+
 ---
 ## What is a Scaffold in Jetpack Compose?
 Scaffold is a layout component that provides basic structure like:
+
 - TopBar
 - BottomBar
 - FloatingActionButton
 - Drawer
 - SnackbarHost
-
-*Example:*
 ```kotlin
 Scaffold(
     topBar = { TopAppBar(title = { Text("Home") }) },
@@ -2353,7 +2108,6 @@ composeTestRule
 ## What is the Android test pyramid?
 - Use many fast unit tests, fewer integration tests, and a smaller number
 of critical end-to-end UI tests.
-- Example:
 
 ```text
         UI tests
@@ -2427,7 +2181,6 @@ core-security
 -   A memory leak occurs when objects remain reachable even though they
     are no longer needed.
 -   Android commonly sees leaks from lifecycle misuse.
-- Examples:
 ```text
 Singleton
    ↓
@@ -2470,7 +2223,8 @@ ANR   → application unresponsive
 
 ---
 ## Bitmap pooling in android?
-Bitmap pooling is a simple technique, that aims to reuse bitmaps instead of creating new ones every time. When you need a bitmap, you check a bitmap stack to see if there are any bitmaps available. If there are not bitmaps available you create a new bitmap otherwise you pop a bitmap from the stack and reuse it. Then when you are done with the bitmap, you can put it on a stack.
+- Bitmap pooling is a simple technique, that aims to reuse bitmaps instead of creating new ones every time. When you need a bitmap, you check a bitmap stack to see if there are any bitmaps available. 
+- If there are not bitmaps available you create a new bitmap otherwise you pop a bitmap from the stack and reuse it. Then when you are done with the bitmap, you can put it on a stack.
 
 ---
 ## How you load your `Bitmaps`? What do you do for loading large bitmaps?
@@ -2485,7 +2239,6 @@ Bitmap pooling is a simple technique, that aims to reuse bitmaps instead of crea
 
 ---
 ## How would you implement swipe animation in Android
-- Exmaple:
 ```xml
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false">
@@ -2512,7 +2265,7 @@ Bitmap pooling is a simple technique, that aims to reuse bitmaps instead of crea
 - Defer non immediate requests until the phone is plugged in or wifi is turned on. The Wi-Fi radio uses significantly less battery than the mobile radio.
 ---
 ## What is ANR and how do you prevent it as a tech lead?
-- **ANR** means “Application Not Responding.” The system shows a dialog when your app stops responding for too long—about **5 seconds** on the main thread while the user is interacting. Broadcast receivers and services have their own time limits too.
+- **ANR** means “Application Not Responding.” The system shows a dialog when your app stops responding for too long-about **5 seconds** on the main thread while the user is interacting. Broadcast receivers and services have their own time limits too.
 - The main thread draws the UI and handles touches. If it is busy parsing JSON, doing heavy database work, or waiting on locks, input piles up and you get an ANR.
 - What to do: move slow work off the main thread (background threads, coroutines with the right dispatcher), keep the UI path fast, and use profiling (Android Studio, Perfetto) instead of guessing.
 ---
@@ -2550,12 +2303,12 @@ Monitoring
 Compare **trunk-based** vs **GitFlow** honestly; mention **PR** quality gates, **CODEOWNERS**, **protected** branches.
 
 ---
-## Mentoring — how does it differ for junior / mid / senior?
+## Mentoring - how does it differ for junior / mid / senior?
 - **Junior:** small tasks, **pairing**, frequent feedback, fundamentals. 
 - **Mid:** **feature ownership**, design discussions, **trade-off** coaching. 
 - **Senior:** **system** scope, cross-team **initiatives**, decision **accountability**. 
 - Success = team needs you **less** for the same class of problem. 
-- **Underperformance:** diagnose (**skill vs clarity vs motivation**), written expectations, support window, **escalate** early if flat—compassionate and **fair**.
+- **Underperformance:** diagnose (**skill vs clarity vs motivation**), written expectations, support window, **escalate** early if flat-compassionate and **fair**.
 
 ---
 # SDK Integrations
@@ -2572,7 +2325,6 @@ Compare **trunk-based** vs **GitFlow** honestly; mention **PR** quality gates, *
 - The database becomes the observable source of truth.
 - On successful API response, update the database in a transaction when
 multiple related records must remain consistent.
-- Example:
 
 ```text
 API
@@ -2684,7 +2436,6 @@ Retry original request
 - Use modularization with clear ownership.
 - Define dependency rules so feature modules do not depend directly on
 unrelated features.
-- Example:
 ```text
 app
  ├── feature-login
@@ -2746,7 +2497,7 @@ Typical issue:
 - Fragment destroyed 
 - Coroutine still running 
 - On completion → tries to access UI or context 
-#### Fix Strategy — Lifecycle Awareness 
+#### Fix Strategy - Lifecycle Awareness 
 a. Use viewLifecycleOwner Scope 
 ```kotlin
 lifecycleScope.launch { ... } 
@@ -2784,7 +2535,7 @@ flow.collect { ... }
 ## Scenario: Deep Link Handling Breaking Navigation
 E-commerce app. Users report: deep links open the wrong screen, app crashes when opened via link, back navigation behaves incorrectly. App uses Navigation Component, multiple entry points (home, product, offer pages), some deep links have query params. How would you fix?
 
-> Treat this as a **navigation state reconstruction problem**. Deep links bypass normal user flow — the app must reconstruct a correct, coherent back stack from a cold or warm start.
+> Treat this as a **navigation state reconstruction problem**. Deep links bypass normal user flow - the app must reconstruct a correct, coherent back stack from a cold or warm start.
 
 #### Understand the Three Deep Link Entry Scenarios
 
@@ -2907,10 +2658,10 @@ viewLifecycleOwner.lifecycleScope.launch {
 - App in background 
 - App in foreground 
 ---
-## Scenario: API Layer Instability — Retries, Failures, Token Expiry
+## Scenario: API Layer Instability - Retries, Failures, Token Expiry
 You are on a fintech app with millions of daily transactions. Users report: random API failures, some requests succeed on retry, occasional logouts. Monitoring shows: HTTP 401 and 500 spikes, duplicate API calls, token refresh logic recently changed. Constraints: no duplicate financial transactions, backend has rate limits, network is unstable (Tier-2/3 cities). How would you design and fix this?
 
-> Treat this as a **network reliability + distributed consistency** problem — not a simple "add retry" fix, especially with financial data.
+> Treat this as a **network reliability + distributed consistency** problem - not a simple "add retry" fix, especially with financial data.
 
 #### Categorize Failures First
 -   **Client-side:** timeouts, retry storms, duplication bugs
@@ -2918,7 +2669,7 @@ You are on a fintech app with millions of daily transactions. Users report: rand
 -   **Server-side:** 500 errors, rate limit responses (429)
 -   Separating these prevents one fix masking another problem
 
-#### Fix Token Refresh — Single-Flight Pattern
+#### Fix Token Refresh - Single-Flight Pattern
 -   Multiple requests fail with 401 simultaneously → each independently triggers token refresh → **race condition** → multiple refresh calls → all fail or produce duplicate tokens
 -   **Fix:** One active refresh request at a time; others suspend and wait for the result
 
@@ -2944,13 +2695,13 @@ class TokenAuthenticator(private val tokenRepo: TokenRepository) : Authenticator
 }
 ```
 
-#### Prevent Duplicate Financial Transactions — Idempotency Keys
+#### Prevent Duplicate Financial Transactions - Idempotency Keys
 -   Generate a **UUID per transaction request** on the client side before the call
 -   Include it as a header: `X-Idempotency-Key: <uuid>`
 -   Server deduplicates: if same key received again → return cached result, do not re-process
 -   Even on network retry, the transaction processes exactly once
 
-#### Retry Strategy — Not All APIs Are Equal
+#### Retry Strategy - Not All APIs Are Equal
 -   **GET requests and safe POSTs:** retry with exponential backoff
 -   **Financial mutation APIs:** only retry with idempotency key; never blind retry
 -   Retry config: `maxRetries = 3`, backoff = 2^attempt seconds, jitter to spread load
@@ -2975,13 +2726,13 @@ OkHttpClient.Builder()
 
 #### Offline Request Queue _(for poor connectivity markets)_
 -   Queue mutation requests locally in Room with status `PENDING`
--   WorkManager job retries with network constraint — sends when connected
+-   WorkManager job retries with network constraint - sends when connected
 -   Mark transaction as `SYNCING` in UI while queued
 
 #### Observability
 -   Structured logging per request: `requestId`, `attemptNumber`, `statusCode`, `durationMs`
 -   Track metrics: retry rate · 401 frequency · duplicate request detection · token refresh cadence
--   Alert if retry rate exceeds 5% of requests — early warning of upstream issues
+-   Alert if retry rate exceeds 5% of requests - early warning of upstream issues
 
 #### Validation
 -   Simulate: 401 mid-session · network drop · concurrent requests all expiring at once
@@ -3011,7 +2762,7 @@ Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local
 
 #### Incremental Build Optimization
 - Ensure `kapt.incremental.apt=true` in `gradle.properties`
-- Avoid modifying shared/core modules frequently — changes ripple everywhere
+- Avoid modifying shared/core modules frequently - changes ripple everywhere
 - Enable `org.gradle.caching=true` in `gradle.properties`
 
 #### Replace KAPT with KSP
@@ -3107,7 +2858,7 @@ Frame timing
 ## Scenario: Memory Leak Causing Gradual App Slowdown
 You are working on a large-scale social media app (~20M MAU). Users report: app becomes slow after 15–20 minutes, scrolling lags, eventually OOM-killed. Monitoring shows: memory grows continuously, GC frequency very high, issue prominent on feed screen. Recent changes: new feed redesign (RecyclerView), image loading optimizations, singleton analytics manager added. How would you investigate and fix end-to-end?
 
-> Treat this as a **progressive memory leak** (lifecycle mismanagement), not an immediate crash — degradation correlates with user interaction over time.
+> Treat this as a **progressive memory leak** (lifecycle mismanagement), not an immediate crash - degradation correlates with user interaction over time.
 
 #### Confirm Leak vs Expected Growth
 - Memory grows linearly without release → leak
@@ -3133,7 +2884,7 @@ You are working on a large-scale social media app (~20M MAU). Users report: app 
 #### Image Loading & Caching Layer
 - Are images cleared properly on view recycle?
 - Is image loading lifecycle-aware (e.g. Glide tied to Fragment lifecycle)?
-- Validate cache size and eviction policy — unbounded cache = leak
+- Validate cache size and eviction policy - unbounded cache = leak
 
 #### GC Pressure Optimization
 - Reduce object creation inside the scroll path
@@ -3143,9 +2894,9 @@ You are working on a large-scale social media app (~20M MAU). Users report: app 
 #### Fix Strategy Summary
 - Remove strong references causing leaks
 - Enforce proper lifecycle cleanup (`onViewRecycled`, `onDestroyView`)
-- Optimize adapter and ViewHolder — no Context refs, no listeners left attached
-- Fix singleton misuse — Application context, no UI refs
-- Tune image caching — bounded, lifecycle-aware
+- Optimize adapter and ViewHolder - no Context refs, no listeners left attached
+- Fix singleton misuse - Application context, no UI refs
+- Tune image caching - bounded, lifecycle-aware
 
 #### Validation
 - Compare heap dumps before and after fix
@@ -3164,8 +2915,8 @@ You are working on a fitness tracking app. Users report significant battery drai
 > Treat this as a **resource efficiency + background execution policy** problem, not a single bug.
 
 #### Measure Before Changing Anything
-- **Battery Historian** — visualize wake locks, alarms, wakeups over time
-- **Android Profiler (CPU / Network)** — identify which code is running and when
+- **Battery Historian** - visualize wake locks, alarms, wakeups over time
+- **Android Profiler (CPU / Network)** - identify which code is running and when
 - Identify: CPU wake-up frequency · network calls per hour · wake lock duration
 
 #### Identify Problematic Components**
@@ -3175,7 +2926,7 @@ You are working on a fitness tracking app. Users report significant battery drai
 
 #### Replace Services with WorkManager for deferrable tasks
 - WorkManager respects Doze, App Standby, and battery constraints
-- Use `Constraints.Builder()` — run only on Wi-Fi, when charging, etc.
+- Use `Constraints.Builder()` - run only on Wi-Fi, when charging, etc.
 - Only use Foreground Service when **active user-facing** work is happening (e.g. live workout tracking)
 
 #### Optimize Location Updates
@@ -3183,9 +2934,9 @@ You are working on a fitness tracking app. Users report significant battery drai
 - Reduce update interval; use geofencing for region-based triggers instead of continuous polling
 - Use `FusedLocationProviderClient` (not raw GPS)
 
-#### Eliminate Polling — Use Push
+#### Eliminate Polling - Use Push
 - Replace periodic API polling with FCM push notifications
-- Batch network calls — consolidate multiple small requests into one scheduled job
+- Batch network calls - consolidate multiple small requests into one scheduled job
 - Use `WorkManager` periodic work (min 15 min interval) instead of `AlarmManager` for non-critical sync
 
 #### Respect Doze Mode
@@ -3201,7 +2952,7 @@ You are working on a fitness tracking app. Users report significant battery drai
 ## Scenario: Large List Data Loading Causing OOM
 Marketplace app. Users report crashes when scrolling large product lists. Observations: entire dataset loaded at once, images are high-resolution, no pagination. How would you fix?
 
-> Treat this as a **memory management + data loading strategy** problem — you must never load unbounded data into memory.
+> Treat this as a **memory management + data loading strategy** problem - you must never load unbounded data into memory.
 
 #### Identify Root Causes
 - Entire dataset in memory → linear memory growth → OOM
@@ -3225,15 +2976,15 @@ class ProductPagingSource(private val api: ProductApi) : PagingSource<Int, Produ
 ```
 
 #### Optimize Images
-- Never decode at original resolution for a thumbnail — use `inSampleSize` or image loaders
+- Never decode at original resolution for a thumbnail - use `inSampleSize` or image loaders
 - Use Coil/Glide with explicit `size()` constraint matching the view dimensions
-- Use WebP or AVIF format — same quality, 30–50% smaller than JPEG/PNG
+- Use WebP or AVIF format - same quality, 30–50% smaller than JPEG/PNG
 - Implement placeholder + loading states so UI stays responsive
 
 #### RecyclerView Optimization
-- `setHasStableIds(true)` if IDs are stable — improves DiffUtil efficiency
+- `setHasStableIds(true)` if IDs are stable - improves DiffUtil efficiency
 - Use `DiffUtil.ItemCallback` for surgical updates (no `notifyDataSetChanged()`)
-- Avoid creating new objects in `onBindViewHolder` — allocate in `onCreateViewHolder`
+- Avoid creating new objects in `onBindViewHolder` - allocate in `onCreateViewHolder`
 
 #### Memory Cache Strategy
 - Use disk cache + bounded in-memory cache (Glide/Coil do this by default)
