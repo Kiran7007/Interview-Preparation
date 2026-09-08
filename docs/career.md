@@ -4,6 +4,43 @@ Use this file for **self-introduction framing**, **copy-paste LLM prompts**, and
 
 ---
 
+# Career
+
+## Tell me about yourself
+
+Use a 60-90 second structure:
+
+> "I'm an Android engineer with around 9 years of experience building mobile applications, primarily with Kotlin, Android, and Jetpack Compose. I've worked across domains including healthcare, fintech, and banking, and I've owned features from architecture and implementation through testing, CI/CD, and production support.
+>
+> My strongest areas are Kotlin, Coroutines/Flow, Compose, scalable architecture, and engineering quality. More recently I've also worked on automation and AI-assisted developer tooling, including an Android UI testing agent that searches a project and generates Compose UI tests.
+>
+> At this stage I'm looking for a role where I can combine hands-on Android development with technical leadership, architecture, mentoring, and improving engineering practices at scale."
+
+---
+
+## Questions You Should Ask the VP
+
+Ask 2-3, not all.
+
+### Technical
+- "What are the biggest technical challenges the Android team is currently solving?"
+- "How is the Android codebase structured across feature and shared modules?"
+- "How much of the application is Compose versus XML, and what is the migration strategy?"
+
+### Leadership
+- "What does strong performance look like for an SE III in the first six months?"
+- "How much ownership does an SE III have over architecture and technical decisions?"
+- "How do engineers participate in technical strategy across teams?"
+
+### Engineering quality
+- "What are the team's biggest stability or performance challenges today?"
+- "How do you measure engineering quality and delivery effectiveness?"
+
+### AI
+- "How is the organization using approved AI tools in the mobile engineering workflow, and what validation standards are expected?"
+
+---
+
 ## Career Preparation
 
 ### Personal / intro cheat sheet (fill in, then speak aloud)
