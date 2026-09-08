@@ -23,16 +23,15 @@ Use the level of separation justified by the feature. A small screen does not ne
 ---
 
 ## What is the Repository pattern?
-- A Repository hides where data comes from.
+- A Repository hides data access details from the rest of the app.
 - It can coordinate Room, API, cache, Firebase, and memory.
+- The ViewModel should not know whether data came from a database, a REST API, or a cache.
 
 ```kotlin
 interface UserRepository {
     fun observeUser(): Flow<User>
 }
 ```
-
-The ViewModel should not know whether data came from a database, a REST API, or a cache.
 
 ---
 
@@ -58,7 +57,7 @@ Do not create a UseCase for every trivial getter just to follow a pattern.
 
 ## What is dependency injection?
 - Dependency injection means dependencies are provided from the outside.
-- It increases testability and separation of concerns.
+- This improves testability and separation of concerns.
 
 ```kotlin
 class UserViewModel(
@@ -100,7 +99,7 @@ Modern Android usually defaults to MVVM, with MVI for more complex stateful scre
 - Keep the UI layer thin.
 - Reuse core business logic.
 - Make logic testable without UI instrumentation.
-- Reduce duplicate code and easier maintenance.
+- Reduce duplicate code and simplify maintenance.
 
 ---
 
@@ -334,14 +333,6 @@ if (featureFlags.newPaymentFlow) {
 
 ---
 
-## How do you handle retries and refresh?
-- Retry repeats a failed operation.
-- Refresh requests the latest state again.
-- Retry should be used carefully for writes.
-- For financial operations, idempotency and server-side correctness are crucial.
-
----
-
 ## How would you implement offline-first behavior?
 - Keep Room as the local source of truth.
 - Observe data through Flow or StateFlow.
@@ -368,14 +359,7 @@ Conflict Detection
 Retry + Backoff
 ```
 
----
-
-## Offline-first architecture recap
-- Local database is the source of truth.
-- Network sync updates local state.
-- WorkManager handles durable background sync.
-- Queue mutations and retry with backoff.
-- Design for conflict resolution and idempotency.
+This keeps local reads fast while the app syncs changes when connectivity is available.
 
 ---
 
@@ -473,13 +457,6 @@ Choose the component whose lifecycle matches the work. Avoid running long-lived 
 
 ---
 
-## What is the runtime difference between retry and refresh?
-- Retry retries a failed operation.
-- Refresh fetches the latest state again.
-- Use retry only for transient failures.
-
----
-
 ## How would you approach a moderately complex feature from requirements to production?
 ```text
 Requirements
@@ -528,16 +505,7 @@ Store new access token securely
 Retry original request
 ```
 
-Avoid multiple simultaneous refreshes. Coordinate refresh so concurrent requests share a single refresh operation.
-
----
-
-## Retry strategy
-- Retry only transient failures.
-- Use exponential backoff with jitter.
-- Avoid blindly retrying non-idempotent writes.
-- Respect `Retry-After` on rate limits.
-- Cap retries.
+Use a single-flight refresh strategy so concurrent requests do not race. Retry only transient failures with exponential backoff and jitter; avoid blindly retrying non-idempotent writes.
 
 ---
 
@@ -1217,14 +1185,6 @@ The key is to validate against real source and actual behavior rather than trust
 
 ---
 
-## How do you mentor junior developers?
-- Give context, not just instructions.
-- Start with small ownership and grow responsibility.
-- Review code with explanations and pair when useful.
-- Encourage design discussions and learning.
-
----
-
 ## How do you handle sprint planning?
 - Clarify the business outcome.
 - Break work into testable slices.
@@ -1242,27 +1202,6 @@ The key is to validate against real source and actual behavior rather than trust
 
 ---
 
-## How do you handle a production incident?
-```text
-Detect
- ↓
-Assess impact
- ↓
-Stop or slow rollout if needed
- ↓
-Find root cause
- ↓
-Mitigate
- ↓
-Release fix
- ↓
-Monitor
- ↓
-Post-incident review
-```
-
----
-
 ## What metrics matter for delivery?
 - Cycle time
 - Lead time
@@ -1275,31 +1214,6 @@ Post-incident review
 - Build time
 
 Do not optimize one metric at the expense of quality or stability.
-
----
-
-## How would you handle network and database consistency?
-- Treat the database as the local source of truth.
-- Update it transactionally when multiple related records must succeed together.
-- Refresh from the network when data is stale or missing.
-
-```text
-API
- ↓
-Repository
- ↓
-Database
- ↓
-UI
-```
-
----
-
-## How would you handle a server response that is successful but local persistence fails?
-- Do not pretend the operation fully succeeded.
-- Capture the failure.
-- Retry or recover according to the feature’s consistency requirements.
-- Keep UI state accurate and log safe diagnostics.
 
 ---
 
@@ -1324,23 +1238,6 @@ Key concerns:
 - Auditability
 - Monitoring
 - Feature flags and rollback support
-
----
-
-## How would you handle token refresh?
-```text
-API request
- ↓
-401
- ↓
-Refresh token
- ↓
-New access token
- ↓
-Retry original request
-```
-
-Use a single-flight refresh strategy so concurrent requests do not race.
 
 ---
 
@@ -1410,45 +1307,6 @@ Use a single-flight refresh strategy so concurrent requests do not race.
 
 ---
 
-## What delivery metrics matter for Android teams?
-- Cycle time
-- Lead time
-- Deployment frequency
-- Defect escape rate
-- Crash-free users
-- ANR rate
-- Build duration
-- Test stability
-
-A healthy team optimizes the whole delivery pipeline without sacrificing quality.
-
----
-
-## Production incident expectations
-- Detect quickly and assess blast radius.
-- Stop or slow rollout if needed.
-- Identify affected versions, devices, and features.
-- Mitigate and monitor.
-- Run a post-incident review to prevent recurrence.
-
----
-
-## Lead-level code review questions
-- Does the change meet the requirement and edge cases?
-- Is the architecture correct and dependency direction clean?
-- Is the abstraction justified or over-engineered?
-- Are tests and regression coverage adequate?
-- Is performance and security impact acceptable?
-
----
-
-## Mentoring questions
-- How do you help junior engineers grow without overstepping?
-- How do you review code while teaching instead of only correcting?
-- How do you increase ownership and confidence gradually?
-
----
-
 ## Release strategy checklist
 - Feature flags
 - Internal and beta testing
@@ -1457,3 +1315,5 @@ A healthy team optimizes the whole delivery pipeline without sacrificing quality
 - Crash-free sessions
 - ANR rate
 - Startup and performance checks
+
+---
