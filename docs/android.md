@@ -1,4 +1,5 @@
-﻿# Android Architecture
+﻿---
+# Android Architecture
 
 ## What is Clean Architecture?
 - Clean Architecture separates responsibilities into layers.
@@ -230,7 +231,7 @@ Update balance
 - Keeps the ViewModel clean by handling complex logic inside it.
 - Lies in the domain layer in Clean Architecture.
 - Reusable and testable units of code.
-
+---
 # Android Fundamentals
 
 ## How would you implement offline-first behavior?
