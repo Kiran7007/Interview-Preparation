@@ -737,6 +737,136 @@ LazyColumn(state = listState) { /* items */ }
 
 ---
 
+## Compose Deep Dive
+
+## What is state in Compose?
+
+- State is data that can change over time and can cause UI updates.
+- Compose observes state reads and invalidates affected scopes when the value changes.
+
+```kotlin
+var count by remember { mutableIntStateOf(0) }
+```
+
+## What is state hoisting?
+
+- Move state to the lowest common owner that needs to control it.
+- Child composables receive state and callbacks.
+- Makes composables reusable and testable.
+
+```kotlin
+@Composable
+fun SearchBox(
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+    TextField(
+        value = query,
+        onValueChange = onQueryChange
+    )
+}
+```
+
+---
+
+## What is `derivedStateOf`?
+
+-   It creates state derived from other state.
+-   It can prevent unnecessary recompositions when the derived result
+    has not changed.
+
+``` kotlin
+val showButton by remember {
+    derivedStateOf {
+        listState.firstVisibleItemIndex > 0
+    }
+}
+```
+Use it when derived state changes less frequently than its inputs.
+
+---
+
+## `LaunchedEffect` vs `DisposableEffect`
+
+- `LaunchedEffect`: coroutine-based side effect tied to composition.
+- `DisposableEffect`: setup/cleanup for lifecycle-like subscriptions.
+
+```kotlin
+DisposableEffect(lifecycleOwner) {
+    val observer = LifecycleEventObserver { _, event ->
+        // handle event
+    }
+
+    lifecycleOwner.lifecycle.addObserver(observer)
+
+    onDispose {
+        lifecycleOwner.lifecycle.removeObserver(observer)
+    }
+}
+```
+
+## What is `rememberUpdatedState`?
+
+- Keeps the latest value available to an effect without restarting the effect because the value changed.
+
+Useful for long-lived effects where the callback/value should be current.
+
+## What is `snapshotFlow`?
+
+- Converts Compose snapshot state reads into a Flow.
+
+```kotlin
+LaunchedEffect(listState) {
+    snapshotFlow {
+        listState.firstVisibleItemIndex
+    }.collect { index ->
+        // react to scroll position
+    }
+}
+```
+
+## What is `SideEffect`?
+
+- Publishes Compose state to non-Compose code after successful composition.
+
+## What is `produceState`?
+
+- Bridges external asynchronous/callback-style data into Compose `State`.
+
+## What is Compose stability?
+
+- Stability helps the Compose compiler determine whether a composable can be skipped when inputs have not meaningfully changed.
+- Stable types have predictable observable behavior.
+- Immutable data does not change after construction.
+
+## `@Stable` vs `@Immutable`
+
+### `@Immutable`
+
+- Claims the object is deeply immutable from Compose's perspective.
+- Public properties should not change after construction.
+
+### `@Stable`
+
+- Makes a stronger statement about how Compose can observe the object's changes.
+- A stable type may be mutable, but changes must be observable in a way Compose understands.
+
+**Important:** Do not add these annotations just to force performance. Incorrect annotations can cause stale UI because Compose may make incorrect skipping assumptions.
+
+## How do you reduce unnecessary recomposition?
+
+- Keep state close to where it is consumed.
+- Use stable keys.
+- Avoid creating unstable objects unnecessarily.
+- Use immutable UI models where appropriate.
+- Split large composables.
+- Use `remember` for expensive object creation.
+- Use `derivedStateOf` only when it reduces meaningful invalidations.
+- Avoid passing changing state through large subtrees when only a small child needs it.
+- Measure before optimizing.
+
+---
+
 # Unit and UI Testing
 
 ## What is unit testing?
