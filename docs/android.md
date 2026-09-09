@@ -104,8 +104,14 @@ Modern Android usually defaults to MVVM, with MVI for more complex stateful scre
 ---
 
 ## What is modularization?
-- Modularization divides a codebase into logical modules.
-- It improves ownership, dependency boundaries, build speed, and reuse.
+Benefits:
+
+- Faster incremental builds.
+- Clear ownership.
+- Better dependency boundaries.
+- Parallel team development.
+- Reusable libraries.
+- Easier testing.
 
 ```text
 :app
@@ -195,6 +201,22 @@ Network
   ↓
 Response
 ```
+
+---
+
+## HTTP Polling and WebSocket
+| Feature          | HTTP Polling                 | WebSocket                            |
+| ---------------- | ---------------------------- | ------------------------------------ |
+| Connection       | New HTTP request repeatedly  | One persistent connection            |
+| Communication    | Client → Server              | **Bidirectional**                    |
+| Server can push? | ❌ Not directly               | ✅ Yes                                |
+| Real-time        | ❌ Near real-time             | ✅ Real-time                          |
+| Network overhead | Higher                       | Lower after connection               |
+| Latency          | Depends on polling interval  | Very low                             |
+| Battery impact   | Higher, especially on mobile | Generally lower for frequent updates |
+| Implementation   | Simple                       | More complex                         |
+| Best for         | Infrequent updates           | Frequent real-time updates           |
+
 
 ---
 
@@ -315,9 +337,15 @@ if (featureFlags.newPaymentFlow) {
 ---
 
 ## What is operational readiness?
-- Monitoring and alerts should be in place.
-- Rollback plans and ownership must be defined.
-- A feature is not production-ready simply because it works locally.
+- Before release, define:
+    1. Monitoring
+    2. Alerts
+    3. Rollback process
+    4. Feature flag strategy
+    5. Ownership
+    6. Runbook
+    7. Known failure modes
+- A feature is not production-ready simply because the code works locally.
 
 ---
 
@@ -386,6 +414,7 @@ sealed interface UiEvent {
 - Load images at display size.
 - Close resources appropriately.
 - Profile before optimizing.
+- Use lifecycle-aware components.
 
 ---
 
@@ -636,6 +665,19 @@ buildTypes {
 
 ---
 
+## What is screenshot protection?
+- Android can restrict screenshots for sensitive screens using appropriate window flags.
+- Use it where the security requirement calls for preventing screenshots or screen capture.
+
+```kotlin
+window.setFlags(
+    WindowManager.LayoutParams.FLAG_SECURE,
+    WindowManager.LayoutParams.FLAG_SECURE
+)
+```
+
+---
+
 # Jetpack Compose
 
 ## What is Jetpack Compose?
@@ -661,16 +703,6 @@ fun Greeting(name: String) {
 ## What is recomposition?
 - Recomposition occurs when Compose recalculates UI because state changed.
 - It only redraws the affected parts of the tree.
-
----
-
-## What is State in Compose?
-- State holds data that changes over time.
-- UI updates automatically when the state changes.
-
-```kotlin
-val count = remember { mutableStateOf(0) }
-```
 
 ---
 
@@ -707,8 +739,18 @@ Text(
 
 ## What are stable and unstable types in Compose?
 - Compose uses stability information to reason about whether parameters are likely to change.
-- Stable immutable models can reduce unnecessary recomposition.
-- Prefer immutable UI models when possible.
+- Stable parameters can help Compose skip unnecessary recomposition.
+- Mutable or poorly designed types can make stability harder to determine.
+- Prefer immutable UI models where possible.
+
+```kotlin
+data class UserUiModel(
+    val id: String,
+    val name: String
+)
+```
+
+- The goal is not to add annotations blindly. The data model should actually satisfy the stability contract.
 
 ---
 
@@ -725,8 +767,10 @@ LazyColumn(state = listState) { /* items */ }
 
 ## How do you debug excessive recompositions?
 - Use Layout Inspector and recomposition tracing.
+- Use composition tracing and CPU profiling.
 - Look for unstable parameters, repeated `collectAsState()`, and missing `remember`.
 - Break state into smaller units and pass only needed values.
+- Use `derivedStateOf`, `remember`, and stable immutable models.
 
 ---
 
@@ -734,6 +778,12 @@ LazyColumn(state = listState) { /* items */ }
 - Use meaningful semantics and content descriptions.
 - Ensure touch targets are large enough.
 - Respect contrast, focus order, and TalkBack behavior.
+
+```kotlin
+Modifier.semantics {
+    contentDescription = "Account balance"
+}
+```
 
 ---
 
@@ -747,6 +797,8 @@ LazyColumn(state = listState) { /* items */ }
 ```kotlin
 var count by remember { mutableIntStateOf(0) }
 ```
+
+- When `count.value` changes, any UI that depends on it updates automatically.
 
 ## What is state hoisting?
 
@@ -872,6 +924,14 @@ LaunchedEffect(listState) {
 ## What is unit testing?
 - Unit tests validate small pieces of logic in isolation.
 - They are fast and usually run on the JVM.
+- Know:
+    1. semantic tree
+    2. `testTag`
+    3. text/content description
+    4. node matchers
+    5. actions
+    6. assertions
+    7. accessibility semantics
 
 ```kotlin
 @Test
@@ -887,6 +947,17 @@ fun `invalid amount returns error`() {
 ## What is an instrumentation test?
 - Instrumentation tests run on a device or emulator.
 - They are useful for Android framework integration, Room behavior, and end-to-end device flows.
+
+---
+
+## What is the difference between Unit Tests and Instrumentation Tests in Android?
+
+| Unit Test | Instrumentation Test |
+| :--- | :--- |
+| Runs on JVM | Runs on a real device/emulator |
+| Fast | Slower due to UI/device interaction |
+| Tests logic in isolation | Tests integration, UI, and end-to-end |
+| Uses JUnit/Mockito | Uses Espresso, UI Automator, etc. |
 
 ---
 
@@ -964,11 +1035,15 @@ Do not put every business rule into UI tests. Keep most logic in fast unit tests
 Unit tests
    ↓
 Business logic / ViewModel
+```
 
+```text
 Integration tests
    ↓
 Repository / DB / networking boundaries
+```
 
+```text
 UI tests
    ↓
 Critical user journeys
@@ -1026,14 +1101,39 @@ Activity cannot be collected
 
 ## What is Android startup performance?
 - Startup performance is how long it takes before the app becomes usable.
-- Common problems: heavy `Application` initialization, disk work, large dependency setup, DB work.
-- Measure before optimizing.
+- Common problems: 
+    1. Remove unnecessary initialization from `Application`.
+    2. Lazy-load noncritical dependencies.
+    3. Avoid synchronous disk/database work on startup.
+    4. Defer analytics/SDK initialization where allowed.
+    5. Use Baseline Profiles.
+    6. Measure using startup benchmarks and production telemetry.
+    7. The first step should be profiling, not guessing.
+
+## How would you reduce Android app startup time?
+- Remove unnecessary initialization from `Application`.
+- Lazy-load noncritical dependencies.
+- Avoid synchronous disk/database work on startup.
+- Defer analytics/SDK initialization where allowed.
+- Use Baseline Profiles.
+- Measure using startup benchmarks and production telemetry.
+- The first step should be profiling, not guessing.
 
 ---
 
 ## What is Macrobenchmark?
 - Macrobenchmark measures larger user journeys on real devices/emulators.
 - It is useful for startup, scrolling, and other realistic performance tests.
+
+```text
+Launch app
+ ↓
+Navigate
+ ↓
+Scroll
+ ↓
+Measure performance
+```
 
 ---
 
@@ -1119,6 +1219,19 @@ Benchmark
  ↓
 Gradual release
 ```
+
+---
+
+## What does `high-quality user experience across devices and OS versions` mean?
+- Responsive layouts
+- Accessibility
+- Correct lifecycle behavior
+- Reliable offline/error states
+- Good startup and rendering performance
+- Proper font scaling
+- Device/OS compatibility
+- Safe background behavior
+- Consistent navigation
 
 ---
 
@@ -1305,13 +1418,39 @@ The key is to validate against real source and actual behavior rather than trust
 
 ---
 
+## What are the risks of AI-generated code?
+- Possible risks:
+    1. Incorrect APIs
+    2. Security vulnerabilities
+    3. Poor architecture
+    4. Hallucinated behavior
+    5. License/IP concerns
+    6. Sensitive data exposure
+    7. Hidden edge cases
+- The developer remains responsible for the final code.
+
+---
+
 # Behavioral / Leadership / Scenario Based Questions
 
-## How do you handle disagreement with Product or another engineer?
-- Understand the goal and constraints.
-- Discuss trade-offs using requirements and evidence.
-- Present engineering impact clearly.
-- Align on the final decision and document it.
+## How do you handle an architecture disagreement?
+- Understand the other proposal.
+- Compare trade-offs.
+- Use requirements and measurable constraints.
+- Prototype when uncertainty is high.
+- Align with the team.
+- Document important decisions.
+- Avoid making the discussion about who is technically right.
+
+---
+
+## How would you handle a server response that is successful but the local database update fails?
+- Do not pretend the operation completed locally.
+- Capture the failure.
+- Retry or recover according to the feature’s consistency requirements.
+- Keep the UI state accurate.
+- Log safe diagnostic information.
+- Consider transactional persistence for related writes.
 
 ---
 
@@ -1371,61 +1510,189 @@ Key concerns:
 
 ---
 
-## Scenario: Crash spike due to lifecycle issues
-- Common issue: coroutine or callback survives a Fragment or Activity lifecycle.
-- Fix: use lifecycle-aware collection and scopes.
-- Use `viewLifecycleOwner.lifecycleScope` and `repeatOnLifecycle`.
-- Cancel jobs properly and move business logic to the ViewModel when possible.
+## What is your approach when supporting multiple Android OS versions?
+- Use supported APIs according to min/target SDK.
+- Guard newer APIs with version checks when required.
+- Test behavior across important OS/device combinations.
+- Avoid assuming behavior is identical across versions.
+- Monitor production issues by OS version.
+
+```kotlin
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.X) {
+    // New API
+}
+```
 
 ---
 
+
+## How do you investigate a crash?
+```text
+Crash report
+ ↓
+Stack trace
+ ↓
+Affected version/device
+ ↓
+Reproduction
+ ↓
+Root cause
+ ↓
+Fix
+ ↓
+Regression test
+ ↓
+Monitor release
+```
+
+---
+
+## Scenario: Crash spike due to lifecycle issues
+You are working on a modular app with multiple teams contributing. After a recent release:
+
+- Crash rate increased significantly.
+- Common crash: `IllegalStateException: Fragment not attached to a context`.
+- Occurs during navigation or screen rotation.
+- App uses Fragments, coroutines, and ViewBinding.
+
+How would you debug and fix this?
+
+
+### Root cause identification
+Typical issue:
+
+- Coroutine launched in Fragment scope
+- Fragment destroyed
+- Coroutine still running
+- On completion, it tries to access UI or context
+
+### Fix strategy
+- Use `viewLifecycleOwner.lifecycleScope` instead of fragment scope.
+- Use `repeatOnLifecycle` when collecting flows.
+- Check if the fragment is attached before accessing context.
+- Cancel jobs properly in `onDestroyView()`.
+- Move business logic to the ViewModel where possible.
+
+--- 
+
 ## Scenario: Deep link handling breaking navigation
-- Validate deep link arguments before navigation.
-- Declare deep links correctly in the manifest and navigation graph.
-- Handle cold-start, warm-start, and `onNewIntent()` flows safely.
-- Use a valid back stack and avoid duplicate navigation events.
+E-commerce app. Users report deep links open the wrong screen, the app crashes when opened via link, and back navigation behaves incorrectly. The app uses the Navigation Component and multiple entry points. How would you fix?
+
+
+### Understand the three deep link entry scenarios
+- Cold start
+- Warm start
+- Foreground case with `onNewIntent()`
+
+### Fixes
+- Validate deep-link parameters before navigation.
+- Declare deep links in the navigation graph.
+- Use `NavDeepLinkBuilder` to construct a valid back stack.
+- Handle duplication carefully when a destination is already in the stack.
 
 ---
 
 ## Scenario: API instability and token refresh issues
-- Separate client-side, auth, and server-side failures.
-- Use a single-flight token refresh path.
-- Retry only transient errors.
-- Respect `Retry-After` on 429.
+You are on a fintech app with millions of daily transactions. Users report random API failures, some requests succeed on retry, and occasional logouts. Monitoring shows HTTP 401 and 500 spikes, duplicate API calls, and token refresh logic recently changed. How would you design and fix this?
+
+
+### Key fixes
+- Separate client-side, auth, and server-side failure categories.
+- Use a single-flight token refresh pattern so multiple concurrent 401 requests do not race.
 - Use idempotency keys for financial writes.
+- Only retry transient failures, not all failures.
+- Respect `Retry-After` on 429 responses.
+- Queue local mutation requests with WorkManager when offline.
+- Add observability around retry rate, 401 frequency, and duplicate request detection.
 
 ---
 
 ## Scenario: Slow build time in a multi-module project
-- Improve module boundaries.
-- Reduce inter-module coupling.
-- Use Gradle caching and remote cache.
-- Enable parallel execution.
-- Replace KAPT with KSP where possible.
+Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local build ~10-12 minutes. Small changes trigger full rebuilds. How would you optimize?
+
+
+### Root causes
+- Poor module boundaries
+- Too many inter-module dependencies
+- KAPT overhead
+- Non-incremental custom tasks
+
+### Improvements
+- Feature-based module design
+- Reduce coupling between modules
+- Use Gradle caching and remote build cache
+- Enable parallel execution
+- Replace KAPT with KSP where possible
+- Run only affected modules in CI
 
 ---
 
 ## Scenario: Memory leak causing gradual slowdown
-- Look for singleton or listener references to Activity/Fragment context.
-- Investigate binding leaks, adapters, and unbounded caches.
-- Use LeakCanary and Memory Profiler.
-- Enforce lifecycle cleanup and validate with soak tests.
+You are working on a large social media app. Users report the app becomes slow after 15-20 minutes and eventually is OOM-killed. Monitoring shows memory grows continuously. How would you investigate and fix end-to-end?
+
+
+### Confirm leak vs expected growth
+- Memory grows linearly without release → leak
+- Memory grows then stabilizes → expected caching behavior
+- Tools: Memory Profiler, heap dumps, LeakCanary
+
+### Typical suspects
+- Activity or Fragment references retained by singletons
+- RecyclerView adapters retaining old contexts
+- ViewHolder or listener references not being cleared
+- Unbounded image cache
+
+### Fix strategy
+- Remove strong references causing leaks
+- Enforce proper lifecycle cleanup
+- Use Application context in long-lived objects
+- Tune image caching and remove stale listeners
+- Validate with long soak tests
 
 ---
 
 ## Scenario: Battery drain due to background work
-- Check polling, wake locks, high-frequency location updates, and background sync.
-- Replace polling with push or batching when possible.
-- Respect Doze and App Standby.
-- Use WorkManager with constraints.
+You are working on a fitness tracking app. Users report significant battery drain. The app uses location tracking, background sync, and periodic API polling. How would you diagnose and fix?
+
+
+### Measure before changing anything
+- Battery Historian
+- Android Profiler
+- Wake lock and alarm frequency
+
+### Likely causes
+- Frequent location updates at high accuracy
+- Background polling using network aggressively
+- Foreground services running when not needed
+
+### Fixes
+- Replace polling with push or batch sync where possible
+- Use WorkManager and battery constraints
+- Reduce location update frequency or use geofencing
+- Respect Doze and App Standby
+- Stop wake locks for non-critical work
 
 ---
 
 ## Scenario: Large list causing OOM
-- Use Paging 3.
-- Load small chunks at a time.
-- Decode images at display size.
-- Use bounded caches and `DiffUtil` with stable IDs.
+Users report crashes when scrolling large product lists. Observations: the entire dataset loads at once, images are high-resolution, and there is no pagination. How would you fix?
+
+
+### Root causes
+- Entire dataset in memory
+- High-resolution images decoded at original size
+- No lazy loading
+
+
+
+
+### Fix strategy
+- Use Paging 3
+- Page data in small chunks
+- Decode images at display size
+- Use bounded caches
+- Use `DiffUtil` and stable IDs for adapters
+- Clear caches on memory pressure
 
 ---
 

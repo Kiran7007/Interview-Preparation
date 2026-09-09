@@ -143,7 +143,6 @@ var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
 Strong answer:
 
-> "The application was already Fragment/XML based. I used the Fragment as the navigation and lifecycle boundary and hosted Compose inside it so we could migrate incrementally without rewriting the existing navigation and surrounding screens. It also allowed us to isolate the Compose screen and control the migration risk."
 
 Be ready to discuss:
 - ComposeView inside an existing Fragment
@@ -665,7 +664,6 @@ No.
 
 Strong answer:
 
-> "I use the level of separation justified by the complexity of the feature. For a small feature, too many use cases and layers can add ceremony. For a large banking application with multiple data sources, business rules, testing requirements and multiple teams, the boundaries become valuable."
 
 ## MVVM vs MVI
 
@@ -1283,7 +1281,6 @@ Trade-offs
 
 Strong answer:
 
-> "I start by clarifying the business outcome, then break the feature into technical and testable slices. I identify dependencies, risks, API readiness, design dependencies and unknowns. I estimate with the team rather than assigning estimates individually, and I make sure acceptance criteria and non-functional requirements are explicit."
 
 ## How do you handle unclear requirements?
 
@@ -1298,7 +1295,6 @@ Strong answer:
 
 Answer:
 
-> "I first understand the business deadline and impact. Then I separate must-have scope from nice-to-have scope, identify technical risks, and propose the smallest safe deliverable. I would not trade away security, data integrity or critical quality gates just to meet a date."
 
 ## How do you handle disagreement with Product?
 
@@ -1428,7 +1424,6 @@ Do not optimize metrics blindly.
 
 Example:
 
-> "Reducing cycle time by skipping review or tests is not a real improvement. I would optimize the entire delivery system while protecting quality and security."
 
 ---
 
@@ -1476,7 +1471,6 @@ Post-incident review
 
 Strong answer:
 
-> "I use approved AI tools for boilerplate, test generation, refactoring ideas, documentation and exploring alternatives. I treat the output as untrusted generated code. I review it, compile it, run unit/UI tests, run static analysis and verify security and business behavior. I follow the organization's approved-tool and data-handling policies and never expose customer data, credentials or restricted source code to an unapproved service."
 
 ## How do you validate AI-generated code?
 
@@ -1599,11 +1593,6 @@ For senior-level answers, emphasize:
 
 Use a 60-90 second structure:
 
-> "I'm an Android engineer with around 9 years of experience building mobile applications, primarily with Kotlin, Android and Jetpack Compose. I've worked across domains including healthcare, fintech and banking, and I've owned features from architecture and implementation through testing, CI/CD and production support.  
->
-> My strongest areas are Kotlin, Coroutines/Flow, Compose, scalable architecture and engineering quality. More recently I've also worked on automation and AI-assisted developer tooling, including an Android UI testing agent that searches a project and generates Compose UI tests.  
->
-> At this stage I'm looking for a role where I can combine hands-on Android development with technical leadership, architecture, mentoring and improving engineering practices at scale."
 
 ---
 

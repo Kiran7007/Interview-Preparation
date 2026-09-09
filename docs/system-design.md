@@ -17,7 +17,6 @@
 - [9 Architectural Patterns for Data and Communication Flow](https://www.linkedin.com/feed/update/urn:li:activity:7220454954266759168/)
 
 
-> **Interview answer:** **Constraints-first architecture** wins interviews.
 
 ---
 
@@ -40,7 +39,6 @@
 - [SOLID in Android (Kotlin examples)](https://www.coderefer.com/blog/solid-principles-in-android-with-kotlin-examples/)
 
 
-> **Interview answer:** SOLID is how you keep **large apps mergeable**.
 
 ---
 
@@ -60,7 +58,6 @@
 - [Strategy:](https://lnkd.in/d9dz8ER7)  
 
 
-> **Interview answer:** Patterns are **dependency boundaries**, not trivia.
 
 ---
 
@@ -80,7 +77,6 @@
 - [Interfaces:](https://lnkd.in/d8NzSRgG)  
 
 
-> **Interview answer:** Interviewers reward **clear diagrams** + explicit failure paths.
 
 ---
 
@@ -100,7 +96,6 @@
 - [Authentication:](https://lnkd.in/dQ94BgzQ)  
 
 
-> **Interview answer:** Mobile clients **retry aggressively**—design APIs for that reality.
 
 ---
 
@@ -118,7 +113,6 @@
 - [Lazy loading:](https://lnkd.in/dvcdY_RX)  
 
 
-> **Interview answer:** Show you can **partner with backend**—not blame it.
 
 ---
 
@@ -134,7 +128,6 @@
 - **Testing:** property tests for merge, integration tests for retry storms.
 
 
-> **Interview answer:** State **conflict policy** explicitly—don’t hand-wave.
 
 ---
 
@@ -150,7 +143,6 @@
 - [Logging strategies:](https://lnkd.in/dvikcadQ)  
 
 
-> **Interview answer:** **PII discipline** is part of system design.
 
 ---
 
@@ -167,7 +159,6 @@
 - [Atomic operations:](https://lnkd.in/dcfZF9Jb)  
 
 
-> **Interview answer:** **Cancellation + backpressure** separate senior answers from junior ones.
 
 ---
 
@@ -184,5 +175,4 @@
 - [Relationships:](https://lnkd.in/da3YTaJN)  
 
 
-> **Interview answer:** Optimize for **read latency** the UI actually needs.
 - [Learn more](https://lnkd.in/da3YTaJN)
