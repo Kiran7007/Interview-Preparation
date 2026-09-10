@@ -198,6 +198,57 @@ val results = query
 
 # Android Fundamentals
 
+---
+
+## What is the difference between Activity context and Application context?
+- Activity context is tied to an Activity lifecycle.
+- Application context lives as long as the process.
+- Do not store an Activity context in a long-lived singleton.
+
+---
+
+
+## What is Gradle?
+- Gradle is the Android build system.
+- It manages project configuration, dependencies, and packaging.
+- Project-level config applies broadly; module-level config is specific to a module.
+
+---
+
+## What is the difference between Project-level and Module-level build.gradle?
+
+#### **Project-level build.gradle** 
+- Applies to the entire project.
+- Gradle version
+- Repositories
+- Classpath for plugins
+
+#### **Module-level build.gradle** 
+- Specific to each app/module.
+- Dependencies (`implementation`, `api`, etc.)
+- Build types (`debug`/`release`)
+- Product flavors
+- Android SDK version
+
+---
+
+## What are build variants and product flavors?
+- Build variants combine build type and flavor.
+- Example: `freeDebug` or `paidRelease`.
+- Build types usually cover debug vs release behavior.
+
+---
+
+## How would you improve build time?
+- Use Gradle build cache.
+- Reduce unnecessary annotation processing.
+- Keep module boundaries coherent.
+- Use appropriate plugins and caching.
+- Parallelize independent jobs.
+- Run targeted tests locally and comprehensive checks in CI.
+
+---
+
 ## What is an HTTP interceptor?
 - An interceptor can inspect, modify, or add behavior to requests and responses.
 - Common uses include headers, logging, metrics, and auth logic.
@@ -256,28 +307,10 @@ Response
 
 ---
 
-## What is `collectAsStateWithLifecycle()`?
-- It collects a Flow while respecting the lifecycle.
-- It prevents unnecessary collection while the UI is inactive.
-
-```kotlin
-val state by viewModel.state
-    .collectAsStateWithLifecycle()
-```
-
----
-
 ## What is process death?
 - Android may kill the app process when resources are needed.
 - A ViewModel does not survive process death.
 - Important state should be restored via saved state or persisted storage.
-
----
-
-## What is the difference between Activity context and Application context?
-- Activity context is tied to an Activity lifecycle.
-- Application context lives as long as the process.
-- Do not store an Activity context in a long-lived singleton.
 
 ---
 
@@ -357,6 +390,19 @@ if (featureFlags.newPaymentFlow) {
     6. Runbook
     7. Known failure modes
 - A feature is not production-ready simply because the code works locally.
+
+---
+
+## What is a release strategy checklist?
+- Feature flags.
+- Staged/phased rollout.
+- Internal/beta testing.
+- Monitoring.
+- Rollback/disable mechanisms.
+- Crash-free sessions/users.
+- ANR rate.
+- startup performance.
+- defect escape rate.
 
 ---
 
@@ -558,12 +604,6 @@ override fun onDestroyView() {
     super.onDestroyView()
 }
 ```
-
----
-
-## Why collect Flow with `repeatOnLifecycle`?
-- Prevents collection while the UI is stopped.
-- Automatically starts and stops collection with lifecycle state.
 
 ---
 
@@ -792,62 +832,6 @@ buildTypes {
 
 ---
 
-## What is Gradle?
-- Gradle is the Android build system.
-- It manages project configuration, dependencies, and packaging.
-- Project-level config applies broadly; module-level config is specific to a module.
-
----
-
-## What is the difference between Project-level and Module-level build.gradle?
-
-#### **Project-level build.gradle** 
-- Applies to the entire project.
-- Gradle version
-- Repositories
-- Classpath for plugins
-
-#### **Module-level build.gradle** 
-- Specific to each app/module.
-- Dependencies (`implementation`, `api`, etc.)
-- Build types (`debug`/`release`)
-- Product flavors
-- Android SDK version
-
----
-
-## What are build variants and product flavors?
-- Build variants combine build type and flavor.
-- Example: `freeDebug` or `paidRelease`.
-- Build types usually cover debug vs release behavior.
-
----
-
-## How would you improve build time?
-- Use Gradle build cache.
-- Reduce unnecessary annotation processing.
-- Keep module boundaries coherent.
-- Use appropriate plugins and caching.
-- Parallelize independent jobs.
-- Run targeted tests locally and comprehensive checks in CI.
-
----
-
-## What is a release strategy?
-- Feature flags.
-- Staged/phased rollout.
-- Internal/beta testing.
-- Monitoring.
-- Rollback/disable mechanisms.
-- Crash-free sessions/users.
-- ANR rate.
-- startup performance.
-- defect escape rate.
-
----
-
----
-
 ## How can you prevent reverse engineering of your APK?
 - Use ProGuard or R8.
 - Remove unused code and classes.
@@ -1020,6 +1004,17 @@ var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
 ---
 
+## What is `collectAsStateWithLifecycle()`?
+- It collects a Flow while respecting the lifecycle.
+- It prevents unnecessary collection while the UI is inactive.
+
+```kotlin
+val state by viewModel.state
+    .collectAsStateWithLifecycle()
+```
+
+---
+
 ## Why did you create a separate Fragment for Compose?
 
 Strong answer:
@@ -1033,6 +1028,12 @@ Be ready to discuss:
 - Lifecycle ownership
 - Back navigation
 - ViewBinding/XML coexistence
+
+---
+
+## Why collect Flow with `repeatOnLifecycle`?
+- Prevents collection while the UI is stopped.
+- Automatically starts and stops collection with lifecycle state.
 
 ---
 
@@ -2275,16 +2276,5 @@ interface UserDao {
 ```
 
 Use a custom `@Query` for a partial update instead of replacing the full entity with `@Update`. `@Embedded` can flatten a value object into an entity, but define column names carefully to avoid collisions. Test migrations and keep database work off the main thread.
-
----
-
-## Release strategy checklist
-- Feature flags
-- Internal and beta testing
-- Staged rollout
-- Monitoring and rollback
-- Crash-free sessions
-- ANR rate
-- Startup and performance checks
 
 ---
