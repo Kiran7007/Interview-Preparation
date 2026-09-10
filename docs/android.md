@@ -885,17 +885,6 @@ You should never store sensitive data (like passwords or tokens) in plain text. 
 
 ---
 
-## What are common security risks in Android apps?
-Some common risks:
-
-- Storing data in plain text.
-- Using HTTP instead of HTTPS.
-- Hardcoding API keys in code.
-- Not validating inputs (leading to injection attacks).
-- Using outdated libraries with vulnerabilities.
-
----
-
 # Jetpack Compose
 
 ## What is Jetpack Compose?
@@ -1037,12 +1026,6 @@ Be ready to discuss:
 
 ---
 
-## What is `remember` and `rememberSaveable`?
-- `remember` retains state across recompositions.
-- `rememberSaveable` retains state across configuration changes using a `Bundle`.
-
----
-
 ## What is a `Modifier` in Jetpack Compose?
 - `Modifier` decorates a composable or changes behavior.
 - Common uses include padding, background, size, click handling, and layout modifications.
@@ -1081,27 +1064,6 @@ viewLifecycleOwner.lifecycleScope.launch {
     }
 }
 ```
-
----
-
-## What is a Scaffold in Jetpack Compose?
-Scaffold is a layout component that provides basic structure like:
-- TopBar
-- BottomBar
-- FloatingActionButton
-- Drawer
-- SnackbarHost
-
-*Example:*
-```kotlin
-Scaffold(
-    topBar = { TopAppBar(title = { Text("Home") }) },
-    floatingActionButton = { FloatingActionButton(onClick = {}) { Text("+") } }
-) {
-    // Content
-}
-```
-Useful for material design layouts.
 
 ---
 
@@ -1508,15 +1470,12 @@ Activity
 Activity cannot be collected
 ```
 
----
-
-## How do you detect leaks?
-
-- LeakCanary.
-- Android Studio Memory Profiler.
-- Heap dumps.
-- Allocation tracking.
-- Reproduce navigation cycles and inspect retained objects.
+- Analysis Tool:
+    1. LeakCanary.
+    2. Android Studio Memory Profiler.
+    3. Heap dumps.
+    4. Allocation tracking.
+    5. Reproduce navigation cycles and inspect retained objects.
 
 ---
 
@@ -1686,14 +1645,6 @@ Use:
 - Long-lived listeners or callbacks
 - Coroutine outliving required lifecycle
 - Static references
-
----
-
-## How do you detect leaks?
-- LeakCanary
-- Android Studio Memory Profiler
-- Heap dumps
-- Allocation tracking
 
 ---
 

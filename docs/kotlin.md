@@ -1801,50 +1801,6 @@ Prefer atomic operations when appropriate:
 cache.putIfAbsent(id, user)
 ```
 
-
----
-
-## What are Primary and Secondary Constructors in Kotlin?
-
-#### Primary Constructor
-- The main constructor of a class.
-- Defined in the class header.
-- Can directly initialize properties.
-
-*Usage in Android:*
-- Pass data directly when creating an object.
-
-*Key Points:*
-- There can be only one primary constructor.
-- Can include `init` block for additional initialization.
-
-#### Secondary Constructor
-- Optional additional constructors for different ways to create an object.
-- Defined inside the class body with a `constructor` keyword.
-- Must delegate to the primary constructor (if primary exists) using `: this(...)`.
-
-*Usage in Android:*
-- Useful when you want flexible object creation in different scenarios.
-
-*Key Points:*
-- You can have multiple secondary constructors.
-- Helps when default values or alternative initialization is needed.
-
-
----
-
-## What are the main features of Kotlin?
-
-- **Concise:** Less boilerplate than Java
-- **Null Safety:** Built-in null checks
-- **Extension Functions:** Add functions to existing classes
-- **Coroutines:** Lightweight concurrency
-- **Smart Casts:** No need for explicit casting after type check
-- **Data Classes:** Auto-generate `equals()`, `hashCode()`, `toString()`, etc.
-- **Default & Named Arguments**
-- **Higher-order functions & Lambdas**
-
-
 ---
 
 # Coroutine
