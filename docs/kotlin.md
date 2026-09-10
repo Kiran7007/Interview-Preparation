@@ -1688,121 +1688,6 @@ Output:
 
 
 ---
-
-# Kotlin Advanced
-
-## What does the `open` keyword mean in Kotlin and why is it the default opposite of Java?
-
-* Kotlin classes and members are `final` by default.
-* `open` explicitly allows inheritance or overriding.
-* This makes inheritance intentional instead of accidental.
-* Java classes and methods are inheritable by default unless marked `final`.
-
-```kotlin
-open class Animal {
-
-    open fun sound() {
-        println("Animal sound")
-    }
-}
-
-class Dog : Animal() {
-
-    override fun sound() {
-        println("Bark")
-    }
-}
-```
-
-Without `open`:
-
-```kotlin
-class Animal
-```
-
-This cannot be inherited.
-
-**Android interview point:** Some mocking frameworks or Android frameworks may require classes to be open. Plugins such as Kotlin's all-open plugin can also make selected classes open automatically.
-
-
----
-
-## What is a Kotlin `value class` and when do you use it on Android?
-
-* A `value class` creates a distinct type around one value.
-* It gives compile-time type safety without necessarily creating a separate object at runtime.
-* It is useful when two values have the same underlying type but different meanings.
-
-```kotlin
-@JvmInline
-value class UserId(val value: String)
-
-@JvmInline
-value class OrderId(val value: String)
-```
-
-Now this is type-safe:
-
-```kotlin
-fun loadUser(id: UserId) {
-    // ...
-}
-
-val userId = UserId("123")
-
-loadUser(userId)
-```
-
-You cannot accidentally pass:
-
-```kotlin
-val orderId = OrderId("123")
-
-// loadUser(orderId) // Compilation error
-```
-
-Instead of:
-
-```kotlin
-fun loadUser(id: String)
-fun loadOrder(id: String)
-```
-
-you get:
-
-```kotlin
-fun loadUser(id: UserId)
-fun loadOrder(id: OrderId)
-```
-
-**Important:** Value classes are not guaranteed to be allocation-free in every situation. They can be boxed when used with generics, nullable types, arrays, reflection, or certain APIs.
-
-
----
-
-## Does `ConcurrentHashMap` make all operations thread-safe?
-
-* Individual map operations are thread-safe.
-* A sequence of operations can still have a race condition.
-
-For example:
-
-```kotlin
-if (!cache.containsKey(id)) {
-    cache[id] = user
-}
-```
-
-Another thread can modify the map between `containsKey()` and `put()`.
-
-Prefer atomic operations when appropriate:
-
-```kotlin
-cache.putIfAbsent(id, user)
-```
-
----
-
 # Coroutine
 
 ## What are coroutine builders in Kotlin?
@@ -1910,7 +1795,6 @@ cancellable.
 
 
 ---
-
 # Flow
 
 ## What is Flow?
@@ -4423,6 +4307,119 @@ query
     .debounce(300)
     .distinctUntilChanged()
     .flatMapLatest { repository.search(it) }
+```
+
+---
+# Kotlin Advanced
+
+## What does the `open` keyword mean in Kotlin and why is it the default opposite of Java?
+
+* Kotlin classes and members are `final` by default.
+* `open` explicitly allows inheritance or overriding.
+* This makes inheritance intentional instead of accidental.
+* Java classes and methods are inheritable by default unless marked `final`.
+
+```kotlin
+open class Animal {
+
+    open fun sound() {
+        println("Animal sound")
+    }
+}
+
+class Dog : Animal() {
+
+    override fun sound() {
+        println("Bark")
+    }
+}
+```
+
+Without `open`:
+
+```kotlin
+class Animal
+```
+
+This cannot be inherited.
+
+**Android interview point:** Some mocking frameworks or Android frameworks may require classes to be open. Plugins such as Kotlin's all-open plugin can also make selected classes open automatically.
+
+
+---
+
+## What is a Kotlin `value class` and when do you use it on Android?
+
+* A `value class` creates a distinct type around one value.
+* It gives compile-time type safety without necessarily creating a separate object at runtime.
+* It is useful when two values have the same underlying type but different meanings.
+
+```kotlin
+@JvmInline
+value class UserId(val value: String)
+
+@JvmInline
+value class OrderId(val value: String)
+```
+
+Now this is type-safe:
+
+```kotlin
+fun loadUser(id: UserId) {
+    // ...
+}
+
+val userId = UserId("123")
+
+loadUser(userId)
+```
+
+You cannot accidentally pass:
+
+```kotlin
+val orderId = OrderId("123")
+
+// loadUser(orderId) // Compilation error
+```
+
+Instead of:
+
+```kotlin
+fun loadUser(id: String)
+fun loadOrder(id: String)
+```
+
+you get:
+
+```kotlin
+fun loadUser(id: UserId)
+fun loadOrder(id: OrderId)
+```
+
+**Important:** Value classes are not guaranteed to be allocation-free in every situation. They can be boxed when used with generics, nullable types, arrays, reflection, or certain APIs.
+
+
+---
+
+## Does `ConcurrentHashMap` make all operations thread-safe?
+
+* Individual map operations are thread-safe.
+* A sequence of operations can still have a race condition.
+
+For example:
+
+```kotlin
+if (!cache.containsKey(id)) {
+    cache[id] = user
+}
+```
+
+Another thread can modify the map between `containsKey()` and `put()`.
+
+Prefer atomic operations when appropriate:
+
+```kotlin
+cache.putIfAbsent(id, user)
 ```
 
 ---
