@@ -22,6 +22,17 @@ Use the level of separation justified by the feature. A small screen does not ne
 
 ---
 
+## What are MVVM, ViewModel, LiveData, StateFlow, Repository, and UseCase?
+
+- **MVVM:** The UI renders state exposed by a ViewModel; the ViewModel coordinates use cases; repositories abstract data sources.
+- **ViewModel:** Retains screen state across configuration changes and must not hold Activity/View references. It does not survive process death by itself.
+- **LiveData:** A lifecycle-aware observable value, especially useful in legacy XML/View screens.
+- **StateFlow:** A coroutine-based hot stream representing current state; collect it with `repeatOnLifecycle` in Views or Compose lifecycle APIs.
+- **Repository:** Owns data access and hides API, Room, Firebase or cache details from callers.
+- **UseCase:** Encapsulates one meaningful business operation and is valuable when logic is reused or complex; it is not mandatory ceremony for every trivial operation.
+
+---
+
 ## What is the Repository pattern?
 - A Repository hides data access details from the rest of the app.
 - It can coordinate Room, API, cache, Firebase, and memory.
@@ -355,6 +366,20 @@ if (featureFlags.newPaymentFlow) {
 
 ---
 
+## What should a runbook contain?
+
+- Symptoms.
+- Detection/alerts.
+- Impact.
+- Investigation steps.
+- Mitigation.
+- Rollback/feature flag.
+- Escalation path.
+- Recovery verification.
+- Post-incident actions.
+
+---
+
 ## What is crash-free rate?
 - It measures how many sessions complete without crashes.
 - Track by app version, device, OS version, feature, and release cohort.
@@ -388,6 +413,25 @@ Retry + Backoff
 ```
 
 This keeps local reads fast while the app syncs changes when connectivity is available.
+
+---
+
+## What is `PeriodicWorkRequest`, and what are WorkManager states and constraints?
+
+- `PeriodicWorkRequest` is for deferrable recurring work such as synchronization, log upload, cache cleanup, or periodic content refresh. 
+- Its minimum interval is 15 minutes and execution is inexact because WorkManager respects constraints and system battery policy. 
+- It is not suitable for exact alarms or immediate user-visible work.
+
+WorkManager states are:
+
+- `ENQUEUED`: waiting to run or waiting for constraints.
+- `RUNNING`: currently executing.
+- `SUCCEEDED`: completed successfully.
+- `FAILED`: permanently failed.
+- `BLOCKED`: waiting for prerequisite work.
+- `CANCELLED`: explicitly cancelled.
+
+Constraints can require network availability, charging, battery-not-low, or storage-not-low. Observe work with `WorkInfo` through LiveData or Flow, and configure retry/backoff in the Worker for transient failures. Do not promise exact timing to product stakeholders.
 
 ---
 
@@ -451,6 +495,56 @@ Key concepts:
 
 ---
 
+## Can `onDestroy()` be called without `onPause()` and `onStop()`?
+
+Yes. If an Activity calls `finish()` during `onCreate()`, it may be destroyed without becoming visible, so `onPause()` and `onStop()` are not necessarily called. Code must not assume every lifecycle callback pair occurs for an Activity that never reaches the started or resumed state.
+
+---
+
+## What is an Intent?
+
+An Intent is a message describing an action for another Android component. It can carry data in extras and, for implicit intents, data such as a URI or MIME type.
+
+- **Explicit intent:** Names the target component, commonly for navigation inside the application.
+- **Implicit intent:** Describes an action and lets Android resolve a capable component through intent filters.
+
+```kotlin
+val explicit = Intent(this, SecondActivity::class.java)
+startActivity(explicit)
+
+val browser = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"))
+startActivity(browser)
+```
+
+Validate external intent data and use explicit intents for sensitive internal flows. Deep links should also validate authentication and authorization before displaying protected content.
+
+---
+
+## Explain the Android application and Activity lifecycles.
+
+- `Application.onCreate()` runs once when the process is created and is appropriate for lightweight, process-wide initialization.
+- `onTerminate()` is not a reliable production-device callback. 
+- `onTrimMemory()` communicates memory pressure and is the useful callback for releasing caches or other reclaimable resources.
+
+- An Activity commonly moves through:
+
+```text
+onCreate -> onStart -> onResume -> onPause -> onStop -> onDestroy
+```
+
+- Use `onCreate()` for initial setup, `onStart()`/`onStop()` for visibility, and `onResume()`/`onPause()` for foreground interaction. 
+- Configuration changes recreate the Activity, while process death can remove both the Activity and its ViewModel.
+- Use ViewModel for screen state and saved state mechanisms for small restorable UI state.
+
+---
+
+## What are intent filters?
+
+- Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
+- Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
+
+---
+
 ## Fragment lifecycle
 - A Fragment has its own lifecycle.
 - The Fragment view can be destroyed while the Fragment instance remains.
@@ -474,19 +568,33 @@ override fun onDestroyView() {
 ---
 
 ## What are the building blocks of an Android app?
-- Activity
-- Fragment
-- Service
-- BroadcastReceiver
-- ContentProvider
-- Views and layouts
-- AndroidManifest.xml
 
-Choose the component whose lifecycle matches the work. Avoid running long-lived work from an Activity unnecessarily.
+- **Activity:** A screen-level entry point for user interaction and lifecycle management.
+- **Fragment:** A reusable UI and lifecycle component hosted by an Activity or another Fragment.
+- **Service:** A component for work that should continue without a visible UI. Modern apps should prefer WorkManager for deferrable, guaranteed work and foreground services only when user-visible ongoing work is required.
+- **BroadcastReceiver:** A short-lived handler for system or application broadcasts.
+- **ContentProvider:** A controlled, URI-based data-sharing boundary between applications.
+- **Views and layouts:** The traditional UI hierarchy, created in XML or code. Compose provides a declarative alternative using composables and layout primitives.
+- **AndroidManifest.xml:** Declares components, capabilities, permissions, intent filters and application metadata.
+
+---
+
+## What are Loaders in Android?
+
+- Loaders were lifecycle-aware APIs introduced in API 11 for asynchronous data loading, commonly with `CursorAdapter` and `LoaderManager`. They could reconnect after configuration changes and avoid repeated queries.
+- They are legacy APIs today; use Room with `Flow`, ViewModel, and lifecycle-aware collection for new code. 
+- The underlying principle remains valid: database or provider work must not block the main thread and collection should follow the UI lifecycle.
 
 ---
 
 ## How would you approach a moderately complex feature from requirements to production?
+- Clarify expected behavior.
+- Identify edge cases.
+- Write acceptance criteria.
+- Create a spike for technical uncertainty.
+- Document assumptions.
+- Avoid starting implementation based on ambiguous requirements.
+
 ```text
 Requirements
  ↓
@@ -510,6 +618,24 @@ Monitoring
  ↓
 Post-release review
 ```
+
+---
+
+## What are Activity launch modes?
+
+- **standard:** Creates a new instance for every launch.
+- **singleTop:** Reuses the instance only when it is already at the top and delivers the Intent through `onNewIntent()`.
+- **singleTask:** Reuses an existing instance in the task, removes the activities above it, and calls `onNewIntent()`.
+- **singleInstance:** Places the Activity in its own task, isolating it from other Activities.
+
+Choose launch modes deliberately. For most navigation, standard behavior plus an explicit back-stack policy is easier to reason about. Notification and deep-link flows often use flags such as `FLAG_ACTIVITY_CLEAR_TOP` or a suitable navigation graph policy instead of broadly applying `singleTask`.
+
+---
+
+## What is ConstraintLayout?
+
+- ConstraintLayout positions views through relationships to the parent or other views. 
+- Chains support distribution, guidelines support alignment, and barriers respond to dynamic content. It can reduce deeply nested hierarchies, but it is not automatically faster than every alternative; measure layout cost and choose the simplest hierarchy that expresses the UI.
 
 ---
 
@@ -560,6 +686,38 @@ Pinned cert/public key check
  ↓
 Server
 ```
+
+---
+
+## Design a banking transaction screen
+
+Discuss:
+
+```text
+UI
+ ↓
+ViewModel
+ ↓
+UseCase
+ ↓
+Repository
+ ↓
+API
+```
+
+Then add:
+
+- Authentication.
+- Secure token handling.
+- Idempotency key.
+- Local state.
+- Loading/error/retry.
+- Duplicate submission protection.
+- Auditability.
+- Server-authoritative transaction result.
+- Analytics/monitoring without sensitive data.
+- Feature flags.
+- Rollout and rollback.
 
 ---
 
@@ -634,6 +792,62 @@ buildTypes {
 
 ---
 
+## What is Gradle?
+- Gradle is the Android build system.
+- It manages project configuration, dependencies, and packaging.
+- Project-level config applies broadly; module-level config is specific to a module.
+
+---
+
+## What is the difference between Project-level and Module-level build.gradle?
+
+#### **Project-level build.gradle** 
+- Applies to the entire project.
+- Gradle version
+- Repositories
+- Classpath for plugins
+
+#### **Module-level build.gradle** 
+- Specific to each app/module.
+- Dependencies (`implementation`, `api`, etc.)
+- Build types (`debug`/`release`)
+- Product flavors
+- Android SDK version
+
+---
+
+## What are build variants and product flavors?
+- Build variants combine build type and flavor.
+- Example: `freeDebug` or `paidRelease`.
+- Build types usually cover debug vs release behavior.
+
+---
+
+## How would you improve build time?
+- Use Gradle build cache.
+- Reduce unnecessary annotation processing.
+- Keep module boundaries coherent.
+- Use appropriate plugins and caching.
+- Parallelize independent jobs.
+- Run targeted tests locally and comprehensive checks in CI.
+
+---
+
+## What is a release strategy?
+- Feature flags.
+- Staged/phased rollout.
+- Internal/beta testing.
+- Monitoring.
+- Rollback/disable mechanisms.
+- Crash-free sessions/users.
+- ANR rate.
+- startup performance.
+- defect escape rate.
+
+---
+
+---
+
 ## How can you prevent reverse engineering of your APK?
 - Use ProGuard or R8.
 - Remove unused code and classes.
@@ -678,6 +892,26 @@ window.setFlags(
 
 ---
 
+## How can you securely store sensitive data in an Android app?
+You should never store sensitive data (like passwords or tokens) in plain text. Instead:
+
+- Use EncryptedSharedPreferences for small data like tokens.
+- Use Android Keystore to store cryptographic keys securely.
+- Avoid storing sensitive info in internal or external storage.
+
+---
+
+## What are common security risks in Android apps?
+Some common risks:
+
+- Storing data in plain text.
+- Using HTTP instead of HTTPS.
+- Hardcoding API keys in code.
+- Not validating inputs (leading to injection attacks).
+- Using outdated libraries with vulnerabilities.
+
+---
+
 # Jetpack Compose
 
 ## What is Jetpack Compose?
@@ -706,6 +940,102 @@ fun Greeting(name: String) {
 
 ---
 
+## How does Compose recomposition work?
+
+- Compose executes composables during **composition** and records state reads.
+- When observed state changes, affected scopes are invalidated.
+- Compose schedules recomposition for those scopes.
+- It may skip composables whose inputs are stable and unchanged.
+- Recomposition does **not** mean the entire screen is redrawn.
+
+```text
+State change
+    ↓
+Snapshot/state observation
+    ↓
+Affected scope invalidated
+    ↓
+Recomposition
+    ↓
+Parameter/stability checks
+    ↓
+Unchanged stable subtrees may be skipped
+```
+
+---
+
+## What causes recomposition?
+
+- A composable reads Compose state and that state changes.
+- A parent recomposes and passes changed parameters.
+- A state holder emits a new value observed by the composable.
+- Unstable/changed parameters can prevent skipping.
+- Incorrect state placement can cause a much larger subtree to recompose than necessary.
+
+---
+
+## What is the difference between recomposition, layout and drawing?
+
+```text
+Composition -> What UI exists
+Layout       -> Where/how large UI is
+Drawing      -> How pixels are drawn
+```
+
+- Recomposition can lead to layout/draw, but they are separate phases.
+- Optimizing composition does not automatically solve every layout or rendering problem.
+
+---
+
+## Why is `LazyColumn` key important?
+
+- A key provides stable identity for each item.
+- Compose can preserve item-specific composition and state when items are inserted, removed or reordered.
+- It is especially important when rows contain remembered state, animations, text input or expanded/collapsed state.
+
+```kotlin
+LazyColumn {
+    items(
+        users,
+        key = { it.id }
+    ) { user ->
+        UserRow(user)
+    }
+}
+```
+
+---
+
+## `remember` vs `rememberSaveable`
+
+- `remember` survives recomposition while the composition remains alive.
+- `rememberSaveable` uses saved-state mechanisms to restore supported values after recreation.
+- Business/domain state should generally belong in a ViewModel or other state holder.
+
+```kotlin
+var query by remember { mutableStateOf("") }
+
+var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+```
+
+---
+
+## Why did you create a separate Fragment for Compose?
+
+Strong answer:
+
+
+Be ready to discuss:
+- ComposeView inside an existing Fragment
+- Fragment hosting a Compose screen
+- Full Compose navigation
+- Migration strategy
+- Lifecycle ownership
+- Back navigation
+- ViewBinding/XML coexistence
+
+---
+
 ## What is `remember` and `rememberSaveable`?
 - `remember` retains state across recompositions.
 - `rememberSaveable` retains state across configuration changes using a `Bundle`.
@@ -725,15 +1055,73 @@ Text(
 
 ---
 
-## What is a `Scaffold` in Jetpack Compose?
-- `Scaffold` provides a standard material layout structure.
-- It includes top bars, bottom bars, floating action buttons, and snackbars.
+## What is the XML/View equivalent of `LaunchedEffect`?
+
+- There is no exact one-to-one equivalent.
+- `LaunchedEffect` starts a coroutine tied to Compose composition and restarts it when its keys change.
+- In View-based UI, use lifecycle-aware APIs according to the requirement:
+  - `lifecycleScope`
+  - `viewLifecycleOwner.lifecycleScope`
+  - `repeatOnLifecycle`
+  - `viewModelScope` for business work
+
+``` kotlin
+LaunchedEffect(userId) {
+    viewModel.loadUser(userId)
+}
+```
+
+```kotlin
+viewLifecycleOwner.lifecycleScope.launch {
+    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.uiState.collect { state ->
+            render(state)
+        }
+    }
+}
+```
 
 ---
 
-## What is `SideEffect` in Jetpack Compose?
-- `SideEffect` is for side effects that occur during recomposition.
-- It is useful for analytics, logging, or external state updates that must happen when the composition runs.
+## What is a Scaffold in Jetpack Compose?
+Scaffold is a layout component that provides basic structure like:
+- TopBar
+- BottomBar
+- FloatingActionButton
+- Drawer
+- SnackbarHost
+
+*Example:*
+```kotlin
+Scaffold(
+    topBar = { TopAppBar(title = { Text("Home") }) },
+    floatingActionButton = { FloatingActionButton(onClick = {}) { Text("+") } }
+) {
+    // Content
+}
+```
+Useful for material design layouts.
+
+---
+
+## What is a Scaffold in Jetpack Compose?
+Scaffold is a layout component that provides basic structure like:
+- TopBar
+- BottomBar
+- FloatingActionButton
+- Drawer
+- SnackbarHost
+
+*Example:*
+```kotlin
+Scaffold(
+    topBar = { TopAppBar(title = { Text("Home") }) },
+    floatingActionButton = { FloatingActionButton(onClick = {}) { Text("+") } }
+) {
+    // Content
+}
+```
+Useful for material design layouts.
 
 ---
 
@@ -877,13 +1265,28 @@ LaunchedEffect(listState) {
 }
 ```
 
-## What is `SideEffect`?
-
+## What is SideEffect in Jetpack Compose?
 - Publishes Compose state to non-Compose code after successful composition.
+- Compose functions are pure by default, meaning they should not change anything outside themselves.
+- SideEffect lets you perform actions that interact with external systems safely during recomposition.
+
+#### Why It’s Needed
+- Compose functions can recompose multiple times, so directly performing side-effects (like updating a variable, logging, or showing a toast) can cause bugs or repeated actions.
+- SideEffect APIs provide a safe way to run external operations exactly when Compose recomposes.
+
+#### Common Examples of SideEffects
+- Updating a state in ViewModel
+- Showing a Toast message
+- Logging events
+- Triggering analytics events
+
+---
 
 ## What is `produceState`?
 
 - Bridges external asynchronous/callback-style data into Compose `State`.
+
+---
 
 ## What is Compose stability?
 
@@ -973,6 +1376,14 @@ composeTestRule
 
 ---
 
+## Unit vs instrumentation vs UI tests
+
+- `Unit` - Fast, JVM-based, business logic/ViewModel/use case. It runs on the JVM and are fast because they don't require a device/emulator.
+- `Instrumentation` - Runs on Android environment and is useful for framework/integration behavior.
+- `UI` - Verifies actual user interaction and UI behavior.
+
+---
+
 ## What is the Android test pyramid?
 - Many unit tests
 - Fewer integration tests
@@ -988,13 +1399,13 @@ Unit tests
 
 ---
 
-## Which libraries are commonly used?
-- JUnit
-- MockK or Mockito
-- Truth, AssertJ, or Hamcrest
-- Robolectric for JVM Android tests
-- Turbine for Flow testing
-- `runTest` for coroutine timing
+## Which tools/libraries are used for Unit Testing in Android?
+- **JUnit** – Base library for writing tests.
+- **Mockito / MockK** – For mocking dependencies.
+- **Truth / AssertJ / Hamcrest** – Assertion libraries.
+- **Robolectric** – Allows you to run Android SDK code in JVM unit tests.
+- **Turbine** – For testing Kotlin Flow.
+- **Kotlin Test DSL** – For idiomatic Kotlin test writing.
 
 ---
 
@@ -1080,8 +1491,13 @@ Use BLE when low power and small payloads matter more than throughput.
 # Performance and Reliability
 
 ## What is a memory leak?
-- A memory leak occurs when an object remains reachable even though it is no longer needed.
-- Common Android causes include lifecycle misuse, singleton references, leaked views, and unbounded caches.
+- Singleton holding Activity/Context.
+- Fragment retaining binding after `onDestroyView`.
+- Long-lived listener/callback.
+- Handler/Runnable retaining an object.
+- Coroutine running beyond the required lifecycle.
+- Static references.
+- Incorrect lifecycle ownership.
 
 ```text
 Singleton
@@ -1090,6 +1506,16 @@ Activity
    ↓
 Activity cannot be collected
 ```
+
+---
+
+## How do you detect leaks?
+
+- LeakCanary.
+- Android Studio Memory Profiler.
+- Heap dumps.
+- Allocation tracking.
+- Reproduce navigation cycles and inspect retained objects.
 
 ---
 
@@ -1314,39 +1740,6 @@ Monitor + rollback if needed
 
 ---
 
-## What is Gradle?
-- Gradle is the Android build system.
-- It manages project configuration, dependencies, and packaging.
-- Project-level config applies broadly; module-level config is specific to a module.
-
----
-
-## What are build variants and product flavors?
-- Build variants combine build type and flavor.
-- Example: `freeDebug` or `paidRelease`.
-- Build types usually cover debug vs release behavior.
-
----
-
-## How would you improve build time?
-- Use Gradle build cache.
-- Reduce unnecessary annotation processing.
-- Keep module boundaries coherent.
-- Use appropriate plugins and caching.
-- Parallelize independent jobs.
-- Run targeted tests locally and comprehensive checks in CI.
-
----
-
-## What is a release strategy?
-- Use feature flags.
-- Stage rollout gradually.
-- Validate with internal and beta testing.
-- Monitor crash-free sessions, ANR rate, startup performance, and business metrics.
-- Keep rollback paths ready.
-
----
-
 ## Git-related questions to be ready for
 - How do you handle merge conflicts?
 - What is the difference between merge and rebase?
@@ -1429,6 +1822,19 @@ The key is to validate against real source and actual behavior rather than trust
     7. Hidden edge cases
 - The developer remains responsible for the final code.
 
+--- 
+
+## How do you prevent hallucinated tests?
+
+- Search actual source code.
+- Reuse existing project conventions.
+- Inspect actual Composable names and semantics.
+- Generate only against available APIs.
+- Compile generated code.
+- Execute tests.
+- Validate failures.
+- Require human review for sensitive/high-risk changes.
+
 ---
 
 # Behavioral / Leadership / Scenario Based Questions
@@ -1451,6 +1857,73 @@ The key is to validate against real source and actual behavior rather than trust
 - Keep the UI state accurate.
 - Log safe diagnostic information.
 - Consider transactional persistence for related writes.
+
+---
+
+## How do you handle disagreement with Product?
+
+Use:
+
+```text
+Understand goal
+ ↓
+Present engineering impact
+ ↓
+Quantify risk
+ ↓
+Offer alternatives
+ ↓
+Agree on decision
+ ↓
+Document it
+```
+
+Do not make it personal.
+
+---
+
+## How do you mentor junior developers?
+
+- Give context, not only instructions.
+- Start with small ownership.
+- Review code with explanations.
+- Encourage design discussions.
+- Pair on difficult problems.
+- Define measurable growth goals.
+- Gradually increase responsibility.
+
+---
+
+## How do you measure whether mentoring worked?
+
+- Increased independent ownership.
+- Better PR quality.
+- Reduced repeated defects.
+- Faster delivery of appropriately scoped work.
+- Engineer can explain design decisions independently.
+
+---
+
+## How do you handle a disagreement with another senior engineer?
+
+- Understand their reasoning first.
+- Compare against requirements/data.
+- Prototype or benchmark if uncertain.
+- Focus on trade-offs rather than authority.
+- Escalate only when necessary.
+- Commit to the final team decision.
+
+---
+
+## How do you handle a PR from a junior engineer with problems?
+
+- Do not rewrite everything yourself.
+- Explain the reasoning.
+- Identify high-risk issues clearly.
+- Separate blocking issues from suggestions.
+- Pair when useful.
+- Encourage the engineer to make the change.
+- Follow up to ensure learning.
 
 ---
 
@@ -1510,6 +1983,19 @@ Key concerns:
 
 ---
 
+## How would you prevent double payment?
+
+- Disable duplicate UI submission.
+- Generate a client/request idempotency key.
+- Send it with the request.
+- Server guarantees idempotent processing.
+- Persist pending transaction state when necessary.
+- Reconcile status rather than blindly retrying an unknown result.
+
+**Important:** UI-level disabling alone is not enough.
+
+---
+
 ## What is your approach when supporting multiple Android OS versions?
 - Use supported APIs according to min/target SDK.
 - Guard newer APIs with version checks when required.
@@ -1522,6 +2008,22 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.X) {
     // New API
 }
 ```
+
+---
+
+## How do you resolve conflicts?
+
+Possible approaches:
+
+- Server version/revision.
+- Optimistic concurrency.
+- Last-write-wins where acceptable.
+- Server-wins/client-wins where business rules permit.
+- Field-level merge.
+- Domain-specific conflict rules.
+- User-visible conflict resolution.
+
+For financial/business-critical operations, the server should remain authoritative and mutation APIs should be designed for idempotency and concurrency control.
 
 ---
 
@@ -1547,6 +2049,48 @@ Monitor release
 
 ---
 
+## How do you handle common Android scenarios?
+
+### Two API calls must complete before updating the UI
+
+Use structured concurrency and `async` only when the calls are independent and parallelism reduces latency:
+
+```kotlin
+viewModelScope.launch {
+    runCatching {
+        coroutineScope {
+            val user = async { api.getUser() }
+            val posts = async { api.getPosts() }
+            user.await() to posts.await()
+        }
+    }.onSuccess { (user, posts) ->
+        _uiState.value = UiState.Success(user, posts)
+    }.onFailure { error ->
+        _uiState.value = UiState.Error(error)
+    }
+}
+```
+
+Use `supervisorScope` only when the results are independent and one failure should not cancel the other operation.
+
+### Room and network data are both required
+
+Expose Room as the observable source of truth, render cached data immediately, and synchronize from the network when data is stale or missing. Save successful network results transactionally. Represent freshness, sync status and errors explicitly so offline data is not confused with fresh data.
+
+### The user opens the app offline
+
+Render the last valid Room snapshot, expose an offline indicator, and allow retry when connectivity returns. Do not block the UI waiting for a network timeout. WorkManager can reconcile queued mutations later, with idempotency and conflict handling for business-critical data.
+
+### Who handles click events in MVVM?
+
+The UI owns the event wiring and calls a ViewModel intent such as `onLoginClicked()`. The ViewModel validates input and coordinates business work; it emits state or one-time events for the UI to render. This keeps Activities and composables thin and makes behavior testable.
+
+### How do you preserve a Compose list's scroll position?
+
+Use `rememberLazyListState()` and pass the state to `LazyColumn`. Use stable item keys so insertion, removal and reordering do not attach remembered row state to the wrong item. For navigation or process recreation, place the required state in an appropriate saved-state or navigation owner rather than assuming `remember` survives everything.
+
+---
+
 ## Scenario: Crash spike due to lifecycle issues
 You are working on a modular app with multiple teams contributing. After a recent release:
 
@@ -1557,6 +2101,7 @@ You are working on a modular app with multiple teams contributing. After a recen
 
 How would you debug and fix this?
 
+> I would approach this as a lifecycle misalignment problem between UI components and async operations.
 
 ### Root cause identification
 Typical issue:
@@ -1578,6 +2123,7 @@ Typical issue:
 ## Scenario: Deep link handling breaking navigation
 E-commerce app. Users report deep links open the wrong screen, the app crashes when opened via link, and back navigation behaves incorrectly. The app uses the Navigation Component and multiple entry points. How would you fix?
 
+> Treat this as a navigation state reconstruction problem.
 
 ### Understand the three deep link entry scenarios
 - Cold start
@@ -1595,6 +2141,7 @@ E-commerce app. Users report deep links open the wrong screen, the app crashes w
 ## Scenario: API instability and token refresh issues
 You are on a fintech app with millions of daily transactions. Users report random API failures, some requests succeed on retry, and occasional logouts. Monitoring shows HTTP 401 and 500 spikes, duplicate API calls, and token refresh logic recently changed. How would you design and fix this?
 
+> Treat this as a network reliability and consistency problem, not a simple retry fix.
 
 ### Key fixes
 - Separate client-side, auth, and server-side failure categories.
@@ -1610,6 +2157,7 @@ You are on a fintech app with millions of daily transactions. Users report rando
 ## Scenario: Slow build time in a multi-module project
 Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local build ~10-12 minutes. Small changes trigger full rebuilds. How would you optimize?
 
+> Treat this as a build system scalability problem, not just a hardware issue.
 
 ### Root causes
 - Poor module boundaries
@@ -1630,6 +2178,7 @@ Large Android codebase: 50+ modules, multiple teams, CI build ~25 minutes, local
 ## Scenario: Memory leak causing gradual slowdown
 You are working on a large social media app. Users report the app becomes slow after 15-20 minutes and eventually is OOM-killed. Monitoring shows memory grows continuously. How would you investigate and fix end-to-end?
 
+> Treat this as a progressive memory leak, not an immediate crash.
 
 ### Confirm leak vs expected growth
 - Memory grows linearly without release → leak
@@ -1654,6 +2203,7 @@ You are working on a large social media app. Users report the app becomes slow a
 ## Scenario: Battery drain due to background work
 You are working on a fitness tracking app. Users report significant battery drain. The app uses location tracking, background sync, and periodic API polling. How would you diagnose and fix?
 
+> Treat this as a resource efficiency and background execution problem, not a single bug.
 
 ### Measure before changing anything
 - Battery Historian
@@ -1677,13 +2227,12 @@ You are working on a fitness tracking app. Users report significant battery drai
 ## Scenario: Large list causing OOM
 Users report crashes when scrolling large product lists. Observations: the entire dataset loads at once, images are high-resolution, and there is no pagination. How would you fix?
 
+> Treat this as a memory management and data loading strategy problem.
 
 ### Root causes
 - Entire dataset in memory
 - High-resolution images decoded at original size
 - No lazy loading
-
-
 
 
 ### Fix strategy
@@ -1701,6 +2250,31 @@ Users report crashes when scrolling large product lists. Observations: the entir
 - Queue user mutations in an outbox.
 - Synchronize when online.
 - Handle conflict resolution explicitly and keep idempotency on retries.
+
+---
+
+## What is Room, and how should it be used?
+
+Room is an abstraction over SQLite that provides entities, DAOs, compile-time query verification, migrations, and observable queries through `Flow`. A production repository commonly treats Room as the source of truth for displayed offline-capable data and synchronizes it with the network.
+
+```kotlin
+@Entity
+data class User(
+    @PrimaryKey val id: Int,
+    val name: String
+)
+
+@Dao
+interface UserDao {
+    @Query("SELECT * FROM User ORDER BY name")
+    fun observeUsers(): Flow<List<User>>
+
+    @Query("UPDATE User SET name = :name WHERE id = :id")
+    suspend fun updateName(id: Int, name: String)
+}
+```
+
+Use a custom `@Query` for a partial update instead of replacing the full entity with `@Update`. `@Embedded` can flatten a value object into an entity, but define column names carefully to avoid collisions. Test migrations and keep database work off the main thread.
 
 ---
 

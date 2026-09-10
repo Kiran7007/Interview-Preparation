@@ -1,5 +1,17 @@
 # Kotlin Fundamentals
 
+## What are the main features of Kotlin?
+- **Concise:** Less boilerplate than Java
+- **Null Safety:** Built-in null checks
+- **Extension Functions:** Add functions to existing classes
+- **Coroutines:** Lightweight concurrency
+- **Smart Casts:** No need for explicit casting after type check
+- **Data Classes:** Auto-generate `equals()`, `hashCode()`, `toString()`, etc.
+- **Default & Named Arguments**
+- **Higher-order functions & Lambdas**
+
+---
+
 ## What is the difference between `==` and `===` in Kotlin?
 
 -   `==` checks structural equality using `equals()`.
@@ -14,6 +26,163 @@ println(a === b)  // false
 ```
 
 Use `==` when comparing values.
+
+---
+
+## What is the difference between val, var, and const in Kotlin?
+In Kotlin, `val` and `var` are used to declare variables, but they behave differently:
+
+1. **var (Variable)**
+   - A mutable variable.
+   - You can change its value after it's assigned.
+   - Stored in memory at runtime.
+
+2. **val (Value)**
+   - An immutable variable (like `final` in Java).
+   - You can assign only once.
+   - Value is also stored at runtime, but can’t be reassigned.
+
+3. **const val (Constant)**
+   - A compile-time constant.
+   - Can only be used with top-level properties or inside objects or companion objects.
+   - Must be of a primitive type or String, and value must be known at compile time.
+
+```kotlin
+val name = "Kiran" // Cannot be changed later
+var age = 30 // Can be updated
+age = 31
+```
+
+---
+
+## What are null safety features in Kotlin?
+Kotlin eliminates `NullPointerException` (NPE) by making all types non-nullable by default.
+
+#### Types:
+- **Non-nullable:** `var name: String = "Kiran"` → cannot hold null
+- **Nullable:** `var name: String? = null` → can hold null
+
+#### Safe Operations:
+- **Safe call `?.`:** Skips execution if the object is null.
+- **Elvis `?:`:** Provide default value if null.
+- **Not-null Assertion `!!`:** Throws Null Pointer Exception if value is null.
+- **Safe Cast `as?`:** Returns null instead of throwing ClassCastException.
+
+---
+
+## What is a data class in Kotlin?
+A data class is a special class made specifically for storing data. It automatically gives you useful methods like:
+
+- `toString()` – so you can print the object easily
+- `equals()` and `hashCode()` – to compare objects or use in HashMap/Set
+- `copy()` – to create a new object with some properties changed
+- `componentN()` – to access values using destructuring (like `val (a, b) = obj`)
+
+*Syntax:*
+```kotlin
+data class User(val name: String, val age: Int)
+```
+
+---
+
+## What are Primary and Secondary Constructors in Kotlin?
+
+| Primary Constructor  | Secondary Constructor                                                    |
+| --- | --- |
+| The main constructor of a class.                           | Optional additional constructors for different ways to create an object. |
+| Defined in the class header.                               | Defined inside the class body using the `constructor` keyword.           |
+| Can directly initialize properties.                        | Used for alternative initialization scenarios.                           |
+| Pass data directly when creating an object.                | Can provide different ways to create an object.                          |
+| There can be only one primary constructor.                 | You can have multiple secondary constructors.                            |
+| Can include an `init` block for additional initialization. | Must delegate to the primary constructor using `: this(...)`.            |
+| Best suited for the main required parameters.              | Useful for alternative initialization.                                   |
+
+---
+
+## What is an inline function?
+
+- Compiler can substitute the function body at the call site.
+- Useful for higher-order functions to reduce lambda allocation/call overhead.
+- Can enable `reified` type parameters.
+- Excessive use can increase generated code size.
+
+---
+
+## What are `noinline` and `crossinline`?
+
+- `noinline`: prevents a function parameter from being inlined.
+- `crossinline`: prevents non-local returns from an inlined lambda.
+
+---
+
+## What is a reified generic?
+
+- Normally generic type information is erased at runtime.
+- `reified` preserves access to the type inside an inline function.
+
+```kotlin
+inline fun <reified T> Gson.fromJson(json: String): T {
+    return fromJson(json, T::class.java)
+}
+```
+
+---
+
+## What is delegation?
+
+```kotlin
+class Repository(
+    private val dataSource: DataSource
+) : DataSource by dataSource
+```
+
+- Delegates implementation to another object.
+- `by lazy` is also property delegation.
+
+## `lazy` vs `lateinit`
+
+- `lazy`: initializes on first access and supports immutable `val`.
+- `lateinit`: deferred initialization of a mutable non-null property, mainly reference types. Accessing an uninitialized `lateinit` property throws an exception.
+
+---
+
+## Sealed class vs sealed interface
+
+| Feature | Sealed Class | Sealed Interface |
+|---|---|---|
+| **Purpose** | Models a restricted class hierarchy | Models a restricted interface hierarchy |
+| **Inheritance** | A class can extend only one class | A class can implement multiple interfaces |
+| **State / Constructor** | Can have constructors and maintain state | Interfaces generally don't hold instance state or constructors |
+| **Multiple inheritance** | ❌ Cannot extend multiple classes | ✅ Can implement multiple interfaces |
+| **Use case** | Best when subtypes share common state or implementation | Best for modeling states, capabilities, or orthogonal hierarchies |
+| **Example** | `sealed class Result` | `sealed interface UiState` |
+
+---
+
+## What is variance?
+
+- `out` = producer/covariant.
+- `in` = consumer/contravariant.
+- `*` = star projection when exact type argument is unknown.
+
+---
+
+## Why is `List<String>` assignable to `List<Any>`?
+Kotlin's `List` is read-only and covariant: `List<out T>`.
+
+---
+
+## Scope functions
+
+| Function | Receiver | Returns | Typical use |
+|---|---|---|---|
+| `let` | `it` | lambda result | null transformation |
+| `run` | `this` | lambda result | configure + compute |
+| `with` | `this` | lambda result | group operations |
+| `apply` | `this` | receiver | object configuration |
+| `also` | `it` | receiver | side effect |
+
+Avoid chaining them excessively.
 
 ---
 
@@ -561,8 +730,6 @@ val count = AtomicInteger(0)
 
 count.incrementAndGet()
 ```
-
-
 
 ---
 
@@ -1700,11 +1867,57 @@ viewModelScope.launch {
 }
 ```
 
+---
+
+## `launch` vs `async`
+
+- `launch` -> `Job`.
+- `async` -> `Deferred<T>`.
+- Use `async` when a result is required and concurrent execution provides value.
+- Do not use `async` just because multiple calls exist.
+
+## What is cancellation?
+
+- Cancellation is cooperative.
+- Suspending functions normally check cancellation.
+- CPU-heavy loops should check `isActive` or call `ensureActive()`.
+
+```kotlin
+while (isActive) {
+    processNext()
+}
+```
+
+---
+
+## `withContext` vs `launch`
+- `withContext` switches context and returns a result while remaining sequential.
+- `launch` starts a new child coroutine and returns immediately with a `Job`.
+
+---
+
+## `Dispatchers.Main`, `IO`, `Default`
+- `Main`: UI work.
+- `IO`: blocking I/O.
+- `Default`: CPU-intensive work.
+- Do not mechanically move every function to `IO`; understand the workload.
+
+---
+
+## `SupervisorJob` vs `supervisorScope`
+- `SupervisorJob` is a Job implementation that gives supervisor-style child failure behavior.
+- `supervisorScope` creates a structured scope with supervisor semantics.
+
+---
+
+## Exception handling
+- `CoroutineExceptionHandler` is primarily for uncaught exceptions in root/launch-style coroutines.
+- For `async`, exceptions are normally observed through `await`.
+- Prefer local `try/catch` where the failure is expected and needs a business response.
 
 ---
 
 ## What is coroutine cancellation?
-
 -   Cancellation is cooperative.
 -   Suspending functions usually check cancellation automatically.
 -   CPU-heavy loops should check cancellation explicitly.
@@ -1721,7 +1934,6 @@ Avoid swallowing `CancellationException`.
 ---
 
 ## What is exception handling in coroutines?
-
 -   Use `try/catch` around operations where you can recover.
 -   `CoroutineExceptionHandler` is mainly for uncaught exceptions in
     root coroutines.
@@ -1759,7 +1971,6 @@ fun users(): Flow<List<User>> = flow {
 
 Each collector can trigger the upstream flow independently.
 
-
 ---
 
 ## What is a cold Flow?
@@ -1790,6 +2001,34 @@ val state: StateFlow<UiState>
 
 The producer can exist even when no UI is collecting.
 
+---
+
+## StateFlow vs SharedFlow
+
+| StateFlow | SharedFlow |
+|---|---|
+| Represents current state | Broadcasts events/data |
+| Requires initial value | Does not require one |
+| Always has latest value | Configurable replay |
+| Conflates updates | Configurable buffering/replay |
+
+Use for screen state:
+```kotlin
+data class UiState(
+    val loading: Boolean = false,
+    val data: List<Item> = emptyList(),
+    val error: String? = null
+)
+```
+
+Use for events:
+
+```kotlin
+sealed interface UiEvent {
+    data class ShowError(val message: String) : UiEvent
+    data object NavigateBack : UiEvent
+}
+```
 
 ---
 
@@ -1807,42 +2046,41 @@ For new coroutine-based applications, StateFlow is usually preferred.
 
 ## How do you convert a cold Flow to a hot Flow?
 
-Use `stateIn` or `shareIn`.
+- Converts a cold `Flow` into `StateFlow`.
 
-``` kotlin
-val users = repository.users()
+```kotlin
+val uiState = repository.observe()
     .stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5_000),
-        emptyList()
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = UiState()
     )
 ```
 
-`stateIn` creates StateFlow.
+- Converts a cold `Flow` into a `SharedFlow`.
 
-`shareIn` creates SharedFlow.
-
+```kotlin
+val events = repository.observeEvents()
+    .shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        replay = 1
+    )
+```
 
 ---
 
 ## How do you convert a hot Flow to a cold Flow?
 
-You normally cannot turn a hot stream into a truly equivalent cold
-stream without changing its semantics.
-
-If you need independent execution per collector, expose the underlying
-cold producer instead.
-
-For example:
+- You normally cannot turn a hot stream into a truly equivalent cold stream without changing its semantics.
+- If you need independent execution per collector, expose the underlying cold producer instead.
+- For example:
 
 ``` kotlin
 fun users(): Flow<List<User>> = flow {
     emit(repository.loadUsers())
 }
 ```
-
-A `StateFlow` itself remains hot.
-
 
 ---
 
@@ -2248,7 +2486,24 @@ api1 ──────> result1
 api2 ──────> result2
 ```
 
+---
 
+## `combine` vs `merge`
+
+- `combine`: emits using the latest value from each upstream.
+- `merge`: forwards emissions from multiple flows as they arrive.
+
+## `flatMapLatest`
+
+- Cancels the previous inner flow when a new upstream value arrives.
+- Excellent for search.
+
+```kotlin
+query
+    .debounce(300)
+    .distinctUntilChanged()
+    .flatMapLatest { repository.search(it) }
+```
 
 ---
 
@@ -3368,7 +3623,52 @@ lifecycleScope.launch {
     loadData()
 }
 ```
+---
 
+---
+
+## What are Kotlin coroutine builder functions?
+
+- Common coroutine builders/concurrency primitives include `launch`, `async`, `runBlocking`, `coroutineScope` and `supervisorScope`.
+- `launch` returns `Job` and is used when no result is required.
+- `async` returns `Deferred<T>` and is used when a result is required, especially for concurrent work.
+- `runBlocking` blocks the current thread and is mainly appropriate at synchronous boundaries or tests, not Android UI code.
+- `coroutineScope` creates a structured child scope where failure normally cancels siblings.
+- `supervisorScope` isolates child failures so one child failing does not automatically cancel siblings.
+
+```kotlin
+viewModelScope.launch {
+    val user = async { repository.getUser() }
+    val orders = async { repository.getOrders() }
+
+    val result = user.await() to orders.await()
+}
+```
+
+## What is structured concurrency?
+
+- Child coroutines have a clear parent and lifetime.
+- The parent owns the children.
+- Cancellation propagates predictably.
+- A parent normally does not complete while its children are still active.
+- It prevents work from escaping its lifecycle.
+
+```kotlin
+viewModelScope.launch {
+    coroutineScope {
+        launch { loadUser() }
+        launch { loadOrders() }
+    }
+}
+```
+
+## `coroutineScope` vs `supervisorScope`
+
+| `coroutineScope` | `supervisorScope` |
+|---|---|
+| Child failure normally cancels scope/siblings | Child failure does not automatically cancel siblings |
+| Good when operations are interdependent | Good when operations are independent |
+| Failure is propagated | Failures can be handled independently |
 
 ---
 
@@ -3947,8 +4247,6 @@ suspend fun readFile(): String {
 ```
 
 **Important interview point:**
-
-
 
 ---
 
