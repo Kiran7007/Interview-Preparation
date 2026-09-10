@@ -1,4 +1,4 @@
-# Flutter (Cross-platform) — Full Topic Coverage (Senior)
+# Flutter Fundamentals
 
 ---
 
