@@ -35,6 +35,35 @@
 
 ---
 
+## What is a Class and Object in Android?
+
+### Class
+
+- A class is like a blueprint or template for creating objects.
+- It defines properties (variables) and behaviors (functions/methods).
+- In Android (Kotlin/Java), you use classes to structure your app.
+- A class does not occupy memory by itself until an object is created.
+
+### Object
+
+- An object is a real instance of a class.
+- It occupies memory and can use the properties and methods defined in the class.
+- You can create multiple objects from the same class, each with different data.
+
+```java
+class User {
+    String name;
+
+    User(String name) {
+        this.name = name;
+    }
+}
+
+User user = new User("Asha");
+```
+
+---
+
 ## What is an object?
 
 - An object is a runtime instance with identity, state, and behavior defined by its class.

@@ -1,6 +1,20 @@
 ---
 # Android Architecture
 
+## What is Android Architecture?
+
+- It defines a way to structure code into layers.
+- It helps separate UI, data, and business logic.
+- It makes the code easier to maintain, test, and scale.
+
+```kotlin
+class UserViewModel(
+    private val repository: UserRepository
+) : ViewModel()
+```
+
+---
+
 ## What is Clean Architecture?
 - Clean Architecture separates responsibilities into layers.
 - It improves testability, maintainability, and changeability.
@@ -94,6 +108,25 @@ A dependency used only by one ViewModel should not become global by default.
 
 ---
 
+## How does Dagger Hilt facilitate the application of the Dependency Inversion Principle in Android?
+
+- Dagger Hilt automatically injects dependencies instead of manually creating them.
+- It allows classes such as ViewModels to depend on interfaces instead of concrete classes.
+- Define a `UserRepository` interface, bind `UserRepositoryImpl` using `@Binds` in a module, and let Hilt provide the implementation wherever it is needed.
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+    @Binds
+    abstract fun bindUserRepository(
+        implementation: UserRepositoryImpl
+    ): UserRepository
+}
+```
+
+---
+
 ## Difference between MVC, MVP, MVVM, and MVI?
 | Pattern | Core idea | Android fit |
 |---|---|---|
@@ -181,6 +214,98 @@ interface UserDao {
 Use a custom `@Query` for a partial update instead of replacing the full entity with `@Update`. `@Embedded` can flatten a value object into an entity, but define column names carefully to avoid collisions. Test migrations and keep database work off the main thread.
 
 ---
+
+## How to update only specific fields in Room?
+
+You can write a custom `@Query` to update only one or two fields. Avoid using `@Update` if a partial update is needed.
+
+```kotlin
+@Query("UPDATE user SET name = :name WHERE id = :id")
+suspend fun updateName(id: Int, name: String)
+```
+
+---
+
+## Explain SOLID Principles in Android with examples
+
+- SOLID is a set of five design principles that help in writing clean, scalable, and easy-to-maintain code.
+- Each letter in SOLID stands for one principle:
+  1. S - Single Responsibility
+  2. O - Open/Closed
+  3. L - Liskov Substitution
+  4. I - Interface Segregation
+  5. D - Dependency Inversion
+
+Let’s understand them one by one.
+
+### S - Single Responsibility Principle (SRP)
+
+- A class should have only one reason to change, meaning it should do only one job.
+- Example in Android:
+  - Do not mix UI logic and data logic inside an Activity.
+  - Use Activity for UI and ViewModel for business logic.
+  - Use Repository for data handling such as API or database work.
+- This makes code cleaner and easier to test or modify.
+
+### O - Open/Closed Principle (OCP)
+
+- A class should be open for extension but closed for modification.
+- You should add new features without changing existing code.
+- Example in Android:
+  - Suppose you have a PaymentProcessor class.
+  - Instead of editing it for every new payment method such as UPI, Card, or Wallet, create new classes such as CardPayment and UPIPayment that implement a PaymentInterface.
+- This keeps the original class safe from future changes.
+
+### L - Liskov Substitution Principle (LSP)
+
+- Subclasses should be usable in place of their parent class without breaking the app.
+- Example:
+  - If you have a Bird class with a `fly()` method, any subclass such as Sparrow or Eagle should also support flying.
+  - If a Penguin cannot fly, it should not extend that Bird class.
+- In Android, this means subclasses should behave consistently with their base classes.
+
+### I - Interface Segregation Principle (ISP)
+
+- Do not create large, all-in-one interfaces.
+- Instead, create smaller, specific interfaces that serve one purpose.
+- Example in Android:
+  - Split one large UserActions interface with login, logout, and uploadPhoto methods into smaller interfaces such as AuthActions, ProfileActions, and MediaActions.
+- This keeps code flexible because classes only implement what they need.
+
+### D - Dependency Inversion Principle (DIP)
+
+- High-level modules such as ViewModel should not depend on low-level modules such as RepositoryImpl.
+- Both should depend on an abstraction such as an interface.
+- Example in Android:
+  - Create a UserRepository interface.
+  - Have multiple implementations such as RemoteUserRepo and LocalUserRepo.
+  - Inject it using Dagger/Hilt or manual dependency injection.
+- This makes it easy to swap implementations, for example, in testing.
+
+### Real Example
+
+For a User Profile screen:
+
+- SRP: Separate classes for UI (Activity), business logic (ViewModel), and data (Repository).
+- OCP: Add a new API provider without changing existing data layer code.
+- LSP: Replace LocalUserRepository with RemoteUserRepository safely.
+- ISP: Create small interfaces for login, logout, and profile operations separately.
+- DIP: ViewModel depends on the UserRepository interface, not a concrete class.
+
+```kotlin
+interface PaymentMethod {
+    fun pay()
+}
+
+class PaymentProcessor(
+    private val method: PaymentMethod
+) {
+    fun process() = method.pay()
+}
+```
+
+---
+
 ## What is a database transaction?
 - A transaction ensures multiple writes succeed or fail together.
 - It preserves consistency when related local records must move as a unit.
@@ -360,6 +485,26 @@ Validate external intent data and use explicit intents for sensitive internal fl
 
 - Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
 - Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
+
+---
+
+## What is a BroadcastReceiver in Android?
+
+- A BroadcastReceiver is a component in Android that listens for system-wide or app-specific broadcast messages called Intents.
+- It helps the app respond to events even if the app is not currently open.
+- It can listen for events such as charging, low battery, connectivity changes, and device boot completion.
+- You can also create and send custom broadcasts within your own app.
+- It does not show UI, but it can start work, show a notification, or launch an Activity when appropriate.
+
+```kotlin
+class BatteryReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == Intent.ACTION_BATTERY_LOW) {
+            Log.d("BatteryReceiver", "Battery is low")
+        }
+    }
+}
+```
 
 ---
 
@@ -867,6 +1012,30 @@ buildTypes {
 - Avoid storing secrets or logic in the app.
 - Sign with a release keystore.
 - Monitor unauthorized APKs via Play Console.
+
+---
+
+## What is the use of ProGuard/R8 in Android?
+
+ProGuard, now replaced by R8, is a tool that:
+
+- Minifies code by removing unused code.
+- Obfuscates names by changing class and method names.
+- Makes it harder for attackers to reverse engineer the app.
+
+```kotlin
+android {
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+}
+```
 
 ---
 
@@ -1413,6 +1582,33 @@ Unit tests
 
 ---
 
+## How do you test ViewModel in Android?
+
+- ViewModels are easy to test because they do not depend on the Android Framework.
+- You can write plain JUnit tests and verify outputs by observing LiveData or StateFlow.
+
+```kotlin
+class CounterViewModel : ViewModel() {
+    private val _count = MutableStateFlow(0)
+    val count: StateFlow<Int> = _count
+
+    fun increment() {
+        _count.value++
+    }
+}
+
+@Test
+fun increment_updatesCount() = runTest {
+    val viewModel = CounterViewModel()
+
+    viewModel.increment()
+
+    assertEquals(1, viewModel.count.value)
+}
+```
+
+---
+
 ## What is `runTest`?
 - It provides a coroutine test environment with virtual time.
 - It allows deterministic testing of delays and scheduling.
@@ -1755,6 +1951,15 @@ Monitor + rollback if needed
 - Consistent builds.
 - Reduced manual work.
 - Better collaboration across teams.
+
+---
+
+## Which tools are commonly used for CI/CD in Android?
+
+Some commonly used CI/CD tools are:
+
+- GitHub Actions - Integrated with GitHub, good for open-source and personal projects.
+- Bitrise - Android and iOS friendly, with no setup needed and a GUI-based workflow.
 
 ---
 
