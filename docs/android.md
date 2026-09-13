@@ -471,6 +471,36 @@ UI is rebuilt with retained state
 
 ---
 
+## What is `SavedStateHandle`?
+
+`SavedStateHandle` stores small pieces of screen state that should be restored after configuration changes and, where supported, process recreation. It is commonly provided to a ViewModel and is not a replacement for a database.
+
+```kotlin
+class AccountViewModel(
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
+    val accountId = savedStateHandle.getStateFlow("accountId", "")
+}
+```
+
+---
+
+## What is the ViewModel lifecycle?
+
+A ViewModel survives configuration changes such as rotation while the screen's owner is recreated. It is cleared when the owner is permanently removed, and its `viewModelScope` is cancelled. A ViewModel does not survive process death.
+
+```kotlin
+class AccountViewModel : ViewModel() {
+    val state = MutableStateFlow(AccountState())
+
+    override fun onCleared() {
+        super.onCleared()
+    }
+}
+```
+
+---
+
 ## What is the difference between Activity context and Application context?
 - Activity context is tied to an Activity lifecycle.
 - Application context lives as long as the process.
@@ -935,6 +965,18 @@ Constraints can require network availability, charging, battery-not-low, or stor
 
 ---
 
+## What is the difference between WorkManager and a Service?
+
+Use WorkManager for deferrable, guaranteed background work that can follow constraints such as network availability or charging. Use a Service for work that needs to run immediately or for an ongoing operation; a foreground service is appropriate when the user must be informed about that ongoing work. Do not use a Service when WorkManager is sufficient.
+
+```kotlin
+WorkManager.getInstance(context).enqueue(
+    OneTimeWorkRequestBuilder<SyncWorker>().build()
+)
+```
+
+---
+
 ## How do you handle one-time events such as navigation?
 - Keep durable state separate from transient events.
 - Use a `SharedFlow` or one-time event stream.
@@ -1180,6 +1222,20 @@ class PaymentRepository(
         api.pay(request)
     }
 }
+```
+
+## How do you handle a rooted device?
+
+A rooted device may allow local protections to be bypassed, so the client must be treated as untrusted. Keep authorization and transaction validation on the server, minimize sensitive data on the device, and use Play Integrity as an additional risk signal when the product's threat model requires it. It should not be the only security control.
+
+---
+
+## How do you handle sensitive logging?
+
+Never log tokens, passwords, account numbers, or unnecessary personal data. Log only the minimum safe diagnostic information needed to investigate an issue, and review logging in release builds.
+
+```kotlin
+Log.d("Payment", "Payment request started: id=$paymentId")
 ```
 
 ---
@@ -1625,6 +1681,25 @@ fun SearchBox(
 
 ---
 
+## Why should composables be stateless?
+
+Stateless composables receive their state and callbacks from the caller instead of owning the state internally. They are easier to test, reusable, predictable, and support state hoisting.
+
+```kotlin
+@Composable
+fun UserCard(
+    user: User,
+    onClick: () -> Unit
+) {
+    Text(
+        text = user.name,
+        modifier = Modifier.clickable(onClick = onClick)
+    )
+}
+```
+
+---
+
 ## What is `derivedStateOf`?
 
 -   It creates state derived from other state.
@@ -1954,6 +2029,26 @@ fun `search updates state`() = runTest {
 - Accessibility-sensitive behavior
 
 Do not put every business rule into UI tests. Keep most logic in fast unit tests.
+
+---
+
+## What should not be UI tested?
+
+Do not put every business rule or implementation detail into UI tests. Keep most business logic, ViewModel behavior, use cases, validators, and mappers in unit tests. Use UI tests for critical user journeys and user-visible behavior.
+
+---
+
+## How do you handle flaky tests?
+
+First identify whether the issue is timing, synchronization, environment, test isolation, or product behavior. Avoid arbitrary sleeps and use deterministic synchronization. Track flaky tests separately instead of repeatedly rerunning them until they pass.
+
+```kotlin
+runTest {
+    viewModel.load()
+    advanceUntilIdle()
+    assertEquals(expected, viewModel.uiState.value)
+}
+```
 
 ---
 
@@ -2305,6 +2400,50 @@ Gradual release
 
 ---
 
+## How do you investigate high CPU usage?
+
+First measure the issue with the CPU profiler and identify the hot code path. Then check for expensive loops, repeated parsing, unnecessary recomposition, excessive polling, or work running on the wrong dispatcher. Fix the bottleneck and validate the result with the same workload.
+
+```kotlin
+val result = withContext(Dispatchers.Default) {
+    records.sortedBy { it.timestamp }
+}
+```
+
+---
+
+## How do you reduce a large APK?
+
+Use APK Analyzer to find large files and remove unused resources or dependencies. Enable code and resource shrinking for release builds, and use appropriate ABI splits when the distribution strategy supports them.
+
+```kotlin
+buildTypes {
+    release {
+        isMinifyEnabled = true
+        isShrinkResources = true
+    }
+}
+```
+
+---
+
+## How do you investigate database performance?
+
+Inspect slow queries and database traces. Check indexes, avoid loading unnecessary columns or rows, use pagination for large data sets, keep database work off the main thread, and use transactions when multiple related writes must be atomic.
+
+```kotlin
+@Query("SELECT id, name FROM users ORDER BY name LIMIT :limit OFFSET :offset")
+suspend fun loadUsers(limit: Int, offset: Int): List<UserRow>
+```
+
+---
+
+## How do you handle a crash spike after release?
+
+First identify the affected version, devices, and crash cluster. Pause or reduce the rollout, disable the feature with a flag when possible, investigate the root cause, and release a validated fix or rollback. Continue monitoring after the mitigation.
+
+---
+
 ## Your app has become slow. How would you investigate?
 
 This question can mean different things, so I’d first clarify whether the issue is:
@@ -2403,6 +2542,12 @@ Monitor + rollback if needed
 
 ---
 
+## What should fail a PR?
+
+A PR should fail for compilation errors, unit-test failures, lint or static-analysis failures, security-scan failures, and important instrumentation-test failures. Coverage should support meaningful tests rather than being enforced as an arbitrary number.
+
+---
+
 ## Why is CI/CD important in Android development?
 - Faster feedback and shorter release cycles.
 - Earlier bug detection.
@@ -2457,6 +2602,12 @@ Merge
 
 ---
 
+## Where can AI help?
+
+AI can help with refactoring, unit-test generation, boilerplate, documentation, code explanation, migration assistance, and bug investigation. The generated result still needs human review and validation.
+
+---
+
 ## How do you validate AI-generated code?
 - Check correctness against requirements.
 - Verify compile and runtime behavior.
@@ -2505,6 +2656,12 @@ The key is to validate against real source and actual behavior rather than trust
 
 ---
 
+## AI generates code that stores a token in SharedPreferences. What do you do?
+
+I would not merge it directly. I would identify the security issue, replace it with an approved secure-storage approach, add tests, run static and security checks, and review whether the generated code introduced any other security concerns.
+
+---
+
 ## How do you prevent hallucinated tests?
 
 - Search actual source code.
@@ -2528,6 +2685,12 @@ The key is to validate against real source and actual behavior rather than trust
 - Align with the team.
 - Document important decisions.
 - Avoid making the discussion about who is technically right.
+
+---
+
+## How do you lead a moderately complex initiative?
+
+I would understand the requirements, identify technical risks, design the architecture, break the work into deliverables, align with stakeholders, implement the critical pieces, support code review and mentoring, test the result, release it safely, and monitor it in production.
 
 ---
 
@@ -2697,6 +2860,12 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.X) {
     // New API
 }
 ```
+
+---
+
+## Two requests update the same account data. How do you handle it?
+
+Use a single source of truth and coordinate updates through the repository. Depending on the requirement, use database transactions and optimistic or pessimistic concurrency. The server must enforce consistency, and the UI should not display stale state as the final result.
 
 ---
 

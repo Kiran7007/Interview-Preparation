@@ -12,6 +12,14 @@
 
 ---
 
+## Why Kotlin over Java for Android?
+
+Kotlin provides null safety, concise syntax, extension functions, sealed classes, data classes, coroutines, and better support for functional programming. It reduces boilerplate and makes asynchronous and state-driven Android development easier.
+
+```kotlin
+val name: String? = user?.name
+```
+
 ## What is the difference between `==` and `===` in Kotlin?
 
 -   `==` checks structural equality using `equals()`.
