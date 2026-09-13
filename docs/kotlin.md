@@ -150,6 +150,16 @@ user1 === user2     // false
 - Can enable `reified` type parameters.
 - Excessive use can increase generated code size.
 
+## Why many Kotlin stdlib functions are inline?
+
+Many standard-library functions use lambdas heavily. Making them inline can reduce lambda-object creation and function-call overhead at the call site. This is useful for functions such as `let`, `apply`, `run`, and `forEach`, but inlining can increase generated code size when used excessively.
+
+```kotlin
+listOf(1, 2, 3).forEach { value ->
+    println(value)
+}
+```
+
 ---
 
 ## What are `noinline` and `crossinline`?
@@ -168,6 +178,27 @@ user1 === user2     // false
 inline fun <reified T> Gson.fromJson(json: String): T {
     return fromJson(json, T::class.java)
 }
+```
+
+## Why inline required?
+
+Generic type information is normally erased at runtime. `reified` works only with an inline function because the compiler can insert the actual type information at each call site.
+
+```kotlin
+inline fun <reified T> parse(json: String): T {
+    return Gson().fromJson(json, T::class.java)
+}
+```
+
+---
+
+## Why Java cannot do this cleanly?
+
+Java generics are erased at runtime, and Java does not provide Kotlin's inline mechanism for inserting the concrete generic type at the call site. Kotlin combines `inline` and `reified` to make this pattern concise.
+
+```kotlin
+inline fun <reified T> parse(json: String): T =
+    Gson().fromJson(json, T::class.java)
 ```
 
 ---
@@ -512,6 +543,17 @@ val total = Money(100) + Money(50)
 
 Use it only when the operator meaning is obvious.
 
+## Should operator overloading be overused?
+
+No. Operator overloading can reduce readability when the operator does not have an obvious meaning. Use it for mathematical models, DSLs, or other cases where the operation is intuitive.
+
+```kotlin
+data class Money(val amount: Int)
+
+operator fun Money.plus(other: Money): Money =
+    Money(amount + other.amount)
+```
+
 ---
 
 ## What is a DSL in Kotlin?
@@ -551,6 +593,28 @@ iOS     → iOS UI
 
 Use it when code sharing provides enough value to justify the added
 complexity.
+
+---
+
+## Why Kotlin ideal for DSL?
+
+Kotlin supports DSLs through extension functions, trailing lambdas, lambdas with receivers, and operator overloading. These features make configuration and builder APIs readable while keeping them type-safe.
+
+```kotlin
+class UserBuilder {
+    var name: String = ""
+    var age: Int = 0
+}
+
+fun buildUser(block: UserBuilder.() -> Unit): UserBuilder =
+    UserBuilder().apply(block)
+```
+
+---
+
+## What should NOT be shared in KMP?
+
+Usually avoid sharing Android UI, platform-specific APIs, and lifecycle code. Share domain logic, repositories, networking, validation, and caching when that provides enough value to justify the added build and interoperability complexity.
 
 ---
 
@@ -2050,6 +2114,55 @@ val events = repository.observeEvents()
 ```kotlin
 fun users(): Flow<List<User>> = flow {
     emit(repository.loadUsers())
+}
+```
+
+## Is this truly cold?
+
+No. Wrapping a hot Flow inside `flow { emitAll(...) }` makes the downstream collection collector-dependent, but the upstream producer remains hot. Its lifecycle and replay behavior do not change.
+
+```kotlin
+val coldLikeFlow = flow {
+    emitAll(sharedFlow)
+}
+```
+
+---
+
+## Why might wrapped hot flow still lose events?
+
+If a `MutableSharedFlow` has no replay and no collector is active, an emission can be lost before the wrapper starts collecting. Wrapping the Flow later cannot recover events that were already missed.
+
+```kotlin
+val shared = MutableSharedFlow<Int>(replay = 0)
+
+// An emission without an active collector is not replayed.
+shared.tryEmit(1)
+```
+
+---
+
+## Can hot flow become truly cold?
+
+Not by wrapping the existing hot producer. To get truly cold behavior, recreate the producer logic so each collector starts a fresh execution.
+
+```kotlin
+fun getColdFlow(): Flow<Data> = flow {
+    emit(api.fetch())
+}
+```
+
+---
+
+## Why this feels cold?
+
+`callbackFlow` ties registration and cleanup to collection. The listener is registered when a collector starts and removed when the collection is cancelled. This adapts callback-based APIs such as WebSocket, BLE, and listeners to a lifecycle-aware Flow.
+
+```kotlin
+fun observeEvents(): Flow<Int> = callbackFlow {
+    val listener = Listener { value -> trySend(value) }
+    register(listener)
+    awaitClose { unregister(listener) }
 }
 ```
 
