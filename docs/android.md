@@ -92,6 +92,23 @@ class UserViewModel(
 
 ---
 
+## Explain Tight Coupling vs Loose Coupling
+- Tight coupling means a class creates or depends directly on a concrete implementation.
+- Loose coupling means a class depends on an abstraction, such as an interface.
+- Loose coupling makes testing, replacement, and maintenance easier.
+
+```kotlin
+interface UserService {
+    fun loadUser(): User
+}
+
+class UserRepository(
+    private val service: UserService
+)
+```
+
+---
+
 ## What are Hilt scopes?
 - Scope should match dependency lifetime.
 - Common scopes include:
@@ -1107,6 +1124,14 @@ Then add:
 
 ---
 
+## What are the advantages of XML over Jetpack Compose, and how would you convince a non-technical manager to choose Jetpack Compose over XML?
+- XML has a mature ecosystem and works well for large legacy applications.
+- XML can be easier for gradual migration and existing ViewBinding/DataBinding screens.
+- For new screens, Compose usually needs less boilerplate and supports faster state-driven UI development.
+- I would explain the trade-offs using delivery speed, maintenance cost, team skills, and migration risk instead of presenting it as only a language preference.
+
+---
+
 ## What is a Composable function?
 - A Composable is a function marked with `@Composable`.
 - It describes part of the UI.
@@ -1579,6 +1604,25 @@ Unit tests
 - **Robolectric** – Allows you to run Android SDK code in JVM unit tests.
 - **Turbine** – For testing Kotlin Flow.
 - **Kotlin Test DSL** – For idiomatic Kotlin test writing.
+
+---
+
+## What is a spy, and how does it differ from a mock in Android unit testing?
+- A mock does not run the real implementation by default; you define its behavior.
+- A spy wraps a real object, so real methods run by default and selected methods can be stubbed or verified.
+- Mocks are usually better for isolated unit tests. Spies are useful when most real behavior is needed.
+
+```kotlin
+class UserRepository {
+    fun getUserName() = "Kiran"
+}
+
+val mockRepository = mockk<UserRepository>()
+every { mockRepository.getUserName() } returns "Test User"
+
+val spyRepository = spyk(UserRepository())
+every { spyRepository.getUserName() } returns "Test User"
+```
 
 ---
 

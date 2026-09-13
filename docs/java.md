@@ -1,5 +1,13 @@
 # Java Language and OOP
 
+## What are the advantages of Java over Kotlin in Android?
+- Java has a large ecosystem, mature libraries, and broad legacy-code support.
+- It can be easier to onboard teams that already maintain Java applications.
+- Java interoperates well with older Java frameworks and Android code.
+- Kotlin is still the preferred choice for most new Android development.
+
+---
+
 ## `String`, `StringBuilder` and `StringBuffer`
 
 - `String` is immutable. `StringBuilder` is mutable and unsynchronized, so it is the normal choice for single-threaded assembly. `StringBuffer` is synchronized and mainly legacy.

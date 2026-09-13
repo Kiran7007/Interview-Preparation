@@ -85,6 +85,39 @@ data class User(val name: String, val age: Int)
 
 ---
 
+## Why should data classes be immutable?
+- Immutable data classes make state predictable and prevent accidental changes.
+- They work well with unidirectional data flow and make concurrent code safer.
+- Use `copy()` to create a changed value instead of modifying the existing object.
+
+```kotlin
+data class UiState(
+    val isLoading: Boolean,
+    val users: List<String>
+)
+
+val updatedState = state.copy(isLoading = false)
+```
+
+---
+
+## Why are `equals()` and `hashCode()` important?
+- `equals()` compares object content, while `hashCode()` supports hash-based collections such as `HashMap` and `HashSet`.
+- Equal objects must return the same hash code.
+- Data classes generate both methods from their primary-constructor properties.
+
+```kotlin
+data class User(val id: String)
+
+val first = User("1")
+val second = User("1")
+
+check(first == second)
+check(first.hashCode() == second.hashCode())
+```
+
+---
+
 ## What are Primary and Secondary Constructors in Kotlin?
 
 | Primary Constructor  | Secondary Constructor                                                    |
@@ -3419,6 +3452,20 @@ viewModelScope.launch {
         launch { loadUser() }
         launch { loadOrders() }
     }
+}
+```
+
+## What is the difference between Structured Concurrency and Parallelism?
+- Structured concurrency defines coroutine ownership, lifetime, and cancellation.
+- Parallelism means tasks actually run at the same time on different threads or CPU cores.
+- Coroutines can be concurrent without running in parallel; parallel execution depends on the dispatcher and available threads.
+
+```kotlin
+coroutineScope {
+    val first = async(Dispatchers.Default) { 20 }
+    val second = async(Dispatchers.Default) { 22 }
+
+    check(first.await() + second.await() == 42)
 }
 ```
 
