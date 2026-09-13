@@ -3719,23 +3719,6 @@ viewModelScope.launch {
 }
 ```
 
-## What is structured concurrency?
-
-- Child coroutines have a clear parent and lifetime.
-- The parent owns the children.
-- Cancellation propagates predictably.
-- A parent normally does not complete while its children are still active.
-- It prevents work from escaping its lifecycle.
-
-```kotlin
-viewModelScope.launch {
-    coroutineScope {
-        launch { loadUser() }
-        launch { loadOrders() }
-    }
-}
-```
-
 ## What is Structured Concurrency?
 
 - Child coroutines have a clear parent and lifetime.
