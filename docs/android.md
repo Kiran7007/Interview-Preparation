@@ -1690,6 +1690,26 @@ fun collectBaselineProfile() = baselineProfileRule.collect(
 }
 ```
 
+The test runs important user flows, and Android generates `baseline-prof.txt` from them. You normally do not write that file manually.
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class BaselineProfileGenerator {
+    @get:Rule
+    val rule = BaselineProfileRule()
+
+    @Test
+    fun generate() = rule.collect(
+        packageName = "com.example.app"
+    ) {
+        pressHome()
+        startActivityAndWait()
+        device.waitForIdle()
+        // Exercise important startup, login, navigation, and scrolling flows.
+    }
+}
+```
+
 ---
 
 ## What is Macrobenchmark?
@@ -1717,6 +1737,55 @@ fun startupBenchmark() = benchmarkRule.measureRepeated(
 ) {
     pressHome()
     startActivityAndWait()
+}
+```
+
+Macrobenchmark tests usually run in a separate benchmark module. They measure the complete app flow, such as cold startup or scrolling.
+
+```kotlin
+plugins {
+    id("com.android.test")
+}
+
+android {
+    namespace = "com.example.benchmark"
+    targetProjectPath = ":app"
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+dependencies {
+    implementation("androidx.benchmark:benchmark-macro-junit4:1.4.0")
+    implementation("androidx.test.uiautomator:uiautomator:2.3.0")
+}
+```
+
+Macrobenchmark measures performance, while a Baseline Profile tells Android which frequently used code should be optimized. Run the benchmark before and after adding the profile to check the improvement.
+
+```kotlin
+@Test
+fun coldStartupBenchmark() = benchmarkRule.measureRepeated(
+    packageName = "com.example.app",
+    metrics = listOf(StartupTimingMetric()),
+    iterations = 10,
+    startupMode = StartupMode.COLD
+) {
+    pressHome()
+    startActivityAndWait()
+    device.waitForIdle()
+}
+
+@Test
+fun scrollBenchmark() = benchmarkRule.measureRepeated(
+    packageName = "com.example.app",
+    metrics = listOf(FrameTimingMetric()),
+    iterations = 5
+) {
+    startActivityAndWait()
+    device.findObject(By.res("com.example.app", "recycler_view"))
+        .swipe(Direction.UP, 1.0f)
+    device.waitForIdle()
 }
 ```
 
