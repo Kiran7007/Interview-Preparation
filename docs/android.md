@@ -157,6 +157,30 @@ This gives fast reads while still refreshing when needed.
 
 ---
 
+## What is Room, and how should it be used?
+
+Room is an abstraction over SQLite that provides entities, DAOs, compile-time query verification, migrations, and observable queries through `Flow`. A production repository commonly treats Room as the source of truth for displayed offline-capable data and synchronizes it with the network.
+
+```kotlin
+@Entity
+data class User(
+    @PrimaryKey val id: Int,
+    val name: String
+)
+
+@Dao
+interface UserDao {
+    @Query("SELECT * FROM User ORDER BY name")
+    fun observeUsers(): Flow<List<User>>
+
+    @Query("UPDATE User SET name = :name WHERE id = :id")
+    suspend fun updateName(id: Int, name: String)
+}
+```
+
+Use a custom `@Query` for a partial update instead of replacing the full entity with `@Update`. `@Embedded` can flatten a value object into an entity, but define column names carefully to avoid collisions. Test migrations and keep database work off the main thread.
+
+---
 ## What is a database transaction?
 - A transaction ensures multiple writes succeed or fail together.
 - It preserves consistency when related local records must move as a unit.
@@ -200,6 +224,96 @@ val results = query
 
 ---
 
+## What is the role of Android SDK knowledge?
+- Lifecycle
+- Context
+- Activity/Fragment
+- Services
+- Permissions
+- Saved state
+- Background execution
+- Notifications
+- Configuration changes
+- OS behavior
+
+---
+
+## What are the building blocks of an Android app?
+
+- **Activity:** A screen-level entry point for user interaction and lifecycle management.
+- **Fragment:** A reusable UI and lifecycle component hosted by an Activity or another Fragment.
+- **Service:** A component for work that should continue without a visible UI. Modern apps should prefer WorkManager for deferrable, guaranteed work and foreground services only when user-visible ongoing work is required.
+- **BroadcastReceiver:** A short-lived handler for system or application broadcasts.
+- **ContentProvider:** A controlled, URI-based data-sharing boundary between applications.
+- **Views and layouts:** The traditional UI hierarchy, created in XML or code. Compose provides a declarative alternative using composables and layout primitives.
+- **AndroidManifest.xml:** Declares components, capabilities, permissions, intent filters and application metadata.
+
+---
+
+## Activity lifecycle
+```text
+onCreate
+onStart
+onResume
+onPause
+onStop
+onDestroy
+```
+
+Key concepts:
+- configuration changes
+- process death
+- saved state
+- ViewModel retention
+- back stack behavior
+
+---
+
+## Explain the Android application and Activity lifecycles.
+
+- `Application.onCreate()` runs once when the process is created and is appropriate for lightweight, process-wide initialization.
+- `onTerminate()` is not a reliable production-device callback.
+- `onTrimMemory()` communicates memory pressure and is the useful callback for releasing caches or other reclaimable resources.
+
+- An Activity commonly moves through:
+
+```text
+onCreate -> onStart -> onResume -> onPause -> onStop -> onDestroy
+```
+
+- Use `onCreate()` for initial setup, `onStart()`/`onStop()` for visibility, and `onResume()`/`onPause()` for foreground interaction.
+- Configuration changes recreate the Activity, while process death can remove both the Activity and its ViewModel.
+- Use ViewModel for screen state and saved state mechanisms for small restorable UI state.
+
+---
+
+## Can `onDestroy()` be called without `onPause()` and `onStop()`?
+
+Yes. If an Activity calls `finish()` during `onCreate()`, it may be destroyed without becoming visible, so `onPause()` and `onStop()` are not necessarily called. Code must not assume every lifecycle callback pair occurs for an Activity that never reaches the started or resumed state.
+
+---
+
+## How do you handle configuration changes without losing data?
+- ViewModel retains UI-related state across configuration changes.
+- Saved state is useful for small restorable UI data.
+
+```text
+Activity recreated
+ ↓
+ViewModel survives
+ ↓
+UI is rebuilt with retained state
+```
+
+---
+
+## What is process death?
+- Android may kill the app process when resources are needed.
+- A ViewModel does not survive process death.
+- Important state should be restored via saved state or persisted storage.
+
+---
+
 ## What is the difference between Activity context and Application context?
 - Activity context is tied to an Activity lifecycle.
 - Application context lives as long as the process.
@@ -207,6 +321,73 @@ val results = query
 
 ---
 
+## Fragment lifecycle
+- A Fragment has its own lifecycle.
+- The Fragment view can be destroyed while the Fragment instance remains.
+- Clear ViewBinding in `onDestroyView()`.
+
+```kotlin
+private var _binding: FragmentHomeBinding? = null
+
+override fun onDestroyView() {
+    _binding = null
+    super.onDestroyView()
+}
+```
+
+---
+
+## What is an Intent?
+
+An Intent is a message describing an action for another Android component. It can carry data in extras and, for implicit intents, data such as a URI or MIME type.
+
+- **Explicit intent:** Names the target component, commonly for navigation inside the application.
+- **Implicit intent:** Describes an action and lets Android resolve a capable component through intent filters.
+
+```kotlin
+val explicit = Intent(this, SecondActivity::class.java)
+startActivity(explicit)
+
+val browser = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"))
+startActivity(browser)
+```
+
+Validate external intent data and use explicit intents for sensitive internal flows. Deep links should also validate authentication and authorization before displaying protected content.
+
+---
+
+## What are intent filters?
+
+- Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
+- Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
+
+---
+
+## What are Activity launch modes?
+
+- **standard:** Creates a new instance for every launch.
+- **singleTop:** Reuses the instance only when it is already at the top and delivers the Intent through `onNewIntent()`.
+- **singleTask:** Reuses an existing instance in the task, removes the activities above it, and calls `onNewIntent()`.
+- **singleInstance:** Places the Activity in its own task, isolating it from other Activities.
+
+Choose launch modes deliberately. For most navigation, standard behavior plus an explicit back-stack policy is easier to reason about. Notification and deep-link flows often use flags such as `FLAG_ACTIVITY_CLEAR_TOP` or a suitable navigation graph policy instead of broadly applying `singleTask`.
+
+---
+
+## What are Loaders in Android?
+
+- Loaders were lifecycle-aware APIs introduced in API 11 for asynchronous data loading, commonly with `CursorAdapter` and `LoaderManager`. They could reconnect after configuration changes and avoid repeated queries.
+- They are legacy APIs today; use Room with `Flow`, ViewModel, and lifecycle-aware collection for new code.
+- The underlying principle remains valid: database or provider work must not block the main thread and collection should follow the UI lifecycle.
+
+---
+
+## What is ConstraintLayout?
+
+- ConstraintLayout positions views through relationships to the parent or other views.
+- Chains support distribution, guidelines support alignment, and barriers respond to dynamic content. It can reduce deeply nested hierarchies, but it is not automatically faster than every alternative; measure layout cost and choose the simplest hierarchy that expresses the UI.
+
+---
 
 ## What is Gradle?
 - Gradle is the Android build system.
@@ -217,13 +398,13 @@ val results = query
 
 ## What is the difference between Project-level and Module-level build.gradle?
 
-#### **Project-level build.gradle** 
+#### **Project-level build.gradle**
 - Applies to the entire project.
 - Gradle version
 - Repositories
 - Classpath for plugins
 
-#### **Module-level build.gradle** 
+#### **Module-level build.gradle**
 - Specific to each app/module.
 - Dependencies (`implementation`, `api`, etc.)
 - Build types (`debug`/`release`)
@@ -279,12 +460,36 @@ Response
 | Implementation   | Simple                       | More complex                         |
 | Best for         | Infrequent updates           | Frequent real-time updates           |
 
-
 ---
 
 ## What is the difference between interceptor and authenticator?
 - Interceptor adds headers or transforms requests.
 - Authenticator handles authentication challenges such as 401 and refreshes tokens.
+
+---
+
+## What is the difference between Retrofit and OkHttp?
+- Retrofit provides typed API abstractions.
+- OkHttp handles HTTP transport, connection management, and interceptors.
+
+---
+
+## How would you implement token refresh?
+```text
+Request
+ ↓
+401
+ ↓
+Authenticator
+ ↓
+Refresh token
+ ↓
+Store new access token securely
+ ↓
+Retry original request
+```
+
+Use a single-flight refresh strategy so concurrent requests do not race. Retry only transient failures with exponential backoff and jitter; avoid blindly retrying non-idempotent writes.
 
 ---
 
@@ -307,27 +512,6 @@ Response
 
 ---
 
-## What is process death?
-- Android may kill the app process when resources are needed.
-- A ViewModel does not survive process death.
-- Important state should be restored via saved state or persisted storage.
-
----
-
-## How do you handle configuration changes without losing data?
-- ViewModel retains UI-related state across configuration changes.
-- Saved state is useful for small restorable UI data.
-
-```text
-Activity recreated
- ↓
-ViewModel survives
- ↓
-UI is rebuilt with retained state
-```
-
----
-
 ## What is idempotency?
 - Repeating the same request should not create unintended additional effects.
 - It is critical for payments and other business-critical writes.
@@ -343,6 +527,88 @@ POST payment + idempotencyKey=ABC
 - Offset pagination is simple but can be less reliable at scale.
 - Cursor pagination is often better for large datasets.
 - Android Paging 3 can help with loading, retry, refresh, and UI state.
+
+---
+
+## How would you implement offline-first behavior?
+- Keep Room as the local source of truth.
+- Observe data through Flow or StateFlow.
+- Queue local mutations and synchronize later with WorkManager.
+- Use optimistic concurrency or version checks to handle conflicts.
+
+```text
+Offline First
+      ↓
+Room = Source of Truth
+      ↓
+Flow / StateFlow
+      ↓
+Repository
+      ↓
+Outbox Pattern
+      ↓
+WorkManager
+      ↓
+Push + Pull Sync
+      ↓
+Conflict Detection
+      ↓
+Retry + Backoff
+```
+
+This keeps local reads fast while the app syncs changes when connectivity is available.
+
+---
+
+## What is `PeriodicWorkRequest`, and what are WorkManager states and constraints?
+
+- `PeriodicWorkRequest` is for deferrable recurring work such as synchronization, log upload, cache cleanup, or periodic content refresh.
+- Its minimum interval is 15 minutes and execution is inexact because WorkManager respects constraints and system battery policy.
+- It is not suitable for exact alarms or immediate user-visible work.
+
+WorkManager states are:
+
+- `ENQUEUED`: waiting to run or waiting for constraints.
+- `RUNNING`: currently executing.
+- `SUCCEEDED`: completed successfully.
+- `FAILED`: permanently failed.
+- `BLOCKED`: waiting for prerequisite work.
+- `CANCELLED`: explicitly cancelled.
+
+Constraints can require network availability, charging, battery-not-low, or storage-not-low. Observe work with `WorkInfo` through LiveData or Flow, and configure retry/backoff in the Worker for transient failures. Do not promise exact timing to product stakeholders.
+
+---
+
+## How do you handle one-time events such as navigation?
+- Keep durable state separate from transient events.
+- Use a `SharedFlow` or one-time event stream.
+
+```kotlin
+data class UiState(
+    val account: Account? = null,
+    val isLoading: Boolean = false
+)
+
+sealed interface UiEvent {
+    data object NavigateBack : UiEvent
+    data class ShowMessage(val text: String) : UiEvent
+}
+```
+
+---
+
+## How do you reduce memory usage?
+- Avoid holding Activity or View references in long-lived objects.
+- Load images at display size.
+- Close resources appropriately.
+- Profile before optimizing.
+- Use lifecycle-aware components.
+
+---
+
+## What are shared libraries in Android?
+- Shared libraries contain functionality used by multiple features or teams.
+- Examples: networking, security utilities, design system, analytics, logging.
 
 ---
 
@@ -432,201 +698,6 @@ if (featureFlags.newPaymentFlow) {
 
 ---
 
-## How would you implement offline-first behavior?
-- Keep Room as the local source of truth.
-- Observe data through Flow or StateFlow.
-- Queue local mutations and synchronize later with WorkManager.
-- Use optimistic concurrency or version checks to handle conflicts.
-
-```text
-Offline First
-      ↓
-Room = Source of Truth
-      ↓
-Flow / StateFlow
-      ↓
-Repository
-      ↓
-Outbox Pattern
-      ↓
-WorkManager
-      ↓
-Push + Pull Sync
-      ↓
-Conflict Detection
-      ↓
-Retry + Backoff
-```
-
-This keeps local reads fast while the app syncs changes when connectivity is available.
-
----
-
-## What is `PeriodicWorkRequest`, and what are WorkManager states and constraints?
-
-- `PeriodicWorkRequest` is for deferrable recurring work such as synchronization, log upload, cache cleanup, or periodic content refresh. 
-- Its minimum interval is 15 minutes and execution is inexact because WorkManager respects constraints and system battery policy. 
-- It is not suitable for exact alarms or immediate user-visible work.
-
-WorkManager states are:
-
-- `ENQUEUED`: waiting to run or waiting for constraints.
-- `RUNNING`: currently executing.
-- `SUCCEEDED`: completed successfully.
-- `FAILED`: permanently failed.
-- `BLOCKED`: waiting for prerequisite work.
-- `CANCELLED`: explicitly cancelled.
-
-Constraints can require network availability, charging, battery-not-low, or storage-not-low. Observe work with `WorkInfo` through LiveData or Flow, and configure retry/backoff in the Worker for transient failures. Do not promise exact timing to product stakeholders.
-
----
-
-## How do you handle one-time events such as navigation?
-- Keep durable state separate from transient events.
-- Use a `SharedFlow` or one-time event stream.
-
-```kotlin
-data class UiState(
-    val account: Account? = null,
-    val isLoading: Boolean = false
-)
-
-sealed interface UiEvent {
-    data object NavigateBack : UiEvent
-    data class ShowMessage(val text: String) : UiEvent
-}
-```
-
----
-
-## How do you reduce memory usage?
-- Avoid holding Activity or View references in long-lived objects.
-- Load images at display size.
-- Close resources appropriately.
-- Profile before optimizing.
-- Use lifecycle-aware components.
-
----
-
-## What is the role of Android SDK knowledge?
-- Lifecycle
-- Context
-- Activity/Fragment
-- Services
-- Permissions
-- Saved state
-- Background execution
-- Notifications
-- Configuration changes
-- OS behavior
-
----
-
-## Activity lifecycle
-```text
-onCreate
-onStart
-onResume
-onPause
-onStop
-onDestroy
-```
-
-Key concepts:
-- configuration changes
-- process death
-- saved state
-- ViewModel retention
-- back stack behavior
-
----
-
-## Can `onDestroy()` be called without `onPause()` and `onStop()`?
-
-Yes. If an Activity calls `finish()` during `onCreate()`, it may be destroyed without becoming visible, so `onPause()` and `onStop()` are not necessarily called. Code must not assume every lifecycle callback pair occurs for an Activity that never reaches the started or resumed state.
-
----
-
-## What is an Intent?
-
-An Intent is a message describing an action for another Android component. It can carry data in extras and, for implicit intents, data such as a URI or MIME type.
-
-- **Explicit intent:** Names the target component, commonly for navigation inside the application.
-- **Implicit intent:** Describes an action and lets Android resolve a capable component through intent filters.
-
-```kotlin
-val explicit = Intent(this, SecondActivity::class.java)
-startActivity(explicit)
-
-val browser = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"))
-startActivity(browser)
-```
-
-Validate external intent data and use explicit intents for sensitive internal flows. Deep links should also validate authentication and authorization before displaying protected content.
-
----
-
-## Explain the Android application and Activity lifecycles.
-
-- `Application.onCreate()` runs once when the process is created and is appropriate for lightweight, process-wide initialization.
-- `onTerminate()` is not a reliable production-device callback. 
-- `onTrimMemory()` communicates memory pressure and is the useful callback for releasing caches or other reclaimable resources.
-
-- An Activity commonly moves through:
-
-```text
-onCreate -> onStart -> onResume -> onPause -> onStop -> onDestroy
-```
-
-- Use `onCreate()` for initial setup, `onStart()`/`onStop()` for visibility, and `onResume()`/`onPause()` for foreground interaction. 
-- Configuration changes recreate the Activity, while process death can remove both the Activity and its ViewModel.
-- Use ViewModel for screen state and saved state mechanisms for small restorable UI state.
-
----
-
-## What are intent filters?
-
-- Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
-- Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
-
----
-
-## Fragment lifecycle
-- A Fragment has its own lifecycle.
-- The Fragment view can be destroyed while the Fragment instance remains.
-- Clear ViewBinding in `onDestroyView()`.
-
-```kotlin
-private var _binding: FragmentHomeBinding? = null
-
-override fun onDestroyView() {
-    _binding = null
-    super.onDestroyView()
-}
-```
-
----
-
-## What are the building blocks of an Android app?
-
-- **Activity:** A screen-level entry point for user interaction and lifecycle management.
-- **Fragment:** A reusable UI and lifecycle component hosted by an Activity or another Fragment.
-- **Service:** A component for work that should continue without a visible UI. Modern apps should prefer WorkManager for deferrable, guaranteed work and foreground services only when user-visible ongoing work is required.
-- **BroadcastReceiver:** A short-lived handler for system or application broadcasts.
-- **ContentProvider:** A controlled, URI-based data-sharing boundary between applications.
-- **Views and layouts:** The traditional UI hierarchy, created in XML or code. Compose provides a declarative alternative using composables and layout primitives.
-- **AndroidManifest.xml:** Declares components, capabilities, permissions, intent filters and application metadata.
-
----
-
-## What are Loaders in Android?
-
-- Loaders were lifecycle-aware APIs introduced in API 11 for asynchronous data loading, commonly with `CursorAdapter` and `LoaderManager`. They could reconnect after configuration changes and avoid repeated queries.
-- They are legacy APIs today; use Room with `Flow`, ViewModel, and lifecycle-aware collection for new code. 
-- The underlying principle remains valid: database or provider work must not block the main thread and collection should follow the UI lifecycle.
-
----
-
 ## How would you approach a moderately complex feature from requirements to production?
 - Clarify expected behavior.
 - Identify edge cases.
@@ -661,103 +732,14 @@ Post-release review
 
 ---
 
-## What are Activity launch modes?
-
-- **standard:** Creates a new instance for every launch.
-- **singleTop:** Reuses the instance only when it is already at the top and delivers the Intent through `onNewIntent()`.
-- **singleTask:** Reuses an existing instance in the task, removes the activities above it, and calls `onNewIntent()`.
-- **singleInstance:** Places the Activity in its own task, isolating it from other Activities.
-
-Choose launch modes deliberately. For most navigation, standard behavior plus an explicit back-stack policy is easier to reason about. Notification and deep-link flows often use flags such as `FLAG_ACTIVITY_CLEAR_TOP` or a suitable navigation graph policy instead of broadly applying `singleTask`.
-
----
-
-## What is ConstraintLayout?
-
-- ConstraintLayout positions views through relationships to the parent or other views. 
-- Chains support distribution, guidelines support alignment, and barriers respond to dynamic content. It can reduce deeply nested hierarchies, but it is not automatically faster than every alternative; measure layout cost and choose the simplest hierarchy that expresses the UI.
-
----
-
-## What is the difference between Retrofit and OkHttp?
-- Retrofit provides typed API abstractions.
-- OkHttp handles HTTP transport, connection management, and interceptors.
-
----
-
-## How would you implement token refresh?
-```text
-Request
- ↓
-401
- ↓
-Authenticator
- ↓
-Refresh token
- ↓
-Store new access token securely
- ↓
-Retry original request
-```
-
-Use a single-flight refresh strategy so concurrent requests do not race. Retry only transient failures with exponential backoff and jitter; avoid blindly retrying non-idempotent writes.
-
----
-
-## What are shared libraries in Android?
-- Shared libraries contain functionality used by multiple features or teams.
-- Examples: networking, security utilities, design system, analytics, logging.
-
----
-
 # Android Security
 
-## What is certificate pinning?
-- TLS validates the certificate chain by default.
-- Certificate pinning adds a stricter check against expected certificates or public keys.
-- It can reduce some MITM risks but increases operational complexity during rotation.
-
-```text
-App
- ↓
-TLS validation
- ↓
-Pinned cert/public key check
- ↓
-Server
-```
-
----
-
-## Design a banking transaction screen
-
-Discuss:
-
-```text
-UI
- ↓
-ViewModel
- ↓
-UseCase
- ↓
-Repository
- ↓
-API
-```
-
-Then add:
-
-- Authentication.
-- Secure token handling.
-- Idempotency key.
-- Local state.
-- Loading/error/retry.
-- Duplicate submission protection.
-- Auditability.
-- Server-authoritative transaction result.
-- Analytics/monitoring without sensitive data.
-- Feature flags.
-- Rollout and rollback.
+## What are common security risks in Android apps?
+- Storing data in plain text.
+- Using HTTP instead of HTTPS.
+- Hardcoding API keys in code.
+- Weak input validation.
+- Outdated dependencies with known vulnerabilities.
 
 ---
 
@@ -768,10 +750,20 @@ Then add:
 
 ---
 
-## What is certificate transparency?
-- Certificate Transparency provides public logs of issued certificates.
-- It helps detect improperly issued certificates.
-- It complements normal TLS validation rather than replacing it.
+## How can you securely store sensitive data in an Android app?
+You should never store sensitive data (like passwords or tokens) in plain text. Instead:
+
+- Use EncryptedSharedPreferences for small data like tokens.
+- Use Android Keystore to store cryptographic keys securely.
+- Avoid storing sensitive info in internal or external storage.
+
+---
+
+## How do you securely store tokens?
+- Use Android Keystore-backed secure storage where appropriate.
+- Never log access or refresh tokens.
+- Minimize token lifetime and scope.
+- Clear credentials during logout.
 
 ---
 
@@ -797,6 +789,52 @@ Then add:
 
 ---
 
+## What is certificate pinning?
+- TLS validates the certificate chain by default.
+- Certificate pinning adds a stricter check against expected certificates or public keys.
+- It can reduce some MITM risks but increases operational complexity during rotation.
+
+```text
+App
+ ↓
+TLS validation
+ ↓
+Pinned cert/public key check
+ ↓
+Server
+```
+
+---
+
+## What is hooking in Android security?
+
+Hooking intercepts or replaces method behavior while the app is running. It can help with debugging, but attackers may use it to bypass client-side checks. Sensitive authorization decisions must still be enforced on the server.
+
+```kotlin
+interface DeviceTrust {
+    fun isTrusted(): Boolean
+}
+
+class PaymentRepository(
+    private val trust: DeviceTrust,
+    private val api: PaymentApi
+) {
+    suspend fun pay(request: PaymentRequest) {
+        check(trust.isTrusted())
+        api.pay(request)
+    }
+}
+```
+
+---
+
+## What is certificate transparency?
+- Certificate Transparency provides public logs of issued certificates.
+- It helps detect improperly issued certificates.
+- It complements normal TLS validation rather than replacing it.
+
+---
+
 ## How do you protect API keys and prevent reverse engineering?
 - Do not hardcode keys in source code, `strings.xml`, or git-committed config.
 - Use `BuildConfig` and CI-managed environment variables.
@@ -812,15 +850,6 @@ buildTypes {
     }
 }
 ```
-
----
-
-## What are common security risks in Android apps?
-- Storing data in plain text.
-- Using HTTP instead of HTTPS.
-- Hardcoding API keys in code.
-- Weak input validation.
-- Outdated dependencies with known vulnerabilities.
 
 ---
 
@@ -855,14 +884,6 @@ buildTypes {
 
 ---
 
-## How do you securely store tokens?
-- Use Android Keystore-backed secure storage where appropriate.
-- Never log access or refresh tokens.
-- Minimize token lifetime and scope.
-- Clear credentials during logout.
-
----
-
 ## What is screenshot protection?
 - Android can restrict screenshots for sensitive screens using appropriate window flags.
 - Use it where the security requirement calls for preventing screenshots or screen capture.
@@ -876,12 +897,35 @@ window.setFlags(
 
 ---
 
-## How can you securely store sensitive data in an Android app?
-You should never store sensitive data (like passwords or tokens) in plain text. Instead:
+## Design a banking transaction screen
 
-- Use EncryptedSharedPreferences for small data like tokens.
-- Use Android Keystore to store cryptographic keys securely.
-- Avoid storing sensitive info in internal or external storage.
+Discuss:
+
+```text
+UI
+ ↓
+ViewModel
+ ↓
+UseCase
+ ↓
+Repository
+ ↓
+API
+```
+
+Then add:
+
+- Authentication.
+- Secure token handling.
+- Idempotency key.
+- Local state.
+- Loading/error/retry.
+- Duplicate submission protection.
+- Auditability.
+- Server-authoritative transaction result.
+- Analytics/monitoring without sensitive data.
+- Feature flags.
+- Rollout and rollback.
 
 ---
 
@@ -1008,7 +1052,6 @@ val state by viewModel.state
 
 Strong answer:
 
-
 Be ready to discuss:
 - ComposeView inside an existing Fragment
 - Fragment hosting a Compose screen
@@ -1049,7 +1092,7 @@ Text(
   - `repeatOnLifecycle`
   - `viewModelScope` for business work
 
-``` kotlin
+```kotlin
 LaunchedEffect(userId) {
     viewModel.loadUser(userId)
 }
@@ -1075,7 +1118,6 @@ Scaffold is a layout component that provides basic structure like:
 - Drawer
 - SnackbarHost
 
-*Example:*
 ```kotlin
 Scaffold(
     topBar = { TopAppBar(title = { Text("Home") }) },
@@ -1139,7 +1181,6 @@ Modifier.semantics {
 ---
 
 ## Compose Deep Dive
-
 ## What is state in Compose?
 
 - State is data that can change over time and can cause UI updates.
@@ -1178,7 +1219,7 @@ fun SearchBox(
 -   It can prevent unnecessary recompositions when the derived result
     has not changed.
 
-``` kotlin
+```kotlin
 val showButton by remember {
     derivedStateOf {
         listState.firstVisibleItemIndex > 0
@@ -1425,33 +1466,76 @@ Critical user journeys
 
 ---
 
-# Bluetooth Low Energy
+# Performance and Reliability
 
-## What is Bluetooth Low Energy?
-- BLE is a low-power wireless technology for short-range communication.
-- It is optimized for battery life and periodic data exchange.
-- Common use cases include wearables, smart locks, sensors, and proximity features.
+## What is Android startup performance?
+- Startup performance is how long it takes before the app becomes usable.
+- Common problems:
+    1. Remove unnecessary initialization from `Application`.
+    2. Lazy-load noncritical dependencies.
+    3. Avoid synchronous disk/database work on startup.
+    4. Defer analytics/SDK initialization where allowed.
+    5. Use Baseline Profiles.
+    6. Measure using startup benchmarks and production telemetry.
+    7. The first step should be profiling, not guessing.
 
-```text
-Phone
-  ↓
-BLE GATT
-  ↓
-Peripheral / Sensor
+## What are Baseline Profiles?
+- Baseline Profiles tell Android which code paths are important.
+- They can improve startup and runtime performance by optimizing critical paths earlier.
+
+In simple terms, they tell Android which code to optimize first.
+
+```kotlin
+@Test
+fun collectBaselineProfile() = baselineProfileRule.collect(
+    packageName = "com.example.app"
+) {
+    startActivityAndWait()
+}
 ```
 
-Use BLE when low power and small payloads matter more than throughput.
+---
+
+## What is Macrobenchmark?
+- Macrobenchmark measures larger user journeys on real devices/emulators.
+- It is useful for startup, scrolling, and other realistic performance tests.
+
+In simple terms, it measures a real user flow instead of only measuring one function.
+
+```text
+Launch app
+ ↓
+Navigate
+ ↓
+Scroll
+ ↓
+Measure performance
+```
+
+```kotlin
+@Test
+fun startupBenchmark() = benchmarkRule.measureRepeated(
+    packageName = "com.example.app",
+    metrics = listOf(StartupTimingMetric()),
+    iterations = 5
+) {
+    pressHome()
+    startActivityAndWait()
+}
+```
 
 ---
 
-## When should you use BLE instead of Wi-Fi or classic Bluetooth?
-- Use BLE for low-power, low-bandwidth communication with nearby devices.
-- Use Wi-Fi for internet-connected or high-bandwidth transfers.
-- Use classic Bluetooth for larger streaming or audio-like workloads.
+## How would you reduce Android app startup time?
+- Remove unnecessary initialization from `Application`.
+- Lazy-load noncritical dependencies.
+- Avoid synchronous disk/database work on startup.
+- Defer analytics/SDK initialization where allowed.
+- Use Baseline Profiles.
+- Measure using startup benchmarks and production telemetry.
+- The first step should be profiling, not guessing.
 
 ---
-
-# Performance and Reliability
 
 ## What is a memory leak?
 - Singleton holding Activity/Context.
@@ -1479,53 +1563,20 @@ Activity cannot be collected
 
 ---
 
-## What are Baseline Profiles?
-- Baseline Profiles tell Android which code paths are important.
-- They can improve startup and runtime performance by optimizing critical paths earlier.
+## What are common Android leaks?
+- Singleton holding Activity or Context
+- Fragment retaining a binding after `onDestroyView`
+- Long-lived listeners or callbacks
+- Coroutine outliving required lifecycle
+- Static references
 
 ---
 
-## What is Android startup performance?
-- Startup performance is how long it takes before the app becomes usable.
-- Common problems: 
-    1. Remove unnecessary initialization from `Application`.
-    2. Lazy-load noncritical dependencies.
-    3. Avoid synchronous disk/database work on startup.
-    4. Defer analytics/SDK initialization where allowed.
-    5. Use Baseline Profiles.
-    6. Measure using startup benchmarks and production telemetry.
-    7. The first step should be profiling, not guessing.
-
-## How would you reduce Android app startup time?
-- Remove unnecessary initialization from `Application`.
-- Lazy-load noncritical dependencies.
-- Avoid synchronous disk/database work on startup.
-- Defer analytics/SDK initialization where allowed.
-- Use Baseline Profiles.
-- Measure using startup benchmarks and production telemetry.
-- The first step should be profiling, not guessing.
-
----
-
-## What is Macrobenchmark?
-- Macrobenchmark measures larger user journeys on real devices/emulators.
-- It is useful for startup, scrolling, and other realistic performance tests.
-
-```text
-Launch app
- ↓
-Navigate
- ↓
-Scroll
- ↓
-Measure performance
-```
-
----
-
-## What is ANR rate?
-- ANR rate measures application-not-responding events.
-- It is a key stability metric alongside startup performance and crashes.
+## How do you load large bitmaps?
+- Decode images close to display size.
+- Use an image library with caching.
+- Prefer thumbnails, sampling, and appropriate formats.
+- Avoid retaining many full-resolution images.
 
 ---
 
@@ -1546,11 +1597,9 @@ ANR   → application unresponsive
 
 ---
 
-## How do you load large bitmaps?
-- Decode images close to display size.
-- Use an image library with caching.
-- Prefer thumbnails, sampling, and appropriate formats.
-- Avoid retaining many full-resolution images.
+## What is ANR rate?
+- ANR rate measures application-not-responding events.
+- It is a key stability metric alongside startup performance and crashes.
 
 ---
 
@@ -1558,13 +1607,6 @@ ANR   → application unresponsive
 - An ANR happens when the UI thread is blocked for too long.
 - Avoid long work on the main thread.
 - Move heavy tasks to background threads and use lifecycle-aware APIs.
-
----
-
-## How do you reduce battery consumption?
-- Avoid unnecessary polling.
-- Sync only when needed and under suitable constraints.
-- Use WorkManager, batching, and Doze/Standby-aware logic.
 
 ---
 
@@ -1582,6 +1624,31 @@ Typical causes:
 - large computations
 - lock contention
 - binder delays
+
+---
+
+## How do you reduce battery consumption?
+- Avoid unnecessary polling.
+- Sync only when needed and under suitable constraints.
+- Use WorkManager, batching, and Doze/Standby-aware logic.
+
+---
+
+## How do you investigate UI jank?
+Look for:
+- long main-thread work
+- expensive composition
+- excessive recomposition
+- large list rendering
+- image decoding
+- layout complexity
+
+Use:
+- Compose/Layout Inspector
+- CPU profiler
+- Perfetto
+- Macrobenchmark
+- Frame timing
 
 ---
 
@@ -1621,30 +1688,29 @@ Gradual release
 
 ---
 
-## How do you investigate UI jank?
-Look for:
-- long main-thread work
-- expensive composition
-- excessive recomposition
-- large list rendering
-- image decoding
-- layout complexity
+# Bluetooth Low Energy
 
-Use:
-- Compose/Layout Inspector
-- CPU profiler
-- Perfetto
-- Macrobenchmark
-- Frame timing
+## What is Bluetooth Low Energy?
+- BLE is a low-power wireless technology for short-range communication.
+- It is optimized for battery life and periodic data exchange.
+- Common use cases include wearables, smart locks, sensors, and proximity features.
+
+```text
+Phone
+  ↓
+BLE GATT
+  ↓
+Peripheral / Sensor
+```
+
+Use BLE when low power and small payloads matter more than throughput.
 
 ---
 
-## What are common Android leaks?
-- Singleton holding Activity or Context
-- Fragment retaining a binding after `onDestroyView`
-- Long-lived listeners or callbacks
-- Coroutine outliving required lifecycle
-- Static references
+## When should you use BLE instead of Wi-Fi or classic Bluetooth?
+- Use BLE for low-power, low-bandwidth communication with nearby devices.
+- Use Wi-Fi for internet-connected or high-bandwidth transfers.
+- Use classic Bluetooth for larger streaming or audio-like workloads.
 
 ---
 
@@ -1774,7 +1840,7 @@ The key is to validate against real source and actual behavior rather than trust
     7. Hidden edge cases
 - The developer remains responsible for the final code.
 
---- 
+---
 
 ## How do you prevent hallucinated tests?
 
@@ -1979,7 +2045,6 @@ For financial/business-critical operations, the server should remain authoritati
 
 ---
 
-
 ## How do you investigate a crash?
 ```text
 Crash report
@@ -2070,7 +2135,7 @@ Typical issue:
 - Cancel jobs properly in `onDestroyView()`.
 - Move business logic to the ViewModel where possible.
 
---- 
+---
 
 ## Scenario: Deep link handling breaking navigation
 E-commerce app. Users report deep links open the wrong screen, the app crashes when opened via link, and back navigation behaves incorrectly. The app uses the Navigation Component and multiple entry points. How would you fix?
@@ -2186,7 +2251,6 @@ Users report crashes when scrolling large product lists. Observations: the entir
 - High-resolution images decoded at original size
 - No lazy loading
 
-
 ### Fix strategy
 - Use Paging 3
 - Page data in small chunks
@@ -2202,30 +2266,5 @@ Users report crashes when scrolling large product lists. Observations: the entir
 - Queue user mutations in an outbox.
 - Synchronize when online.
 - Handle conflict resolution explicitly and keep idempotency on retries.
-
----
-
-## What is Room, and how should it be used?
-
-Room is an abstraction over SQLite that provides entities, DAOs, compile-time query verification, migrations, and observable queries through `Flow`. A production repository commonly treats Room as the source of truth for displayed offline-capable data and synchronizes it with the network.
-
-```kotlin
-@Entity
-data class User(
-    @PrimaryKey val id: Int,
-    val name: String
-)
-
-@Dao
-interface UserDao {
-    @Query("SELECT * FROM User ORDER BY name")
-    fun observeUsers(): Flow<List<User>>
-
-    @Query("UPDATE User SET name = :name WHERE id = :id")
-    suspend fun updateName(id: Int, name: String)
-}
-```
-
-Use a custom `@Query` for a partial update instead of replacing the full entity with `@Update`. `@Embedded` can flatten a value object into an entity, but define column names carefully to avoid collisions. Test migrations and keep database work off the main thread.
 
 ---

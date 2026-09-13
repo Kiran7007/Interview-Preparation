@@ -17,7 +17,7 @@
 -   `==` checks structural equality using `equals()`.
 -   `===` checks whether two references point to the same object.
 
-``` kotlin
+```kotlin
 val a = String("Hello".toCharArray())
 val b = String("Hello".toCharArray())
 
@@ -193,7 +193,7 @@ Avoid chaining them excessively.
 -   `Set` stores unique items without order guarantees.
 -   `Map` stores key-value pairs.
 
-``` kotlin
+```kotlin
 val names: List<String> = listOf("Kiran", "Asha")
 val mutableNames = mutableListOf("Kiran")
 mutableNames.add("Asha")
@@ -213,7 +213,7 @@ uniqueness, or key-value lookups.
 -   It uses generated or declared `componentN()` functions.
 -   It is commonly used with data classes.
 
-``` kotlin
+```kotlin
 data class Employee(
     val name: String,
     val age: Int
@@ -226,7 +226,7 @@ val (name, age) = employee
 
 The compiler effectively uses:
 
-``` kotlin
+```kotlin
 employee.component1()
 employee.component2()
 ```
@@ -234,7 +234,7 @@ employee.component2()
 It can become unsafe when the component order is misunderstood or
 changes.
 
-``` kotlin
+```kotlin
 data class Employee(
     val name: String,
     val age: Int
@@ -252,7 +252,7 @@ val (age, name) = employee // Compiles, but meaning is wrong
 -   This is different from Java, where classes are inheritable by
     default.
 
-``` kotlin
+```kotlin
 open class Animal {
     open fun sound() {
         println("Animal sound")
@@ -276,7 +276,7 @@ Kotlin makes classes final by default to reduce accidental inheritance.
     modifying that type.
 -   It is resolved statically.
 
-``` kotlin
+```kotlin
 fun String.isValidAccountId(): Boolean {
     return length == 10 && all { it.isDigit() }
 }
@@ -294,7 +294,7 @@ It is useful for small, reusable transformations.
 -   After a check, the compiler can treat the value as a non-null type.
 -   This reduces boilerplate and keeps code safer.
 
-``` kotlin
+```kotlin
 fun printLength(value: Any?) {
     if (value is String) {
         println(value.length)
@@ -314,7 +314,7 @@ network layers.
 -   A higher-order function takes another function as a parameter or
     returns a function.
 
-``` kotlin
+```kotlin
 fun execute(block: () -> Unit) {
     block()
 }
@@ -339,7 +339,7 @@ higher-order functions.
 -   `apply` configures an object and returns the same object.
 -   `with` runs a block on an object without extension syntax.
 
-``` kotlin
+```kotlin
 val user = User("Kiran").apply {
     age = 30
 }
@@ -362,7 +362,7 @@ Use `apply` for object configuration, `let` for null-safe work, and
 -   `lazy` initializes a value only when it is first accessed.
 -   The default implementation is thread-safe.
 
-``` kotlin
+```kotlin
 val repository by lazy {
     UserRepository()
 }
@@ -377,7 +377,7 @@ It is useful for expensive objects that are not needed immediately.
 -   A companion object provides class-level members.
 -   Kotlin does not have Java-style static members.
 
-``` kotlin
+```kotlin
 class User private constructor() {
     companion object {
         fun create(): User = User()
@@ -394,7 +394,7 @@ It can also implement interfaces.
 -   `debounce` waits for a quiet period before emitting.
 -   It is useful for search input.
 
-``` kotlin
+```kotlin
 query
     .debounce(300)
 ```
@@ -407,7 +407,7 @@ If the user types continuously, intermediate values are skipped.
 
 -   It prevents consecutive duplicate values.
 
-``` kotlin
+```kotlin
 query
     .distinctUntilChanged()
 ```
@@ -422,7 +422,7 @@ downstream operation.
 -   `stateIn` converts a Flow into StateFlow.
 -   It gives the stream a current value.
 
-``` kotlin
+```kotlin
 val state = repository.users()
     .stateIn(
         scope = viewModelScope,
@@ -440,7 +440,7 @@ It is useful when UI needs current state.
 -   `shareIn` converts a cold Flow into SharedFlow.
 -   It shares one upstream execution among collectors.
 
-``` kotlin
+```kotlin
 val events = repository.events()
     .shareIn(
         viewModelScope,
@@ -449,7 +449,6 @@ val events = repository.events()
     )
 ```
 
-
 ---
 
 ## What is operator overloading in Kotlin?
@@ -457,7 +456,7 @@ val events = repository.events()
 -   Kotlin allows operators such as `+`, `-`, `[]`, and `invoke` to map
     to functions.
 
-``` kotlin
+```kotlin
 data class Money(val amount: Int)
 
 operator fun Money.plus(other: Money): Money {
@@ -469,7 +468,6 @@ val total = Money(100) + Money(50)
 
 Use it only when the operator meaning is obvious.
 
-
 ---
 
 ## What is a DSL in Kotlin?
@@ -479,7 +477,7 @@ Use it only when the operator meaning is obvious.
 -   Kotlin supports DSLs using lambdas with receivers, builders, and
     extension functions.
 
-``` kotlin
+```kotlin
 buildUser {
     name = "Kiran"
     age = 30
@@ -487,7 +485,6 @@ buildUser {
 ```
 
 DSLs are useful for readable configuration and builders.
-
 
 ---
 
@@ -511,7 +508,6 @@ iOS     → iOS UI
 Use it when code sharing provides enough value to justify the added
 complexity.
 
-
 ---
 
 ## What does `ensureActive()` do?
@@ -521,7 +517,7 @@ complexity.
 -   If it is cancelled, `ensureActive()` throws `CancellationException`.
 -   It is useful inside CPU-heavy loops that do not naturally suspend.
 
-``` kotlin
+```kotlin
 val job = launch {
 
     for (i in 1..1_000_000) {
@@ -551,7 +547,7 @@ loop stops
 
 Important:
 
-``` kotlin
+```kotlin
 for (i in 1..1_000_000) {
     heavyCalculation(i)
 }
@@ -559,8 +555,6 @@ for (i in 1..1_000_000) {
 
 If `heavyCalculation()` never suspends and there is no cancellation
 check, cancellation may not stop the loop immediately.
-
-
 
 ---
 
@@ -572,13 +566,13 @@ check, cancellation may not stop the loop immediately.
 -   `ensureActive()` is useful when you want normal coroutine
     cancellation to propagate automatically.
 
-``` kotlin
+```kotlin
 ensureActive()
 ```
 
 is similar to:
 
-``` kotlin
+```kotlin
 if (!isActive) {
     throw CancellationException()
 }
@@ -586,7 +580,7 @@ if (!isActive) {
 
 With `isActive`:
 
-``` kotlin
+```kotlin
 while (isActive) {
     doWork()
 }
@@ -594,14 +588,12 @@ while (isActive) {
 
 With `ensureActive()`:
 
-``` kotlin
+```kotlin
 while (true) {
     ensureActive()
     doWork()
 }
 ```
-
-
 
 ---
 
@@ -609,14 +601,14 @@ while (true) {
 
 Instead of:
 
-``` kotlin
+```kotlin
 job.cancel()
 job.join()
 ```
 
 you can use:
 
-``` kotlin
+```kotlin
 job.cancelAndJoin()
 ```
 
@@ -632,12 +624,11 @@ wait for completion
 
 This is useful in tests and lifecycle-sensitive code.
 
-
 ---
 
 ## What happens when you call `join()` without cancelling?
 
-``` kotlin
+```kotlin
 val job = launch {
     delay(1000)
     println("Done")
@@ -659,14 +650,11 @@ Finished waiting
 
 It simply waits for the job to complete.
 
-
 ---
 
 ## What is a common race condition with shared mutable state?
 
-Example:
-
-``` kotlin
+```kotlin
 var count = 0
 
 coroutineScope {
@@ -698,14 +686,13 @@ write count
 
 Multiple threads can interleave these operations.
 
-
 ---
 
 ## How do you safely update shared mutable state?
 
 Use `Mutex`:
 
-``` kotlin
+```kotlin
 val mutex = Mutex()
 var count = 0
 
@@ -725,7 +712,7 @@ coroutineScope {
 
 Or use atomic primitives when appropriate:
 
-``` kotlin
+```kotlin
 val count = AtomicInteger(0)
 
 count.incrementAndGet()
@@ -737,7 +724,7 @@ count.incrementAndGet()
 
 Suppose you have:
 
-``` kotlin
+```kotlin
 val user = loadUser()
 val orders = loadOrders(user.id)
 ```
@@ -748,7 +735,7 @@ You cannot make it fully parallel if `orders` needs `user.id`.
 
 But if the calls are independent:
 
-``` kotlin
+```kotlin
 val user = async {
     loadUser()
 }
@@ -763,38 +750,33 @@ val finalSettings = settings.await()
 
 They can run concurrently.
 
-
-
 ---
 
 ## What is the difference between `cancel()` and throwing an exception?
 
 Cancellation:
 
-``` kotlin
+```kotlin
 job.cancel()
 ```
 
 means:
 
-
 Normal exception:
 
-``` kotlin
+```kotlin
 throw IOException()
 ```
 
 means:
 
-
 Cancellation should normally not be treated as an application error.
 
-``` kotlin
+```kotlin
 catch (e: CancellationException) {
     throw e
 }
 ```
-
 
 ---
 
@@ -812,7 +794,6 @@ val length = name?.length
 println(length) // null
 ```
 
-
 ---
 
 ## What is the Elvis `?:` operator in Kotlin?
@@ -828,7 +809,6 @@ val displayName = name ?: "Guest"
 println(displayName) // Guest
 ```
 
-
 ---
 
 ## What is the not-null assertion `!!` operator?
@@ -842,7 +822,6 @@ val name: String? = null
 
 val length = name!!.length // NullPointerException
 ```
-
 
 ---
 
@@ -864,7 +843,6 @@ For a `data class`, this returns `true` because the values are equal.
 data class User(val name: String)
 ```
 
-
 ---
 
 ## What is the `===` operator in Kotlin?
@@ -879,7 +857,6 @@ val b = String(charArrayOf('H', 'i'))
 println(a == b)   // true
 println(a === b)  // false
 ```
-
 
 ---
 
@@ -898,7 +875,6 @@ fun printValue(value: Any) {
 
 After `value is String`, Kotlin treats `value` as a `String`.
 
-
 ---
 
 ## What is the `as` operator in Kotlin?
@@ -914,7 +890,6 @@ val text = value as String
 println(text.length)
 ```
 
-
 ---
 
 ## What is the `as?` safe-cast operator?
@@ -929,7 +904,6 @@ val text = value as? String
 
 println(text) // null
 ```
-
 
 ---
 
@@ -956,7 +930,6 @@ if ("Kiran" in names) {
 }
 ```
 
-
 ---
 
 ## What is the range `..` operator?
@@ -978,7 +951,6 @@ Output:
 4
 5
 ```
-
 
 ---
 
@@ -1002,7 +974,6 @@ Output:
 4
 ```
 
-
 ---
 
 ## What are `&&` and `||` operators?
@@ -1023,7 +994,6 @@ if (isAdmin || isManager) {
 }
 ```
 
-
 ---
 
 ## What is the `!` operator?
@@ -1037,7 +1007,6 @@ if (!isLoggedIn) {
     println("Please login")
 }
 ```
-
 
 ---
 
@@ -1062,7 +1031,6 @@ It is also commonly used with Android/Compose callbacks:
 Button(onClick = ::onButtonClick)
 ```
 
-
 ---
 
 ## Why are Kotlin classes `final` by default?
@@ -1080,7 +1048,6 @@ This cannot be inherited:
 ```kotlin
 // class Admin : User() // Error
 ```
-
 
 ---
 
@@ -1102,7 +1069,6 @@ class Child : Parent() {
     }
 }
 ```
-
 
 ---
 
@@ -1128,7 +1094,6 @@ class GrandChild : Child() {
 }
 ```
 
-
 ---
 
 ## What is `noinline` in Kotlin?
@@ -1153,7 +1118,6 @@ Here:
 * `block1` is inlined.
 * `block2` remains a normal function object.
 
-
 ---
 
 ## What is `crossinline` in Kotlin?
@@ -1173,7 +1137,6 @@ inline fun execute(crossinline block: () -> Unit) {
 ```
 
 Without `crossinline`, Kotlin cannot safely allow a non-local return because the lambda executes inside another function/callback.
-
 
 ---
 
@@ -1198,7 +1161,6 @@ fun test() {
 ```
 
 The `return` returns from `test()`, not just the lambda.
-
 
 ---
 
@@ -1226,7 +1188,6 @@ execute {
 ```
 
 Because the lambda is executed inside `Runnable`, Kotlin cannot allow the lambda to return from the outer function.
-
 
 ---
 
@@ -1256,7 +1217,6 @@ You don't need to create an instance:
 // Logger() // Not allowed
 ```
 
-
 ---
 
 ## What is a `companion object`?
@@ -1282,7 +1242,6 @@ Usage:
 val user = User.create()
 ```
 
-
 ---
 
 ## What is the difference between `object` and `companion object`?
@@ -1304,7 +1263,6 @@ class User {
 }
 ```
 
-
 ---
 
 ## What does the `data` keyword mean?
@@ -1325,7 +1283,6 @@ You can do:
 val user1 = User(1, "Kiran")
 val user2 = user1.copy(name = "John")
 ```
-
 
 ---
 
@@ -1352,7 +1309,6 @@ class Dog : Animal() {
 }
 ```
 
-
 ---
 
 ## What is an interface in Kotlin?
@@ -1373,7 +1329,6 @@ class Button : ClickListener {
     }
 }
 ```
-
 
 ---
 
@@ -1399,7 +1354,6 @@ class ViewModel(
 ```
 
 Now `ViewModel` automatically delegates `getData()` to `repository`.
-
 
 ---
 
@@ -1432,7 +1386,6 @@ val result = p1 + p2
 
 The `+` operator internally calls `plus()`.
 
-
 ---
 
 ## What does the `infix` keyword mean?
@@ -1458,7 +1411,6 @@ Instead of:
 val result = 10.add(5)
 ```
 
-
 ---
 
 ## What does the `const` keyword mean?
@@ -1478,7 +1430,6 @@ object Constants {
     const val TIMEOUT = 30
 }
 ```
-
 
 ---
 
@@ -1508,7 +1459,6 @@ fun setListener(listener: OnUserClick) {
 
 is easier to read.
 
-
 ---
 
 ## What does the `tailrec` keyword mean?
@@ -1528,7 +1478,6 @@ tailrec fun countDown(value: Int) {
 ```
 
 The compiler can optimize the recursion instead of creating a new stack frame for every call.
-
 
 ---
 
@@ -1553,7 +1502,6 @@ name = " Kiran "
 println(name) // KIRAN
 ```
 
-
 ---
 
 ## What does `this` mean in Kotlin?
@@ -1570,7 +1518,6 @@ class User(
     }
 }
 ```
-
 
 ---
 
@@ -1601,7 +1548,6 @@ Parent
 Child
 ```
 
-
 ---
 
 ## What is the `when` expression in Kotlin?
@@ -1627,7 +1573,6 @@ when (result) {
 }
 ```
 
-
 ---
 
 ## What does `return` do?
@@ -1639,7 +1584,6 @@ fun getName(): String {
     return "Kiran"
 }
 ```
-
 
 ---
 
@@ -1663,7 +1607,6 @@ Output:
 4
 ```
 
-
 ---
 
 ## What does `continue` do?
@@ -1686,29 +1629,84 @@ Output:
 5
 ```
 
+---
+# Kotlin Advanced
+
+## What is a Kotlin `value class` and when do you use it on Android?
+
+* A `value class` creates a distinct type around one value.
+* It gives compile-time type safety without necessarily creating a separate object at runtime.
+* It is useful when two values have the same underlying type but different meanings.
+
+```kotlin
+@JvmInline
+value class UserId(val value: String)
+
+@JvmInline
+value class OrderId(val value: String)
+```
+
+Now this is type-safe:
+
+```kotlin
+fun loadUser(id: UserId) {
+    // ...
+}
+
+val userId = UserId("123")
+
+loadUser(userId)
+```
+
+You cannot accidentally pass:
+
+```kotlin
+val orderId = OrderId("123")
+
+// loadUser(orderId) // Compilation error
+```
+
+Instead of:
+
+```kotlin
+fun loadUser(id: String)
+fun loadOrder(id: String)
+```
+
+you get:
+
+```kotlin
+fun loadUser(id: UserId)
+fun loadOrder(id: OrderId)
+```
+
+**Important:** Value classes are not guaranteed to be allocation-free in every situation. They can be boxed when used with generics, nullable types, arrays, reflection, or certain APIs.
 
 ---
-# Coroutine
 
-## What are coroutine builders in Kotlin?
+## Does `ConcurrentHashMap` make all operations thread-safe?
 
-Common builders are:
+* Individual map operations are thread-safe.
+* A sequence of operations can still have a race condition.
 
--   `launch` returns a `Job`.
--   `async` returns a `Deferred<T>`.
--   `runBlocking` blocks the current thread.
--   `coroutineScope` creates a structured child scope.
--   `supervisorScope` isolates child failures.
+For example:
 
-``` kotlin
-viewModelScope.launch {
-    val result = async {
-        repository.loadUser()
-    }.await()
+```kotlin
+if (!cache.containsKey(id)) {
+    cache[id] = user
 }
 ```
 
+Another thread can modify the map between `containsKey()` and `put()`.
+
+Prefer atomic operations when appropriate:
+
+```kotlin
+cache.putIfAbsent(id, user)
+```
+
 ---
+# Coroutine
 
 ## `launch` vs `async`
 
@@ -1716,20 +1714,6 @@ viewModelScope.launch {
 - `async` -> `Deferred<T>`.
 - Use `async` when a result is required and concurrent execution provides value.
 - Do not use `async` just because multiple calls exist.
-
-## What is cancellation?
-
-- Cancellation is cooperative.
-- Suspending functions normally check cancellation.
-- CPU-heavy loops should check `isActive` or call `ensureActive()`.
-
-```kotlin
-while (isActive) {
-    processNext()
-}
-```
-
----
 
 ## `withContext` vs `launch`
 - `withContext` switches context and returns a result while remaining sequential.
@@ -1763,14 +1747,13 @@ while (isActive) {
 -   Suspending functions usually check cancellation automatically.
 -   CPU-heavy loops should check cancellation explicitly.
 
-``` kotlin
+```kotlin
 while (isActive) {
     doWork()
 }
 ```
 
 Avoid swallowing `CancellationException`.
-
 
 ---
 
@@ -1780,7 +1763,7 @@ Avoid swallowing `CancellationException`.
     root coroutines.
 -   `supervisorScope` is useful when child failures should be isolated.
 
-``` kotlin
+```kotlin
 viewModelScope.launch {
     try {
         repository.loadUser()
@@ -1793,7 +1776,6 @@ viewModelScope.launch {
 Do not catch every `Throwable` blindly because cancellation must remain
 cancellable.
 
-
 ---
 # Flow
 
@@ -1803,7 +1785,7 @@ cancellable.
 -   It is cold by default.
 -   The producer executes when a collector starts collecting.
 
-``` kotlin
+```kotlin
 fun users(): Flow<List<User>> = flow {
     emit(api.getUsers())
 }
@@ -1818,7 +1800,7 @@ Each collector can trigger the upstream flow independently.
 -   A cold Flow does not start producing values until collected.
 -   Each collector gets its own execution.
 
-``` kotlin
+```kotlin
 val flow = flow {
     println("Started")
     emit(1)
@@ -1827,7 +1809,6 @@ val flow = flow {
 
 Collecting twice can execute the upstream twice.
 
-
 ---
 
 ## What is a hot Flow?
@@ -1835,7 +1816,7 @@ Collecting twice can execute the upstream twice.
 -   A hot flow exists independently of collectors.
 -   `StateFlow` and `SharedFlow` are common hot flows.
 
-``` kotlin
+```kotlin
 val state: StateFlow<UiState>
 ```
 
@@ -1881,7 +1862,6 @@ sealed interface UiEvent {
 
 For new coroutine-based applications, StateFlow is usually preferred.
 
-
 ---
 
 ## How do you convert a cold Flow to a hot Flow?
@@ -1916,7 +1896,7 @@ val events = repository.observeEvents()
 - If you need independent execution per collector, expose the underlying cold producer instead.
 - For example:
 
-``` kotlin
+```kotlin
 fun users(): Flow<List<User>> = flow {
     emit(repository.loadUsers())
 }
@@ -1929,7 +1909,7 @@ fun users(): Flow<List<User>> = flow {
 -   A `suspend` function usually returns one result.
 -   A Flow can emit multiple values over time.
 
-``` kotlin
+```kotlin
 suspend fun getUser(): User
 
 fun observeUser(): Flow<User>
@@ -1937,14 +1917,13 @@ fun observeUser(): Flow<User>
 
 Use a suspend function for one-shot work and Flow for streams/state.
 
-
 ---
 
 ## What happens if `searchRepositories(query)` is a suspend function?
 
 If it returns one result:
 
-``` kotlin
+```kotlin
 val repositories = query
     .debounce(300)
     .distinctUntilChanged()
@@ -1956,7 +1935,6 @@ val repositories = query
 `mapLatest` is useful because a new query cancels the previous suspend
 operation.
 
-
 ---
 
 ## What is `runBlocking` vs `runTest`?
@@ -1966,7 +1944,7 @@ operation.
 -   Android unit tests should generally use `runTest` for coroutine
     code.
 
-``` kotlin
+```kotlin
 @Test
 fun testLoadUser() = runTest {
     viewModel.loadUser()
@@ -1975,7 +1953,6 @@ fun testLoadUser() = runTest {
 
 Use `runBlocking` mainly when bridging synchronous and coroutine code,
 not as the normal coroutine test tool.
-
 
 ---
 
@@ -1987,13 +1964,12 @@ not as the normal coroutine test tool.
 
 Prefer:
 
-``` kotlin
+```kotlin
 viewModelScope.launch { ... }
 ```
 
 or an injected application-level scope when work truly belongs to the
 application lifecycle.
-
 
 ---
 
@@ -2004,7 +1980,7 @@ application lifecycle.
 -   The coroutine must reach a suspension point or explicitly check
     cancellation.
 
-``` kotlin
+```kotlin
 val job = launch {
 
     while (true) {
@@ -2018,7 +1994,7 @@ job.cancel()
 
 Common cancellation-aware operations include:
 
-``` kotlin
+```kotlin
 delay(...)
 yield()
 await()
@@ -2027,13 +2003,11 @@ withContext(...)
 
 A CPU-only loop needs an explicit check:
 
-``` kotlin
+```kotlin
 while (isActive) {
     calculate()
 }
 ```
-
-
 
 ---
 
@@ -2041,7 +2015,7 @@ while (isActive) {
 
 `delay()` is cancellation-aware.
 
-``` kotlin
+```kotlin
 val job = launch {
 
     println("Start")
@@ -2072,14 +2046,13 @@ coroutine ends
 
 This is one reason `delay()` is safe for coroutine cancellation.
 
-
 ---
 
 ## Does `delay()` block the Main thread?
 
 No.
 
-``` kotlin
+```kotlin
 viewModelScope.launch(Dispatchers.Main) {
 
     delay(5000)
@@ -2094,13 +2067,11 @@ The Main thread can continue processing other work.
 
 Compare this with:
 
-``` kotlin
+```kotlin
 Thread.sleep(5000)
 ```
 
 `Thread.sleep()` blocks the Main thread.
-
-
 
 ---
 
@@ -2111,7 +2082,7 @@ Thread.sleep(5000)
     executing.
 -   It is mainly useful for cleanup or critical final operations.
 
-``` kotlin
+```kotlin
 try {
     doWork()
 } finally {
@@ -2129,7 +2100,7 @@ Use it carefully.
 
 Good use:
 
-``` kotlin
+```kotlin
 finally {
     withContext(NonCancellable) {
         closeResource()
@@ -2139,14 +2110,13 @@ finally {
 
 Bad use:
 
-``` kotlin
+```kotlin
 withContext(NonCancellable) {
     apiCall()
 }
 ```
 
 Do not use it simply to make normal business work ignore cancellation.
-
 
 ---
 
@@ -2166,7 +2136,7 @@ No. They solve completely different problems.
 -   Is not automatically tied to the current feature lifecycle.
 -   Can outlive an Activity, Fragment, ViewModel, or screen.
 
-``` kotlin
+```kotlin
 withContext(NonCancellable) {
     cleanup()
 }
@@ -2174,7 +2144,7 @@ withContext(NonCancellable) {
 
 versus:
 
-``` kotlin
+```kotlin
 GlobalScope.launch {
     cleanup()
 }
@@ -2184,15 +2154,13 @@ The first is controlled cleanup.
 
 The second creates an independent coroutine.
 
-
-
 ---
 
 ## What happens to `finally` when a coroutine is cancelled?
 
 `finally` normally executes during cancellation.
 
-``` kotlin
+```kotlin
 val job = launch {
 
     try {
@@ -2209,7 +2177,7 @@ job.cancel()
 
 But this is tricky:
 
-``` kotlin
+```kotlin
 finally {
     delay(1000)
 }
@@ -2220,7 +2188,7 @@ immediately fail with `CancellationException`.
 
 For cleanup that must suspend:
 
-``` kotlin
+```kotlin
 finally {
     withContext(NonCancellable) {
         delay(1000)
@@ -2229,14 +2197,13 @@ finally {
 }
 ```
 
-
 ---
 
 ## Do two `async` calls execute if I never call `await()`?
 
 They can start and execute even if you never call `await()`.
 
-``` kotlin
+```kotlin
 coroutineScope {
 
     val first = async {
@@ -2257,7 +2224,7 @@ The enclosing structured scope still waits for its children.
 
 If the results are not needed, prefer:
 
-``` kotlin
+```kotlin
 launch {
     api1()
 }
@@ -2272,15 +2239,13 @@ Another important point:
 If an `async` child fails, its exception can still cancel the parent in
 a normal `coroutineScope`, even if nobody calls `await()`.
 
-
-
 ---
 
 ## Are two `async` calls parallel or sequential?
 
 This is parallel/concurrent:
 
-``` kotlin
+```kotlin
 coroutineScope {
 
     val first = async {
@@ -2308,7 +2273,7 @@ api2  ────────────────┘
 
 But this is sequential:
 
-``` kotlin
+```kotlin
 val result1 = async {
     api1()
 }.await()
@@ -2354,7 +2319,7 @@ No.
 `async` means concurrent coroutine work, not guaranteed physical
 parallelism.
 
-``` kotlin
+```kotlin
 async {
     calculate()
 }
@@ -2364,7 +2329,7 @@ Whether it executes on multiple threads depends on the dispatcher.
 
 For example:
 
-``` kotlin
+```kotlin
 async(Dispatchers.Default) {
     calculate()
 }
@@ -2374,7 +2339,7 @@ can execute CPU work on different worker threads.
 
 But:
 
-``` kotlin
+```kotlin
 async(Dispatchers.Main) {
     calculate()
 }
@@ -2383,15 +2348,11 @@ async(Dispatchers.Main) {
 runs on the Main dispatcher and does not magically create another UI
 thread.
 
-
-
 ---
 
 ## What happens if `await()` is called immediately after `async`?
 
-Example:
-
-``` kotlin
+```kotlin
 val result1 = async {
     api1()
 }.await()
@@ -2407,7 +2368,7 @@ The first operation must complete before the second `async` is created.
 
 To run concurrently:
 
-``` kotlin
+```kotlin
 val first = async {
     api1()
 }
@@ -2422,12 +2383,11 @@ val result2 = second.await()
 
 This is a very common interview trap.
 
-
 ---
 
 ## What happens if one `async` fails inside `coroutineScope`?
 
-``` kotlin
+```kotlin
 coroutineScope {
 
     val first = async {
@@ -2463,7 +2423,6 @@ coroutineScope
 The exception is not made harmless simply because `await()` was not
 called.
 
-
 ---
 
 ## How does `supervisorScope` change exception propagation?
@@ -2471,7 +2430,7 @@ called.
 `supervisorScope` prevents one child failure from automatically
 cancelling sibling children.
 
-``` kotlin
+```kotlin
 supervisorScope {
 
     launch {
@@ -2511,14 +2470,13 @@ child B continues
 
 Use it when sibling operations should be independent.
 
-
 ---
 
 ## Does `launch` exception get caught by an outer `try-catch`?
 
 This does not work as many developers expect:
 
-``` kotlin
+```kotlin
 try {
 
     launch {
@@ -2538,7 +2496,7 @@ child.
 
 Instead:
 
-``` kotlin
+```kotlin
 launch {
 
     try {
@@ -2552,15 +2510,13 @@ launch {
 For a root coroutine, a `CoroutineExceptionHandler` can also observe
 uncaught exceptions.
 
-
-
 ---
 
 ## What happens if an `async` exception is never awaited?
 
 Consider:
 
-``` kotlin
+```kotlin
 coroutineScope {
 
     val deferred = async {
@@ -2582,12 +2538,11 @@ The parent can be cancelled because the `async` child failed.
 
 This is a common senior-level interview correction.
 
-
 ---
 
 ## What happens when a child coroutine is cancelled?
 
-``` kotlin
+```kotlin
 launch {
 
     val child = launch {
@@ -2627,12 +2582,11 @@ child.cancel()
 parent continues
 ```
 
-
 ---
 
 ## What happens when a parent coroutine is cancelled?
 
-``` kotlin
+```kotlin
 val parent = launch {
 
     launch {
@@ -2653,12 +2607,11 @@ Both children are cancelled.
 
 This is structured concurrency.
 
-
 ---
 
 ## What happens with `launch` inside another `launch`?
 
-``` kotlin
+```kotlin
 launch {
 
     launch {
@@ -2678,12 +2631,11 @@ The important point is that the parent coroutine does not necessarily
 wait at that exact line, but the structured parent does not complete
 until its child completes.
 
-
 ---
 
 ## What happens if `GlobalScope.launch` is used inside a parent coroutine?
 
-``` kotlin
+```kotlin
 launch {
 
     GlobalScope.launch {
@@ -2707,14 +2659,13 @@ GlobalScope child → continues
 
 This is why `GlobalScope` is usually avoided in Android feature code.
 
-
 ---
 
 ## Is `withContext` blocking?
 
 No, not in the thread-blocking sense.
 
-``` kotlin
+```kotlin
 withContext(Dispatchers.IO) {
     apiCall()
 }
@@ -2740,7 +2691,6 @@ coroutine pauses
 thread can do other work
 ```
 
-
 ---
 
 ## What is `Dispatchers.Main.immediate`?
@@ -2750,7 +2700,7 @@ is already running on the Main dispatcher.
 
 For example:
 
-``` kotlin
+```kotlin
 launch(Dispatchers.Main.immediate) {
     println("A")
 }
@@ -2763,7 +2713,7 @@ before `B`.
 
 With:
 
-``` kotlin
+```kotlin
 launch(Dispatchers.Main) {
     println("A")
 }
@@ -2775,13 +2725,11 @@ the coroutine may be dispatched, so `B` can execute before `A`.
 
 Important:
 
-
-
 ---
 
 ## Why can `delay()` inside `Dispatchers.Main` be safe?
 
-``` kotlin
+```kotlin
 launch(Dispatchers.Main) {
 
     println("Before")
@@ -2808,7 +2756,7 @@ coroutine resumes later
 
 Compare:
 
-``` kotlin
+```kotlin
 launch(Dispatchers.Main) {
     Thread.sleep(1000)
 }
@@ -2816,14 +2764,13 @@ launch(Dispatchers.Main) {
 
 This blocks Main and can cause an ANR.
 
-
 ---
 
 ## What is `yield()`?
 
 `yield()` gives other ready coroutines an opportunity to execute.
 
-``` kotlin
+```kotlin
 launch {
     println("A")
     yield()
@@ -2847,13 +2794,11 @@ The important point is not to promise an exact order.
 
 `yield()` is also cancellation-aware.
 
-``` kotlin
+```kotlin
 yield()
 ```
 
 can detect cancellation and stop the coroutine.
-
-
 
 ---
 
@@ -2861,7 +2806,7 @@ can detect cancellation and stop the coroutine.
 
 `delay()`:
 
-``` kotlin
+```kotlin
 delay(1000)
 ```
 
@@ -2869,7 +2814,7 @@ suspends for at least the requested delay period.
 
 `yield()`:
 
-``` kotlin
+```kotlin
 yield()
 ```
 
@@ -2878,14 +2823,13 @@ scheduler an opportunity to run other work.
 
 Both are suspension points.
 
-
 ---
 
 ## Can `withContext(Dispatchers.IO)` be nested inside `withContext(Dispatchers.IO)`?
 
 Technically yes:
 
-``` kotlin
+```kotlin
 withContext(Dispatchers.IO) {
 
     withContext(Dispatchers.IO) {
@@ -2898,7 +2842,7 @@ But it is usually unnecessary.
 
 A better design is:
 
-``` kotlin
+```kotlin
 withContext(Dispatchers.IO) {
     repository.load()
 }
@@ -2907,12 +2851,11 @@ withContext(Dispatchers.IO) {
 Avoid unnecessary context switches because they make code harder to
 reason about.
 
-
 ---
 
 ## What happens with nested dispatcher switching?
 
-``` kotlin
+```kotlin
 withContext(Dispatchers.IO) {
 
     loadFromDatabase()
@@ -2940,7 +2883,6 @@ return to original context
 `withContext` is sequential. The outer block waits for the inner block
 to finish.
 
-
 ---
 
 ## Can `runBlocking` cause an Android ANR?
@@ -2951,7 +2893,7 @@ Yes.
 
 Bad Android example:
 
-``` kotlin
+```kotlin
 fun onClick() {
 
     runBlocking {
@@ -2974,19 +2916,17 @@ UI cannot process events
 
 Prefer:
 
-``` kotlin
+```kotlin
 lifecycleScope.launch {
     delay(5000)
 }
 ```
 
-
-
 ---
 
 ## What happens when `runBlocking` contains a normal child `launch`?
 
-``` kotlin
+```kotlin
 runBlocking {
 
     launch {
@@ -3007,12 +2947,11 @@ Done
 
 `runBlocking` waits for its structured children before returning.
 
-
 ---
 
 ## What happens when `runBlocking` contains `GlobalScope.launch`?
 
-``` kotlin
+```kotlin
 runBlocking {
 
     GlobalScope.launch {
@@ -3038,14 +2977,13 @@ GlobalScope.launch
 not a child
 ```
 
-
 ---
 
 ## What is a common `Flow` cancellation trap?
 
 Consider:
 
-``` kotlin
+```kotlin
 flow {
     emit(1)
     emit(2)
@@ -3063,22 +3001,20 @@ through cancellation.
 
 The important idea is:
 
-
 A safer way to stop collection based on a condition is often to use
 operators such as:
 
-``` kotlin
+```kotlin
 takeWhile { it != 1 }
 ```
 
 or:
 
-``` kotlin
+```kotlin
 first { it == 1 }
 ```
 
 depending on the requirement.
-
 
 ---
 
@@ -3086,7 +3022,7 @@ depending on the requirement.
 
 This is dangerous:
 
-``` kotlin
+```kotlin
 try {
     doWork()
 } catch (e: Exception) {
@@ -3101,7 +3037,7 @@ A coroutine may then continue executing after cancellation.
 
 Prefer:
 
-``` kotlin
+```kotlin
 try {
     doWork()
 } catch (e: CancellationException) {
@@ -3111,15 +3047,11 @@ try {
 }
 ```
 
-
-
 ---
 
 ## What is the tricky problem with `catch (Exception)` in coroutine code?
 
-Example:
-
-``` kotlin
+```kotlin
 try {
     delay(5000)
 } catch (e: Exception) {
@@ -3134,7 +3066,7 @@ If you swallow it, the coroutine may continue.
 
 Better:
 
-``` kotlin
+```kotlin
 catch (e: CancellationException) {
     throw e
 }
@@ -3145,12 +3077,11 @@ catch (e: Exception) {
 
 This is a very common senior-level interview question.
 
-
 ---
 
 ## What happens if `CancellationException` is thrown manually?
 
-``` kotlin
+```kotlin
 throw CancellationException()
 ```
 
@@ -3162,14 +3093,13 @@ cancellation is part of coroutine control flow.
 Usually you should let cancellation propagate instead of converting it
 into another exception.
 
-
 ---
 
 ## What happens if a cancelled coroutine calls `withContext(Dispatchers.IO)`?
 
 Cancellation normally propagates.
 
-``` kotlin
+```kotlin
 job.cancel()
 
 withContext(Dispatchers.IO) {
@@ -3184,7 +3114,7 @@ Changing the dispatcher does not remove cancellation.
 
 To intentionally perform cancellation-safe cleanup:
 
-``` kotlin
+```kotlin
 withContext(NonCancellable) {
     withContext(Dispatchers.IO) {
         saveData()
@@ -3194,14 +3124,13 @@ withContext(NonCancellable) {
 
 This is a useful interview combination.
 
-
 ---
 
 ## Can `NonCancellable` make a coroutine immortal?
 
 No.
 
-``` kotlin
+```kotlin
 withContext(NonCancellable) {
     cleanup()
 }
@@ -3229,12 +3158,11 @@ cleanup finishes
 coroutine completes
 ```
 
-
 ---
 
 ## What happens if you call `job.cancel()` and immediately call `job.join()`?
 
-``` kotlin
+```kotlin
 job.cancel()
 job.join()
 ```
@@ -3246,20 +3174,18 @@ job.join()
 This is useful when you need to wait for cancellation and cleanup to
 finish.
 
-``` kotlin
+```kotlin
 job.cancel()
 job.join()
 
 println("Job completely finished")
 ```
 
-
-
 ---
 
 ## What happens with `Job` cancellation and child jobs?
 
-``` kotlin
+```kotlin
 val parent = launch {
 
     val child = launch {
@@ -3277,14 +3203,13 @@ child.
 
 But:
 
-``` kotlin
+```kotlin
 child.cancel()
 ```
 
 does not normally cancel the parent.
 
 Cancellation flows downward.
-
 
 ---
 
@@ -3319,7 +3244,6 @@ sibling can continue
 This distinction is important when explaining `coroutineScope` vs
 `supervisorScope`.
 
-
 ---
 
 ## Can `Dispatchers.Default` execute multiple coroutines at the same time?
@@ -3329,7 +3253,7 @@ Yes.
 `Dispatchers.Default` uses a shared pool of worker threads designed
 primarily for CPU-bound work.
 
-``` kotlin
+```kotlin
 coroutineScope {
 
     launch(Dispatchers.Default) {
@@ -3346,10 +3270,9 @@ These coroutines may execute concurrently on different worker threads.
 
 For blocking I/O, prefer:
 
-``` kotlin
+```kotlin
 Dispatchers.IO
 ```
-
 
 ---
 
@@ -3358,7 +3281,7 @@ Dispatchers.IO
 It protects the Main thread, but it does not make the operation
 magically non-blocking.
 
-``` kotlin
+```kotlin
 withContext(Dispatchers.IO) {
     blockingFileOperation()
 }
@@ -3369,12 +3292,11 @@ The worker thread is still blocked while the operation runs.
 The benefit is that you are blocking an I/O worker rather than the Main
 thread.
 
-
 ---
 
 ## What happens if you use `Dispatchers.Default` for blocking I/O?
 
-``` kotlin
+```kotlin
 withContext(Dispatchers.Default) {
     blockingNetworkCall()
 }
@@ -3393,14 +3315,13 @@ Blocking I/O    → IO
 UI work         → Main
 ```
 
-
 ---
 
 ## What is the hidden trap with `withContext` and cancellation?
 
 Changing dispatcher does not reset cancellation.
 
-``` kotlin
+```kotlin
 withContext(Dispatchers.IO) {
     doWork()
 }
@@ -3421,14 +3342,13 @@ still cancelled
 `withContext` changes context elements such as dispatcher, but it does
 not detach the coroutine from its parent.
 
-
 ---
 
 ## What is the difference between `coroutineScope` and `GlobalScope` in Android?
 
 `coroutineScope`:
 
-``` kotlin
+```kotlin
 coroutineScope {
     launch {
         loadData()
@@ -3440,7 +3360,7 @@ The child has a clear parent and lifecycle.
 
 `GlobalScope`:
 
-``` kotlin
+```kotlin
 GlobalScope.launch {
     loadData()
 }
@@ -3450,7 +3370,7 @@ The coroutine is independent of the current feature lifecycle.
 
 For Android, prefer lifecycle-aware scopes such as:
 
-``` kotlin
+```kotlin
 viewModelScope.launch {
     loadData()
 }
@@ -3458,7 +3378,7 @@ viewModelScope.launch {
 
 or:
 
-``` kotlin
+```kotlin
 lifecycleScope.launch {
     loadData()
 }
@@ -3516,7 +3436,7 @@ viewModelScope.launch {
 
 `viewModelScope` is tied to the ViewModel.
 
-``` kotlin
+```kotlin
 viewModelScope.launch {
     repository.load()
 }
@@ -3526,7 +3446,7 @@ It is cancelled when the ViewModel is cleared.
 
 `lifecycleScope` is tied to an Android LifecycleOwner.
 
-``` kotlin
+```kotlin
 lifecycleScope.launch {
     loadData()
 }
@@ -3534,13 +3454,11 @@ lifecycleScope.launch {
 
 It is cancelled when the LifecycleOwner is destroyed.
 
-
-
 ---
 
 ## What happens if two `async` operations have different durations?
 
-``` kotlin
+```kotlin
 val first = async {
     delay(3000)
     "A"
@@ -3559,7 +3477,7 @@ println(second.await())
 
 But the code waits for `first` first because:
 
-``` kotlin
+```kotlin
 first.await()
 ```
 
@@ -3582,14 +3500,13 @@ await(second)
 already completed
 ```
 
-
 ---
 
 ## Does calling `await()` cancel other `async` operations?
 
 No.
 
-``` kotlin
+```kotlin
 val first = async { api1() }
 val second = async { api2() }
 
@@ -3601,14 +3518,13 @@ Calling `first.await()` only waits for the first result.
 `second` continues unless the parent scope is cancelled or another
 failure causes cancellation.
 
-
 ---
 
 ## What happens if one `async` fails and another is still running?
 
 In a normal `coroutineScope`:
 
-``` kotlin
+```kotlin
 coroutineScope {
 
     val first = async {
@@ -3637,12 +3553,11 @@ api2 cancelled
 If the operations are independent and should not cancel each other,
 consider:
 
-``` kotlin
+```kotlin
 supervisorScope {
     ...
 }
 ```
-
 
 ---
 
@@ -3651,7 +3566,7 @@ supervisorScope {
 `supervisorScope` prevents sibling cancellation, but you still need to
 handle the failed `Deferred`.
 
-``` kotlin
+```kotlin
 supervisorScope {
 
     val first = async {
@@ -3675,12 +3590,11 @@ supervisorScope {
 Supervision does not automatically convert a failed operation into a
 successful result.
 
-
 ---
 
 ## What happens if a coroutine is cancelled before it starts executing?
 
-``` kotlin
+```kotlin
 val job = launch {
     println("Hello")
 }
@@ -3697,14 +3611,13 @@ If an operation must happen before cancellation can occur, structure the
 operation appropriately rather than assuming `launch` starts
 synchronously.
 
-
 ---
 
 ## Does calling `launch {}` execute the block immediately?
 
 Not necessarily.
 
-``` kotlin
+```kotlin
 launch {
     println("Child")
 }
@@ -3732,15 +3645,13 @@ without knowing the execution context.
 
 A senior answer should say:
 
-
-
 ---
 
 ## What happens with `launch(start = CoroutineStart.LAZY)`?
 
 A lazy coroutine does not start until it is needed.
 
-``` kotlin
+```kotlin
 val job = launch(start = CoroutineStart.LAZY) {
     println("Work")
 }
@@ -3759,7 +3670,7 @@ Work
 
 For `async`:
 
-``` kotlin
+```kotlin
 val deferred = async(start = CoroutineStart.LAZY) {
     loadData()
 }
@@ -3769,14 +3680,13 @@ val result = deferred.await()
 
 `await()` starts the lazy coroutine.
 
-
 ---
 
 ## What is the difference between `CoroutineStart.DEFAULT` and `LAZY`?
 
 Default:
 
-``` kotlin
+```kotlin
 launch {
     work()
 }
@@ -3786,7 +3696,7 @@ The coroutine is scheduled immediately.
 
 Lazy:
 
-``` kotlin
+```kotlin
 launch(start = CoroutineStart.LAZY) {
     work()
 }
@@ -3795,13 +3705,11 @@ launch(start = CoroutineStart.LAZY) {
 The coroutine does not start until `start()`, `join()`, or another
 operation that starts it.
 
-
-
 ---
 
 ## What is a common `finally` + cancellation interview question?
 
-``` kotlin
+```kotlin
 val job = launch {
 
     try {
@@ -3816,12 +3724,11 @@ job.cancel()
 
 Question:
 
-
 Yes.
 
 Then:
 
-``` kotlin
+```kotlin
 finally {
     delay(1000)
 }
@@ -3829,12 +3736,11 @@ finally {
 
 Question:
 
-
 No, because the coroutine is already cancelled.
 
 Use:
 
-``` kotlin
+```kotlin
 finally {
     withContext(NonCancellable) {
         delay(1000)
@@ -3843,7 +3749,6 @@ finally {
 ```
 
 if the cleanup must suspend and complete.
-
 
 ---
 
@@ -3856,7 +3761,7 @@ It is not a replacement for normal business error handling.
 
 Prefer:
 
-``` kotlin
+```kotlin
 viewModelScope.launch {
 
     try {
@@ -3870,14 +3775,11 @@ viewModelScope.launch {
 Use `CoroutineExceptionHandler` for last-resort handling/logging of
 uncaught exceptions.
 
-
 ---
 
 ## What is `CoroutineExceptionHandler` and `async`?
 
-Example:
-
-``` kotlin
+```kotlin
 val handler = CoroutineExceptionHandler { _, exception ->
     println("Caught: $exception")
 }
@@ -3891,7 +3793,7 @@ The handler can observe an uncaught exception from `launch`.
 
 But:
 
-``` kotlin
+```kotlin
 async(handler) {
     throw Exception("Failed")
 }
@@ -3901,14 +3803,13 @@ is different because `async` exposes failure through its `Deferred`.
 
 You should normally handle the failure when awaiting:
 
-``` kotlin
+```kotlin
 try {
     deferred.await()
 } catch (e: Exception) {
     handleError(e)
 }
 ```
-
 
 ---
 
@@ -3948,44 +3849,6 @@ GlobalScope.launch {
 
 because the work can outlive the screen or feature that started it.
 
-
----
-
-## What is `Flow` and how does it relate to coroutines?
-
-* `Flow` represents an asynchronous stream of values.
-* It is built around coroutines and suspension.
-* A `Flow` is normally cold, meaning its code starts executing when collected.
-
-```kotlin
-fun observeUsers(): Flow<List<User>> {
-    return repository.users
-}
-```
-
-Collect it:
-
-```kotlin
-viewModelScope.launch {
-    repository.observeUsers().collect { users ->
-        // Update UI
-    }
-}
-```
-
-For Android UI, use lifecycle-aware collection:
-
-```kotlin
-lifecycleScope.launch {
-    repeatOnLifecycle(Lifecycle.State.STARTED) {
-        viewModel.users.collect { users ->
-            // Update UI
-        }
-    }
-}
-```
-
-
 ---
 
 ## What is the difference between `CoroutineContext` and `CoroutineScope`?
@@ -3999,8 +3862,6 @@ lifecycleScope.launch {
   * `CoroutineDispatcher`
   * `CoroutineName`
   * `CoroutineExceptionHandler`
-
-Example:
 
 ```kotlin
 val context =
@@ -4023,8 +3884,6 @@ scope.launch {
 ```
 
 Simple way to remember:
-
-
 
 ---
 
@@ -4058,7 +3917,6 @@ viewModelScope.launch { // Main
     updateUi(user)
 }
 ```
-
 
 ---
 
@@ -4126,7 +3984,6 @@ fun `loads user`() = runTest {
 }
 ```
 
-
 ---
 
 ## How does a coroutine switch threads from Main to IO and back?
@@ -4134,8 +3991,6 @@ fun `loads user`() = runTest {
 * A coroutine does not physically move its existing thread.
 * At a suspension point, Kotlin saves the coroutine's state.
 * The dispatcher decides where the continuation should resume.
-
-Example:
 
 ```kotlin
 viewModelScope.launch { // Main
@@ -4178,7 +4033,6 @@ suspend fun load() {
 does not automatically mean IO.
 
 A suspend function can still execute on Main if called from Main.
-
 
 ---
 
@@ -4235,15 +4089,12 @@ launch {
 }
 ```
 
-
 ---
 
 ## When should you use `Mutex` instead of `ConcurrentHashMap`?
 
 * Use `Mutex` when multiple operations must be treated as one atomic coroutine operation.
 * Use `ConcurrentHashMap` when you need concurrent map access.
-
-Example:
 
 ```kotlin
 private val mutex = Mutex()
@@ -4263,7 +4114,6 @@ For a simple cache:
 ```kotlin
 private val cache = ConcurrentHashMap<String, User>()
 ```
-
 
 ---
 
@@ -4293,133 +4143,5 @@ StandardTestDispatcher(testScheduler)
 
 This makes asynchronous behavior deterministic.
 
-
 ---
 - `merge`: forwards emissions from multiple flows as they arrive.
-
-## `flatMapLatest`
-
-- Cancels the previous inner flow when a new upstream value arrives.
-- Excellent for search.
-
-```kotlin
-query
-    .debounce(300)
-    .distinctUntilChanged()
-    .flatMapLatest { repository.search(it) }
-```
-
----
-# Kotlin Advanced
-
-## What does the `open` keyword mean in Kotlin and why is it the default opposite of Java?
-
-* Kotlin classes and members are `final` by default.
-* `open` explicitly allows inheritance or overriding.
-* This makes inheritance intentional instead of accidental.
-* Java classes and methods are inheritable by default unless marked `final`.
-
-```kotlin
-open class Animal {
-
-    open fun sound() {
-        println("Animal sound")
-    }
-}
-
-class Dog : Animal() {
-
-    override fun sound() {
-        println("Bark")
-    }
-}
-```
-
-Without `open`:
-
-```kotlin
-class Animal
-```
-
-This cannot be inherited.
-
-**Android interview point:** Some mocking frameworks or Android frameworks may require classes to be open. Plugins such as Kotlin's all-open plugin can also make selected classes open automatically.
-
-
----
-
-## What is a Kotlin `value class` and when do you use it on Android?
-
-* A `value class` creates a distinct type around one value.
-* It gives compile-time type safety without necessarily creating a separate object at runtime.
-* It is useful when two values have the same underlying type but different meanings.
-
-```kotlin
-@JvmInline
-value class UserId(val value: String)
-
-@JvmInline
-value class OrderId(val value: String)
-```
-
-Now this is type-safe:
-
-```kotlin
-fun loadUser(id: UserId) {
-    // ...
-}
-
-val userId = UserId("123")
-
-loadUser(userId)
-```
-
-You cannot accidentally pass:
-
-```kotlin
-val orderId = OrderId("123")
-
-// loadUser(orderId) // Compilation error
-```
-
-Instead of:
-
-```kotlin
-fun loadUser(id: String)
-fun loadOrder(id: String)
-```
-
-you get:
-
-```kotlin
-fun loadUser(id: UserId)
-fun loadOrder(id: OrderId)
-```
-
-**Important:** Value classes are not guaranteed to be allocation-free in every situation. They can be boxed when used with generics, nullable types, arrays, reflection, or certain APIs.
-
-
----
-
-## Does `ConcurrentHashMap` make all operations thread-safe?
-
-* Individual map operations are thread-safe.
-* A sequence of operations can still have a race condition.
-
-For example:
-
-```kotlin
-if (!cache.containsKey(id)) {
-    cache[id] = user
-}
-```
-
-Another thread can modify the map between `containsKey()` and `put()`.
-
-Prefer atomic operations when appropriate:
-
-```kotlin
-cache.putIfAbsent(id, user)
-```
-
----
