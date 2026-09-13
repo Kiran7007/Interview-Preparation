@@ -93,19 +93,34 @@ class UserViewModel(
 ---
 
 ## Explain Tight Coupling vs Loose Coupling
-- Tight coupling means a class creates or depends directly on a concrete implementation.
-- Loose coupling means a class depends on an abstraction, such as an interface.
-- Loose coupling makes testing, replacement, and maintenance easier.
+
+Tight Coupling:
 
 ```kotlin
-interface UserService {
-    fun loadUser(): User
+class UserRepository {
+    private val api = UserApi()
 }
+```
 
+Repository directly depends on a concrete implementation.
+
+Loose Coupling:
+
+```kotlin
 class UserRepository(
-    private val service: UserService
+    private val api: UserService
 )
 ```
+
+Dependency is injected via an interface.
+
+Benefits of Loose Coupling over Tight Coupling:
+
+- Easier unit testing
+- Easy mocking
+- Better maintainability
+- Follows Dependency Inversion Principle
+- Easier to replace implementations
 
 ---
 
@@ -1124,11 +1139,18 @@ Then add:
 
 ---
 
-## What are the advantages of XML over Jetpack Compose, and how would you convince a non-technical manager to choose Jetpack Compose over XML?
-- XML has a mature ecosystem and works well for large legacy applications.
-- XML can be easier for gradual migration and existing ViewBinding/DataBinding screens.
-- For new screens, Compose usually needs less boilerplate and supports faster state-driven UI development.
-- I would explain the trade-offs using delivery speed, maintenance cost, team skills, and migration risk instead of presenting it as only a language preference.
+## Advantages of XML over Jetpack Compose — How would you convince your manager(who is from a non-technical background) to choose Jetpack Compose over XML?
+
+XML still has a few advantages:
+
+- Mature ecosystem with years of production stability.
+- Faster preview rendering for very large legacy projects.
+- Easier gradual migration in existing applications.
+- Less recomposition knowledge required.
+- Works well with ViewBinding/DataBinding.
+- Better choice when maintaining legacy apps with thousands of XML screens.
+
+For greenfield projects, Compose is generally preferred.
 
 ---
 
@@ -1182,6 +1204,23 @@ Unchanged stable subtrees may be skipped
 - A state holder emits a new value observed by the composable.
 - Unstable/changed parameters can prevent skipping.
 - Incorrect state placement can cause a much larger subtree to recompose than necessary.
+
+---
+
+## When does recomposition happen in Compose?
+
+Recomposition occurs whenever observed state changes.
+
+Compose re-executes only the affected composables to update the UI.
+
+To minimise recomposition:
+
+- Keep state as low as possible in the UI tree.
+- Pass only the required state to child composables.
+- Use immutable models (`val` properties).
+- Compose skips recomposition when parameters are stable and unchanged.
+- Use `@Stable` and `@Immutable` where appropriate.
+- Provide `key()` in LazyLists to maintain stable item identity.
 
 ---
 
@@ -1480,6 +1519,19 @@ LaunchedEffect(listState) {
 
 ---
 
+## Explain Side Effects in Jetpack Compose
+
+Compose UI should ideally be side-effect free. Side-effect APIs execute work outside recomposition.
+
+- `LaunchedEffect` → launch coroutines
+- `DisposableEffect` → register/unregister listeners
+- `SideEffect` → update non-Compose objects after successful recomposition
+- `produceState` → convert callback/Flow into State
+- `rememberUpdatedState` → avoid restarting effects when lambdas change
+- `derivedStateOf` → compute expensive derived state only when dependencies change
+
+---
+
 ## What is `produceState`?
 
 - Bridges external asynchronous/callback-style data into Compose `State`.
@@ -1517,6 +1569,23 @@ LaunchedEffect(listState) {
 - Use `derivedStateOf` only when it reduces meaningful invalidations.
 - Avoid passing changing state through large subtrees when only a small child needs it.
 - Measure before optimizing.
+
+---
+
+## How do you avoid unnecessary recomposition?
+
+The most common mistake is reading state too high in the composable tree.
+
+Rule: Move state down to the composable that actually needs it.
+
+Also:
+
+- Use immutable UI models.
+- Annotate models with `@Immutable` / `@Stable` when appropriate.
+- Use `remember` for expensive calculations.
+- Use `derivedStateOf` for derived values.
+- Use `key()` inside LazyColumn.
+- Hoist state only when multiple composables need it.
 
 ---
 
@@ -1607,7 +1676,7 @@ Unit tests
 
 ---
 
-## What is a spy, and how does it differ from a mock in Android unit testing?
+## What is a Spy in Android Unit Testing?
 - A mock does not run the real implementation by default; you define its behavior.
 - A spy wraps a real object, so real methods run by default and selected methods can be stubbed or verified.
 - Mocks are usually better for isolated unit tests. Spies are useful when most real behavior is needed.
@@ -1881,6 +1950,30 @@ Activity cannot be collected
 
 ---
 
+## When do memory leaks happen in Android?
+
+The most common memory leak occurs when an Activity or Fragment is referenced by a longer-lived object.
+
+Common causes:
+
+- Activity/Fragment Context stored inside a Singleton (use Application Context instead)
+- Fragment ViewBinding not cleared in `onDestroyView()`
+- Inner classes or anonymous listeners holding Activity references
+- Listeners registered but never unregistered
+- Delayed Handlers or Runnables capturing Activity
+- Coroutines launched in GlobalScope instead of lifecycle-aware scopes
+
+Prevention
+
+- Use `applicationContext` for singletons.
+- Set `binding = null` in `onDestroyView()`.
+- Register/unregister listeners in matching lifecycle callbacks.
+- Use `lifecycleScope` and `viewModelScope`.
+- Avoid `GlobalScope`.
+- Detect leaks using LeakCanary and Android Studio Memory Profiler.
+
+---
+
 ## How do you load large bitmaps?
 - Decode images close to display size.
 - Use an image library with caching.
@@ -1916,6 +2009,31 @@ ANR   → application unresponsive
 - An ANR happens when the UI thread is blocked for too long.
 - Avoid long work on the main thread.
 - Move heavy tasks to background threads and use lifecycle-aware APIs.
+
+---
+
+## What causes ANRs?
+
+An ANR occurs when:
+
+- Main thread is blocked for more than 5 seconds during user interaction.
+- `BroadcastReceiver.onReceive()` takes more than 10 seconds.
+
+Common causes:
+
+- Network or database work on Main Thread
+- Disk I/O
+- Lock contention
+- Long-running BroadcastReceivers
+- Heavy layout inflation
+- Large JSON parsing or bitmap decoding on UI thread
+
+Prevention
+
+- Keep UI thread lightweight.
+- Move expensive work to `Dispatchers.IO` or `Dispatchers.Default`.
+- Enable StrictMode in debug builds.
+- Monitor Android Vitals and analyze `/data/anr/traces.txt`.
 
 ---
 
@@ -1981,6 +2099,30 @@ Benchmark
  ↓
 Gradual release
 ```
+
+---
+
+## Your app has become slow. How would you investigate?
+
+This question can mean different things, so I’d first clarify whether the issue is:
+
+- Cold startup
+- Warm startup
+- Frame drops / UI Jank
+- Scrolling performance
+- Memory issues
+- Network latency
+
+Then I’d use:
+
+- Macrobenchmark
+- Baseline Profiles
+- Perfetto
+- JankStats
+- Android Studio Profiler
+- StrictMode
+
+The investigation always starts with measuring first, then optimising the identified bottleneck.
 
 ---
 
@@ -2271,12 +2413,20 @@ Do not make it personal.
 
 ---
 
-## What do you look for in a code review?
-- Correctness and edge cases
-- Dependency direction and architecture
-- Testability and maintainability
-- Performance and security impact
-- Clear naming and reasoning
+## How do you perform a Pull Request (PR) review?
+
+I categorise my review comments into four buckets:
+
+  * Architecture — SOLID, Clean Architecture, scalability, maintainability.
+  * Functionality — Missing business logic, edge cases, incorrect implementation.
+  * Coding Standards — Naming, formatting, Kotlin best practices, readability.
+  * Documentation — Missing KDocs, README updates, copyright headers, comments.
+
+My review strategy
+
+  * If major functionality is missing but architectural improvements are relatively small, I recommend finishing the functionality first (especially if the PR is blocking a release), merging it, and taking architecture improvements as a separate refactoring task.
+  * If architectural issues affect the core implementation, I recommend addressing architecture first since functionality built on a poor design usually creates more technical debt.
+  * Syntax, formatting, documentation and copyright changes are usually lightweight and should be completed within the same PR.
 
 ---
 

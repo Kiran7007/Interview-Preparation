@@ -86,34 +86,37 @@ data class User(val name: String, val age: Int)
 ---
 
 ## Why should data classes be immutable?
-- Immutable data classes make state predictable and prevent accidental changes.
-- They work well with unidirectional data flow and make concurrent code safer.
-- Use `copy()` to create a changed value instead of modifying the existing object.
+Immutable data classes help ensure Unidirectional Data Flow (UDF).
 
-```kotlin
-data class UiState(
-    val isLoading: Boolean,
-    val users: List<String>
-)
+Benefits:
 
-val updatedState = state.copy(isLoading = false)
-```
+- Predictable UI state.
+- Easier debugging.
+- Thread-safe.
+- Prevent accidental mutations.
+- Compose can skip recomposition more effectively.
+- Works naturally with `copy()` to create new state objects.
+- Encourages functional programming patterns.
 
 ---
 
 ## Why are `equals()` and `hashCode()` important?
-- `equals()` compares object content, while `hashCode()` supports hash-based collections such as `HashMap` and `HashSet`.
-- Equal objects must return the same hash code.
-- Data classes generate both methods from their primary-constructor properties.
+- Data classes automatically generate `equals()` and `hashCode()`.
+
+They are used for:
+
+- Content equality instead of reference equality.
+- Collections like `HashMap`, `HashSet`.
+- Detecting whether state actually changed.
+- Comparing objects created using `copy()`.
 
 ```kotlin
-data class User(val id: String)
+data class User(val name: String, val age: Int)
 
-val first = User("1")
-val second = User("1")
-
-check(first == second)
-check(first.hashCode() == second.hashCode())
+val user1 = User("Monika", 30)
+val user2 = user1.copy()
+user1 == user2      // true
+user1 === user2     // false
 ```
 
 ---
@@ -1767,6 +1770,64 @@ cache.putIfAbsent(id, user)
 - `supervisorScope` creates a structured scope with supervisor semantics.
 
 ---
+
+## What is SupervisorJob vs supervisorScope?
+
+Both provide supervisor-style failure behavior.
+
+If one child coroutine fails, its sibling coroutines are not automatically cancelled.
+
+The main difference is:
+
+- `SupervisorJob` is a `Job` implementation used to create a long-lived supervisor-based `CoroutineScope`.
+- `supervisorScope` is a structured concurrency scope function used for a temporary group of coroutines.
+
+```kotlin
+val scope = CoroutineScope(
+    SupervisorJob() + Dispatchers.IO
+)
+
+suspend fun loadDashboard() = supervisorScope {
+    launch { loadUser() }
+    launch { loadOrders() }
+}
+```
+
+## When should I use which?
+
+Use `supervisorScope` when:
+
+You have a temporary group of independent operations.
+
+Use `SupervisorJob` when:
+
+You need a long-lived scope whose children should fail independently.
+
+```kotlin
+private val scope = CoroutineScope(
+    SupervisorJob() + Dispatchers.IO
+)
+```
+
+## When should you use SupervisorJob?
+
+Use `SupervisorJob` when you need a long-lived scope whose child coroutines should fail independently.
+
+```kotlin
+private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+```
+
+## When should you use supervisorScope?
+
+Use `supervisorScope` when you have a temporary group of independent operations inside a suspend function.
+
+```kotlin
+suspend fun loadDashboard() = supervisorScope {
+    launch { loadProfile() }
+    launch { loadTransactions() }
+    launch { loadRecommendations() }
+}
+```
 
 ## Exception handling
 - `CoroutineExceptionHandler` is primarily for uncaught exceptions in root/launch-style coroutines.
@@ -3455,19 +3516,49 @@ viewModelScope.launch {
 }
 ```
 
-## What is the difference between Structured Concurrency and Parallelism?
-- Structured concurrency defines coroutine ownership, lifetime, and cancellation.
-- Parallelism means tasks actually run at the same time on different threads or CPU cores.
-- Coroutines can be concurrent without running in parallel; parallel execution depends on the dispatcher and available threads.
+## What is Structured Concurrency?
+
+- Child coroutines have a clear parent and lifetime.
+- The parent owns the children.
+- Cancellation propagates predictably.
+- A parent normally does not complete while its children are still active.
+- It prevents work from escaping its lifecycle.
+
+```kotlin
+viewModelScope.launch {
+    coroutineScope {
+        launch { loadUser() }
+        launch { loadOrders() }
+    }
+}
+```
+
+## Difference between Structured Concurrency and Parallelism
+Concurrency means multiple tasks can make progress independently during overlapping time periods, even if they are not running simultaneously. Parallelism means multiple tasks are actually executing at the same time on multiple CPU cores. Concurrency focuses on task coordination and responsiveness, while parallelism focuses on performance and throughput. In Kotlin coroutines, we mainly deal with concurrency, while actual parallelism depends on dispatcher threads and available cores.
+
+Important Interview Point
+
+Concurrency does NOT guarantee parallelism: Single-core CPU can still do concurrency.Because OS switches tasks rapidly.
+
+Parallelism is a subset of concurrency: Parallel tasks are concurrent too.But concurrent tasks may not be parallel.
+
+Kotlin Coroutines Perspective: Coroutines are mainly about: concurrency
+NOT necessarily parallelism.
+
+Example:
 
 ```kotlin
 coroutineScope {
-    val first = async(Dispatchers.Default) { 20 }
-    val second = async(Dispatchers.Default) { 22 }
-
-    check(first.await() + second.await() == 42)
+    launch {
+        api1()
+    }
+    launch {
+        api2()
+    }
 }
 ```
+
+---
 
 ## `coroutineScope` vs `supervisorScope`
 

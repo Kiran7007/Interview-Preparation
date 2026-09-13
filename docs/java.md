@@ -1,10 +1,16 @@
 # Java Language and OOP
 
-## What are the advantages of Java over Kotlin in Android?
-- Java has a large ecosystem, mature libraries, and broad legacy-code support.
-- It can be easier to onboard teams that already maintain Java applications.
-- Java interoperates well with older Java frameworks and Android code.
-- Kotlin is still the preferred choice for most new Android development.
+## Advantages of Java over Kotlin
+
+Although Kotlin is the recommended language today, Java still has advantages:
+
+- Huge ecosystem and mature libraries.
+- Easier onboarding for large legacy codebases.
+- Faster compilation in some large projects.
+- Better interoperability with older Java frameworks.
+- Many enterprise backends and Android SDK internals are still Java-based.
+
+For new Android development, Kotlin remains the preferred choice.
 
 ---
 
