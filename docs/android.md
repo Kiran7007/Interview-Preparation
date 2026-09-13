@@ -159,6 +159,55 @@ abstract class RepositoryModule {
 
 ---
 
+## What the use of hilt qualifier?
+
+A Hilt qualifier distinguishes between multiple bindings that have the same type. For example, it can distinguish an authenticated API from a public API.
+
+```kotlin
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AuthApi
+```
+
+---
+
+## Which Retrofit should I inject?
+
+Inject the Retrofit or API client whose qualifier matches the responsibility of the class. A qualifier prevents Hilt from selecting the wrong client when several clients have the same type.
+
+```kotlin
+class UserRepository @Inject constructor(
+    @AuthApi private val api: UserApi
+)
+```
+
+---
+
+## Why use custom qualifier instead of Named?
+
+Both approaches distinguish bindings. A custom qualifier is usually safer because the compiler checks the annotation type instead of relying on a string that can contain a typo.
+
+```kotlin
+@AuthApi
+@Provides
+fun provideAuthApi(retrofit: Retrofit): UserApi =
+    retrofit.create(UserApi::class.java)
+```
+
+---
+
+## Can we use multiple qualifiers together?
+
+Use one qualifier to identify one binding key. If a dependency needs more detail, create a meaningful custom qualifier or model that detail in the dependency itself instead of stacking qualifiers.
+
+---
+
+## What happens if qualifier is missing during injection?
+
+Hilt normally reports a compile-time missing-binding error. The requested qualified binding and the provided binding do not have the same key, so Hilt cannot choose one safely.
+
+---
+
 ## Difference between MVC, MVP, MVVM, and MVI?
 | Pattern | Core idea | Android fit |
 |---|---|---|
@@ -765,16 +814,6 @@ Retry + Backoff
 
 This keeps local reads fast while the app syncs changes when connectivity is available.
 
----
-
-## Design an Offline-First Multi-Module Android Application. How would you synchronise local and remote data? How would you resolve data conflicts when users modify the same data offline?
-
-One of the best articles I found explaining Offline-First Architecture:
-
-https://medium.com/@ramadan123sayed/room-offline-first-architecture-the-complete-guide-for-android-in-2026-962ecd56a9ca
-
----
-
 ## How would you design an Offline-First Multi-Module Android Application?
 
 For an offline-first Android application, I would make the local database the source of truth for the UI. The app should remain fully usable without a network connection, and synchronization with the backend happens in the background whenever connectivity is available.
@@ -1165,6 +1204,12 @@ You should never store sensitive data (like passwords or tokens) in plain text. 
 
 ---
 
+## Would you use EncryptedSharedPreferences for auth tokens?
+
+For a small, short-lived access token it can be acceptable. For a refresh token or other long-lived credential, use a Keystore-protected design, minimize its lifetime and scope, and support server-side revocation. No client storage makes an extracted token harmless.
+
+---
+
 ## Why do Android apps need permissions like `INTERNET` or `LOCATION`?
 - Android permissions protect sensitive resources and user privacy.
 - Some permissions require runtime user approval.
@@ -1187,6 +1232,19 @@ You should never store sensitive data (like passwords or tokens) in plain text. 
 
 ---
 
+## How do permissions affect app security over time?
+
+Permission state can change after installation, settings changes, OS upgrades, or user decisions. Check permission state at the point of use, handle revocation without crashing, and reduce the feature gracefully when access is unavailable.
+
+```kotlin
+val cameraAllowed = ContextCompat.checkSelfPermission(
+    context,
+    Manifest.permission.CAMERA
+) == PackageManager.PERMISSION_GRANTED
+```
+
+---
+
 ## What is certificate pinning?
 - TLS validates the certificate chain by default.
 - Certificate pinning adds a stricter check against expected certificates or public keys.
@@ -1201,6 +1259,42 @@ Pinned cert/public key check
  ↓
 Server
 ```
+
+---
+
+## How does certificate pinning actually protect against MITM?
+
+Normal TLS trusts any valid certificate chain from a trusted CA. Pinning adds an application check for an expected certificate or public key, so a proxy certificate signed by another trusted CA is rejected. Backup pins and a rotation plan are required to avoid outages.
+
+---
+
+## What Exactly Gets Pinned?
+
+An app can pin a leaf certificate, an intermediate certificate, or the server public key hash. Public-key pinning is generally less sensitive to certificate renewal, but it still requires backup pins and a tested rotation process.
+
+---
+
+## Can SSL Pinning Be Bypassed?
+
+On a compromised or instrumented device, an attacker may hook the networking code, patch the APK, or bypass client checks. Pinning remains useful against ordinary network interception, but it is not a replacement for server-side authentication, authorization, and fraud detection.
+
+---
+
+## How do both sides create encryption keys securely?
+
+With an ephemeral key exchange such as ECDHE, the client and server exchange public values and independently derive the same shared secret. Private key material is not sent over the network. TLS then derives symmetric session keys from that exchange for application data.
+
+---
+
+## How does trust get established before any API data is exchanged?
+
+The server presents a certificate during the TLS handshake. Android verifies its chain, hostname, and validity period, and certificate pinning can add an expected public-key check. Only after these checks succeed does the client send application data through the encrypted session.
+
+---
+
+## What Happens During MITM Attack?
+
+Without pinning, a device that trusts an attacker-controlled certificate authority may accept a proxy certificate. With pinning, the proxy key does not match the expected pin and the connection is rejected. A compromised device can still bypass client-side checks, so the server must remain authoritative.
 
 ---
 
@@ -1230,6 +1324,11 @@ A rooted device may allow local protections to be bypassed, so the client must b
 
 ---
 
+## Can an app reliably detect rooted devices?
+
+No. Root detection is heuristic because an attacker can hide or bypass individual signals. Combine signals for risk scoring and let the backend decide which sensitive operations require stronger integrity.
+
+---
 ## How do you handle sensitive logging?
 
 Never log tokens, passwords, account numbers, or unnecessary personal data. Log only the minimum safe diagnostic information needed to investigate an issue, and review logging in release builds.
@@ -1282,6 +1381,12 @@ buildTypes {
 
 ---
 
+## What prevents someone from modifying your APK?
+
+Release signing, runtime signature checks, installer and integrity signals, and server-side verification make modification harder to use successfully. They do not make a client impossible to patch, so sensitive authorization must remain on the backend.
+
+---
+
 ## What is the use of ProGuard/R8 in Android?
 
 ProGuard, now replaced by R8, is a tool that:
@@ -1330,6 +1435,349 @@ window.setFlags(
     WindowManager.LayoutParams.FLAG_SECURE
 )
 ```
+
+---
+
+## How does Android Keystore work internally, and what does “hardware-backed” really mean?
+
+Android Keystore delegates key operations to KeyMint or its supported software implementation. With a hardware-backed key, the private key material stays inside the device's secure hardware, such as the TEE or StrongBox, while the app requests operations through the Keystore API. Hardware backing must be checked because support varies by device.
+
+```kotlin
+val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+val secretKey = keyStore.getKey("auth_key", null) as SecretKey
+val factory = SecretKeyFactory.getInstance("AES", "AndroidKeyStore")
+val keyInfo = factory.getKeySpec(secretKey, KeyInfo::class.java)
+val hardwareBacked = keyInfo.isInsideSecureHardware
+```
+
+---
+
+## What are common mistakes teams make when using Android Keystore?
+
+Common mistakes include storing the token instead of encrypting it, treating Keystore as a general database, ignoring key invalidation after biometric or lock-screen changes, and assuming every device provides hardware backing. A secure app handles key failure by clearing unusable encrypted state and requiring re-authentication.
+
+---
+
+## How does Jetpack Security work under the hood?
+
+Jetpack Security is a convenience layer over cryptographic primitives and Android Keystore. `EncryptedSharedPreferences` protects preference keys and values separately, using a Keystore-protected master key. It is suitable for small secrets, not large or frequently changing data.
+
+```kotlin
+val masterKey = MasterKey.Builder(context)
+    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+    .build()
+
+val prefs = EncryptedSharedPreferences.create(
+    context,
+    "secure_prefs",
+    masterKey,
+    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+)
+```
+
+---
+
+## When should you use EncryptedSharedPreferences?
+
+Use it for small secrets such as a small token, preference, or feature credential when the convenience and storage size fit the use case. Do not use it as a general database or for large, frequently updated data.
+
+---
+
+## How do you secure a local database using Room?
+
+Use SQLCipher or another reviewed database-encryption solution with a key protected by Android Keystore. Restrict database access to the app process, avoid exporting database files or backups when required by the threat model, and clear the database during secure logout.
+
+---
+
+## How do you encrypt files stored on device?
+
+Generate or unwrap the encryption key through Android Keystore, use an authenticated encryption mode such as AES-GCM, and store only ciphertext in the file. Keep temporary plaintext files short-lived and remove them when the operation finishes.
+
+---
+
+## Cache vs Persistent Storage – what’s safe?
+
+Neither location should be assumed safe on a compromised device. A cache may be deleted by the system but can still contain sensitive data, while persistent storage survives longer. Do not cache secrets unnecessarily; encrypt data that must be retained and clear sensitive cache entries on logout.
+
+---
+
+## Why is local storage a security risk in Android apps?
+
+App sandboxing reduces access from other ordinary apps, but local data can still be exposed through backups, logs, debugging, rooted devices, malware, screenshots, or a compromised process. Store the minimum data, encrypt sensitive values, protect keys with Keystore, and define cleanup and backup policies.
+
+---
+
+## How do you handle secure logout?
+
+Revoke credentials server-side, delete or invalidate local encryption keys, clear encrypted preferences and sensitive databases, remove cache files, cancel user-specific work, and reset in-memory state. The signed-out UI should be shown only after the cleanup policy has completed.
+
+---
+
+## Why not rely on full-disk encryption?
+
+Full-disk or file-based encryption protects data primarily when the device is locked. After the user unlocks the device, an app can access its permitted data. App-level encryption adds another layer and allows sensitive keys or data to be invalidated independently.
+
+---
+
+## What happens if Keystore is wiped?
+
+Ciphertext that depends on the missing key may no longer be decryptable. The app should fail securely, remove unusable encrypted state, require the user to authenticate again, and provision a new key rather than falling back to plaintext storage.
+
+---
+
+## How do you generate and manage encryption keys?
+
+Generate keys in Android Keystore, never export key material, choose authentication and purpose settings according to the threat model, version keys for rotation, and handle invalidation by requiring re-authentication and re-provisioning.
+
+```kotlin
+val generator = KeyGenerator.getInstance(
+    KeyProperties.KEY_ALGORITHM_AES,
+    "AndroidKeyStore"
+)
+generator.init(
+    KeyGenParameterSpec.Builder(
+        "storage_key_v1",
+        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+    )
+        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+        .build()
+)
+val key = generator.generateKey()
+```
+
+---
+
+## How do you securely handle logout in a production app?
+
+Logout is a security operation, not only a UI event. Revoke credentials server-side, delete or invalidate encryption keys, clear encrypted preferences, remove sensitive databases and cache files, cancel user-specific workers, and reset in-memory state. Cleanup should complete before the app presents the signed-out state.
+
+```kotlin
+fun secureLogout() {
+    encryptedPrefs.edit().clear().commit()
+    database.clearAllTables()
+    context.cacheDir.deleteRecursively()
+}
+```
+
+---
+
+## How do you prevent reverse engineering beyond basic obfuscation?
+
+R8 reduces readable symbols and unused code, but it cannot make client code secret. Keep authorization and sensitive business decisions on the server, avoid hardcoded secrets, add integrity and tamper signals where appropriate, and use runtime checks only as additional risk signals.
+
+---
+
+## Why should you pin public keys instead of certificates?
+
+Certificates expire and are commonly renewed, while the same public key can remain valid across renewals. Pinning the public key can reduce outages during certificate rotation, but backup pins and a tested rotation plan are still required.
+
+---
+
+## How do you detect rooted or tampered devices?
+
+Use several weak signals such as suspicious files, test keys, debuggable state, signature checks, and Play Integrity. Root and tamper detection are heuristics, so use the result for risk-based decisions and enforce sensitive authorization on the server.
+
+```kotlin
+val hasTestKeys = Build.TAGS?.contains("test-keys") == true
+```
+
+---
+
+## How do you detect APK tampering?
+
+Verify the runtime signing certificate, installer information, and an integrity verdict when available. A changed or resigned APK should be treated as untrusted, but client checks should supplement server-side verification rather than replace it.
+
+---
+
+## How should permissions be handled securely?
+
+Request sensitive permissions just before the feature needs them, check the permission every time the operation runs, handle revocation and denial gracefully, and request only the minimum scope. A previous grant is not a permanent guarantee.
+
+```kotlin
+if (ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.CAMERA
+    ) != PackageManager.PERMISSION_GRANTED
+) {
+    // Request permission at the point of use.
+}
+```
+
+---
+
+## How do you secure background work and services?
+
+Keep components unexported unless another app must call them, use explicit intents, protect required IPC with permissions, validate all incoming data, and choose WorkManager or a foreground service according to the work's visibility and urgency.
+
+```xml
+<service
+    android:name=".SecureService"
+    android:exported="false" />
+```
+
+---
+
+## If you had to summarize Android security strategy as a Tech Lead, what would it be?
+
+Use layered controls: protect keys with Keystore, encrypt sensitive data, use TLS and carefully managed pinning, detect integrity risks, secure exported components, revoke credentials during logout, and keep final authorization on the server. The goal is to reduce blast radius and fail safely, not to assume the client is impossible to compromise.
+
+---
+
+## Additional Security Interview Questions
+
+### How does Android Keystore work under the hood? How do you know if a key is hardware-backed?
+
+Keystore delegates cryptographic operations to KeyMint or a software implementation. Check `KeyInfo.isInsideSecureHardware()` after key creation because hardware backing varies by device.
+
+### How would you securely store encryption keys on an Android device? What are failure cases?
+
+Generate keys in Android Keystore, never export key material, handle key invalidation, and fail securely by requiring re-authentication when a key is unavailable.
+
+### How do you protect cryptographic keys from root or malware attacks?
+
+Keep keys in hardware-backed Keystore when available, require user authentication for sensitive operations, use integrity signals, and keep final authorization on the server.
+
+### What happens to Keystore keys when biometrics change?
+
+Keys configured for biometric invalidation can become unusable. Catch the key exception, clear dependent ciphertext, and require the user to authenticate and provision a new key.
+
+### Users report login failures after fingerprint reset. What went wrong?
+
+The biometric change likely invalidated an authentication-bound key. The app must recover through key re-provisioning and login instead of treating the decryption failure as a normal network error.
+
+### How does EncryptedSharedPreferences work internally?
+
+It uses a Keystore-protected master key and encrypts preference keys and values separately. It is intended for small secrets rather than large data sets.
+
+### Is EncryptedSharedPreferences enough for sensitive data?
+
+It is useful for small secrets, but it does not protect against every compromised-device or token-replay threat. Use suitable key lifecycle, logout, backup, and server-revocation controls as well.
+
+### Why would you or wouldn’t you use Jetpack Security for tokens?
+
+I would use it for small, short-lived secrets when its lifecycle fits the product. For long-lived refresh tokens, I want explicit key invalidation, rotation, and server-side revocation.
+
+### How would you store access and refresh tokens securely?
+
+Keep access tokens short-lived, protect refresh tokens with Keystore-backed encryption, minimize their scope, avoid logging them, and support server-side revocation and rotation.
+
+### What happens if an attacker extracts app data?
+
+The attacker may obtain ciphertext, metadata, or cached data. Encryption limits usefulness only when keys are separately protected; the backend must still detect and revoke suspicious sessions.
+
+### How do you protect refresh tokens on a rooted device?
+
+Use Keystore-backed encryption, device and session binding, short lifetimes where possible, integrity risk signals, and server-side revocation. Treat the rooted client as untrusted.
+
+### What does a secure logout mean on Android?
+
+It means revoking server credentials and removing local access to secrets by deleting keys, encrypted state, caches, databases, workers, and in-memory session data.
+
+### How do you ensure customer data is removed after logout?
+
+Define all user-scoped storage, clear it synchronously or through a controlled completion state, cancel user work, revoke the server session, and verify cleanup with tests.
+
+### What exactly do you clear when a user logs out?
+
+Clear or invalidate Keystore keys, encrypted preferences, databases, sensitive files, caches, pending workers, cookies, and in-memory authentication state.
+
+### How do you protect business logic from reverse engineering?
+
+Use R8 to raise analysis cost, keep secrets and authorization on the backend, minimize sensitive logic on the client, and add integrity checks where they support the threat model.
+
+### How do you slow down attackers analyzing your app?
+
+Use shrinking and obfuscation, avoid hardcoded secrets, add runtime and integrity checks, and make the server independently validate important actions.
+
+### When would you use certificate pinning, and when would you avoid it?
+
+Use it when the threat model justifies the operational cost and you can manage backup pins and rotation. Avoid or limit it when certificate ownership, rotation, or recovery cannot be reliably controlled.
+
+### How do you protect against MITM attacks?
+
+Use HTTPS with correct certificate validation, consider public-key pinning, protect against downgrade or proxy risks, and keep sensitive authorization and replay protection on the server.
+
+### How do you ensure API calls aren’t intercepted?
+
+Use TLS, carefully managed pinning where appropriate, request authentication and signing for sensitive operations, short-lived credentials, and server-side anomaly detection.
+
+### How do you handle security on compromised devices?
+
+Treat the client as untrusted, use risk-based restrictions for sensitive actions, minimize local secrets, and enforce the final decision on the backend.
+
+### What happens if PhonePe runs on a rooted phone?
+
+The app should use root and integrity signals for risk decisions, allow only appropriate low-risk functionality, and require stronger verification or block high-value transactions on the server.
+
+### How do you know your APK hasn’t been modified?
+
+Check the signing certificate, installer source, integrity verdict, and server-side attestation signals. These checks reduce risk but cannot make a client unpatchable.
+
+### How would you detect a repackaged app?
+
+Verify the expected signing certificate and package identity, inspect installer and integrity signals, and reject or restrict suspicious clients through backend policy.
+
+### How do you prevent fake apps with your branding?
+
+Protect release signing, monitor distribution channels, verify package and certificate identity, use Play Integrity where appropriate, and keep account and transaction authorization on the backend.
+
+### What happens if a user revokes permission at runtime?
+
+The next sensitive operation must detect the denial, stop or reduce the feature safely, explain the required permission, and avoid crashing or assuming the earlier grant still exists.
+
+### How do you safely handle camera or SMS permissions?
+
+Request only at the point of use, request the minimum permission, check the result every time, and provide a safe fallback when the user denies or revokes access.
+
+### What Android components are common attack vectors?
+
+Exported activities, services, receivers, and providers are common IPC attack surfaces, especially when they accept implicit intents or unvalidated input.
+
+### How can one app exploit another app?
+
+It can invoke exported components, send crafted intents, access weakly protected providers, or abuse unsafe IPC contracts. Restrict exports, validate inputs, and protect components with permissions.
+
+### How do you secure services and receivers?
+
+Set `exported=false` unless external access is required, use explicit intents, protect exported entry points with permissions, and validate every incoming request.
+
+### How would you design Android security for a large-scale app?
+
+Start with threat modeling, then layer Keystore, encrypted storage, TLS, integrity checks, secure IPC, server authorization, observability, incident response, and staged rollout controls.
+
+### How do you balance security with customer experience?
+
+Use risk-based controls: keep low-risk actions convenient, add step-up authentication or restrictions only when signals and transaction value justify them, and provide recovery paths for legitimate users.
+
+### How would you secure a fintech Android app?
+
+Use layered device, application, network, session, and backend controls; bind sensitive actions to authenticated sessions and transaction context; and make the server authoritative for every financial decision.
+
+---
+
+## How connection established between client and server how key exchanges?
+
+The app first resolves the server address and establishes a TCP connection. During the TLS handshake, the server presents its certificate, the client validates the certificate chain and hostname, and both sides perform an ephemeral key exchange such as ECDHE. They derive the same symmetric session keys without sending the private keys. HTTP requests and responses are then encrypted with those session keys.
+
+---
+
+## End to end flow form mobile app to backend SSL pinning lfow and public key flow, how it works, do not explain with code
+
+The app sends an HTTPS request. TLS authenticates the server through its certificate chain, while pinning adds a check that the server's certificate or public key matches an expected value. After validation, the TLS session uses symmetric encryption for application data. The backend authenticates and authorizes the request independently; pinning does not replace server-side authorization.
+
+---
+
+## Why use ECDHE instead of RSA key exchange?
+
+ECDHE creates a fresh shared secret for each handshake and provides forward secrecy when ephemeral keys are used. RSA key exchange does not provide the same forward-secrecy property and is not the preferred modern TLS key-exchange approach.
+
+---
+
+## Why Symmetric Key?
+
+Symmetric encryption is much faster than public-key encryption for large amounts of data. TLS uses asymmetric cryptography to authenticate and establish a shared secret, then uses the symmetric session key for normal request and response traffic.
 
 ---
 
@@ -2073,6 +2521,54 @@ Critical user journeys
 
 ---
 
+## Why coEvery and coVerify not used instead of whenever?
+
+`coEvery` and `coVerify` are MockK APIs for suspend functions. `whenever` and `verify` are Mockito-style APIs. The test should use the syntax that matches the mocking library configured for the project.
+
+```kotlin
+coEvery { api.getUser() } returns User("Kiran")
+repository.getUser()
+coVerify(exactly = 1) { api.getUser() }
+```
+
+---
+
+## How to mock Singletone object or Objects which are created inside Function?
+
+MockK can replace a Kotlin `object` with `mockkObject`. For a class constructed inside the function, `mockkConstructor` and `anyConstructed` can intercept that instance. Dependency injection is preferable for new code because it keeps tests simpler.
+
+```kotlin
+mockkObject(AnalyticsManager)
+every { AnalyticsManager.track("login") } just Runs
+
+mockkConstructor(HttpClient::class)
+every { anyConstructed<HttpClient>().getUser() } returns User("Kiran")
+```
+
+---
+
+## What if constructor has parameters?
+
+Constructor mocking still intercepts the constructed instance regardless of its constructor arguments. Configure `anyConstructed<T>()` when the exact arguments are not important, or inject the dependency when the production code can be changed.
+
+```kotlin
+mockkConstructor(ApiClient::class)
+every { anyConstructed<ApiClient>().getData() } returns "Mocked Data"
+```
+
+---
+
+## How do you mock objects created inside a function?
+
+With MockK, use constructor mocking for legacy code that creates the dependency internally. For new code, dependency injection is easier to test and keeps the production dependency explicit.
+
+```kotlin
+mockkConstructor(HttpClient::class)
+every { anyConstructed<HttpClient>().getUser() } returns User("Kiran")
+```
+
+---
+
 # Performance and Reliability
 
 ## What is Android startup performance?
@@ -2412,6 +2908,18 @@ val result = withContext(Dispatchers.Default) {
 
 ---
 
+## How do you detect and fix main thread blocking?
+
+I would enable StrictMode, inspect the main-thread trace in CPU Profiler or Perfetto, and look for disk I/O, database work, network calls, parsing, or expensive rendering. I would move blocking work to an appropriate dispatcher and measure the same user flow again.
+
+```kotlin
+val user = withContext(Dispatchers.IO) {
+    repository.loadUser()
+}
+```
+
+---
+
 ## How do you reduce a large APK?
 
 Use APK Analyzer to find large files and remove unused resources or dependencies. Enable code and resource shrinking for release builds, and use appropriate ABI splits when the distribution strategy supports them.
@@ -2481,6 +2989,157 @@ The investigation always starts with measuring first, then optimising the identi
 
 ---
 
+## Q: How do you verify startup improvements didn’t break behavior?
+
+I would run the existing unit, integration, and UI tests, then compare startup benchmarks with the same device, build type, and user flow. I would also monitor crashes, ANRs, startup timing, and key business metrics during a staged rollout.
+
+---
+
+## Q: How do you verify jank reduction?
+
+I would compare frame timing and frozen-frame metrics before and after the change using the same device and workload. I would verify the result with Macrobenchmark or Perfetto and confirm that scrolling and critical interactions still behave correctly.
+
+```kotlin
+@Test
+fun scrollBenchmark() = benchmarkRule.measureRepeated(
+    packageName = "com.example.app",
+    metrics = listOf(FrameTimingMetric()),
+    iterations = 5
+) {
+    startActivityAndWait()
+    device.waitForIdle()
+}
+```
+
+---
+
+## Which profiling tools do you actually use day-to-day?
+
+I use Android Studio CPU, Memory, and Network Profiler, Layout Inspector, Compose tooling, StrictMode, Perfetto, Android Vitals, LeakCanary, JankStats, and Macrobenchmark. I choose the tool based on the symptom and measure before and after the fix.
+
+---
+
+## How do you optimize large lists?
+
+Use pagination or incremental loading, stable item identity, view reuse, lightweight binding, appropriately sized images, and one source of truth for list state. For Compose, use stable keys and avoid passing changing large objects unnecessarily.
+
+```kotlin
+LazyColumn {
+    items(
+        items = users,
+        key = { user -> user.id }
+    ) { user ->
+        UserRow(user)
+    }
+}
+```
+
+---
+
+## How do you optimize network and DB access?
+
+Measure request and query latency, avoid duplicate calls, cache data at the correct layer, paginate large results, select only required columns, batch compatible work, and keep I/O off the main thread. The repository should expose a predictable source of truth and a clear retry policy.
+
+```kotlin
+@Query("SELECT id, name FROM users LIMIT :limit OFFSET :offset")
+suspend fun loadUsers(limit: Int, offset: Int): List<UserRow>
+```
+
+---
+
+## How do you analyze and optimize Android app startup, especially cold start?
+
+Measure cold, warm, and hot startup with Macrobenchmark and production telemetry. Inspect initialization and the main-thread trace, remove or defer noncritical work, avoid synchronous I/O, and validate the result with the same startup flow.
+
+---
+
+## How do you diagnose and eliminate UI jank?
+
+Use frame timing, Perfetto, CPU Profiler, Layout Inspector, and Compose tooling to find long main-thread work, expensive layout or composition, image decoding, and large-list rendering. Fix the measured bottleneck and compare frame metrics before and after.
+
+---
+
+## How do you detect memory leaks in production-scale apps?
+
+Look for retained Activities, Fragments, views, callbacks, and long-lived jobs after lifecycle destruction. Reproduce navigation cycles with heap dumps and LeakCanary, inspect retained paths, fix ownership or cancellation, and monitor memory and OOM trends after rollout.
+
+---
+
+## How does Android OS manage background work, and why do background limits exist?
+
+Android schedules background work based on app state, device state, battery, and user visibility. Limits exist to prevent apps from keeping the CPU, radio, and sensors active continuously. Use lifecycle-aware and constraint-aware APIs instead of assuming immediate execution.
+
+---
+
+## Explain Doze Mode and App Standby. How do they differ?
+
+Doze Mode reduces background activity when the device is unused and stationary. App Standby limits apps that the user has not recently used. Both defer non-urgent work, but Doze is primarily device-state based while App Standby is primarily app-usage based.
+
+---
+
+## WorkManager vs Foreground Service vs AlarmManager: when to use what?
+
+- Use WorkManager for deferrable, persistent work with constraints.
+- Use a Foreground Service only for user-visible work that must continue immediately, with an ongoing notification.
+- Use AlarmManager for precise time-based alarms when the use case truly requires an alarm.
+
+```kotlin
+val request = OneTimeWorkRequestBuilder<SyncWorker>()
+    .setConstraints(
+        Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+    )
+    .build()
+```
+
+---
+
+## What are common background execution limit violations in production apps?
+
+Common violations include starting an unbounded background service, doing long work from a receiver, scheduling frequent alarms, polling continuously, and starting a foreground service without a clear user-visible reason. Replace these with WorkManager, bounded work, push messaging, or a correctly scoped foreground service.
+
+---
+
+## How should push notifications be optimized for battery?
+
+Use push messages for events instead of frequent polling. Batch non-urgent synchronization, avoid high priority unless the user must be notified immediately, and do only small work from the message callback. Schedule larger work with WorkManager.
+
+---
+
+## Location and sensor usage: what kills battery fastest?
+
+High-frequency location updates, continuous high-accuracy tracking, frequent sensor sampling, and scans that never stop are expensive. Match accuracy and frequency to the user-visible feature, stop updates when they are no longer needed, and use batching where possible.
+
+```kotlin
+fusedLocationClient.removeLocationUpdates(locationCallback)
+```
+
+---
+
+## How does network batching and scheduling reduce battery drain?
+
+Each radio wake-up has setup and tail energy cost. Batching compatible requests reduces wake-ups, and scheduling work with network and charging constraints avoids unnecessary retries and radio activity.
+
+---
+
+## What are the most dangerous battery anti-patterns seen in real apps?
+
+- Frequent polling instead of push or scheduled sync.
+- Unbounded location or sensor listeners.
+- Repeated wake locks.
+- High-priority notifications for ordinary events.
+- Retry loops without backoff.
+- Work that ignores Doze and connectivity constraints.
+
+---
+
+## Q: Why is WorkManager preferred even if execution timing is unpredictable?
+
+WorkManager is preferred for deferrable work because it persists work across process death and lets Android schedule it according to constraints and battery state. Exact timing is not guaranteed, so it should not be used for work that must happen at a precise instant.
+
+---
+
 # Bluetooth Low Energy
 
 ## What is Bluetooth Low Energy?
@@ -2504,6 +3163,225 @@ Use BLE when low power and small payloads matter more than throughput.
 - Use BLE for low-power, low-bandwidth communication with nearby devices.
 - Use Wi-Fi for internet-connected or high-bandwidth transfers.
 - Use classic Bluetooth for larger streaming or audio-like workloads.
+
+---
+
+## Why does BLE require a GATT operation queue?
+
+Most GATT operations are asynchronous and should be serialized per connection. A queue prevents overlapping reads, writes, and descriptor operations from producing unreliable callbacks or platform errors.
+
+```kotlin
+private val queue = ArrayDeque<() -> Unit>()
+
+fun enqueue(operation: () -> Unit) {
+    queue.add(operation)
+    if (queue.size == 1) operation()
+}
+```
+
+---
+
+## What is GATT error 133 and how do you handle it?
+
+Error 133 is a generic Android GATT failure rather than one precise root cause. I close the connection, avoid overlapping operations, wait briefly before retrying, and collect device, OS, RSSI, and connection-state telemetry. Repeated failures should use bounded retry and a clean reconnect path.
+
+---
+
+## How do you design BLE for scalability (multiple devices)?
+
+Give each device its own connection state, operation queue, callback, timeout, and retry policy. Limit simultaneous connections according to device capability and expose a per-device state stream to the UI.
+
+---
+
+## How do you convert BLE callbacks into reactive streams?
+
+Wrap callbacks in `callbackFlow`, close the flow when the connection is released, and use `awaitClose` to unregister callbacks. This gives collection and cancellation a clear lifecycle.
+
+```kotlin
+fun notifications(
+    register: (BluetoothGattCallback) -> Unit,
+    unregister: (BluetoothGattCallback) -> Unit
+): Flow<ByteArray> = callbackFlow {
+    val callback = object : BluetoothGattCallback() {
+        override fun onCharacteristicChanged(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray
+        ) {
+            trySend(value)
+        }
+    }
+    register(callback)
+    awaitClose { unregister(callback) }
+}
+```
+
+---
+
+## How do you handle lifecycle safely?
+
+The connection owner should have a lifecycle longer than the screen only when the product requires it. Cancel collection and remove callbacks when the owner is destroyed, and never retain an Activity or Fragment in a long-lived BLE manager.
+
+---
+
+## How do notifications work internally?
+
+The central subscribes by writing the Client Characteristic Configuration Descriptor on the peripheral. The peripheral then sends characteristic updates asynchronously; the app receives them through `BluetoothGattCallback`.
+
+---
+
+## Difference between Notify vs Indicate?
+
+Notify sends updates without a link-layer acknowledgement and is faster. Indicate requires acknowledgement and is more reliable but slower. Use Indicate when delivery confirmation matters and Notify when throughput is more important.
+
+---
+
+## How do you handle large data transfer?
+
+Negotiate a suitable MTU, split the payload into chunks, include sequence information when needed, and acknowledge or retry chunks at the application layer. Reassemble only after validating ordering and completeness.
+
+```kotlin
+gatt?.requestMtu(247)
+```
+
+---
+
+## Why BLE behaves differently on different devices?
+
+Android BLE behavior depends on chipset, vendor firmware, Android version, permissions, Bluetooth state, and peripheral implementation. Test representative devices, add timeouts and retries, and collect structured connection telemetry instead of assuming one device defines platform behavior.
+
+---
+
+## How do you debug BLE issues in production?
+
+Record sanitized state transitions, operation names, status codes, timing, device model, Android version, MTU, and retry count. Reproduce with Bluetooth HCI snoop logs when available, and correlate failures with firmware and device versions.
+
+---
+
+## How do you secure BLE communication?
+
+Do not treat BLE pairing alone as application authorization. Authenticate the device, protect sensitive payloads with an application-level protocol when required, validate nonces or counters, and reject unexpected device identities or message formats.
+
+---
+
+## What causes memory leaks in BLE?
+
+Common causes are a manager retaining an Activity, callbacks not being cleared, repeated `BluetoothGatt` objects, and flows or coroutines surviving their owner. Close the GATT, unregister callbacks, cancel jobs, and keep only application-safe references.
+
+---
+
+## How do you ensure reliability?
+
+Serialize operations, add timeouts, retry only bounded and recoverable failures, reconnect cleanly, validate payloads, and make the state machine explicit. The UI should observe state rather than infer connection status from one callback.
+
+---
+
+## How would you design BLE for testability?
+
+Hide Android Bluetooth classes behind interfaces, inject a clock and dispatchers, and test the state machine with a fake adapter. Test disconnects, timeouts, retries, malformed data, and cancellation without requiring a physical device for every unit test.
+
+---
+
+## What are the biggest real-world issues you faced?
+
+The most common issues are vendor-specific disconnects, GATT error 133, overlapping operations, incomplete packets, background restrictions, stale callbacks, and battery drain. I address them with an explicit state machine, serialized operations, bounded retries, lifecycle ownership, and production telemetry.
+
+---
+
+## Devices disconnect randomly. How do you debug and fix it?
+
+I would log the complete connection state sequence, status code, timing, device model, RSSI, and operation in progress. Then I would check Bluetooth state, distance, firmware, permissions, concurrent GATT operations, and lifecycle cancellation before applying a bounded reconnect with backoff.
+
+```kotlin
+if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+    gatt.close()
+    scheduleReconnectWithBackoff()
+}
+```
+
+---
+
+## BLE scan works on some devices but not others. Why?
+
+Differences commonly come from Android version, runtime permissions, location or Bluetooth state, vendor behavior, and scan settings. Check the required permissions for the device version, verify Bluetooth is enabled, stop scans when finished, and test on representative devices.
+
+---
+
+## Why are you receiving incomplete BLE data?
+
+A characteristic notification may contain only one packet of a larger application message. Respect the negotiated MTU, accumulate chunks, use length or sequence metadata, and emit the message only after reassembly is complete.
+
+---
+
+## BLE drains battery. How do you optimize?
+
+Stop scanning and notifications when they are not needed, avoid continuous reconnect loops, reduce connection and polling frequency, use suitable connection priorities, and batch data. Measure radio activity and wakeups before and after the change.
+
+---
+
+## Why BLE callbacks cause bugs?
+
+Callbacks arrive asynchronously and may be delayed, duplicated, or delivered after a screen has gone away. Route them through one state owner, serialize operations, check the current connection, and cancel or ignore callbacks after cleanup.
+
+---
+
+## Why BLE slow?
+
+BLE is optimized for low power rather than high throughput. Small MTU, acknowledged writes, connection intervals, notification frequency, radio interference, and application-level delays can all reduce speed. Measure each stage before changing parameters.
+
+---
+
+## What is GATT 133 and how do you fix it?
+
+GATT 133 is a generic Android Bluetooth failure. Fix the connection lifecycle first: close stale GATT objects, serialize operations, wait before reconnecting, use bounded retries, and collect device-specific diagnostics rather than assuming one universal cause.
+
+---
+
+## How do you manage multiple BLE connections?
+
+Maintain independent state, queues, callbacks, timeouts, and retry policies for each device. Limit concurrency based on device capability and prevent one device's failure from corrupting another device's state.
+
+---
+
+## How do you keep BLE working in background?
+
+Use a lifecycle appropriate to the product requirement. For an ongoing user-visible connection, use a correctly declared foreground service; for deferrable synchronization, use WorkManager. Stop work and release resources when the feature no longer needs the connection.
+
+---
+
+## How do you make BLE reliable?
+
+Use an explicit connection state machine, serialized GATT operations, timeouts, bounded retries, clean reconnects, payload validation, and production telemetry. Do not infer reliability from a single successful callback.
+
+---
+
+## How would you design BLE module?
+
+Separate scanning, connection management, GATT operations, protocol parsing, state, and UI adapters. Hide Android Bluetooth classes behind interfaces so the state machine can be unit-tested with fakes.
+
+---
+
+## What is MTU?
+
+MTU is the maximum transmission unit negotiated for an ATT packet. A larger MTU can reduce application-level fragmentation, but the usable payload is smaller than the negotiated value because protocol bytes are reserved.
+
+---
+
+## What is GATT vs GAP?
+
+GAP describes discovery, advertising, roles, and connection behavior. GATT describes the data model and operations used after connection, including services, characteristics, descriptors, reads, writes, and notifications.
+
+---
+
+## What is Characteristic vs Service?
+
+A service groups related functionality. A characteristic is a value inside that service with properties such as read, write, notify, or indicate.
+
+---
+
+## Indication vs Notification?
+
+Notification is sent without an application-level acknowledgement from the central. Indication requires acknowledgement and is slower but provides stronger delivery confirmation.
 
 ---
 
@@ -2572,6 +3450,30 @@ Some commonly used CI/CD tools are:
 - How do you structure branches for feature work and release work?
 - How do you handle hotfixes?
 - How do you keep branch hygiene and release stability consistent?
+
+---
+
+## How would you integrate an LLM into automated review?
+
+Run the LLM after the diff, tests, lint, and security checks are available. Give it the changed files, relevant surrounding code, project rules, and test results. Treat its output as review suggestions, require human ownership of the decision, and never send secrets or unnecessary production data to the model.
+
+```text
+Pull Request
+ ↓
+Build + tests + static analysis
+ ↓
+LLM review of the diff and failures
+ ↓
+Human review
+ ↓
+Merge or request changes
+```
+
+---
+
+## What should an LLM review and what should remain human-owned?
+
+An LLM can point out missing tests, suspicious edge cases, duplicated logic, unsafe API usage, and deviations from documented conventions. Humans must own requirements, security risk acceptance, architecture decisions, privacy, and whether the change is safe to release.
 
 ---
 
@@ -3878,3 +4780,55 @@ Benefits:
 > OOM issues are typically due to unbounded data loading, and the solution is controlled, incremental data flow.
 
 ---
+
+## How do you handle pressure and deadlines?
+
+I clarify the outcome, separate must-have work from nice-to-have work, make risks visible early, and agree on a realistic plan with stakeholders. I keep quality gates for security and correctness, while reducing scope or sequencing work when the deadline cannot move.
+
+---
+
+## How do you ensure code quality in a large team?
+
+I use clear conventions, automated build and test checks, focused PR reviews, ownership boundaries, documentation for important decisions, and monitoring after release. Quality should be part of the development workflow rather than a final manual step.
+
+---
+
+## How do you prioritize technical debt?
+
+I prioritize debt by user impact, security and reliability risk, delivery cost, and how much it slows future work. I make the trade-off visible, connect the work to a measurable outcome, and schedule small improvements alongside feature delivery when possible.
+
+---
+
+## How do you handle underperforming team members?
+
+I first understand whether the issue is clarity, skill, workload, or support. I agree on specific expectations and a time-bound improvement plan, provide coaching and feedback, and involve the appropriate manager or process when the problem continues.
+
+---
+
+## Why do you want to move into a Lead role?
+
+I want to increase my impact through technical direction, better decisions, mentoring, and alignment across teams. A Lead role is not only about making architectural choices; it also requires ownership of delivery, communication, and team growth.
+
+---
+
+## What if your team ignores your technical suggestion?
+
+I would understand the concerns, explain the trade-offs with evidence, and invite alternatives. If the team chooses another reasonable approach, I commit to the decision and help make it successful. I escalate only when there is a material risk to users, security, or delivery.
+
+---
+
+## How do you handle ambiguity?
+
+I clarify the desired outcome, identify assumptions and unknowns, speak with the relevant stakeholders, and choose a small step that produces useful feedback. I document decisions and revisit them when new information changes the trade-off.
+
+---
+
+## What makes a strong engineering team?
+
+A strong team has shared goals, psychological safety, clear ownership, useful feedback, reliable engineering practices, and accountability for outcomes. People should be able to disagree respectfully, learn from failures, and deliver without depending on one person.
+
+---
+
+## What kind of leader are you?
+
+I am a calm, outcome-focused, and transparent leader. I provide context, make decisions when needed, give people ownership, remove blockers, and stay accountable for both technical quality and team delivery.

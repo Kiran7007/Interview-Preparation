@@ -574,6 +574,48 @@ AtomicInteger count = new AtomicInteger();
 
 ---
 
+## Singleton vs Object in Kotlin?
+
+Kotlin `object` is a language-supported singleton and is initialized safely when first accessed. A Java Singleton requires explicit construction and visibility rules. Both should be used carefully because global state hides dependencies and complicates tests.
+
+```kotlin
+object Analytics {
+    fun track(event: String) = Unit
+}
+```
+
+---
+
+## Decorator vs Inheritance?
+
+Inheritance changes behavior through a fixed class hierarchy. A Decorator wraps an object and adds behavior at runtime, so decorators can be combined without creating a subclass for every combination.
+
+```kotlin
+interface Repository {
+    fun load(): String
+}
+
+class LoggingRepository(
+    private val delegate: Repository
+) : Repository {
+    override fun load(): String = delegate.load().also { println("loaded") }
+}
+```
+
+---
+
+## Observer vs Flow?
+
+Observer is a notification pattern in which observers receive updates from a subject. Kotlin `Flow` represents asynchronous streams and supports operators, cancellation, and structured collection. Use lifecycle-aware collection on Android.
+
+```kotlin
+val updates: Flow<String> = flow {
+    emit("ready")
+}
+```
+
+---
+
 ## What are creational patterns?
 
 - They control object construction and separate clients from concrete creation details. Factory, Builder, Prototype, and Singleton are common examples.

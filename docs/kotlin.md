@@ -234,6 +234,56 @@ class Repository(
 
 ---
 
+## Can sealed interface have enum implementations?
+
+Yes. An enum can implement a sealed interface, so each enum constant becomes one of the permitted implementations.
+
+```kotlin
+sealed interface ConnectionState
+
+enum class Status : ConnectionState {
+    CONNECTED,
+    DISCONNECTED
+}
+```
+
+---
+
+## Can enum extend sealed class?
+
+No. An enum class already extends `Enum`, and Kotlin classes can extend only one class. Use a sealed interface when enum implementations are required.
+
+```kotlin
+sealed interface PaymentState
+
+enum class PaymentStatus : PaymentState {
+    SUCCESS,
+    FAILED
+}
+```
+
+---
+
+## What is difference in sealed interface and sealed class?
+
+A sealed class is a restricted class hierarchy and can hold shared state or constructor logic. A sealed interface is a restricted interface hierarchy and allows a class to implement it alongside another class or interface.
+
+---
+
+## Why Google prefers sealed interface in modern Android?
+
+A sealed interface models UI states or capabilities while keeping implementations flexible. A state class can implement it without giving up its single class inheritance, which is useful for modern Android state models.
+
+```kotlin
+sealed interface UiState
+
+data object Loading : UiState
+data class Success(val value: String) : UiState
+data class Error(val message: String) : UiState
+```
+
+---
+
 ## What is variance?
 
 - `out` = producer/covariant.
