@@ -1793,6 +1793,28 @@ suspend fun loadDashboard() = supervisorScope {
 }
 ```
 
+## What is SupervisorJob?
+
+`SupervisorJob` is a special `Job` implementation. It is useful when you want a long-lived scope where child coroutines can fail independently.
+
+```kotlin
+private val scope = CoroutineScope(
+    SupervisorJob() + Dispatchers.IO
+)
+```
+
+## What is supervisorScope?
+
+`supervisorScope` creates a temporary structured scope where child failures are isolated. The scope automatically completes when its children complete.
+
+```kotlin
+suspend fun loadDashboard() = supervisorScope {
+    launch { loadUser() }
+    launch { loadTransactions() }
+    launch { loadNotifications() }
+}
+```
+
 ## When should I use which?
 
 Use `supervisorScope` when:
@@ -1826,6 +1848,33 @@ suspend fun loadDashboard() = supervisorScope {
     launch { loadProfile() }
     launch { loadTransactions() }
     launch { loadRecommendations() }
+}
+```
+
+## Important: Supervisor does not mean "ignore exceptions"
+
+`SupervisorJob` and `supervisorScope` prevent failure propagation to sibling children, but they do not automatically catch exceptions. Appropriate exception handling is still required.
+
+```kotlin
+scope.launch {
+    try {
+        loadData()
+    } catch (e: Exception) {
+        handleError(e)
+    }
+}
+```
+
+## Important: Parent cancellation still propagates
+
+Supervisor semantics prevent a child failure from cancelling siblings. They do not prevent parent cancellation from cancelling children.
+
+```kotlin
+coroutineScope {
+    supervisorScope {
+        launch { loadUser() }
+        launch { loadOrders() }
+    }
 }
 ```
 

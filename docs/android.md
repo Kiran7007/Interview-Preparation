@@ -737,6 +737,185 @@ This keeps local reads fast while the app syncs changes when connectivity is ava
 
 ---
 
+## Design an Offline-First Multi-Module Android Application. How would you synchronise local and remote data? How would you resolve data conflicts when users modify the same data offline?
+
+One of the best articles I found explaining Offline-First Architecture:
+
+https://medium.com/@ramadan123sayed/room-offline-first-architecture-the-complete-guide-for-android-in-2026-962ecd56a9ca
+
+---
+
+## How would you design an Offline-First Multi-Module Android Application?
+
+For an offline-first Android application, I would make the local database the source of truth for the UI. The app should remain fully usable without a network connection, and synchronization with the backend happens in the background whenever connectivity is available.
+
+The network updates the local database, and the UI observes those database changes through `Flow` or `StateFlow`.
+
+```kotlin
+class OrderRepository(
+    private val dao: OrderDao
+) {
+    fun observeOrders(): Flow<List<Order>> =
+        dao.observeOrders().map { entities ->
+            entities.map { it.toDomain() }
+        }
+}
+```
+
+---
+
+## How do you detect conflicts?
+
+This is the most important part of the question.
+
+I would not rely only on timestamps. Instead, I would preferably use a server-generated version or revision. The client sends the version it last read with its update. If the server's current version is different, the server returns a conflict instead of silently overwriting newer data.
+
+```kotlin
+data class OrderEntity(
+    val id: String,
+    val status: String,
+    val serverVersion: Long,
+    val syncStatus: SyncStatus
+)
+```
+
+---
+
+## What does "client sends the version it last read" mean?
+
+When the app comes online, it sends the version that it previously downloaded with the update. The meaning is: "I am modifying Order 101 based on the version 5 that I previously downloaded."
+
+The server compares the client's version with its current version. If they match, the update is accepted and the server increments the version. If they do not match, another client changed the data and the update becomes a conflict.
+
+```kotlin
+data class UpdateOrderRequest(
+    val orderId: Int,
+    val status: String,
+    val version: Long
+)
+```
+
+---
+
+## Now where does conflict happen?
+
+Imagine two phones both download Order 101 at version 5. Phone A changes the order to `CANCELLED` and synchronizes first, so the server changes its version to 6. Phone B later sends its update using version 5. The server sees that the client is trying to modify an old version, because `5 != 6`. That is a conflict.
+
+```kotlin
+val clientVersion = 5L
+val serverVersion = 6L
+
+val hasConflict = clientVersion != serverVersion
+```
+
+---
+
+## Why not simply overwrite it?
+
+Suppose the server blindly accepts Phone B. Phone A's change would be lost, and the server would not know whether `COMPLETED` should replace `CANCELLED`. That is why we detect the conflict first.
+
+---
+
+## Now what is Last-Write-Wins?
+
+This is one possible conflict resolution strategy. It means whichever update is considered the latest wins.
+
+For example, Phone A changes the order to `CANCELLED` at 10:00 and Phone B changes it to `COMPLETED` at 10:05. The final server value becomes `COMPLETED`.
+
+It is very simple, but you can lose someone's changes. For an important banking application, blindly using Last-Write-Wins can be dangerous.
+
+---
+
+## What is Server-Wins?
+
+Server-Wins means that if there is a conflict, the server's current value is kept.
+
+For example, if the server has `CANCELLED` and Phone B sends `COMPLETED`, Server-Wins keeps `CANCELLED` and discards `COMPLETED`. This is useful when the server is considered the authoritative source.
+
+---
+
+## What is Client-Wins?
+
+Client-Wins means that if there is a conflict, the client's latest local value is accepted.
+
+For example, if the server has `CANCELLED` and Phone B sends `COMPLETED`, `COMPLETED` becomes the final value. This can overwrite another user's change.
+
+---
+
+## What is Field-Level Merging?
+
+Field-level merging compares which fields changed instead of treating the entire object as one thing. If Phone A changes the name and Phone B changes the email, both changes can be merged rather than throwing away one of them.
+
+```kotlin
+data class UserProfile(
+    val name: String,
+    val email: String
+)
+
+val merged = remote.copy(
+    name = local.name,
+    email = remote.email
+)
+```
+
+---
+
+## What are Business-Specific Rules?
+
+This is especially important for a company like JPMorgan. Some data cannot simply use Last-Write-Wins. For example, account balance, payment status, transaction state, and transfer amount require server-side validation and domain-specific rules.
+
+The server or business rules decide whether the transaction is valid, whether there is sufficient balance, whether the transaction was already processed, and whether the account is allowed to perform the operation. For banking operations, the server should be authoritative and validate the business operation.
+
+---
+
+## What happens after a conflict?
+
+The sync layer detects the conflict and returns both the local and remote values. A conflict resolver can then use the local value, the remote value, a merge, or ask the user to decide.
+
+```kotlin
+sealed interface SyncResult {
+    data object Success : SyncResult
+    data class Conflict(
+        val local: Order,
+        val remote: Order
+    ) : SyncResult
+}
+
+interface ConflictResolver<T> {
+    fun resolve(local: T, remote: T): ConflictResolution<T>
+}
+
+sealed interface ConflictResolution<T> {
+    data class UseLocal<T>(val value: T) : ConflictResolution<T>
+    data class UseRemote<T>(val value: T) : ConflictResolution<T>
+    data class Merge<T>(val value: T) : ConflictResolution<T>
+    data class RequiresUser<T>(
+        val local: T,
+        val remote: T
+    ) : ConflictResolution<T>
+}
+```
+
+---
+
+## What happens when the device comes online?
+
+The sync layer sends pending local changes through WorkManager, handles successful updates or conflicts, and then updates Room. The UI reflects the result because it observes Room.
+
+```kotlin
+WorkManager.getInstance(context).enqueue(
+    OneTimeWorkRequestBuilder<SyncWorker>()
+        .setConstraints(
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+        )
+        .build()
+)
+```
+
+---
+
 ## What is `PeriodicWorkRequest`, and what are WorkManager states and constraints?
 
 - `PeriodicWorkRequest` is for deferrable recurring work such as synchronization, log upload, cache cleanup, or periodic content refresh.
@@ -1691,6 +1870,30 @@ every { mockRepository.getUserName() } returns "Test User"
 
 val spyRepository = spyk(UserRepository())
 every { spyRepository.getUserName() } returns "Test User"
+```
+
+## When should you use Mock?
+
+For Android unit testing, a mock is usually the default choice when testing a class in isolation. You do not want the test to depend on Retrofit, Room, the network, authentication, or real repository logic.
+
+```kotlin
+coEvery {
+    repository.getUser()
+} returns User("1", "Kiran")
+```
+
+## When should you use Spy?
+
+Use a spy when you want most of the real behavior, need to override only a specific method, or need to verify interactions with a real object. Replacing the whole object with a mock would otherwise make the test unnecessarily complicated.
+
+```kotlin
+val calculator = spyk(Calculator())
+
+every {
+    calculator.getTaxRate()
+} returns 0.10
+
+val result = calculator.calculatePrice(100)
 ```
 
 ---
