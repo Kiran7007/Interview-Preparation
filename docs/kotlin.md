@@ -14,7 +14,16 @@
 
 ## Why Kotlin over Java for Android?
 
-Kotlin provides null safety, concise syntax, extension functions, sealed classes, data classes, coroutines, and better support for functional programming. It reduces boilerplate and makes asynchronous and state-driven Android development easier.
+Kotlin provides:
+
+- Null safety
+- Concise syntax
+- Extension functions
+- Sealed classes
+- Data classes, coroutines
+- Better support for functional programming. 
+
+It reduces boilerplate and makes asynchronous and state-driven Android development easier.
 
 ```kotlin
 val name: String? = user?.name
@@ -40,20 +49,18 @@ Use `==` when comparing values.
 ## What is the difference between val, var, and const in Kotlin?
 In Kotlin, `val` and `var` are used to declare variables, but they behave differently:
 
-1. **var (Variable)**
-   - A mutable variable.
-   - You can change its value after it's assigned.
-   - Stored in memory at runtime.
-
-2. **val (Value)**
-   - An immutable variable (like `final` in Java).
-   - You can assign only once.
-   - Value is also stored at runtime, but can’t be reassigned.
-
-3. **const val (Constant)**
-   - A compile-time constant.
-   - Can only be used with top-level properties or inside objects or companion objects.
-   - Must be of a primitive type or String, and value must be known at compile time.
+- **var (Variable)**
+   1. A mutable variable.
+   2. You can change its value after it's assigned.
+   3. Stored in memory at runtime.
+-  **val (Value)**
+   1. An immutable variable (like `final` in Java).
+   2. You can assign only once.
+   3. Value is also stored at runtime, but can’t be reassigned.
+-  **const val (Constant)**
+   1. A compile-time constant.
+   2. Can only be used with top-level properties or inside objects or companion objects.
+   3. Must be of a primitive type or String, and value must be known at compile time.
 
 ```kotlin
 val name = "Kiran" // Cannot be changed later
@@ -109,7 +116,7 @@ Benefits:
 ---
 
 ## Why are `equals()` and `hashCode()` important?
-- Data classes automatically generate `equals()` and `hashCode()`.
+Data classes automatically generate `equals()` and `hashCode()`.
 
 They are used for:
 
@@ -204,15 +211,14 @@ inline fun <reified T> parse(json: String): T =
 ---
 
 ## What is delegation?
+- Delegates implementation to another object.
+- `by lazy` is also property delegation.
 
 ```kotlin
 class Repository(
     private val dataSource: DataSource
 ) : DataSource by dataSource
 ```
-
-- Delegates implementation to another object.
-- `by lazy` is also property delegation.
 
 ## `lazy` vs `lateinit`
 
@@ -271,7 +277,6 @@ A sealed class is a restricted class hierarchy and can hold shared state or cons
 ---
 
 ## Why Google prefers sealed interface in modern Android?
-
 A sealed interface models UI states or capabilities while keeping implementations flexible. A state class can implement it without giving up its single class inheritance, which is useful for modern Android state models.
 
 ```kotlin
@@ -284,11 +289,69 @@ data class Error(val message: String) : UiState
 
 ---
 
-## What is variance?
+## What is variance or Explain `out`, `in`, and `*`?
 
-- `out` = producer/covariant.
-- `in` = consumer/contravariant.
-- `*` = star projection when exact type argument is unknown.
+### `out` → Producer → Read
+
+Use `out` when a class **produces/returns** `T`.
+
+```kotlin
+interface Producer<out T> {
+    fun get(): T
+}
+```
+
+Example:
+
+```kotlin
+Producer<Dog> → Producer<Animal> // ✅
+```
+
+**Remember:** `out` = **read / output / producer**
+
+---
+
+### `in` → Consumer → Write
+
+Use `in` when a class **consumes/accepts** `T`.
+
+```kotlin
+interface Consumer<in T> {
+    fun consume(value: T)
+}
+```
+
+Example:
+
+```kotlin
+Consumer<Animal> → Consumer<Dog> // ✅
+```
+
+**Remember:** `in` = **write / input / consumer**
+
+---
+
+### `*` → Unknown Type
+
+Use `*` when you **don't know or don't care about the exact generic type**.
+
+```kotlin
+fun printList(list: List<*>) {
+    list.forEach { println(it) }
+}
+```
+
+The list could be:
+
+```kotlin
+List<String>
+List<Int>
+List<Dog>
+```
+
+You only know that the elements can safely be treated as `Any?`.
+
+**Remember:** `*` = **unknown type**
 
 ---
 
