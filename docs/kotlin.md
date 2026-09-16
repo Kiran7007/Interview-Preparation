@@ -50,17 +50,17 @@ Use `==` when comparing values.
 In Kotlin, `val` and `var` are used to declare variables, but they behave differently:
 
 - **var (Variable)**
-   1. A mutable variable.
-   2. You can change its value after it's assigned.
-   3. Stored in memory at runtime.
+    1. A mutable variable.
+    2. You can change its value after it's assigned.
+    3. Stored in memory at runtime.
 -  **val (Value)**
-   1. An immutable variable (like `final` in Java).
-   2. You can assign only once.
-   3. Value is also stored at runtime, but can’t be reassigned.
+    1. An immutable variable (like `final` in Java).
+    2. You can assign only once.
+    3. Value is also stored at runtime, but can’t be reassigned.
 -  **const val (Constant)**
-   1. A compile-time constant.
-   2. Can only be used with top-level properties or inside objects or companion objects.
-   3. Must be of a primitive type or String, and value must be known at compile time.
+    1. A compile-time constant.
+    2. Can only be used with top-level properties or inside objects or companion objects.
+    3. Must be of a primitive type or String, and value must be known at compile time.
 
 ```kotlin
 val name = "Kiran" // Cannot be changed later
@@ -293,7 +293,7 @@ data class Error(val message: String) : UiState
 
 ### `out` → Producer → Read
 
-Use `out` when a class **produces/returns** `T`.
+Use `out` when a class produces/returns `T`.
 
 ```kotlin
 interface Producer<out T> {
