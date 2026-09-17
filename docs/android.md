@@ -740,6 +740,7 @@ POST payment + idempotencyKey=ABC
 - Observe data through Flow or StateFlow.
 - Queue local mutations and synchronize later with WorkManager.
 - Use optimistic concurrency or version checks to handle conflicts.
+- This keeps local reads fast while the app syncs changes when connectivity is available.
 
 ```text
 Offline First
@@ -761,14 +762,6 @@ Conflict Detection
 Retry + Backoff
 ```
 
-This keeps local reads fast while the app syncs changes when connectivity is available.
-
-## How would you design an Offline-First Multi-Module Android Application?
-
-For an offline-first Android application, I would make the local database the source of truth for the UI. The app should remain fully usable without a network connection, and synchronization with the backend happens in the background whenever connectivity is available.
-
-The network updates the local database, and the UI observes those database changes through `Flow` or `StateFlow`.
-
 ```kotlin
 class OrderRepository(
     private val dao: OrderDao
@@ -783,8 +776,6 @@ class OrderRepository(
 ---
 
 ## How do you detect conflicts?
-
-This is the most important part of the question.
 
 I would not rely only on timestamps. Instead, I would preferably use a server-generated version or revision. The client sends the version it last read with its update. If the server's current version is different, the server returns a conflict instead of silently overwriting newer data.
 
@@ -813,10 +804,6 @@ data class UpdateOrderRequest(
 )
 ```
 
----
-
-## Now where does conflict happen?
-
 Imagine two phones both download Order 101 at version 5. Phone A changes the order to `CANCELLED` and synchronizes first, so the server changes its version to 6. Phone B later sends its update using version 5. The server sees that the client is trying to modify an old version, because `5 != 6`. That is a conflict.
 
 ```kotlin
@@ -826,15 +813,11 @@ val serverVersion = 6L
 val hasConflict = clientVersion != serverVersion
 ```
 
----
-
-## Why not simply overwrite it?
-
 Suppose the server blindly accepts Phone B. Phone A's change would be lost, and the server would not know whether `COMPLETED` should replace `CANCELLED`. That is why we detect the conflict first.
 
 ---
 
-## Now what is Last-Write-Wins?
+## What is Last-Write-Wins?
 
 This is one possible conflict resolution strategy. It means whichever update is considered the latest wins.
 
@@ -1060,21 +1043,19 @@ if (featureFlags.newPaymentFlow) {
 
 ## What is a runbook?
 - A runbook explains what to do in production incidents.
-- It should cover detection, investigation, mitigation, rollback, and recovery.
+- It should cover
 
----
-
-## What should a runbook contain?
-
-- Symptoms.
-- Detection/alerts.
-- Impact.
-- Investigation steps.
-- Mitigation.
-- Rollback/feature flag.
-- Escalation path.
-- Recovery verification.
-- Post-incident actions.
+```text
+    1. Symptoms.
+    2. Detection/alerts.
+    3. Impact.
+    4. Investigation steps.
+    5. Mitigation.
+    6. Rollback/feature flag.
+    7. Escalation path.
+    8. Recovery verification.
+    9. Post-incident actions.
+```
 
 ---
 
