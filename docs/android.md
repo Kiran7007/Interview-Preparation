@@ -1,24 +1,18 @@
 ---
 # Android Architecture
 
-## What is Android Architecture?
+## What is Clean Architecture?
 
 - It defines a way to structure code into layers.
 - It helps separate UI, data, and business logic.
 - It makes the code easier to maintain, test, and scale.
+- It is most valuable when the feature is complex or spans multiple data sources.
 
 ```kotlin
 class UserViewModel(
     private val repository: UserRepository
 ) : ViewModel()
 ```
-
----
-
-## What is Clean Architecture?
-- Clean Architecture separates responsibilities into layers.
-- It improves testability, maintainability, and changeability.
-- It is most valuable when the feature is complex or spans multiple data sources.
 
 ```text
 UI
@@ -32,18 +26,14 @@ Repository
 Data Sources
 ```
 
-Use the level of separation justified by the feature. A small screen does not need a large number of layers.
-
 ---
 
-## What are MVVM, ViewModel, LiveData, StateFlow, Repository, and UseCase?
+## What are MVVM, ViewModel, LiveData, StateFlow?
 
 - **MVVM:** The UI renders state exposed by a ViewModel; the ViewModel coordinates use cases; repositories abstract data sources.
 - **ViewModel:** Retains screen state across configuration changes and must not hold Activity/View references. It does not survive process death by itself.
 - **LiveData:** A lifecycle-aware observable value, especially useful in legacy XML/View screens.
 - **StateFlow:** A coroutine-based hot stream representing current state; collect it with `repeatOnLifecycle` in Views or Compose lifecycle APIs.
-- **Repository:** Owns data access and hides API, Room, Firebase or cache details from callers.
-- **UseCase:** Encapsulates one meaningful business operation and is valuable when logic is reused or complex; it is not mandatory ceremony for every trivial operation.
 
 ---
 
@@ -309,81 +299,40 @@ suspend fun updateName(id: Int, name: String)
 
 ## Explain SOLID Principles in Android with examples
 
-- SOLID is a set of five design principles that help in writing clean, scalable, and easy-to-maintain code.
-- Each letter in SOLID stands for one principle:
-  1. S - Single Responsibility
-  2. O - Open/Closed
-  3. L - Liskov Substitution
-  4. I - Interface Segregation
-  5. D - Dependency Inversion
-
-Let’s understand them one by one.
+- SOLID is a set of five design principles that help in writing clean, scalable, and easy-to-maintain code. Let’s understand them one by one.
 
 ### S - Single Responsibility Principle (SRP)
 
 - A class should have only one reason to change, meaning it should do only one job.
-- Example in Android:
-  - Do not mix UI logic and data logic inside an Activity.
-  - Use Activity for UI and ViewModel for business logic.
-  - Use Repository for data handling such as API or database work.
 - This makes code cleaner and easier to test or modify.
+- For example, Do not mix UI logic and data logic inside an Activity. Use Activity for UI and ViewModel for business logic. Use Repository for data handling such as API or database work.
 
 ### O - Open/Closed Principle (OCP)
 
 - A class should be open for extension but closed for modification.
 - You should add new features without changing existing code.
-- Example in Android:
-  - Suppose you have a PaymentProcessor class.
-  - Instead of editing it for every new payment method such as UPI, Card, or Wallet, create new classes such as CardPayment and UPIPayment that implement a PaymentInterface.
 - This keeps the original class safe from future changes.
+- For example, Suppose you have a PaymentProcessor class. Instead of editing it for every new payment method such as UPI, Card, or Wallet, create new classes such as CardPayment and UPIPayment that implement a PaymentInterface.
 
 ### L - Liskov Substitution Principle (LSP)
 
 - Subclasses should be usable in place of their parent class without breaking the app.
-- Example:
-  - If you have a Bird class with a `fly()` method, any subclass such as Sparrow or Eagle should also support flying.
-  - If a Penguin cannot fly, it should not extend that Bird class.
 - In Android, this means subclasses should behave consistently with their base classes.
+- For example, If you have a Bird class with a `fly()` method, any subclass such as Sparrow or Eagle should also support flying. If a Penguin cannot fly, it should not extend that Bird class.
 
 ### I - Interface Segregation Principle (ISP)
 
 - Do not create large, all-in-one interfaces.
 - Instead, create smaller, specific interfaces that serve one purpose.
-- Example in Android:
-  - Split one large UserActions interface with login, logout, and uploadPhoto methods into smaller interfaces such as AuthActions, ProfileActions, and MediaActions.
 - This keeps code flexible because classes only implement what they need.
+- For example, split one large UserActions interface with login, logout, and uploadPhoto methods into smaller interfaces such as AuthActions, ProfileActions, and MediaActions.
 
 ### D - Dependency Inversion Principle (DIP)
 
 - High-level modules such as ViewModel should not depend on low-level modules such as RepositoryImpl.
 - Both should depend on an abstraction such as an interface.
-- Example in Android:
-  - Create a UserRepository interface.
-  - Have multiple implementations such as RemoteUserRepo and LocalUserRepo.
-  - Inject it using Dagger/Hilt or manual dependency injection.
 - This makes it easy to swap implementations, for example, in testing.
-
-### Real Example
-
-For a User Profile screen:
-
-- SRP: Separate classes for UI (Activity), business logic (ViewModel), and data (Repository).
-- OCP: Add a new API provider without changing existing data layer code.
-- LSP: Replace LocalUserRepository with RemoteUserRepository safely.
-- ISP: Create small interfaces for login, logout, and profile operations separately.
-- DIP: ViewModel depends on the UserRepository interface, not a concrete class.
-
-```kotlin
-interface PaymentMethod {
-    fun pay()
-}
-
-class PaymentProcessor(
-    private val method: PaymentMethod
-) {
-    fun process() = method.pay()
-}
-```
+- For example, Create a UserRepository interface. Have multiple implementations such as RemoteUserRepo and LocalUserRepo. Inject it using Dagger/Hilt or manual dependency injection.
 
 ---
 
