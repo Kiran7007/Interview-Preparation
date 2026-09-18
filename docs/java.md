@@ -1,5 +1,7 @@
 # Java Language and OOP
 
+> Oracle's classic Java tutorial targets JDK 8. Use current Java API documentation for newer language and library features, and verify Android toolchain support before using them.
+
 ## Advantages of Java over Kotlin
 
 Although Kotlin is the recommended language today, Java still has advantages:
@@ -11,6 +13,36 @@ Although Kotlin is the recommended language today, Java still has advantages:
 - Many enterprise backends and Android SDK internals are still Java-based.
 
 For new Android development, Kotlin remains the preferred choice.
+
+---
+
+## Primitive types vs reference types
+
+- Primitive variables store values such as `int`, `boolean`, and `double`.
+- Reference variables point to objects; they can be `null` and use methods.
+- Wrapper types such as `Integer` are needed by generics and APIs that require objects.
+- Prefer primitives when `null` and object behavior are not required to avoid boxing.
+
+---
+
+## What is an array?
+
+- An array stores a fixed number of values of one type and uses zero-based indexes.
+- Its length cannot change after creation; use a `List` when the size must grow.
+
+```java
+int[] scores = {90, 85, 100};
+System.out.println(scores[0]);
+```
+
+---
+
+## What are Java control-flow statements?
+
+- `if`/`else` chooses between conditions; `switch` selects among cases.
+- `for`, enhanced `for`, `while`, and `do-while` repeat work.
+- `break`, `continue`, and `return` change loop or method flow.
+- Keep branches small and prefer a clear `switch` or early return over deeply nested conditions.
 
 ---
 
@@ -49,20 +81,11 @@ For new Android development, Kotlin remains the preferred choice.
 
 ---
 
-## What is a Class and Object in Android?
+## What are classes and objects in Java?
 
-### Class
-
-- A class is like a blueprint or template for creating objects.
-- It defines properties (variables) and behaviors (functions/methods).
-- In Android (Kotlin/Java), you use classes to structure your app.
-- A class does not occupy memory by itself until an object is created.
-
-### Object
-
-- An object is a real instance of a class.
-- It occupies memory and can use the properties and methods defined in the class.
-- You can create multiple objects from the same class, each with different data.
+- A class is a blueprint that defines state and behavior.
+- An object is a runtime instance of that class with its own identity and state.
+- Multiple objects can come from one class and hold different values.
 
 ```java
 class User {
@@ -75,12 +98,6 @@ class User {
 
 User user = new User("Asha");
 ```
-
----
-
-## What is an object?
-
-- An object is a runtime instance with identity, state, and behavior defined by its class.
 
 ---
 
@@ -109,7 +126,9 @@ class PaymentService {
 
 ## What is an interface?
 
-- An interface defines a contract that classes can implement. It cannot be instantiated, and a class can implement multiple interfaces. A marker interface has no abstract methods and communicates capability or metadata.
+- An interface defines a contract that classes can implement; it is not instantiated directly.
+- A class can implement multiple interfaces, while it can extend only one class.
+- A marker interface has no methods and communicates a capability or metadata.
 
 ---
 
@@ -128,6 +147,17 @@ Predicate<String> valid = value -> !value.isBlank();
 
 - Default methods let existing implementations inherit new behavior, helping evolve interfaces compatibly. Static interface methods belong to the interface and are not overridden.
 - Conflicting default methods from two interfaces must be resolved by the implementing class.
+
+---
+
+## What are lambdas and method references?
+
+- A lambda is a short implementation of a functional interface.
+- A method reference reuses an existing method with the same compatible signature.
+
+```java
+Predicate<String> empty = String::isEmpty;
+```
 
 ---
 
@@ -417,6 +447,15 @@ List<String> roles = List.of("admin", "reviewer");
 
 ---
 
+## What are `Queue`, `Deque`, and `PriorityQueue`?
+
+- `Queue` models items waiting to be processed, usually in FIFO order.
+- `Deque` supports adding and removing from both ends; `ArrayDeque` is a common stack or queue choice.
+- `PriorityQueue` returns the highest-priority element according to its ordering, not insertion order.
+- None of these are automatically safe for concurrent access; choose a concurrent queue when needed.
+
+---
+
 ## What are Java Streams?
 
 - A Stream is a pipeline for processing elements from a source.
@@ -536,8 +575,8 @@ try (InputStream input = source.openStream()) {
 
 ## What is externalization?
 
-- `Externalizable` gives a class explicit control over serialized state through `writeExternal` and `readExternal`.
-- It shifts compatibility, validation, and security responsibility to the developer, so explicit schemas are often clearer.
+- `Externalizable` is a legacy serialization API that gives a class explicit control through `writeExternal` and `readExternal`.
+- It shifts compatibility, validation, and security responsibility to the developer; explicit schemas are usually clearer.
 
 ---
 
@@ -619,8 +658,8 @@ CompletableFuture<String> userName = loadUserAsync()
 
 ## What does `synchronized` mean?
 
-- It provides mutual exclusion through a monitor and visibility around lock acquisition and release. Only one thread can hold that monitor at a time.
-- Keep critical sections small and use consistent lock ordering.
+- It locks a monitor, allowing one thread at a time through the protected section and establishing visibility at lock boundaries.
+- Keep the section small; use `Lock` when timed or interruptible acquisition is required.
 
 ---
 
@@ -726,43 +765,58 @@ Example: a Java language feature may compile successfully, while a library API s
 
 ---
 
-## Singleton vs Object in Kotlin?
+## What is a Java Singleton, and why should it be used carefully?
 
-Kotlin `object` is a language-supported singleton and is initialized safely when first accessed. A Java Singleton requires explicit construction and visibility rules. Both should be used carefully because global state hides dependencies and complicates tests.
+- A Singleton exposes one shared instance, but global state hides dependencies and complicates tests.
+- Prefer dependency injection when the object has business state or external dependencies.
+- If a Singleton is necessary, an enum is a concise, serialization-safe option.
 
-```kotlin
-object Analytics {
-    fun track(event: String) = Unit
+```java
+enum Analytics {
+    INSTANCE;
+
+    void track(String event) { }
 }
 ```
 
 ---
 
-## Decorator vs Inheritance?
+## Decorator vs inheritance
 
 Inheritance changes behavior through a fixed class hierarchy. A Decorator wraps an object and adds behavior at runtime, so decorators can be combined without creating a subclass for every combination.
 
-```kotlin
+```java
 interface Repository {
-    fun load(): String
+    String load();
 }
 
-class LoggingRepository(
-    private val delegate: Repository
-) : Repository {
-    override fun load(): String = delegate.load().also { println("loaded") }
+class LoggingRepository implements Repository {
+    private final Repository delegate;
+
+    LoggingRepository(Repository delegate) {
+        this.delegate = delegate;
+    }
+
+    @Override
+    public String load() {
+        String value = delegate.load();
+        System.out.println("loaded");
+        return value;
+    }
 }
 ```
 
 ---
 
-## Observer vs Flow?
+## What is the Observer pattern?
 
-Observer is a notification pattern in which observers receive updates from a subject. Kotlin `Flow` represents asynchronous streams and supports operators, cancellation, and structured collection. Use lifecycle-aware collection on Android.
+- The subject keeps a list of observers and notifies them when its state changes.
+- It is useful for one-to-many notifications, but careless observers can cause leaks or unexpected update order.
+- Use explicit lifecycle ownership and unregister observers when they are no longer needed. Kotlin `Flow` belongs in the Kotlin section.
 
-```kotlin
-val updates: Flow<String> = flow {
-    emit("ready")
+```java
+interface Observer {
+    void onChanged(String value);
 }
 ```
 
