@@ -2425,6 +2425,25 @@ MaterialTheme(colorScheme = lightColorScheme()) {
 - Define lifecycle, state ownership, and disposal behavior at the integration boundary.
 - Migrate incrementally rather than duplicating the same state in both UI systems.
 
+```kotlin
+// Compose inside an existing View or Fragment layout.
+composeView.setViewCompositionStrategy(
+    ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+)
+composeView.setContent {
+    ProfileScreen(uiState = uiState)
+}
+
+// An existing custom View inside Compose.
+@Composable
+fun LegacyChart(data: ChartData) {
+    AndroidView(
+        factory = { context -> LegacyChartView(context) },
+        update = { view -> view.setData(data) }
+    )
+}
+```
+
 ---
 
 ## How do you handle animation in Compose?
@@ -2578,10 +2597,6 @@ val state by viewModel.state
 ---
 
 ## Why did you create a separate Fragment for Compose?
-
-Strong answer:
-
-Be ready to discuss:
 - ComposeView inside an existing Fragment
 - Fragment hosting a Compose screen
 - Full Compose navigation
