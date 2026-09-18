@@ -1404,7 +1404,23 @@ val prefs = EncryptedSharedPreferences.create(
 
 ## When should you use EncryptedSharedPreferences?
 
-Use it for small secrets such as a small token, preference, or feature credential when the convenience and storage size fit the use case. Do not use it as a general database or for large, frequently updated data. The API is deprecated in current AndroidX Security Crypto, so prefer a supported Keystore-backed design for new code and use this mainly when maintaining an existing app.
+Use `EncryptedSharedPreferences` when:
+
+- The data is small, such as a token, preference, or feature credential.
+- The value does not change frequently.
+- Convenience is more important than using a custom storage layer.
+
+Avoid it when:
+
+- You need to store large data or a collection of records.
+- You need frequent updates; use a database instead.
+- You are designing new code without a compatibility requirement.
+
+Remember:
+
+- The API is deprecated in current AndroidX Security Crypto.
+- Prefer a supported Keystore-backed design for new code.
+- Give stored secrets a short lifetime and revoke them server-side when possible.
 
 ```kotlin
 val masterKey = MasterKey.Builder(context)
@@ -1424,15 +1440,23 @@ securePrefs.edit()
     .apply()
 ```
 
-Store only small values and give them a short lifetime. Prefer server-side token revocation and clear the preferences during logout.
-
-Exclude the encrypted preferences file from Auto Backup; restoring ciphertext without its Keystore key can make the data unreadable.
-
 ---
 
 ## How do you secure a local database using Room?
 
-Use SQLCipher or another reviewed database-encryption solution with a key protected by Android Keystore. Restrict database access to the app process, avoid exporting database files or backups when required by the threat model, and clear the database during secure logout.
+Secure a Room database by:
+
+- Using SQLCipher or another reviewed database-encryption solution.
+- Generating a random database key and protecting it with Android Keystore.
+- Keeping database access inside the app process.
+- Disabling or restricting backups when the threat model requires it.
+- Clearing the database and deleting its key during secure logout.
+
+Remember:
+
+- Never hard-code or log the database passphrase.
+- Test encrypted-database migrations before release.
+- Choose backup and recovery behavior based on the sensitivity of the data.
 
 ```kotlin
 // databaseKeyStore returns a random 32-byte key protected by Android Keystore.
@@ -1448,13 +1472,23 @@ val database = Room.databaseBuilder(
     .build()
 ```
 
-Do not hard-code the passphrase or log it. Configure backup rules and migrations according to the data-sensitivity and recovery requirements.
-
 ---
 
 ## How do you encrypt files stored on device?
 
-Generate or unwrap the encryption key through Android Keystore, use an authenticated encryption mode such as AES-GCM, and store only ciphertext in the file. Keep temporary plaintext files short-lived and remove them when the operation finishes.
+To encrypt a file:
+
+- Generate or unwrap the key through Android Keystore.
+- Use authenticated encryption such as AES-GCM.
+- Store the IV together with the ciphertext; the IV is not secret.
+- Keep plaintext files short-lived.
+- Delete temporary plaintext after encryption completes.
+
+Remember:
+
+- The GCM authentication tag detects tampering during decryption.
+- Never reuse an IV with the same key.
+- Store only ciphertext in the final device file.
 
 ```kotlin
 private const val FILE_KEY_ALIAS = "file-encryption-key"
@@ -1491,8 +1525,6 @@ fun encryptFile(input: File, encryptedOutput: File) {
 }
 ```
 
-The GCM authentication tag detects tampering during decryption. Never reuse an IV with the same key, and delete the plaintext temporary file when it is no longer needed.
-
 ---
 
 ## Cache vs Persistent Storage – what’s safe?
@@ -1509,7 +1541,18 @@ App sandboxing reduces access from other ordinary apps, but local data can still
 
 ## How do you handle secure logout?
 
-Revoke credentials server-side, delete or invalidate local encryption keys, clear encrypted preferences and sensitive databases, remove cache files, cancel user-specific work, and reset in-memory state. The signed-out UI should be shown only after the cleanup policy has completed.
+Secure logout should:
+
+1. Revoke the session or refresh token on the server.
+2. Clear sensitive databases and close them.
+3. Clear encrypted preferences synchronously.
+4. Delete sensitive cache files and pending user data.
+5. Cancel user-specific WorkManager jobs and notifications.
+6. Delete or invalidate local encryption keys.
+7. Reset in-memory session state.
+8. Show the signed-out UI only after cleanup completes.
+9. Also remove pending deep-link data and any user-specific in-memory state.
+10. If server revocation fails, keep the local session unusable and retry revocation safely later.
 
 ```kotlin
 suspend fun logout(userId: String) {
@@ -1532,8 +1575,6 @@ suspend fun logout(userId: String) {
     }
 }
 ```
-
-Also remove notifications, pending deep-link data, and any user-specific in-memory state. If server revocation fails, retry it safely while keeping the local session unusable.
 
 ---
 
@@ -1572,35 +1613,51 @@ val key = generator.generateKey()
 
 ---
 
-## How do you securely handle logout in a production app?
-
-Logout is a security operation, not only a UI event. Revoke credentials server-side, delete or invalidate encryption keys, clear encrypted preferences, remove sensitive databases and cache files, cancel user-specific workers, and reset in-memory state. Cleanup should complete before the app presents the signed-out state.
-
-```kotlin
-fun secureLogout() {
-    encryptedPrefs.edit().clear().commit()
-    database.clearAllTables()
-    context.cacheDir.deleteRecursively()
-}
-```
-
----
-
 ## How do you prevent reverse engineering beyond basic obfuscation?
 
-R8 reduces readable symbols and unused code, but it cannot make client code secret. Keep authorization and sensitive business decisions on the server, avoid hardcoded secrets, add integrity and tamper signals where appropriate, and use runtime checks only as additional risk signals.
+Use multiple layers:
+
+- Use R8 to shrink, optimize, and obfuscate the app.
+- Never hard-code API keys, passwords, or signing secrets.
+- Keep authorization and sensitive business decisions on the server.
+- Add Play Integrity and tamper signals where appropriate.
+- Treat runtime checks as risk signals, not as a complete security boundary.
+
+Remember: client code can eventually be inspected, so the backend must remain authoritative.
 
 ---
 
 ## Why should you pin public keys instead of certificates?
 
-Certificates expire and are commonly renewed, while the same public key can remain valid across renewals. Pinning the public key can reduce outages during certificate rotation, but backup pins and a tested rotation plan are still required.
+Public-key pinning is useful because:
+
+- Certificates expire and are renewed frequently.
+- The same public key can remain valid across certificate renewals.
+- Pinning the key can reduce unnecessary outages during certificate rotation.
+
+Always add:
+
+- At least one backup pin.
+- A tested key-rotation plan.
+- A recovery plan for a bad or expired pin.
 
 ---
 
 ## How do you detect rooted or tampered devices?
 
-Use several weak signals such as suspicious files, test keys, debuggable state, signature checks, and Play Integrity. Root and tamper detection are heuristics, so use the result for risk-based decisions and enforce sensitive authorization on the server.
+Check several signals instead of trusting one check:
+
+- Suspicious root files or binaries.
+- Test keys in the system build.
+- A debuggable or unexpectedly modified app.
+- An unexpected signing certificate.
+- Play Integrity results.
+
+Important:
+
+- These checks are heuristics and can produce false positives.
+- Use them for risk-based restrictions.
+- Enforce sensitive authorization on the server.
 
 ```kotlin
 val hasTestKeys = Build.TAGS?.contains("test-keys") == true
@@ -1610,13 +1667,29 @@ val hasTestKeys = Build.TAGS?.contains("test-keys") == true
 
 ## How do you detect APK tampering?
 
-Verify the runtime signing certificate, installer information, and an integrity verdict when available. A changed or resigned APK should be treated as untrusted, but client checks should supplement server-side verification rather than replace it.
+To detect APK tampering:
+
+- Verify the runtime signing certificate.
+- Check the package identity and installer source.
+- Check an integrity verdict when available.
+- Treat a changed or resigned APK as untrusted.
+- Send the result to the backend for policy decisions.
+
+Client checks reduce risk; they cannot replace server-side verification.
 
 ---
 
 ## How should permissions be handled securely?
 
-Request sensitive permissions just before the feature needs them, check the permission every time the operation runs, handle revocation and denial gracefully, and request only the minimum scope. A previous grant is not a permanent guarantee.
+Handle permissions securely by:
+
+- Requesting permission just before the feature needs it.
+- Asking only for the minimum permission or scope.
+- Checking the permission every time the operation runs.
+- Handling denial and permanent denial gracefully.
+- Supporting revocation after the user has previously granted access.
+
+A previous grant is not a permanent guarantee.
 
 ```kotlin
 if (ContextCompat.checkSelfPermission(
@@ -1632,7 +1705,14 @@ if (ContextCompat.checkSelfPermission(
 
 ## How do you secure background work and services?
 
-Keep components unexported unless another app must call them, use explicit intents, protect required IPC with permissions, validate all incoming data, and choose WorkManager or a foreground service according to the work's visibility and urgency.
+Secure background work by:
+
+- Setting components to `exported=false` unless external access is required.
+- Using explicit intents for internal communication.
+- Protecting required IPC with permissions.
+- Validating every incoming intent and its extras.
+- Using WorkManager for deferrable background work.
+- Using a foreground service only for user-visible, ongoing work.
 
 ```xml
 <service
@@ -1644,7 +1724,17 @@ Keep components unexported unless another app must call them, use explicit inten
 
 ## If you had to summarize Android security strategy as a Tech Lead, what would it be?
 
-Use layered controls: protect keys with Keystore, encrypt sensitive data, use TLS and carefully managed pinning, detect integrity risks, secure exported components, revoke credentials during logout, and keep final authorization on the server. The goal is to reduce blast radius and fail safely, not to assume the client is impossible to compromise.
+As a Tech Lead, I would use layered controls:
+
+- Protect keys with Android Keystore.
+- Encrypt sensitive local data.
+- Use TLS and carefully managed public-key pinning where justified.
+- Detect integrity and tamper risks.
+- Secure exported components and IPC.
+- Revoke credentials during logout.
+- Keep final authorization on the server.
+
+The goal is to reduce the blast radius and fail safely, not to assume the client is impossible to compromise.
 
 ---
 
@@ -1652,149 +1742,404 @@ Use layered controls: protect keys with Keystore, encrypt sensitive data, use TL
 
 ### How does Android Keystore work under the hood? How do you know if a key is hardware-backed?
 
-Keystore delegates cryptographic operations to KeyMint or a software implementation. Check `KeyInfo.isInsideSecureHardware()` after key creation because hardware backing varies by device.
+The flow is:
+
+- The app asks Android Keystore to create or use a key.
+- Android delegates the operation to KeyMint hardware when available.
+- Otherwise, Android uses a software-backed implementation.
+- Check `KeyInfo.isInsideSecureHardware()` after key creation.
+- Do not assume every device has hardware-backed keys.
 
 ### How would you securely store encryption keys on an Android device? What are failure cases?
 
-Generate keys in Android Keystore, never export key material, handle key invalidation, and fail securely by requiring re-authentication when a key is unavailable.
+Store encryption keys by following these rules:
+
+- Generate them inside Android Keystore.
+- Never export or log raw key material.
+- Give keys a clear purpose and lifecycle.
+- Handle biometric, lock-screen, and device changes that invalidate keys.
+- Require re-authentication instead of falling back to plaintext.
 
 ### How do you protect cryptographic keys from root or malware attacks?
 
-Keep keys in hardware-backed Keystore when available, require user authentication for sensitive operations, use integrity signals, and keep final authorization on the server.
+Protect keys by:
+
+- Using hardware-backed Keystore when available.
+- Requiring user authentication for high-risk operations.
+- Using integrity signals to adjust risk.
+- Keeping final authorization on the server.
+
+Treat a rooted device as untrusted even when Keystore is used.
 
 ### What happens to Keystore keys when biometrics change?
 
-Keys configured for biometric invalidation can become unusable. Catch the key exception, clear dependent ciphertext, and require the user to authenticate and provision a new key.
+When biometrics change:
+
+- A key configured for biometric invalidation may become unusable.
+- Catch the Keystore or decryption exception.
+- Delete ciphertext that cannot be recovered safely.
+- Ask the user to authenticate again.
+- Provision a new key and encrypt new data with it.
 
 ### Users report login failures after fingerprint reset. What went wrong?
 
-The biometric change likely invalidated an authentication-bound key. The app must recover through key re-provisioning and login instead of treating the decryption failure as a normal network error.
+The likely cause is key invalidation after the fingerprint change.
+
+Recovery should:
+
+- Detect the key or decryption failure.
+- Clear the dependent encrypted state.
+- Require a fresh login or re-authentication.
+- Provision a replacement key.
+
+Do not treat this as an ordinary network failure.
 
 ### How does EncryptedSharedPreferences work internally?
 
-It uses a Keystore-protected master key and encrypts preference keys and values separately. It is intended for small secrets rather than large data sets.
+Internally it:
+
+- Uses a Keystore-protected master key.
+- Encrypts preference keys separately from preference values.
+- Uses authenticated encryption for values.
+- Fits small secrets, not large or frequently changing data.
+
+For new code, also check the current AndroidX API status because this API is deprecated.
 
 ### Is EncryptedSharedPreferences enough for sensitive data?
 
-It is useful for small secrets, but it does not protect against every compromised-device or token-replay threat. Use suitable key lifecycle, logout, backup, and server-revocation controls as well.
+It helps, but it is not complete protection:
+
+- It protects stored values, not a compromised running process.
+- It does not stop token replay if an attacker obtains a usable token.
+- It does not replace server-side revocation.
+- It does not replace key lifecycle, backup, and logout controls.
 
 ### Why would you or wouldn’t you use Jetpack Security for tokens?
 
-I would use it for small, short-lived secrets when its lifecycle fits the product. For long-lived refresh tokens, I want explicit key invalidation, rotation, and server-side revocation.
+Use Jetpack Security when:
+
+- The secret is small and short-lived.
+- The storage lifecycle fits the product.
+- Existing-app compatibility makes it practical.
+
+For long-lived refresh tokens, also require:
+
+- Keystore-backed protection.
+- Token rotation and explicit invalidation.
+- Server-side revocation.
+
+Avoid treating client-side encryption as a guarantee that a token cannot be stolen.
 
 ### How would you store access and refresh tokens securely?
 
-Keep access tokens short-lived, protect refresh tokens with Keystore-backed encryption, minimize their scope, avoid logging them, and support server-side revocation and rotation.
+Store tokens securely by:
+
+- Keeping access tokens short-lived.
+- Protecting refresh tokens with Keystore-backed encryption.
+- Giving tokens the minimum scope and audience.
+- Never logging tokens or placing them in URLs.
+- Supporting server-side revocation and rotation.
+- Clearing tokens during logout.
 
 ### What happens if an attacker extracts app data?
 
-The attacker may obtain ciphertext, metadata, or cached data. Encryption limits usefulness only when keys are separately protected; the backend must still detect and revoke suspicious sessions.
+If app data is extracted, an attacker may obtain:
+
+- Ciphertext.
+- File names and metadata.
+- Cached or temporary data.
+- Tokens that were stored or left in memory unsafely.
+
+Reduce the impact by:
+
+- Separating keys from ciphertext.
+- Minimizing local data.
+- Clearing caches and temporary files.
+- Detecting and revoking suspicious sessions on the server.
 
 ### How do you protect refresh tokens on a rooted device?
 
-Use Keystore-backed encryption, device and session binding, short lifetimes where possible, integrity risk signals, and server-side revocation. Treat the rooted client as untrusted.
+On a rooted device:
+
+- Use Keystore-backed encryption where available.
+- Bind sessions and sensitive actions to the device and session context.
+- Use short token lifetimes.
+- Apply integrity and risk signals.
+- Support immediate server-side revocation.
+
+Treat the client as untrusted and restrict high-value actions when risk is high.
 
 ### What does a secure logout mean on Android?
 
-It means revoking server credentials and removing local access to secrets by deleting keys, encrypted state, caches, databases, workers, and in-memory session data.
+Secure logout means:
+
+- Revoke server credentials.
+- Delete or invalidate local encryption keys.
+- Clear encrypted preferences and sensitive databases.
+- Remove files, caches, cookies, and pending work.
+- Reset in-memory authentication state.
+
+Show the signed-out UI only after the cleanup policy completes.
 
 ### How do you ensure customer data is removed after logout?
 
-Define all user-scoped storage, clear it synchronously or through a controlled completion state, cancel user work, revoke the server session, and verify cleanup with tests.
+To verify customer data removal:
+
+- List every user-scoped database, file, preference, cache, cookie, and worker.
+- Revoke the server session.
+- Clear local data synchronously or expose a controlled cleanup state.
+- Cancel user-specific work and notifications.
+- Add tests that confirm each storage location is empty or inaccessible.
 
 ### What exactly do you clear when a user logs out?
 
-Clear or invalidate Keystore keys, encrypted preferences, databases, sensitive files, caches, pending workers, cookies, and in-memory authentication state.
+At logout, clear or invalidate:
+
+- Keystore keys.
+- Encrypted preferences.
+- User databases.
+- Sensitive files and cache entries.
+- Pending WorkManager jobs and notifications.
+- Cookies and session headers.
+- In-memory authentication and user state.
 
 ### How do you protect business logic from reverse engineering?
 
-Use R8 to raise analysis cost, keep secrets and authorization on the backend, minimize sensitive logic on the client, and add integrity checks where they support the threat model.
+Protect business logic by:
+
+- Using R8 to increase the cost of analysis.
+- Keeping secrets and authorization on the backend.
+- Minimizing sensitive logic on the client.
+- Adding integrity checks when they support the threat model.
+- Rechecking important actions on the server.
 
 ### How do you slow down attackers analyzing your app?
 
-Use shrinking and obfuscation, avoid hardcoded secrets, add runtime and integrity checks, and make the server independently validate important actions.
+Increase attacker effort by:
+
+- Enabling shrinking, optimization, and obfuscation.
+- Avoiding hardcoded secrets.
+- Adding runtime and integrity checks.
+- Separating sensitive decisions across client and server.
+- Validating important actions independently on the server.
 
 ### When would you use certificate pinning, and when would you avoid it?
 
-Use it when the threat model justifies the operational cost and you can manage backup pins and rotation. Avoid or limit it when certificate ownership, rotation, or recovery cannot be reliably controlled.
+Use certificate pinning when:
+
+- The threat model justifies the operational cost.
+- You control certificate or key rotation.
+- You can ship backup pins and test recovery.
+
+Avoid or limit it when:
+
+- Certificate ownership is unclear.
+- Rotation cannot be controlled reliably.
+- A pin failure would lock out users without a recovery path.
 
 ### How do you protect against MITM attacks?
 
-Use HTTPS with correct certificate validation, consider public-key pinning, protect against downgrade or proxy risks, and keep sensitive authorization and replay protection on the server.
+Protect against MITM attacks by:
+
+- Using HTTPS with hostname and certificate-chain validation.
+- Considering public-key pinning when the threat model requires it.
+- Preventing downgrade and unsafe proxy configurations.
+- Using short-lived credentials and replay protection.
+- Keeping authorization decisions on the server.
 
 ### How do you ensure API calls aren’t intercepted?
 
-Use TLS, carefully managed pinning where appropriate, request authentication and signing for sensitive operations, short-lived credentials, and server-side anomaly detection.
+Reduce API interception risk by:
+
+- Using TLS correctly.
+- Adding carefully managed pinning only when appropriate.
+- Authenticating every request.
+- Signing sensitive requests when replay or tampering is a concern.
+- Using short-lived credentials.
+- Detecting unusual activity on the server.
 
 ### How do you handle security on compromised devices?
 
-Treat the client as untrusted, use risk-based restrictions for sensitive actions, minimize local secrets, and enforce the final decision on the backend.
+On a compromised device:
+
+- Treat the client as untrusted.
+- Minimize stored secrets and sensitive data.
+- Use risk-based restrictions for high-value actions.
+- Ask for step-up authentication when needed.
+- Enforce the final decision on the backend.
 
 ### What happens if PhonePe runs on a rooted phone?
 
-The app should use root and integrity signals for risk decisions, allow only appropriate low-risk functionality, and require stronger verification or block high-value transactions on the server.
+If PhonePe runs on a rooted phone:
+
+- Collect root and integrity signals.
+- Allow normal low-risk functionality when policy permits.
+- Require stronger verification for sensitive actions.
+- Let the server approve, restrict, or block high-value transactions.
+
+Do not rely on the client alone to approve a payment.
 
 ### How do you know your APK hasn’t been modified?
 
-Check the signing certificate, installer source, integrity verdict, and server-side attestation signals. These checks reduce risk but cannot make a client unpatchable.
+Check:
+
+- The expected signing certificate.
+- The package identity.
+- The installer source.
+- Play Integrity or another attestation verdict.
+- Server-side attestation and session signals.
+
+These checks reduce risk but cannot make a client unpatchable.
 
 ### How would you detect a repackaged app?
 
-Verify the expected signing certificate and package identity, inspect installer and integrity signals, and reject or restrict suspicious clients through backend policy.
+To detect a repackaged app:
+
+- Verify the expected package identity.
+- Verify the expected signing certificate.
+- Inspect the installer source.
+- Check integrity signals.
+- Reject or restrict suspicious clients through backend policy.
 
 ### How do you prevent fake apps with your branding?
 
-Protect release signing, monitor distribution channels, verify package and certificate identity, use Play Integrity where appropriate, and keep account and transaction authorization on the backend.
+To reduce fake-app risk:
+
+- Protect release-signing keys.
+- Monitor app stores and distribution channels.
+- Verify package and certificate identity.
+- Use Play Integrity where appropriate.
+- Keep account and transaction authorization on the backend.
 
 ### What happens if a user revokes permission at runtime?
 
-The next sensitive operation must detect the denial, stop or reduce the feature safely, explain the required permission, and avoid crashing or assuming the earlier grant still exists.
+When permission is revoked:
+
+- Check it again before the next sensitive operation.
+- Stop or reduce the feature safely.
+- Explain why the permission is needed.
+- Offer a useful fallback when possible.
+- Avoid crashes and never assume an earlier grant still exists.
 
 ### How do you safely handle camera or SMS permissions?
 
-Request only at the point of use, request the minimum permission, check the result every time, and provide a safe fallback when the user denies or revokes access.
+For camera or SMS permissions:
+
+- Request permission only at the point of use.
+- Request the minimum required permission.
+- Check the result every time the feature runs.
+- Handle denial, permanent denial, and later revocation.
+- Provide a safe fallback when possible.
 
 ### What Android components are common attack vectors?
 
-Exported activities, services, receivers, and providers are common IPC attack surfaces, especially when they accept implicit intents or unvalidated input.
+Common IPC attack surfaces include:
+
+- Exported activities.
+- Exported services.
+- Exported broadcast receivers.
+- Exported content providers.
+- Implicit intents and unvalidated input.
 
 ### How can one app exploit another app?
 
-It can invoke exported components, send crafted intents, access weakly protected providers, or abuse unsafe IPC contracts. Restrict exports, validate inputs, and protect components with permissions.
+One app may attack another by:
+
+- Invoking an exported component.
+- Sending a crafted intent.
+- Reading a weakly protected provider.
+- Abusing an unsafe IPC contract.
+
+Prevent this by restricting exports, validating input, and protecting required components with permissions.
 
 ### How do you secure services and receivers?
 
-Set `exported=false` unless external access is required, use explicit intents, protect exported entry points with permissions, and validate every incoming request.
+Secure services and receivers by:
+
+- Setting `exported=false` unless external access is required.
+- Using explicit intents for internal calls.
+- Protecting exported entry points with permissions.
+- Validating every action, caller, and input value.
+- Limiting the work performed by a received request.
 
 ### How would you design Android security for a large-scale app?
 
-Start with threat modeling, then layer Keystore, encrypted storage, TLS, integrity checks, secure IPC, server authorization, observability, incident response, and staged rollout controls.
+For a large-scale app:
+
+1. Start with threat modeling.
+2. Protect keys with Keystore.
+3. Encrypt sensitive local storage.
+4. Secure TLS, IPC, and exported components.
+5. Add integrity and abuse detection.
+6. Keep authorization on the server.
+7. Add observability and incident response.
+8. Use staged rollout and rapid rollback controls.
 
 ### How do you balance security with customer experience?
 
-Use risk-based controls: keep low-risk actions convenient, add step-up authentication or restrictions only when signals and transaction value justify them, and provide recovery paths for legitimate users.
+Balance security and user experience by:
+
+- Keeping low-risk actions convenient.
+- Adding step-up authentication for risky actions.
+- Considering transaction value and device signals.
+- Providing recovery paths for legitimate users.
+- Avoiding blanket blocks when a smaller restriction is sufficient.
 
 ### How would you secure a fintech Android app?
 
-Use layered device, application, network, session, and backend controls; bind sensitive actions to authenticated sessions and transaction context; and make the server authoritative for every financial decision.
+For a fintech app, use:
+
+- Device controls: Keystore and integrity signals.
+- Application controls: secure storage, R8, and safe IPC.
+- Network controls: TLS, authentication, and replay protection.
+- Session controls: short-lived tokens, rotation, and revocation.
+- Transaction controls: bind actions to the user, session, amount, and destination.
+- Backend controls: make the server authoritative for every financial decision.
 
 ---
 
 ## How connection established between client and server how key exchanges?
 
-The app first resolves the server address and establishes a TCP connection. During the TLS handshake, the server presents its certificate, the client validates the certificate chain and hostname, and both sides perform an ephemeral key exchange such as ECDHE. They derive the same symmetric session keys without sending the private keys. HTTP requests and responses are then encrypted with those session keys.
+The connection flow is:
+
+1. The app resolves the server's domain name.
+2. The app opens a TCP connection, or a suitable modern transport.
+3. The TLS handshake begins.
+4. The server sends its certificate.
+5. The client validates the certificate chain and hostname.
+6. Both sides perform an ephemeral key exchange such as ECDHE.
+7. Both sides derive the same symmetric session keys.
+8. HTTP requests and responses are encrypted with those session keys.
+
+The private keys are not sent over the network.
 
 ---
 
 ## End to end flow form mobile app to backend SSL pinning lfow and public key flow, how it works, do not explain with code
 
-The app sends an HTTPS request. TLS authenticates the server through its certificate chain, while pinning adds a check that the server's certificate or public key matches an expected value. After validation, the TLS session uses symmetric encryption for application data. The backend authenticates and authorizes the request independently; pinning does not replace server-side authorization.
+The end-to-end flow is:
+
+1. The mobile app sends an HTTPS request.
+2. TLS validates the server certificate chain and hostname.
+3. Public-key pinning, if enabled, checks the expected certificate or public key.
+4. The TLS handshake derives symmetric session keys.
+5. The request and response travel encrypted over the TLS session.
+6. The backend authenticates the client and authorizes the action.
+7. The backend applies replay, fraud, and transaction checks.
+
+Pinning verifies the expected server identity; it does not replace backend authorization.
 
 ---
 
 ## Why use ECDHE instead of RSA key exchange?
 
-ECDHE creates a fresh shared secret for each handshake and provides forward secrecy when ephemeral keys are used. RSA key exchange does not provide the same forward-secrecy property and is not the preferred modern TLS key-exchange approach.
+ECDHE is preferred because:
+
+- It creates a fresh shared secret for each handshake.
+- Ephemeral keys provide forward secrecy.
+- A later compromise of the server's private key does not automatically reveal old sessions.
+- RSA key exchange does not provide the same forward-secrecy property.
+- Modern TLS uses ephemeral Diffie-Hellman-style key exchange instead of RSA key exchange.
 
 ---
 
