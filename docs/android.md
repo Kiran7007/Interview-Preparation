@@ -59,6 +59,45 @@ val windowSizeClass = adaptiveInfo.windowSizeClass
 
 ---
 
+## What is the optional domain layer in Android architecture?
+
+- It sits between the UI and data layers.
+- It contains reusable or complex business rules, often in use-case classes.
+- It is optional; do not add it only to follow a template.
+- The UI layer should not depend directly on low-level data sources when a domain abstraction is useful.
+
+---
+
+## What does main-safe mean in Android architecture?
+
+- A main-safe function can be called from the main thread without blocking it.
+- The type that owns blocking work should move it to the correct dispatcher.
+- Callers should not need to know whether a repository uses disk, network, or CPU-heavy work.
+
+```kotlin
+suspend fun loadUser(): User = withContext(Dispatchers.IO) {
+    api.loadUser()
+}
+```
+
+---
+
+## Why should app components not hold application state?
+
+- Activities, services, and receivers can be created independently, destroyed, or recreated by the system.
+- They should coordinate work and delegate state to stable owners such as a ViewModel, repository, or database.
+- Never assume components start in a fixed order or remain alive.
+
+---
+
+## What is single-activity architecture?
+
+- One `Activity` acts as a container for screens or Compose destinations.
+- Navigation and screen state are handled by the UI/navigation layer instead of many Activity instances.
+- It is a recommendation, not a rule; use the structure that fits the product and lifecycle needs.
+
+---
+
 ## What is the difference between UI logic and business logic?
 
 - **UI logic:** Converts state into UI behavior, such as showing a snackbar or navigating.
@@ -2364,6 +2403,38 @@ Then add:
 
 ---
 
+## What are Material 3 and theming in Compose?
+
+- Material 3 provides Compose components, typography, shapes, and color roles.
+- Put app-wide colors, typography, and shapes in a `MaterialTheme`.
+- Define light and dark color schemes instead of hardcoding colors inside screens.
+- Keep theme decisions separate from business state.
+
+```kotlin
+MaterialTheme(colorScheme = lightColorScheme()) {
+    AppContent()
+}
+```
+
+---
+
+## How do Compose and View-based UI interoperate?
+
+- Use `ComposeView` to place Compose inside an existing XML/View screen.
+- Use `AndroidView` to place an existing View inside Compose.
+- Define lifecycle, state ownership, and disposal behavior at the integration boundary.
+- Migrate incrementally rather than duplicating the same state in both UI systems.
+
+---
+
+## How do you handle animation in Compose?
+
+- Choose an animation API based on the goal: value animation, visibility, layout change, or shared transition.
+- Keep animation state in the UI layer and make it cancellable with composition/lifecycle.
+- Test the resulting behavior and avoid using animation as a substitute for correct state.
+
+---
+
 ## Advantages of XML over Jetpack Compose — How would you convince your manager(who is from a non-technical background) to choose Jetpack Compose over XML?
 
 XML still has a few advantages:
@@ -2887,6 +2958,32 @@ composeTestRule
 
 ---
 
+## What are the main Compose testing API groups?
+
+- **Finders:** `onNodeWithText`, `onNodeWithContentDescription`, `onNodeWithTag`, and `onAllNodes` locate semantics nodes.
+- **Matchers:** check text, state, roles, actions, focus, and accessibility properties.
+- **Actions:** simulate clicks, text input, scrolling, IME actions, and gestures.
+- **Assertions:** verify existence, visibility, text, enabled state, selection, and counts.
+- Use `createComposeRule()` for Compose-only tests and `createAndroidComposeRule()` when an Activity is required.
+
+```kotlin
+composeTestRule
+    .onNodeWithTag("payButton")
+    .assertIsDisplayed()
+    .performClick()
+```
+
+---
+
+## How do you control time and idleness in Compose tests?
+
+- Use `waitForIdle()` or `runOnIdle()` for Compose/test synchronization.
+- Use `mainClock` to advance Compose-controlled animations deterministically.
+- Use `waitUntil { ... }` for external work that Compose cannot observe automatically.
+- Do not replace synchronization with arbitrary sleeps.
+
+---
+
 ## How does Compose testing use the semantics tree?
 
 - Compose UI tests interact with the semantics tree, not directly with drawing code.
@@ -3204,6 +3301,34 @@ every { anyConstructed<HttpClient>().getUser() } returns User("Kiran")
 - Use production metrics to find affected devices and versions.
 - Use local profilers and benchmarks to reproduce and fix the measured problem.
 - Monitor the metric after rollout instead of relying only on debug-device results.
+
+---
+
+## Which tools help inspect Android performance?
+
+- Use Android Studio profilers and Android Performance Analyzer to inspect CPU, memory, network, and energy behavior.
+- Use Perfetto/system tracing for scheduling, startup, rendering, and thread interactions.
+- Use in-process tracing for important sections of application code.
+- Use `ProfilingManager` when collecting appropriate production profiling data on supported devices.
+- Measure first; do not infer the bottleneck from symptoms alone.
+
+---
+
+## How do R8 and keep rules affect Android performance?
+
+- R8 shrinks, optimizes, and obfuscates release code.
+- Keep rules preserve classes or members needed by reflection, serialization, dependency injection, or framework registration.
+- Overly broad keep rules reduce optimization and can increase app size.
+- Validate release builds and tests after changing rules.
+
+---
+
+## How do you investigate battery and memory problems?
+
+- Check production signals first, then reproduce with profilers and traces.
+- For memory, inspect allocations, retained references, GC pressure, and leaks.
+- For battery, look for excessive wakeups, polling, location work, networking, and background jobs.
+- Use Batterystats/Battery Historian when the investigation requires system-level battery evidence.
 
 ## What are Baseline Profiles?
 - Baseline Profiles tell Android which code paths are important.

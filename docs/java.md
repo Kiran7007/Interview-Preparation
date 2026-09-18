@@ -1,5 +1,7 @@
 # Java Language and OOP
 
+> Oracle's classic Java tutorial targets JDK 8. Use current Java API documentation for newer language and library features, and verify Android toolchain support before using them.
+
 ## Advantages of Java over Kotlin
 
 Although Kotlin is the recommended language today, Java still has advantages:
@@ -41,6 +43,22 @@ System.out.println(scores[0]);
 - `for`, enhanced `for`, `while`, and `do-while` repeat work.
 - `break`, `continue`, and `return` change loop or method flow.
 - Keep branches small and prefer a clear `switch` or early return over deeply nested conditions.
+
+---
+
+## What are Java operators, expressions, statements, and blocks?
+
+- Operators compute values or conditions: arithmetic, comparison, assignment, logical, and bitwise operators.
+- `&&` and `||` short-circuit, so the right side may not execute.
+- An expression produces a value; a statement performs an action; a block groups statements inside `{}`.
+- Operator precedence affects evaluation; use parentheses when the intent is not obvious.
+
+```java
+boolean canPay = balance >= amount && amount > 0;
+if (canPay) {
+    balance -= amount;
+}
+```
 
 ---
 
@@ -411,6 +429,29 @@ class Account {
 
 ---
 
+## What is the difference between `Collection` and `Map`?
+
+- `Collection` represents a group of values, such as a `List`, `Set`, or `Queue`.
+- `Map` stores key-value associations and is not a subtype of `Collection`.
+- A map key should have stable `equals()` and `hashCode()` behavior while stored.
+- Use `entrySet()` when iterating over both keys and values.
+
+```java
+for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+    System.out.println(entry.getKey() + ": " + entry.getValue());
+}
+```
+
+---
+
+## What do `Arrays` and `Collections` provide?
+
+- `Arrays` provides utilities for arrays, such as sorting, searching, and converting to a list view.
+- `Collections` provides algorithms and wrappers for collections, such as sorting and unmodifiable views.
+- An unmodifiable view prevents mutation through that view; it does not copy the underlying collection.
+
+---
+
 ## `ArrayList` vs `Vector`
 
 - Both are resizable arrays, but `Vector` synchronizes legacy methods while `ArrayList` does not. `ArrayList` is normally preferred; concurrency needs an appropriate concurrent collection or explicit lock.
@@ -711,6 +752,48 @@ CompletableFuture<String> userName = loadUserAsync()
 
 - It accepts tasks and manages their execution through worker threads. It supports `Future` results, cancellation, and explicit shutdown.
 - Define queueing, rejection, cancellation, and shutdown; do not leave owned pools running forever.
+
+---
+
+## What are `Runnable`, `Callable`, `Future`, and `BlockingQueue`?
+
+- `Runnable` represents work with no result; `Callable<T>` returns a value and may throw a checked exception.
+- `Future<T>` represents a pending result and supports status checks, waiting, and cancellation.
+- `BlockingQueue` coordinates producers and consumers by waiting when it is empty or full.
+- Prefer bounded queues when overload must be controlled.
+
+```java
+ExecutorService pool = Executors.newFixedThreadPool(2);
+Future<String> result = pool.submit(() -> "ready");
+String value = result.get(1, TimeUnit.SECONDS);
+pool.shutdown();
+```
+
+---
+
+## What are `ScheduledExecutorService` and `CompletionService`?
+
+- `ScheduledExecutorService` runs work after a delay or periodically.
+- `CompletionService` lets producers submit tasks while consumers retrieve results in completion order.
+- Define cancellation, error handling, and shutdown for scheduled or queued work.
+
+---
+
+## What are Java concurrency synchronizers?
+
+- `Semaphore` limits concurrent access to a resource.
+- `CountDownLatch` waits until a fixed number of operations finish; it cannot be reset.
+- `CyclicBarrier` lets a fixed group wait and then continue together; it can be reused.
+- `Phaser` supports reusable synchronization with dynamically changing parties.
+- `Exchanger` swaps data between two threads.
+
+---
+
+## What are `ThreadLocal` and `ForkJoinPool`?
+
+- `ThreadLocal` gives each thread its own value; remove values when thread-pool threads outlive the request to prevent stale state.
+- `ForkJoinPool` is designed for divide-and-conquer tasks and work stealing.
+- Neither is a default solution for every background task; choose based on workload and lifecycle.
 
 ---
 

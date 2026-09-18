@@ -1969,6 +1969,22 @@ cache.putIfAbsent(id, user)
 ---
 # Coroutine
 
+## What are Kotlin coroutines?
+
+- Coroutines are lightweight tasks that can suspend without blocking a thread.
+- `launch` and `async` come from the `kotlinx.coroutines` library, not the Kotlin standard library.
+- `async` and `await` are not Kotlin language keywords; Kotlin uses `Deferred` and `await()` from the library.
+- A coroutine does not automatically run on a background thread; its context and dispatcher decide where it runs.
+
+```kotlin
+viewModelScope.launch {
+    val user = withContext(Dispatchers.IO) { repository.loadUser() }
+    uiState.value = user
+}
+```
+
+---
+
 ## What is a Kotlin Channel?
 
 - A `Channel` is a communication queue between coroutines.
