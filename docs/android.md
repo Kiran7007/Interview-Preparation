@@ -1336,8 +1336,22 @@ android {
 ---
 
 ## What is OWASP MASVS?
-- The Mobile Application Security Verification Standard.
-- It is a structured baseline for secure mobile development.
+
+OWASP MASVS means **Mobile Application Security Verification Standard**.
+
+- It is a security checklist for Android and iOS apps.
+- It covers storage, encryption, authentication, networking, privacy, and tamper resistance.
+- It helps developers and testers find security gaps.
+- It is a standard, not a library or Android API.
+
+Example: verify that an access token is encrypted, not logged or backed up, cleared on logout, and revocable on the server.
+
+```xml
+<!-- One simple MASVS-aligned example: reduce cleartext traffic and backup exposure. -->
+<application
+    android:usesCleartextTraffic="false"
+    android:allowBackup="false" />
+```
 
 ---
 
