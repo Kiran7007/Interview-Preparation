@@ -131,6 +131,55 @@ Predicate<String> valid = value -> !value.isBlank();
 
 ---
 
+## What is a Java record?
+
+- A record is a concise way to model immutable data carriers.
+- The compiler supplies accessors, a canonical constructor, `equals()`, `hashCode()`, and `toString()`.
+- Record components are final, but referenced objects can still be mutable.
+- Use a record for value-like data, not when the type needs a mutable lifecycle or complex inheritance.
+
+```java
+record UserSummary(String id, String name) {}
+
+UserSummary user = new UserSummary("1", "Asha");
+System.out.println(user.name());
+```
+
+On Android, confirm the project's Java language level and desugaring support before using newer Java features.
+
+---
+
+## What are sealed classes and interfaces in Java?
+
+- A sealed type restricts which classes or interfaces may extend or implement it.
+- `permits` documents the complete set of allowed subtypes.
+- It is useful for modelling a closed state or result hierarchy.
+- The compiler can use the closed hierarchy for exhaustiveness checks in supported pattern-matching code.
+
+```java
+sealed interface Result permits Success, Failure {}
+record Success(String value) implements Result {}
+record Failure(Throwable error) implements Result {}
+```
+
+---
+
+## What are switch expressions and pattern matching?
+
+- A switch expression returns a value and can use `yield` for a multi-line branch.
+- The arrow form avoids accidental fall-through.
+- Pattern matching can test a type and bind a variable in the same condition.
+- Check the Android toolchain before using newer syntax in production code.
+
+```java
+String label = switch (result) {
+    case Success success -> success.value();
+    case Failure failure -> "Error";
+};
+```
+
+---
+
 ## Can interfaces be extended?
 
 - Yes. An interface can extend one or more interfaces; a class uses `implements`. A class can extend only one class.
@@ -350,6 +399,41 @@ class Account {
 
 ---
 
+## What are useful modern Java collection choices?
+
+- Use `ArrayDeque` for a stack or queue instead of the legacy `Stack` class.
+- Use `EnumSet` and `EnumMap` when keys or values are enum types.
+- Use `List.of`, `Set.of`, and `Map.of` when an unmodifiable collection is sufficient.
+- Use `Collections.unmodifiableList` when exposing a read-only view of an existing collection.
+- Choose a concurrent collection only when the access pattern requires concurrent mutation.
+
+```java
+Deque<String> queue = new ArrayDeque<>();
+queue.addLast("A");
+String next = queue.removeFirst();
+
+List<String> roles = List.of("admin", "reviewer");
+```
+
+---
+
+## What are Java Streams?
+
+- A Stream is a pipeline for processing elements from a source.
+- Intermediate operations such as `map` and `filter` are lazy.
+- Terminal operations such as `collect`, `count`, and `forEach` start the pipeline.
+- Streams do not store data and are not automatically parallel.
+- On Android, prefer a clear loop when a stream would add overhead or hide performance-critical work.
+
+```java
+List<String> names = users.stream()
+        .filter(User::isActive)
+        .map(User::name)
+        .collect(Collectors.toList());
+```
+
+---
+
 ## Enumeration vs Iterator
 
 - `Enumeration` is a legacy read-oriented API. `Iterator` is the modern traversal API and supports optional removal; `ListIterator` also moves in both directions and can update a list.
@@ -470,6 +554,62 @@ AtomicInteger count = new AtomicInteger();
 
 ---
 
+## What is the Java Memory Model and happens-before?
+
+- The Java Memory Model defines when one thread is guaranteed to see another thread's writes.
+- A happens-before relationship provides both visibility and ordering.
+- Unlocking a monitor happens-before a later lock of the same monitor.
+- A write to a `volatile` field happens-before a later read of that field.
+- Thread start, thread join, and safe publication also create important happens-before relationships.
+- Without a happens-before relationship, observing a shared variable is not enough to make a multi-step operation safe.
+
+```java
+volatile boolean ready;
+int value;
+
+// Writer: value = 42; ready = true;
+// Reader: if (ready) System.out.println(value); // guaranteed to see 42
+```
+
+---
+
+## What is the difference between `synchronized`, `Lock`, and atomic classes?
+
+- `synchronized` provides simple mutual exclusion and automatic unlock on scope exit.
+- `Lock` provides features such as timed acquisition, interruptible acquisition, and multiple conditions.
+- Atomic classes provide lock-free atomic operations for suitable single-variable updates.
+- None of them automatically makes a multi-step business operation atomic; protect the complete invariant.
+- Always release an explicit `Lock` in `finally` or use `withLock`-style structure.
+
+```java
+Lock lock = new ReentrantLock();
+lock.lock();
+try {
+    balance -= amount;
+} finally {
+    lock.unlock();
+}
+```
+
+---
+
+## What is `CompletableFuture`?
+
+- `CompletableFuture` represents a result that may be completed later.
+- `thenApply` transforms a successful result.
+- `thenCompose` chains another asynchronous operation.
+- `thenCombine` combines independent results.
+- `exceptionally` or `handle` defines error behavior.
+- Always define an executor, timeout, cancellation, and lifecycle policy for application code.
+
+```java
+CompletableFuture<String> userName = loadUserAsync()
+        .thenApply(User::name)
+        .exceptionally(error -> "Unknown");
+```
+
+---
+
 ## What are multithreading and `ThreadPoolExecutor`?
 
 - Multithreading runs execution paths concurrently. `ThreadPoolExecutor` reuses worker threads and manages a queue, core/max sizes, keep-alive time, and rejection behavior.
@@ -556,6 +696,18 @@ AtomicInteger count = new AtomicInteger();
 
 - Java serialization uses reflection and temporary allocations, increasing CPU and GC pressure. Android handoffs generally use `Parcelable`/`@Parcelize`, a small `Bundle`, a database, or a URI.
 - Do not pass large object graphs through an `Intent`; pass an ID and reload data.
+
+---
+
+## What is Java API desugaring on Android?
+
+- Java language syntax and Java library APIs have different compatibility requirements.
+- Android Gradle tooling can rewrite some newer Java language and library usage for older Android versions.
+- Desugaring does not make every Java SE API available on every Android release.
+- Check the minimum SDK, compile SDK, AGP, and D8/R8 support before adopting a newer API.
+- Prefer Android-compatible APIs when the feature is on a hot path or has strict size constraints.
+
+Example: a Java language feature may compile successfully, while a library API still requires API-level support or desugaring configuration.
 
 ---
 

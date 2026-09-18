@@ -731,6 +731,29 @@ Usually avoid sharing Android UI, platform-specific APIs, and lifecycle code. Sh
 
 ---
 
+## What are Kotlin context parameters?
+
+- Context parameters declare dependencies that are available implicitly in a surrounding context.
+- They can reduce repeated parameter passing in scoped APIs and DSLs.
+- They replace the older experimental context-receiver design.
+- The feature is still experimental; do not use it as a default replacement for normal dependency injection.
+- Multiple matching context values can cause an ambiguity error.
+
+```kotlin
+interface Logger {
+    fun log(message: String)
+}
+
+context(logger: Logger)
+fun saveUser() {
+    logger.log("User saved")
+}
+
+// context(ConsoleLogger()) { saveUser() }
+```
+
+---
+
 ## What does `ensureActive()` do?
 
 -   `ensureActive()` checks whether the coroutine has been cancelled.
@@ -1578,6 +1601,23 @@ Now `ViewModel` automatically delegates `getData()` to `repository`.
 
 ---
 
+## What are delegated properties in Kotlin?
+
+- A delegated property lets another object implement its getter and setter.
+- The syntax is `val/var name by delegate`.
+- Common delegates include `lazy`, `Delegates.observable`, and map-backed properties.
+- Use them to reuse property behavior without repeating access logic.
+
+```kotlin
+class ScreenState {
+    var title: String by Delegates.observable("Home") { _, _, newValue ->
+        println("Title changed to $newValue")
+    }
+}
+```
+
+---
+
 ## What does the `operator` keyword mean?
 
 * `operator` allows a class to define custom behavior for operators such as `+`, `-`, `[]`, and `==`.
@@ -1929,6 +1969,41 @@ cache.putIfAbsent(id, user)
 ---
 # Coroutine
 
+## What is a Kotlin Channel?
+
+- A `Channel` is a communication queue between coroutines.
+- Each sent element is received by one receiver, unlike `SharedFlow`, which broadcasts to collectors.
+- An unbuffered channel suspends the sender until a receiver is ready.
+- A buffered channel lets the sender continue until the buffer is full.
+- Close or cancel the channel when no more values will be sent.
+
+```kotlin
+val channel = Channel<String>(capacity = 1)
+
+launch { channel.send("ready") }
+launch { println(channel.receive()) }
+```
+
+Use a `Flow` for a stream API and a `Channel` when coroutines need point-to-point coordination or work distribution.
+
+---
+
+## What is a `select` expression in coroutines?
+
+- `select` waits for the first of several suspending operations to become available.
+- It can select between channel receives, deferred results, sends, joins, or timeouts.
+- It is an advanced and experimental coroutine feature; use simpler structured code when possible.
+
+```kotlin
+select<String> {
+    firstResponse.onAwait { it }
+    secondResponse.onAwait { it }
+    onTimeout(1_000) { "Timed out" }
+}
+```
+
+---
+
 ## `launch` vs `async`
 
 - `launch` -> `Job`.
@@ -2181,6 +2256,26 @@ sealed interface UiEvent {
 
 ---
 
+## What are the tricky Flow operators to remember?
+
+- `flowOn` changes the context where upstream work runs; it does not move downstream collection.
+- `buffer` lets producer and consumer work independently when temporary buffering is acceptable.
+- `conflate` keeps the latest value and skips intermediate values.
+- `collectLatest` cancels the previous collector block when a newer value arrives.
+- `catch` handles upstream exceptions; it does not automatically catch exceptions thrown after the `catch` operator.
+- Keep cancellation exceptions propagating instead of converting them into normal errors.
+
+```kotlin
+queryFlow
+    .debounce(300)
+    .distinctUntilChanged()
+    .mapLatest { repository.search(it) }
+    .catch { error -> emit(emptyList()) }
+    .collectLatest { results -> render(results) }
+```
+
+---
+
 ## What is LiveData and how does it compare with StateFlow?
 
 -   LiveData is lifecycle-aware and Android-specific.
@@ -2330,6 +2425,33 @@ fun testLoadUser() = runTest {
 
 Use `runBlocking` mainly when bridging synchronous and coroutine code,
 not as the normal coroutine test tool.
+
+---
+
+## How do you test coroutine dispatchers?
+
+- Inject dispatchers instead of hard-coding `Dispatchers.IO` or `Dispatchers.Default` in business code.
+- Use `runTest` to control virtual time.
+- Use `StandardTestDispatcher` when you want execution to advance explicitly.
+- Use `UnconfinedTestDispatcher` only when its eager execution matches the test's intent.
+- Use `Dispatchers.setMain` and `resetMain` when testing code that depends on `Dispatchers.Main`.
+
+```kotlin
+class UserLoader(
+    private val ioDispatcher: CoroutineDispatcher
+) {
+    suspend fun load() = withContext(ioDispatcher) { "user" }
+}
+
+@Test
+fun loadsUser() = runTest {
+    val dispatcher = StandardTestDispatcher(testScheduler)
+    val loader = UserLoader(ioDispatcher = dispatcher)
+
+    loader.load()
+    advanceUntilIdle()
+}
+```
 
 ---
 

@@ -28,6 +28,46 @@ Data Sources
 
 ---
 
+## What are Single Source of Truth and Unidirectional Data Flow?
+
+- **Single Source of Truth (SSOT):** One owner is responsible for changing a piece of data.
+- Other layers receive an immutable view of that data.
+- **Unidirectional Data Flow (UDF):** State moves from the owner to the UI; user events move back to the owner.
+- This makes state changes easier to test, trace, and debug.
+
+```text
+User action → ViewModel / repository → new UI state → UI
+```
+
+For offline-first data, Room is commonly the SSOT and the network refreshes Room.
+
+---
+
+## How do you design an adaptive Android UI?
+
+- Do not assume a fixed phone-sized portrait screen.
+- Support tablets, foldables, resizable windows, ChromeOS, and other form factors.
+- Use window size information to choose layouts and navigation patterns.
+- Preserve UI state when the window size or device posture changes.
+- Prefer canonical layouts instead of maintaining separate screen implementations.
+
+```kotlin
+val adaptiveInfo = currentWindowAdaptiveInfo()
+val windowSizeClass = adaptiveInfo.windowSizeClass
+// Choose compact, medium, or expanded content/navigation from this value.
+```
+
+---
+
+## What is the difference between UI logic and business logic?
+
+- **UI logic:** Converts state into UI behavior, such as showing a snackbar or navigating.
+- **Business logic:** Applies product rules, validation, persistence, and network decisions.
+- Keep UI logic near the UI and business logic in the ViewModel, use case, repository, or data layer.
+- Do not pass a ViewModel deep into every composable; pass state and event callbacks instead.
+
+---
+
 ## What are MVVM, ViewModel, LiveData, StateFlow?
 
 - **MVVM:** The UI renders state exposed by a ViewModel; the ViewModel coordinates use cases; repositories abstract data sources.
@@ -297,6 +337,27 @@ suspend fun updateName(id: Int, name: String)
 
 ---
 
+## What is DataStore, and how is it different from SharedPreferences?
+
+- DataStore is asynchronous and exposes updates through `Flow`.
+- Preferences DataStore stores key-value data without a schema.
+- Proto DataStore stores typed data with an explicit schema.
+- Use one DataStore instance per file and update it through the transactional `edit` or `updateData` API.
+- Use Room for relational, query-heavy, or large data.
+- Do not block the main thread by calling synchronous `SharedPreferences` APIs for new storage code.
+
+```kotlin
+val Context.settingsDataStore by preferencesDataStore(name = "settings")
+
+suspend fun setDarkMode(context: Context, enabled: Boolean) {
+    context.settingsDataStore.edit { preferences ->
+        preferences[booleanPreferencesKey("dark_mode")] = enabled
+    }
+}
+```
+
+---
+
 ## Explain SOLID Principles in Android with examples
 
 - SOLID is a set of five design principles that help in writing clean, scalable, and easy-to-maintain code. Let’s understand them one by one.
@@ -541,10 +602,66 @@ Validate external intent data and use explicit intents for sensitive internal fl
 
 ---
 
+## What is the Activity Result API?
+
+- It is the modern way to receive results from another Activity or system contract.
+- Register the launcher before the Activity or Fragment is started.
+- Launch it only when the user performs the relevant action.
+- Handle cancellation and configuration changes through the callback.
+- Prefer it over the deprecated `onActivityResult()` and `startActivityForResult()` APIs.
+
+```kotlin
+private val pickImage = registerForActivityResult(
+    ActivityResultContracts.GetContent()
+) { uri ->
+    if (uri != null) viewModel.onImageSelected(uri)
+}
+
+fun onChooseImageClicked() {
+    pickImage.launch("image/*")
+}
+```
+
+---
+
 ## What are intent filters?
 
 - Intent filters declare the actions, categories and data types a component can handle. Android uses them to resolve implicit intents. A web-link filter, for example, may declare `ACTION_VIEW`, the `DEFAULT` category and HTTP/HTTPS data schemes.
 - Do not use filters as an authorization mechanism: any matching application may be offered the intent, and incoming data must still be validated.
+
+---
+
+## What is the difference between a deep link and an Android App Link?
+
+- A **deep link** opens a destination in the app using a URI.
+- An **Android App Link** is an HTTPS deep link verified to belong to the app's domain.
+- App Links reduce chooser dialogs and make link ownership stronger.
+- Validate every URI, parameter, authentication state, and authorization decision before showing protected content.
+- Test cold start, warm start, and an already-open app.
+
+```xml
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="https" android:host="example.com" />
+</intent-filter>
+```
+
+---
+
+## What is Android package visibility?
+
+- Android limits which other installed apps an app can discover.
+- Add a `<queries>` declaration only for packages or intent capabilities the app genuinely needs to inspect.
+- Package visibility is different from permission to interact with an app.
+- Continue to validate the target app and intent before sending sensitive data.
+
+```xml
+<queries>
+    <package android:name="com.example.partner" />
+</queries>
+```
 
 ---
 
@@ -576,6 +693,21 @@ class BatteryReceiver : BroadcastReceiver() {
 - **singleInstance:** Places the Activity in its own task, isolating it from other Activities.
 
 Choose launch modes deliberately. For most navigation, standard behavior plus an explicit back-stack policy is easier to reason about. Notification and deep-link flows often use flags such as `FLAG_ACTIVITY_CLEAR_TOP` or a suitable navigation graph policy instead of broadly applying `singleTask`.
+
+---
+
+## How do you handle the system Back action today?
+
+- Use the Navigation component or Compose navigation for navigation back-stack behavior.
+- Use `OnBackPressedDispatcher` for Activity or Fragment callbacks.
+- Register callbacks with a lifecycle owner and enable them only when needed.
+- Avoid the deprecated `onBackPressed()` override.
+
+```kotlin
+onBackPressedDispatcher.addCallback(this, enabled = true) {
+    viewModel.onBackPressed()
+}
+```
 
 ---
 
@@ -1120,9 +1252,13 @@ Post-release review
 ## How can you securely store sensitive data in an Android app?
 You should never store sensitive data (like passwords or tokens) in plain text. Instead:
 
-- Use EncryptedSharedPreferences for small data like tokens.
-- Use Android Keystore to store cryptographic keys securely.
-- Avoid storing sensitive info in internal or external storage.
+- Use Android Keystore to generate and protect encryption keys.
+- Encrypt small secrets before storing them in a supported local store.
+- Use Room/SQLCipher for sensitive structured data.
+- Avoid logging secrets and exclude sensitive files from backups.
+- Do not treat any client-side storage as safe on a compromised device.
+
+`EncryptedSharedPreferences` can be encountered in existing apps, but the AndroidX Security Crypto API is deprecated. For new code, prefer direct Keystore-backed cryptography with a current storage design.
 
 ---
 
@@ -1171,6 +1307,28 @@ val cameraAllowed = ContextCompat.checkSelfPermission(
     context,
     Manifest.permission.CAMERA
 ) == PackageManager.PERMISSION_GRANTED
+```
+
+---
+
+## When should you use the Android Photo Picker?
+
+- Use Photo Picker when the user only needs to select photos or videos.
+- It avoids requesting broad media-storage permission for simple selection flows.
+- Request the smallest access scope needed by the feature.
+- Persist a granted URI permission only when the app needs continued access.
+- Use direct media permissions only when the product genuinely needs broad library access.
+
+```kotlin
+private val pickMedia = registerForActivityResult(
+    ActivityResultContracts.PickVisualMedia()
+) { uri ->
+    if (uri != null) viewModel.onMediaSelected(uri)
+}
+
+fun choosePhoto() {
+    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+}
 ```
 
 ---
@@ -1398,7 +1556,9 @@ A secure app handles key failure by clearing unusable encrypted state and requir
 ## How does Jetpack Security work under the hood?
 
 - Jetpack Security is a convenience layer over cryptographic primitives and Android Keystore.
-- `EncryptedSharedPreferences` protects preference keys and values separately, using a Keystore-protected master key. It is suitable for small secrets, not large or frequently changing data.
+- Older `EncryptedSharedPreferences` and `MasterKey` APIs protect small preference values with a Keystore-backed key.
+- They are deprecated in current AndroidX Security Crypto, so treat the following as legacy-app code.
+- For new code, use Android Keystore directly with AES-GCM and store only ciphertext in a supported store.
 
 ```kotlin
 val masterKey = MasterKey.Builder(context)
@@ -2727,6 +2887,48 @@ composeTestRule
 
 ---
 
+## How does Compose testing use the semantics tree?
+
+- Compose UI tests interact with the semantics tree, not directly with drawing code.
+- The merged tree is used by default; it combines the semantics of child nodes.
+- Use meaningful text, roles, content descriptions, and test tags as test selectors.
+- Use `useUnmergedTree = true` when a merged node hides the child you need to inspect.
+
+```kotlin
+composeTestRule
+    .onRoot(useUnmergedTree = true)
+    .printToLog("COMPOSE_SEMANTICS")
+```
+
+---
+
+## How do you synchronize Compose UI tests?
+
+- Prefer Compose test APIs instead of arbitrary `Thread.sleep()` calls.
+- Use `waitUntil()` when waiting for external work such as network-backed state or Android layout/draw work.
+- Use the test clock for Compose-controlled animations and time-based UI.
+- Keep tests deterministic by replacing real network and time dependencies.
+
+```kotlin
+composeTestRule.waitUntil(timeoutMillis = 5_000) {
+    composeTestRule
+        .onAllNodesWithText("Loaded")
+        .fetchSemanticsNodes()
+        .isNotEmpty()
+}
+```
+
+---
+
+## What is screenshot testing in Android?
+
+- A screenshot test compares the current UI with an approved reference image.
+- It is useful for visual regressions, themes, layouts, and different screen sizes.
+- Keep device, font scale, locale, rendering, and animation conditions deterministic.
+- Use behavior tests for actions and assertions; use screenshot tests for appearance.
+
+---
+
 ## Unit vs instrumentation vs UI tests
 
 - `Unit` - Fast, JVM-based, business logic/ViewModel/use case. It runs on the JVM and are fast because they don't require a device/emulator.
@@ -2757,6 +2959,35 @@ Unit tests
 - **Robolectric** – Allows you to run Android SDK code in JVM unit tests.
 - **Turbine** – For testing Kotlin Flow.
 - **Kotlin Test DSL** – For idiomatic Kotlin test writing.
+
+---
+
+## What is the difference between a fake, mock, and spy?
+
+- **Fake:** A small working implementation designed for tests, such as an in-memory repository.
+- **Mock:** An object whose calls and returned values are explicitly configured and verified.
+- **Spy:** A real object whose selected behavior can be overridden or observed.
+- Prefer fakes for realistic, stable behavior and mocks for narrow interaction checks.
+- Use dependency injection so tests can replace production dependencies.
+
+```kotlin
+interface TestUserRepository {
+    suspend fun getUser(): User
+}
+
+class FakeUserRepository : TestUserRepository {
+    override suspend fun getUser(): User = User("test-user", "Asha")
+}
+```
+
+---
+
+## What is a hermetic Android test?
+
+- A hermetic test does not depend on the real network, clock, filesystem, or external services.
+- It uses fakes, controlled test data, injected dispatchers, and a test clock where needed.
+- Hermetic tests are faster and less flaky.
+- They are especially useful for large UI or end-to-end tests.
 
 ---
 
@@ -2964,6 +3195,16 @@ every { anyConstructed<HttpClient>().getUser() } returns User("Kiran")
     6. Measure using startup benchmarks and production telemetry.
     7. The first step should be profiling, not guessing.
 
+---
+
+## What are Android Vitals and App Performance Score?
+
+- **Android Vitals:** Production quality signals shown in Google Play Console, such as crashes, ANRs, slow starts, slow rendering, and battery problems.
+- **App Performance Score:** A summary used to compare important app quality and performance signals.
+- Use production metrics to find affected devices and versions.
+- Use local profilers and benchmarks to reproduce and fix the measured problem.
+- Monitor the metric after rollout instead of relying only on debug-device results.
+
 ## What are Baseline Profiles?
 - Baseline Profiles tell Android which code paths are important.
 - They can improve startup and runtime performance by optimizing critical paths earlier.
@@ -3077,6 +3318,45 @@ fun scrollBenchmark() = benchmarkRule.measureRepeated(
     device.waitForIdle()
 }
 ```
+
+---
+
+## What is the difference between Macrobenchmark and Microbenchmark?
+
+- **Macrobenchmark:** Measures larger user journeys such as startup, navigation, scrolling, or animations.
+- **Microbenchmark:** Measures a small hot code path, such as parsing, sorting, or a custom algorithm.
+- Macrobenchmarks need realistic device/app conditions.
+- Microbenchmarks isolate a function and reduce unrelated noise.
+- Use both: macro tests show user impact, while micro tests locate an expensive operation.
+
+```kotlin
+@Test
+fun sortingBenchmark() = benchmarkRule.measureRepeated {
+    runWithTimingDisabled {
+        records = createRecords()
+    }
+    records.sortedBy { it.timestamp }
+}
+```
+
+---
+
+## What is the difference between a Baseline Profile and a Startup Profile?
+
+- A **Baseline Profile** tells Android Runtime which important code paths to precompile for startup and common user journeys.
+- A **Startup Profile** gives the build tools hints for arranging startup code in the DEX layout.
+- Baseline Profiles help runtime execution after installation.
+- Startup Profiles primarily optimize compile-time DEX layout.
+- They solve different parts of startup performance and can be used together.
+
+---
+
+## What is the AndroidX App Startup library?
+
+- It provides a controlled way to initialize libraries and components.
+- It can replace many independent `ContentProvider` initializers.
+- Keep initialization minimal and defer noncritical work.
+- App Startup does not make expensive initialization free; it only centralizes and orders it.
 
 ---
 
