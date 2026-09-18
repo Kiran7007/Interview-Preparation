@@ -223,6 +223,13 @@ class Repository(
 ## `lazy` vs `lateinit`
 
 - `lazy`: initializes on first access and supports immutable `val`.
+
+```kotlin
+val repository by lazy {
+    UserRepository()
+}
+```
+
 - `lateinit`: deferred initialization of a mutable non-null property, mainly reference types. Accessing an uninitialized `lateinit` property throws an exception.
 
 ---
@@ -267,12 +274,6 @@ enum class PaymentStatus : PaymentState {
     FAILED
 }
 ```
-
----
-
-## What is difference in sealed interface and sealed class?
-
-A sealed class is a restricted class hierarchy and can hold shared state or constructor logic. A sealed interface is a restricted interface hierarchy and allows a class to implement it alongside another class or interface.
 
 ---
 
@@ -514,49 +515,6 @@ execute {
 
 Collection APIs such as `map`, `filter`, and `fold` heavily use
 higher-order functions.
-
----
-
-## What is the difference between `let`, `run`, `also`, `apply`, and `with`?
-
--   These are scope functions that make object manipulation more
-    readable.
--   `let` is useful for null-safe calls and transformations.
--   `run` executes a block on an object and returns its result.
--   `also` performs side effects and returns the original object.
--   `apply` configures an object and returns the same object.
--   `with` runs a block on an object without extension syntax.
-
-```kotlin
-val user = User("Kiran").apply {
-    age = 30
-}
-
-val nameLength = user?.name?.let { it.length }
-
-with(user) {
-    println(name)
-    println(age)
-}
-```
-
-Use `apply` for object configuration, `let` for null-safe work, and
-`run` when you want a computed value.
-
----
-
-## What is `by lazy`?
-
--   `lazy` initializes a value only when it is first accessed.
--   The default implementation is thread-safe.
-
-```kotlin
-val repository by lazy {
-    UserRepository()
-}
-```
-
-It is useful for expensive objects that are not needed immediately.
 
 ---
 
@@ -1020,86 +978,6 @@ Cancellation should normally not be treated as an application error.
 catch (e: CancellationException) {
     throw e
 }
-```
-
----
-
-## What is the safe-call `?.` operator in Kotlin?
-
-* `?.` safely accesses a property or function when the object can be `null`.
-* If the object is `null`, the expression returns `null` instead of throwing an exception.
-* Very common when handling API responses and nullable Android data.
-
-```kotlin
-val name: String? = null
-
-val length = name?.length
-
-println(length) // null
-```
-
----
-
-## What is the Elvis `?:` operator in Kotlin?
-
-* `?:` provides a default value when the left side is `null`.
-* It is useful for setting fallback values.
-
-```kotlin
-val name: String? = null
-
-val displayName = name ?: "Guest"
-
-println(displayName) // Guest
-```
-
----
-
-## What is the not-null assertion `!!` operator?
-
-* `!!` tells Kotlin that a nullable value is definitely not `null`.
-* If the value is actually `null`, it throws `NullPointerException`.
-* Avoid it when possible.
-
-```kotlin
-val name: String? = null
-
-val length = name!!.length // NullPointerException
-```
-
----
-
-## What is the `==` operator in Kotlin?
-
-* `==` checks structural equality.
-* It internally uses `equals()`.
-
-```kotlin
-val user1 = User("Kiran")
-val user2 = User("Kiran")
-
-println(user1 == user2)
-```
-
-For a `data class`, this returns `true` because the values are equal.
-
-```kotlin
-data class User(val name: String)
-```
-
----
-
-## What is the `===` operator in Kotlin?
-
-* `===` checks whether two references point to the exact same object.
-* `==` checks values, while `===` checks references.
-
-```kotlin
-val a = String(charArrayOf('H', 'i'))
-val b = String(charArrayOf('H', 'i'))
-
-println(a == b)   // true
-println(a === b)  // false
 ```
 
 ---
@@ -1576,48 +1454,6 @@ class Button : ClickListener {
 
 ---
 
-## What does the `by` keyword mean in Kotlin?
-
-* `by` is used for delegation.
-* It allows another object to handle implementation.
-
-```kotlin
-interface Repository {
-    fun getData()
-}
-
-class RepositoryImpl : Repository {
-    override fun getData() {
-        println("Data")
-    }
-}
-
-class ViewModel(
-    private val repository: Repository
-) : Repository by repository
-```
-
-Now `ViewModel` automatically delegates `getData()` to `repository`.
-
----
-
-## What are delegated properties in Kotlin?
-
-- A delegated property lets another object implement its getter and setter.
-- The syntax is `val/var name by delegate`.
-- Common delegates include `lazy`, `Delegates.observable`, and map-backed properties.
-- Use them to reuse property behavior without repeating access logic.
-
-```kotlin
-class ScreenState {
-    var title: String by Delegates.observable("Home") { _, _, newValue ->
-        println("Title changed to $newValue")
-    }
-}
-```
-
----
-
 ## What does the `operator` keyword mean?
 
 * `operator` allows a class to define custom behavior for operators such as `+`, `-`, `[]`, and `==`.
@@ -1670,26 +1506,6 @@ Instead of:
 
 ```kotlin
 val result = 10.add(5)
-```
-
----
-
-## What does the `const` keyword mean?
-
-* `const` defines a compile-time constant.
-* It can be used only with primitive types and `String`.
-* It must be a top-level property or inside an `object`/`companion object`.
-
-```kotlin
-const val BASE_URL = "https://example.com"
-```
-
-Another example:
-
-```kotlin
-object Constants {
-    const val TIMEOUT = 30
-}
 ```
 
 ---
@@ -2041,12 +1857,6 @@ select<String> {
 
 ---
 
-## `SupervisorJob` vs `supervisorScope`
-- `SupervisorJob` is a Job implementation that gives supervisor-style child failure behavior.
-- `supervisorScope` creates a structured scope with supervisor semantics.
-
----
-
 ## What is SupervisorJob vs supervisorScope?
 
 Both provide supervisor-style failure behavior.
@@ -2069,6 +1879,8 @@ suspend fun loadDashboard() = supervisorScope {
 }
 ```
 
+---
+
 ## What is SupervisorJob?
 
 `SupervisorJob` is a special `Job` implementation. It is useful when you want a long-lived scope where child coroutines can fail independently.
@@ -2078,6 +1890,8 @@ private val scope = CoroutineScope(
     SupervisorJob() + Dispatchers.IO
 )
 ```
+
+--- 
 
 ## What is supervisorScope?
 
@@ -2091,41 +1905,7 @@ suspend fun loadDashboard() = supervisorScope {
 }
 ```
 
-## When should I use which?
-
-Use `supervisorScope` when:
-
-You have a temporary group of independent operations.
-
-Use `SupervisorJob` when:
-
-You need a long-lived scope whose children should fail independently.
-
-```kotlin
-private val scope = CoroutineScope(
-    SupervisorJob() + Dispatchers.IO
-)
-```
-
-## When should you use SupervisorJob?
-
-Use `SupervisorJob` when you need a long-lived scope whose child coroutines should fail independently.
-
-```kotlin
-private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-```
-
-## When should you use supervisorScope?
-
-Use `supervisorScope` when you have a temporary group of independent operations inside a suspend function.
-
-```kotlin
-suspend fun loadDashboard() = supervisorScope {
-    launch { loadProfile() }
-    launch { loadTransactions() }
-    launch { loadRecommendations() }
-}
-```
+---
 
 ## Important: Supervisor does not mean "ignore exceptions"
 
@@ -2141,6 +1921,8 @@ scope.launch {
 }
 ```
 
+---
+
 ## Important: Parent cancellation still propagates
 
 Supervisor semantics prevent a child failure from cancelling siblings. They do not prevent parent cancellation from cancelling children.
@@ -2153,11 +1935,6 @@ coroutineScope {
     }
 }
 ```
-
-## Exception handling
-- `CoroutineExceptionHandler` is primarily for uncaught exceptions in root/launch-style coroutines.
-- For `async`, exceptions are normally observed through `await`.
-- Prefer local `try/catch` where the failure is expected and needs a business response.
 
 ---
 
@@ -3898,6 +3675,7 @@ lifecycleScope.launch {
     loadData()
 }
 ```
+
 ---
 
 ---

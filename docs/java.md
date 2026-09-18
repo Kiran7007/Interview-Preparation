@@ -1,7 +1,5 @@
 # Java Language and OOP
 
-> Oracle's classic Java tutorial targets JDK 8. Use current Java API documentation for newer language and library features, and verify Android toolchain support before using them.
-
 ## Advantages of Java over Kotlin
 
 Although Kotlin is the recommended language today, Java still has advantages:
