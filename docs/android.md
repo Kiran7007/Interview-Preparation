@@ -1294,26 +1294,12 @@ buildTypes {
 
 ---
 
-## How can you protect your API keys in Android?
-- Do not hardcode keys in code or `strings.xml`.
-- Use `BuildConfig` with Gradle.
-- Store keys on the server and use token-based auth.
-- Use NDK only as an additional defense, not as the primary security model.
-
----
-
 ## How can you prevent reverse engineering of your APK?
 - Use ProGuard or R8.
 - Remove unused code and classes.
 - Avoid storing secrets or logic in the app.
 - Sign with a release keystore.
 - Monitor unauthorized APKs via Play Console.
-
----
-
-## What prevents someone from modifying your APK?
-
-Release signing, runtime signature checks, installer and integrity signals, and server-side verification make modification harder to use successfully. They do not make a client impossible to patch, so sensitive authorization must remain on the backend.
 
 ---
 
@@ -1384,13 +1370,21 @@ val hardwareBacked = keyInfo.isInsideSecureHardware
 
 ## What are common mistakes teams make when using Android Keystore?
 
-Common mistakes include storing the token instead of encrypting it, treating Keystore as a general database, ignoring key invalidation after biometric or lock-screen changes, and assuming every device provides hardware backing. A secure app handles key failure by clearing unusable encrypted state and requiring re-authentication.
+Common mistakes include:
+
+- Storing the token instead of encrypting it.
+- Treating Keystore as a general database.
+- Ignoring key invalidation after biometric or lock-screen changes.
+- Assuming every device provides hardware backing. 
+
+A secure app handles key failure by clearing unusable encrypted state and requiring re-authentication.
 
 ---
 
 ## How does Jetpack Security work under the hood?
 
-Jetpack Security is a convenience layer over cryptographic primitives and Android Keystore. `EncryptedSharedPreferences` protects preference keys and values separately, using a Keystore-protected master key. It is suitable for small secrets, not large or frequently changing data.
+- Jetpack Security is a convenience layer over cryptographic primitives and Android Keystore.
+- `EncryptedSharedPreferences` protects preference keys and values separately, using a Keystore-protected master key. It is suitable for small secrets, not large or frequently changing data.
 
 ```kotlin
 val masterKey = MasterKey.Builder(context)
@@ -1410,7 +1404,29 @@ val prefs = EncryptedSharedPreferences.create(
 
 ## When should you use EncryptedSharedPreferences?
 
-Use it for small secrets such as a small token, preference, or feature credential when the convenience and storage size fit the use case. Do not use it as a general database or for large, frequently updated data.
+Use it for small secrets such as a small token, preference, or feature credential when the convenience and storage size fit the use case. Do not use it as a general database or for large, frequently updated data. The API is deprecated in current AndroidX Security Crypto, so prefer a supported Keystore-backed design for new code and use this mainly when maintaining an existing app.
+
+```kotlin
+val masterKey = MasterKey.Builder(context)
+    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+    .build()
+
+val securePrefs = EncryptedSharedPreferences.create(
+    context,
+    "auth_prefs",
+    masterKey,
+    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+)
+
+securePrefs.edit()
+    .putString("access_token", accessToken)
+    .apply()
+```
+
+Store only small values and give them a short lifetime. Prefer server-side token revocation and clear the preferences during logout.
+
+Exclude the encrypted preferences file from Auto Backup; restoring ciphertext without its Keystore key can make the data unreadable.
 
 ---
 
@@ -1418,11 +1434,64 @@ Use it for small secrets such as a small token, preference, or feature credentia
 
 Use SQLCipher or another reviewed database-encryption solution with a key protected by Android Keystore. Restrict database access to the app process, avoid exporting database files or backups when required by the threat model, and clear the database during secure logout.
 
+```kotlin
+// databaseKeyStore returns a random 32-byte key protected by Android Keystore.
+val databaseKey: ByteArray = databaseKeyStore.getOrCreate("room-db-key")
+val openHelperFactory = SupportOpenHelperFactory(databaseKey)
+
+val database = Room.databaseBuilder(
+    context,
+    AppDatabase::class.java,
+    "app.db"
+)
+    .openHelperFactory(openHelperFactory)
+    .build()
+```
+
+Do not hard-code the passphrase or log it. Configure backup rules and migrations according to the data-sensitivity and recovery requirements.
+
 ---
 
 ## How do you encrypt files stored on device?
 
 Generate or unwrap the encryption key through Android Keystore, use an authenticated encryption mode such as AES-GCM, and store only ciphertext in the file. Keep temporary plaintext files short-lived and remove them when the operation finishes.
+
+```kotlin
+private const val FILE_KEY_ALIAS = "file-encryption-key"
+
+private fun fileKey(): SecretKey {
+    val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+    return (keyStore.getKey(FILE_KEY_ALIAS, null) as? SecretKey)
+        ?: KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+            .apply {
+                init(
+                    KeyGenParameterSpec.Builder(
+                        FILE_KEY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                    )
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                        .setKeySize(256)
+                        .build()
+                )
+            }
+            .generateKey()
+}
+
+fun encryptFile(input: File, encryptedOutput: File) {
+    val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+    cipher.init(Cipher.ENCRYPT_MODE, fileKey())
+
+    encryptedOutput.outputStream().use { output ->
+        output.write(cipher.iv) // Store the non-secret IV with the ciphertext.
+        CipherOutputStream(output, cipher).use { encrypted ->
+            input.inputStream().use { it.copyTo(encrypted) }
+        }
+    }
+}
+```
+
+The GCM authentication tag detects tampering during decryption. Never reuse an IV with the same key, and delete the plaintext temporary file when it is no longer needed.
 
 ---
 
@@ -1441,6 +1510,30 @@ App sandboxing reduces access from other ordinary apps, but local data can still
 ## How do you handle secure logout?
 
 Revoke credentials server-side, delete or invalidate local encryption keys, clear encrypted preferences and sensitive databases, remove cache files, cancel user-specific work, and reset in-memory state. The signed-out UI should be shown only after the cleanup policy has completed.
+
+```kotlin
+suspend fun logout(userId: String) {
+    try {
+        // Best effort: local cleanup must still happen if the network is unavailable.
+        authApi.revokeSession()
+    } finally {
+        userDatabase.clearAllTables()
+        userDatabase.close()
+
+        val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+
+        securePrefs.edit().clear().commit() // Synchronous before showing signed-out UI.
+        context.cacheDir.resolve("user-$userId").deleteRecursively()
+        WorkManager.getInstance(context).cancelAllWorkByTag("user:$userId")
+
+        keyStore.deleteEntry("room-db-key")
+        keyStore.deleteEntry("file-encryption-key")
+        sessionState.reset()
+    }
+}
+```
+
+Also remove notifications, pending deep-link data, and any user-specific in-memory state. If server revocation fails, retry it safely while keeping the local session unusable.
 
 ---
 
