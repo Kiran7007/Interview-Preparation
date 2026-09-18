@@ -1,7 +1,5 @@
 # Java Language and OOP
 
-> Oracle's classic Java tutorial targets JDK 8. Use current Java API documentation for newer language and library features, and verify Android toolchain support before using them.
-
 ## Advantages of Java over Kotlin
 
 Although Kotlin is the recommended language today, Java still has advantages:
@@ -81,7 +79,7 @@ System.out.println(scores[0]);
 
 ---
 
-## What are classes and objects in Java?
+## What is a Class and Object in Android?
 
 - A class is a blueprint that defines state and behavior.
 - An object is a runtime instance of that class with its own identity and state.
@@ -156,7 +154,8 @@ Predicate<String> valid = value -> !value.isBlank();
 - A method reference reuses an existing method with the same compatible signature.
 
 ```java
-Predicate<String> empty = String::isEmpty;
+Predicate<String> valid = value -> !value.isBlank();
+    Predicate<String> empty = String::isEmpty;
 ```
 
 ---
@@ -575,8 +574,8 @@ try (InputStream input = source.openStream()) {
 
 ## What is externalization?
 
-- `Externalizable` is a legacy serialization API that gives a class explicit control through `writeExternal` and `readExternal`.
-- It shifts compatibility, validation, and security responsibility to the developer; explicit schemas are usually clearer.
+- `Externalizable` gives a class explicit control over serialized state through `writeExternal` and `readExternal`.
+- It shifts compatibility, validation, and security responsibility to the developer, so explicit schemas are often clearer.
 
 ---
 
@@ -658,8 +657,8 @@ CompletableFuture<String> userName = loadUserAsync()
 
 ## What does `synchronized` mean?
 
-- It locks a monitor, allowing one thread at a time through the protected section and establishing visibility at lock boundaries.
-- Keep the section small; use `Lock` when timed or interruptible acquisition is required.
+- It provides mutual exclusion through a monitor and visibility around lock acquisition and release. Only one thread can hold that monitor at a time.
+- Keep critical sections small and use consistent lock ordering.
 
 ---
 
@@ -781,7 +780,7 @@ enum Analytics {
 
 ---
 
-## Decorator vs inheritance
+## Decorator vs Inheritance?
 
 Inheritance changes behavior through a fixed class hierarchy. A Decorator wraps an object and adds behavior at runtime, so decorators can be combined without creating a subclass for every combination.
 
