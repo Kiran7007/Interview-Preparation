@@ -892,7 +892,9 @@ Multiple threads can interleave these operations.
 
 ## How do you safely update shared mutable state?
 
-Use `Mutex`:
+- Use `Mutex` when multiple reads and writes must be one atomic coroutine operation.
+- Use an atomic primitive for a simple single-value update.
+- Use `ConcurrentHashMap` for concurrent map access, but remember that a sequence of map operations is not automatically atomic.
 
 ```kotlin
 val mutex = Mutex()
@@ -919,6 +921,21 @@ val count = AtomicInteger(0)
 
 count.incrementAndGet()
 ```
+
+- For a simple concurrent cache:
+
+```kotlin
+private val cache = ConcurrentHashMap<String, User>()
+```
+
+---
+
+## When should you use `Mutex` instead of `ConcurrentHashMap`?
+
+- Use `Mutex` when several reads and writes must protect one shared invariant.
+- Use `ConcurrentHashMap` when the shared state is naturally a key-value map.
+- `ConcurrentHashMap` makes individual map operations thread-safe, not an entire multi-step workflow.
+- A `Mutex` suspends waiting coroutines instead of blocking a thread while they wait for the lock.
 
 ---
 
@@ -1849,24 +1866,32 @@ select<String> {
 
 ---
 
-## `Dispatchers.Main`, `IO`, `Default`
+## What are `Dispatchers`, and why should they be injectable?
+
 - `Main`: UI work.
 - `IO`: blocking I/O.
 - `Default`: CPU-intensive work.
 - Do not mechanically move every function to `IO`; understand the workload.
+- Inject dispatchers into business code so tests can control execution and virtual time.
+- Production can provide `Dispatchers.IO`.
+- Tests can provide `StandardTestDispatcher(testScheduler)`.
+- This makes asynchronous behavior deterministic.
+
+```kotlin
+class Repository(
+    private val ioDispatcher: CoroutineDispatcher
+)
+```
 
 ---
 
-## What is SupervisorJob vs supervisorScope?
+## `SupervisorJob` vs `supervisorScope`
 
-Both provide supervisor-style failure behavior.
-
-If one child coroutine fails, its sibling coroutines are not automatically cancelled.
-
-The main difference is:
-
-- `SupervisorJob` is a `Job` implementation used to create a long-lived supervisor-based `CoroutineScope`.
-- `supervisorScope` is a structured concurrency scope function used for a temporary group of coroutines.
+- Both provide supervisor-style failure behavior: one child failure does not automatically cancel siblings.
+- `SupervisorJob` is a `Job` used for a long-lived supervisor-based `CoroutineScope`.
+- `supervisorScope` is a temporary structured-concurrency scope function.
+- `coroutineScope` normally cancels sibling children when one child fails; `supervisorScope` does not automatically do so.
+- Neither one ignores exceptions or prevents cancellation from a parent.
 
 ```kotlin
 val scope = CoroutineScope(
@@ -1878,34 +1903,6 @@ suspend fun loadDashboard() = supervisorScope {
     launch { loadOrders() }
 }
 ```
-
----
-
-## What is SupervisorJob?
-
-`SupervisorJob` is a special `Job` implementation. It is useful when you want a long-lived scope where child coroutines can fail independently.
-
-```kotlin
-private val scope = CoroutineScope(
-    SupervisorJob() + Dispatchers.IO
-)
-```
-
---- 
-
-## What is supervisorScope?
-
-`supervisorScope` creates a temporary structured scope where child failures are isolated. The scope automatically completes when its children complete.
-
-```kotlin
-suspend fun loadDashboard() = supervisorScope {
-    launch { loadUser() }
-    launch { loadTransactions() }
-    launch { loadNotifications() }
-}
-```
-
----
 
 ## Important: Supervisor does not mean "ignore exceptions"
 
@@ -1939,9 +1936,10 @@ coroutineScope {
 ---
 
 ## What is coroutine cancellation?
--   Cancellation is cooperative.
--   Suspending functions usually check cancellation automatically.
--   CPU-heavy loops should check cancellation explicitly.
+
+- Cancellation is cooperative.
+- Suspending functions usually check cancellation automatically.
+- CPU-heavy loops should check cancellation explicitly.
 
 ```kotlin
 while (isActive) {
@@ -1954,10 +1952,10 @@ Avoid swallowing `CancellationException`.
 ---
 
 ## What is exception handling in coroutines?
--   Use `try/catch` around operations where you can recover.
--   `CoroutineExceptionHandler` is mainly for uncaught exceptions in
-    root coroutines.
--   `supervisorScope` is useful when child failures should be isolated.
+
+- Use `try/catch` around operations where the code can recover.
+- `CoroutineExceptionHandler` is mainly for uncaught exceptions in root coroutines.
+- Use `supervisorScope` when child failures should be isolated.
 
 ```kotlin
 viewModelScope.launch {
@@ -2171,8 +2169,8 @@ fun observeEvents(): Flow<Int> = callbackFlow {
 
 ## What is the difference between a suspend function and Flow?
 
--   A `suspend` function usually returns one result.
--   A Flow can emit multiple values over time.
+- A `suspend` function usually returns one result.
+- A Flow can emit multiple values over time.
 
 ```kotlin
 suspend fun getUser(): User
@@ -2183,6 +2181,10 @@ fun observeUser(): Flow<User>
 Use a suspend function for one-shot work and Flow for streams/state.
 
 ---
+
+# Tricky Coroutine Code Problems
+
+These questions test execution order, structured concurrency, cancellation, exception propagation, and dispatcher behavior. Predict the result before reading the explanation.
 
 ## What happens if `searchRepositories(query)` is a suspend function?
 
@@ -2202,12 +2204,13 @@ operation.
 
 ---
 
-## What is `runBlocking` vs `runTest`?
+## What is `runBlocking`, and how does it compare with `runTest`?
 
--   `runBlocking` blocks a real thread.
--   `runTest` provides coroutine test scheduling and virtual time.
--   Android unit tests should generally use `runTest` for coroutine
-    code.
+- `runBlocking` blocks a real thread.
+- `runTest` provides coroutine test scheduling and virtual time.
+- Android unit tests should generally use `runTest` for coroutine code.
+- Avoid `runBlocking` on Android's Main thread because it can cause an ANR.
+- Use `runBlocking` mainly when bridging synchronous and coroutine code, not as the normal coroutine test tool.
 
 ```kotlin
 @Test
@@ -2216,8 +2219,19 @@ fun testLoadUser() = runTest {
 }
 ```
 
-Use `runBlocking` mainly when bridging synchronous and coroutine code,
-not as the normal coroutine test tool.
+---
+
+## Can `runBlocking` cause an Android ANR?
+
+- Yes. `runBlocking` blocks the current thread until its coroutine completes.
+- If it runs on Main, the UI cannot process input or draw frames.
+- Prefer a lifecycle-aware `launch` for Android UI work.
+
+```kotlin
+lifecycleScope.launch {
+    delay(5000)
+}
+```
 
 ---
 
@@ -2248,29 +2262,11 @@ fun loadsUser() = runTest {
 
 ---
 
-## Why should you avoid `GlobalScope`?
-
--   It is not lifecycle-aware.
--   Work can outlive the feature that started it.
--   It makes cancellation and testing harder.
-
-Prefer:
-
-```kotlin
-viewModelScope.launch { ... }
-```
-
-or an injected application-level scope when work truly belongs to the
-application lifecycle.
-
----
-
 ## What is cooperative cancellation?
 
--   Kotlin coroutine cancellation is cooperative.
--   Cancelling a `Job` does not forcibly kill arbitrary CPU code.
--   The coroutine must reach a suspension point or explicitly check
-    cancellation.
+- Kotlin coroutine cancellation is cooperative.
+- Cancelling a `Job` does not forcibly kill arbitrary CPU code.
+- The coroutine must reach a suspension point or explicitly check cancellation.
 
 ```kotlin
 val job = launch {
@@ -2284,7 +2280,7 @@ val job = launch {
 job.cancel()
 ```
 
-Common cancellation-aware operations include:
+- Cancellation-aware operations include `delay`, `yield`, `await`, and `withContext`.
 
 ```kotlin
 delay(...)
@@ -2293,7 +2289,7 @@ await()
 withContext(...)
 ```
 
-A CPU-only loop needs an explicit check:
+- A CPU-only loop needs an explicit check:
 
 ```kotlin
 while (isActive) {
@@ -2336,13 +2332,15 @@ CancellationException
 coroutine ends
 ```
 
-This is one reason `delay()` is safe for coroutine cancellation.
+- This is one reason `delay()` is safe for coroutine cancellation.
 
 ---
 
 ## Does `delay()` block the Main thread?
 
-No.
+- No. `delay()` suspends the coroutine, not the thread.
+- The Main thread can continue processing other work.
+- `Thread.sleep()` blocks the Main thread and should not be used for coroutine delays.
 
 ```kotlin
 viewModelScope.launch(Dispatchers.Main) {
@@ -2353,26 +2351,18 @@ viewModelScope.launch(Dispatchers.Main) {
 }
 ```
 
-`delay()` suspends the coroutine, not the thread.
-
-The Main thread can continue processing other work.
-
-Compare this with:
-
 ```kotlin
 Thread.sleep(5000)
 ```
-
-`Thread.sleep()` blocks the Main thread.
 
 ---
 
 ## What is `NonCancellable`?
 
--   `NonCancellable` is a special `CoroutineContext` element.
--   It prevents cancellation from stopping the block while that block is
-    executing.
--   It is mainly useful for cleanup or critical final operations.
+- `NonCancellable` is a special `CoroutineContext` element.
+- It prevents cancellation from stopping the block while that block is executing.
+- It is mainly useful for cleanup or critical final operations.
+- Use it narrowly; do not make normal business work ignore cancellation.
 
 ```kotlin
 try {
@@ -2385,12 +2375,8 @@ try {
 }
 ```
 
-Without `NonCancellable`, a suspending operation in `finally` may
-immediately observe the cancelled state.
-
-Use it carefully.
-
-Good use:
+- Without `NonCancellable`, a suspending operation in `finally` may immediately observe the cancelled state.
+- Good use: suspending cleanup that must complete.
 
 ```kotlin
 finally {
@@ -2400,7 +2386,7 @@ finally {
 }
 ```
 
-Bad use:
+- Bad use: wrapping normal business or network work so it ignores cancellation.
 
 ```kotlin
 withContext(NonCancellable) {
@@ -2408,25 +2394,10 @@ withContext(NonCancellable) {
 }
 ```
 
-Do not use it simply to make normal business work ignore cancellation.
-
----
-
-## Is `NonCancellable` the same as `GlobalScope`?
-
-No. They solve completely different problems.
-
-`NonCancellable`:
-
--   Is a coroutine context element.
--   Temporarily prevents cancellation inside a specific block.
--   Still belongs to the original coroutine and parent lifecycle.
-
-`GlobalScope`:
-
--   Is a coroutine scope.
--   Is not automatically tied to the current feature lifecycle.
--   Can outlive an Activity, Fragment, ViewModel, or screen.
+- `NonCancellable` and `GlobalScope` solve different problems.
+- `NonCancellable` is a context element for controlled cleanup and still belongs to the parent coroutine.
+- `GlobalScope` is an independent scope that can outlive a feature lifecycle.
+- The first example is controlled cleanup:
 
 ```kotlin
 withContext(NonCancellable) {
@@ -2434,7 +2405,7 @@ withContext(NonCancellable) {
 }
 ```
 
-versus:
+- The second example creates an independent coroutine:
 
 ```kotlin
 GlobalScope.launch {
@@ -2442,15 +2413,14 @@ GlobalScope.launch {
 }
 ```
 
-The first is controlled cleanup.
-
-The second creates an independent coroutine.
-
 ---
 
-## What happens to `finally` when a coroutine is cancelled?
+## What is a common `finally` + cancellation interview question?
 
-`finally` normally executes during cancellation.
+- `finally` normally executes during cancellation.
+- A non-suspending cleanup statement can run normally.
+- `Cleanup` is printed in the first example.
+- A suspending call inside `finally` may immediately fail because the coroutine is already cancelled.
 
 ```kotlin
 val job = launch {
@@ -2465,20 +2435,13 @@ val job = launch {
 job.cancel()
 ```
 
-`Cleanup` is printed.
-
-But this is tricky:
-
 ```kotlin
 finally {
     delay(1000)
 }
 ```
 
-The coroutine is already cancelled, so the suspending call may
-immediately fail with `CancellationException`.
-
-For cleanup that must suspend:
+- Use `withContext(NonCancellable)` only when the cleanup must suspend and complete.
 
 ```kotlin
 finally {
@@ -3177,45 +3140,6 @@ to finish.
 
 ---
 
-## Can `runBlocking` cause an Android ANR?
-
-Yes.
-
-`runBlocking` blocks the current thread until its coroutine completes.
-
-Bad Android example:
-
-```kotlin
-fun onClick() {
-
-    runBlocking {
-        delay(5000)
-    }
-}
-```
-
-If this executes on Main:
-
-``` text
-Main thread
-    ↓
-runBlocking
-    ↓
-thread blocked for 5 seconds
-    ↓
-UI cannot process events
-```
-
-Prefer:
-
-```kotlin
-lifecycleScope.launch {
-    delay(5000)
-}
-```
-
----
-
 ## What happens when `runBlocking` contains a normal child `launch`?
 
 ```kotlin
@@ -3636,67 +3560,7 @@ not detach the coroutine from its parent.
 
 ---
 
-## What is the difference between `coroutineScope` and `GlobalScope` in Android?
-
-`coroutineScope`:
-
-```kotlin
-coroutineScope {
-    launch {
-        loadData()
-    }
-}
-```
-
-The child has a clear parent and lifecycle.
-
-`GlobalScope`:
-
-```kotlin
-GlobalScope.launch {
-    loadData()
-}
-```
-
-The coroutine is independent of the current feature lifecycle.
-
-For Android, prefer lifecycle-aware scopes such as:
-
-```kotlin
-viewModelScope.launch {
-    loadData()
-}
-```
-
-or:
-
-```kotlin
-lifecycleScope.launch {
-    loadData()
-}
-```
-
 ---
-
----
-
-## What are Kotlin coroutine builder functions?
-
-- Common coroutine builders/concurrency primitives include `launch`, `async`, `runBlocking`, `coroutineScope` and `supervisorScope`.
-- `launch` returns `Job` and is used when no result is required.
-- `async` returns `Deferred<T>` and is used when a result is required, especially for concurrent work.
-- `runBlocking` blocks the current thread and is mainly appropriate at synchronous boundaries or tests, not Android UI code.
-- `coroutineScope` creates a structured child scope where failure normally cancels siblings.
-- `supervisorScope` isolates child failures so one child failing does not automatically cancel siblings.
-
-```kotlin
-viewModelScope.launch {
-    val user = async { repository.getUser() }
-    val orders = async { repository.getOrders() }
-
-    val result = user.await() to orders.await()
-}
-```
 
 ## What is Structured Concurrency?
 
@@ -3716,16 +3580,11 @@ viewModelScope.launch {
 ```
 
 ## Difference between Structured Concurrency and Parallelism
-Concurrency means multiple tasks can make progress independently during overlapping time periods, even if they are not running simultaneously. Parallelism means multiple tasks are actually executing at the same time on multiple CPU cores. Concurrency focuses on task coordination and responsiveness, while parallelism focuses on performance and throughput. In Kotlin coroutines, we mainly deal with concurrency, while actual parallelism depends on dispatcher threads and available cores.
-
-Important Interview Point
-
-Concurrency does NOT guarantee parallelism: Single-core CPU can still do concurrency.Because OS switches tasks rapidly.
-
-Parallelism is a subset of concurrency: Parallel tasks are concurrent too.But concurrent tasks may not be parallel.
-
-Kotlin Coroutines Perspective: Coroutines are mainly about: concurrency
-NOT necessarily parallelism.
+- Concurrency means tasks can make progress during overlapping time periods.
+- Parallelism means tasks execute at the same time on multiple CPU cores.
+- Coroutines provide concurrency; actual parallelism depends on the dispatcher and available threads.
+- Concurrency does not guarantee parallelism, especially on a single-core CPU.
+- Parallel tasks are concurrent, but concurrent tasks are not always parallel.
 
 Example:
 
@@ -3739,16 +3598,6 @@ coroutineScope {
     }
 }
 ```
-
----
-
-## `coroutineScope` vs `supervisorScope`
-
-| `coroutineScope` | `supervisorScope` |
-|---|---|
-| Child failure normally cancels scope/siblings | Child failure does not automatically cancel siblings |
-| Good when operations are interdependent | Good when operations are independent |
-| Failure is propagated | Failures can be handled independently |
 
 ---
 
@@ -4027,51 +3876,6 @@ operation that starts it.
 
 ---
 
-## What is a common `finally` + cancellation interview question?
-
-```kotlin
-val job = launch {
-
-    try {
-        delay(5000)
-    } finally {
-        println("Cleanup")
-    }
-}
-
-job.cancel()
-```
-
-Question:
-
-Yes.
-
-Then:
-
-```kotlin
-finally {
-    delay(1000)
-}
-```
-
-Question:
-
-No, because the coroutine is already cancelled.
-
-Use:
-
-```kotlin
-finally {
-    withContext(NonCancellable) {
-        delay(1000)
-    }
-}
-```
-
-if the cleanup must suspend and complete.
-
----
-
 ## Why should you not use `CoroutineExceptionHandler` for normal error handling?
 
 `CoroutineExceptionHandler` is mainly for uncaught exceptions at
@@ -4135,11 +3939,15 @@ try {
 
 ## What is a `CoroutineScope` and how should Android apps structure scopes?
 
-* `CoroutineScope` defines the lifetime of coroutines.
-* It contains a `CoroutineContext`, including a `Job` and usually a dispatcher.
-* When the scope is cancelled, its child coroutines are cancelled.
+- `CoroutineScope` defines the lifetime of coroutines.
+- It contains a `CoroutineContext`, including a `Job` and usually a dispatcher.
+- When the scope is cancelled, its child coroutines are cancelled.
+- Use `viewModelScope` for ViewModel work and `lifecycleScope` for UI-lifecycle work.
+- For reusable components, explicitly own and cancel a scope; avoid `GlobalScope`.
 
-Common Android scopes:
+- Use `viewModelScope` for work that should live as long as the ViewModel.
+
+Example:
 
 ```kotlin
 viewModelScope.launch {
@@ -4147,9 +3955,9 @@ viewModelScope.launch {
 }
 ```
 
-`viewModelScope` is appropriate for work that should live as long as the ViewModel.
+- Use `lifecycleScope` for work tied to an Android `LifecycleOwner`.
 
-For UI lifecycle work:
+Example:
 
 ```kotlin
 lifecycleScope.launch {
@@ -4157,9 +3965,9 @@ lifecycleScope.launch {
 }
 ```
 
-For reusable components, prefer an explicitly owned scope rather than creating a global scope.
+- Avoid `GlobalScope` because its work can outlive the screen or feature that started it.
 
-Avoid:
+Example:
 
 ```kotlin
 GlobalScope.launch {
@@ -4167,21 +3975,19 @@ GlobalScope.launch {
 }
 ```
 
-because the work can outlive the screen or feature that started it.
-
 ---
 
 ## What is the difference between `CoroutineContext` and `CoroutineScope`?
 
 ### `CoroutineContext`
 
-* A collection of elements that describes how a coroutine executes.
-* It can contain:
+- A collection of elements that describes how a coroutine executes.
+- It can contain:
 
-  * `Job`
-  * `CoroutineDispatcher`
-  * `CoroutineName`
-  * `CoroutineExceptionHandler`
+  - `Job`
+  - `CoroutineDispatcher`
+  - `CoroutineName`
+  - `CoroutineExceptionHandler`
 
 ```kotlin
 val context =
@@ -4190,8 +3996,8 @@ val context =
 
 ### `CoroutineScope`
 
-* Owns the coroutine lifecycle.
-* It uses a `CoroutineContext` to launch coroutines.
+- Owns the coroutine lifecycle.
+- It uses a `CoroutineContext` to launch coroutines.
 
 ```kotlin
 val scope = CoroutineScope(
@@ -4203,15 +4009,17 @@ scope.launch {
 }
 ```
 
-Simple way to remember:
+- Remember: `CoroutineContext` describes execution; `CoroutineScope` owns lifetime.
 
 ---
 
 ## What does `withContext()` do?
 
-* `withContext()` changes the coroutine context for a specific block.
-* It is commonly used to switch dispatchers.
-* It suspends the current coroutine until the block finishes.
+- `withContext()` changes the coroutine context for a specific block.
+- It is commonly used to switch dispatchers.
+- It suspends the current coroutine until the block finishes.
+- After the block completes, execution resumes in the original context.
+- It does not detach the coroutine from its parent or reset cancellation.
 
 ```kotlin
 suspend fun loadUser(): User {
@@ -4222,9 +4030,7 @@ suspend fun loadUser(): User {
 }
 ```
 
-After the block completes, execution resumes in the original context.
-
-For example:
+Example:
 
 ```kotlin
 viewModelScope.launch { // Main
@@ -4242,9 +4048,10 @@ viewModelScope.launch { // Main
 
 ## What is a `suspend` function?
 
-* A `suspend` function can suspend execution without blocking the underlying thread.
-* It can be called from another `suspend` function or coroutine.
-* `suspend` does **not** automatically mean background execution.
+- A `suspend` function can suspend execution without blocking the underlying thread.
+- It can be called from another `suspend` function or coroutine.
+- `suspend` does **not** automatically mean background execution.
+- It does not automatically move the call to `Dispatchers.IO`.
 
 ```kotlin
 suspend fun fetchUser(): User {
@@ -4252,9 +4059,7 @@ suspend fun fetchUser(): User {
 }
 ```
 
-This does not automatically move the call to `Dispatchers.IO`.
-
-For blocking work:
+- For blocking work, switch to an appropriate dispatcher explicitly.
 
 ```kotlin
 suspend fun readFile(): String {
@@ -4264,53 +4069,13 @@ suspend fun readFile(): String {
 }
 ```
 
-**Important interview point:**
-
----
-
-## What is `runBlocking` and why is it disliked in Android app code?
-
-* `runBlocking` blocks the current thread until the coroutine finishes.
-* It is useful for bridging regular blocking code and coroutine code.
-* It should generally not be used on Android's Main thread.
-
-```kotlin
-runBlocking {
-    val result = fetchUser()
-}
-```
-
-The calling thread is blocked.
-
-Bad Android example:
-
-```kotlin
-fun onCreate() {
-
-    runBlocking {
-        api.getUser()
-    }
-}
-```
-
-This can block the Main thread and potentially cause an ANR.
-
-For coroutine tests, prefer:
-
-```kotlin
-@Test
-fun `loads user`() = runTest {
-    val result = repository.loadUser()
-}
-```
-
 ---
 
 ## How does a coroutine switch threads from Main to IO and back?
 
-* A coroutine does not physically move its existing thread.
-* At a suspension point, Kotlin saves the coroutine's state.
-* The dispatcher decides where the continuation should resume.
+- A coroutine does not physically move its existing thread.
+- At a suspension point, Kotlin saves the coroutine's state.
+- The dispatcher decides where the continuation should resume.
 
 ```kotlin
 viewModelScope.launch { // Main
@@ -4342,25 +4107,24 @@ updateUi()
 
 `Dispatchers.IO` chooses an appropriate thread from its pool.
 
-**Important:**
-
 ```kotlin
 suspend fun load() {
     api.getUser()
 }
 ```
 
-does not automatically mean IO.
-
-A suspend function can still execute on Main if called from Main.
+- This does not automatically mean IO.
+- A suspend function can still execute on Main if called from Main.
 
 ---
 
 ## Why are coroutines lightweight compared to OS threads?
 
-* A thread has its own stack and operating-system resources.
-* A coroutine is a lightweight task managed by Kotlin's coroutine machinery.
-* When a coroutine suspends, its thread can execute other work.
+- A thread has its own stack and operating-system resources.
+- A coroutine is a lightweight task managed by Kotlin's coroutine machinery.
+- When a coroutine suspends, its thread can execute other work.
+- Thousands of coroutines can wait without requiring thousands of threads.
+- Coroutines still consume memory and CPU; blocking code such as `Thread.sleep()` blocks a thread.
 
 For example:
 
@@ -4373,9 +4137,7 @@ repeat(5000) {
 }
 ```
 
-Thousands of coroutines can wait without requiring thousands of threads.
-
-Conceptually:
+- Conceptually:
 
 ```text
 Many coroutines
@@ -4387,11 +4149,7 @@ Small number of threads
 Threads perform other work
 ```
 
-A coroutine is not free, though.
-
-Thousands of coroutines can still consume memory and CPU.
-
-Also, blocking code defeats much of the benefit:
+- Blocking code defeats much of the benefit:
 
 ```kotlin
 launch {
@@ -4399,9 +4157,7 @@ launch {
 }
 ```
 
-This blocks a thread instead of suspending the coroutine.
-
-Prefer:
+- Prefer `delay()` for a cancellable suspension instead of `Thread.sleep()`.
 
 ```kotlin
 launch {
@@ -4410,58 +4166,3 @@ launch {
 ```
 
 ---
-
-## When should you use `Mutex` instead of `ConcurrentHashMap`?
-
-* Use `Mutex` when multiple operations must be treated as one atomic coroutine operation.
-* Use `ConcurrentHashMap` when you need concurrent map access.
-
-```kotlin
-private val mutex = Mutex()
-
-suspend fun updateBalance() {
-    mutex.withLock {
-        balance -= 100
-        balance += 50
-    }
-}
-```
-
-The entire critical section is protected.
-
-For a simple cache:
-
-```kotlin
-private val cache = ConcurrentHashMap<String, User>()
-```
-
----
-
-## Why should Dispatchers be injectable?
-
-Hardcoding dispatchers makes unit tests harder to control.
-
-Instead:
-
-```kotlin
-class Repository(
-    private val ioDispatcher: CoroutineDispatcher
-)
-```
-
-Production:
-
-```kotlin
-Dispatchers.IO
-```
-
-Test:
-
-```kotlin
-StandardTestDispatcher(testScheduler)
-```
-
-This makes asynchronous behavior deterministic.
-
----
-- `merge`: forwards emissions from multiple flows as they arrive.
