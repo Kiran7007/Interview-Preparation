@@ -69,6 +69,23 @@ age = 31
 - **Not-null Assertion `!!`:** Throws Null Pointer Exception if value is null.
 - **Safe Cast `as?`:** Returns null instead of throwing ClassCastException.
 
+```kotlin
+val displayName = user?.name ?: "Unknown"
+```
+
+---
+
+## What are the common pitfalls of Kotlin's `!!` operator?
+
+- `!!` bypasses compile-time null-safety checks.
+- If the value is null at runtime, it throws `NullPointerException`.
+- It is especially risky with API responses, lifecycle-dependent objects, and asynchronous data.
+- Prefer safe calls, the Elvis operator, or explicit validation; use `!!` only when the non-null guarantee is clear.
+
+```kotlin
+val name = user?.name ?: return
+```
+
 ---
 
 ## What is a data class in Kotlin?
@@ -492,6 +509,22 @@ fun execute(block: () -> Unit) {
 execute {
     println("Done")
 }
+```
+
+---
+
+## How does Kotlin support functional programming in Android projects?
+
+- Use higher-order functions and lambdas with operations such as `map`, `filter`, `fold`, and `associate`.
+- Prefer immutable collections and `val` where possible to make state easier to reason about.
+- Use scope functions such as `let`, `run`, `apply`, and `also` when they improve clarity.
+- Use Flow for reactive or asynchronous data processing.
+- Do not force a functional style when a simple imperative solution is clearer.
+
+```kotlin
+val activeNames = users
+    .filter { it.isActive }
+    .map { it.name }
 ```
 
 ---
@@ -1204,6 +1237,23 @@ class Child : Parent() {
 class GrandChild : Child() {
 
     // Cannot override test()
+}
+```
+
+---
+
+## What are Kotlin visibility modifiers?
+
+- `public`: visible everywhere; it is the default.
+- `private`: visible only inside the declaring class or file.
+- `protected`: visible inside the class and its subclasses; it is not available for top-level declarations.
+- `internal`: visible within the same Kotlin module.
+
+Use the narrowest visibility that supports the API, especially at repository, feature, and module boundaries.
+
+```kotlin
+internal class UserRepository {
+    private fun readCache() = Unit
 }
 ```
 

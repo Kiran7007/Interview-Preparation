@@ -2975,11 +2975,27 @@ composeTestRule
 
 ## What are the main Compose testing API groups?
 
-- **Finders:** `onNodeWithText`, `onNodeWithContentDescription`, `onNodeWithTag`, and `onAllNodes` locate semantics nodes.
-- **Matchers:** check text, state, roles, actions, focus, and accessibility properties.
-- **Actions:** simulate clicks, text input, scrolling, IME actions, and gestures.
-- **Assertions:** verify existence, visibility, text, enabled state, selection, and counts.
-- Use `createComposeRule()` for Compose-only tests and `createAndroidComposeRule()` when an Activity is required.
+- Finding nodes
+    1. onNodeWithText()
+    2. onNodeWithContentDescription()
+    3. onNodeWithTag()
+    4. onNode()
+- Performing actions
+    1. performClick()
+    2. performTextInput()
+    3. performScrollTo()
+    4. performTouchInput()
+- Assertions
+    1. assertIsDisplayed()
+    2. assertIsEnabled()
+    3. assertIsNotEnabled()
+    4. assertTextEquals()
+    5. assertExists()
+- Semantics / Test setup
+    1. Modifier.testTag()
+    2. useUnmergedTree = true
+    3. createComposeRule()
+    4. createAndroidComposeRule()
 
 ```kotlin
 composeTestRule
@@ -2992,10 +3008,21 @@ composeTestRule
 
 ## How do you control time and idleness in Compose tests?
 
-- Use `waitForIdle()` or `runOnIdle()` for Compose/test synchronization.
-- Use `mainClock` to advance Compose-controlled animations deterministically.
-- Use `waitUntil { ... }` for external work that Compose cannot observe automatically.
-- Do not replace synchronization with arbitrary sleeps.
+- mainClock → Control virtual Compose time, useful for testing animations.
+- waitForIdle() → Wait until Compose finishes pending UI work.
+- waitUntil() → Wait for a specific condition with a timeout.
+- Avoid Thread.sleep() because it makes tests slow and flaky.
+
+```kotlin
+composeRule.mainClock.autoAdvance = false
+composeRule.mainClock.advanceTimeBy(500)
+
+composeRule.waitForIdle()
+
+composeRule.waitUntil(5_000) {
+    // condition
+}
+```
 
 ---
 
@@ -3043,9 +3070,11 @@ composeTestRule.waitUntil(timeoutMillis = 5_000) {
 
 ## Unit vs instrumentation vs UI tests
 
-- `Unit` - Fast, JVM-based, business logic/ViewModel/use case. It runs on the JVM and are fast because they don't require a device/emulator.
-- `Instrumentation` - Runs on Android environment and is useful for framework/integration behavior.
-- `UI` - Verifies actual user interaction and UI behavior.
+| Test                     | Runs on                      | Purpose                                      | Speed     | Example                                 |
+| ------------------------ | ---------------------------- | -------------------------------------------- | --------- | --------------------------------------- |
+| **Unit Test**            | JVM                          | Test business logic in isolation             | ⚡ Fast    | ViewModel, UseCase, Repository logic    |
+| **Instrumentation Test** | Real/emulated Android device | Test Android-specific components             | 🟡 Medium | Room, Context, Service, Activity        |
+| **UI Test**              | Real/emulated Android device | Test actual user interaction and UI behavior | 🐢 Slow   | Click button, enter text, verify screen |
 
 ---
 
@@ -3226,6 +3255,13 @@ runTest {
 ---
 
 ## What is a good testing strategy?
+
+- Unit tests cover ViewModels, use cases, repositories, and business logic; keep these as the majority because they are fast.
+- Integration tests cover boundaries such as Room, Retrofit, repositories, and data mapping.
+- UI tests cover critical user journeys with Compose UI tests or Espresso.
+- Keep tests stable with fakes, deterministic data, controlled coroutine dispatchers, and no real network calls.
+- For AI-generated code, require meaningful behavior coverage rather than coverage percentage alone.
+
 ```text
 Unit tests
    ↓
@@ -3325,6 +3361,8 @@ every { anyConstructed<HttpClient>().getUser() } returns User("Kiran")
 - Use Perfetto/system tracing for scheduling, startup, rendering, and thread interactions.
 - Use in-process tracing for important sections of application code.
 - Use `ProfilingManager` when collecting appropriate production profiling data on supported devices.
+- Use Crashlytics, Android Vitals, and Firebase Performance to identify affected users, devices, versions, crashes, ANRs, and slow flows.
+- Use Macrobenchmark for startup and critical user journeys, and Baseline Profiles for important startup/runtime paths.
 - Measure first; do not infer the bottleneck from symptoms alone.
 
 ---
@@ -4317,6 +4355,19 @@ AI can help with refactoring, unit-test generation, boilerplate, documentation, 
 - Verify compile and runtime behavior.
 - Run unit and UI tests.
 - Review for security and architecture issues.
+- Check performance, lifecycle safety, testability, maintainability, and compatibility with supported API levels.
+- Compare the implementation with project conventions and real source code instead of judging it only by how clean it looks.
+
+---
+
+## What criteria do you use to decide whether an AI-generated implementation is better?
+
+- Correctness: it meets functional requirements and handles edge cases.
+- Architecture: it respects separation of concerns and project conventions.
+- Performance: it avoids unnecessary CPU, memory, recomposition, network, and database work.
+- Security: it handles permissions, authentication, and sensitive data safely.
+- Testability and maintainability: it is readable, testable, and easy to change.
+- Lifecycle safety: it does not introduce leaks, incorrect scopes, or process-death bugs.
 
 ---
 
@@ -4558,6 +4609,9 @@ Key concerns:
 - Test behavior across important OS/device combinations.
 - Avoid assuming behavior is identical across versions.
 - Monitor production issues by OS version.
+- Maintain a test matrix covering the minimum supported version, the current version, and important Android releases.
+- Use Firebase Test Lab or a similar device farm for broader coverage.
+- Pay special attention to permissions, background execution, storage, notifications, and lifecycle behavior.
 
 ```kotlin
 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.X) {

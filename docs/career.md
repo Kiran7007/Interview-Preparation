@@ -14,6 +14,32 @@ Use a 60-90 second structure:
 
 ---
 
+## Tell me about a technical collaboration that solved a production problem
+
+In a banking project, we had unreliable synchronization between the backend and local database when devices went offline and later reconnected.
+
+- I investigated logs and reproduced the issue under different network conditions.
+- I worked with the Android and backend teams to review the API, caching, and synchronization behavior.
+- We introduced a more reliable offline-first approach using Room, Flow, and controlled synchronization.
+- I added tests for offline mode, retries, and conflict scenarios.
+
+As a result, synchronization became more reliable, unnecessary API calls decreased, and the edge cases were less likely to regress.
+
+---
+
+## Tell me about a time when you faced ambiguity in a project
+
+While working on an AI-based Android test-automation agent, the requirement was broad: generate automation scripts from natural-language test steps, without clearly defining how UI elements should be identified or how accuracy would be measured.
+
+- I worked with the QA team to understand the existing manual process and identify the main pain points.
+- I broke the problem into input parsing, UI-element identification, script generation, and validation.
+- I evaluated real application locators and Compose semantics against representative test cases.
+- I helped define measurable accuracy criteria and a smaller prototype scope.
+
+The outcome was a working prototype, a clearer scope, and objective criteria for deciding which areas needed further improvement.
+
+---
+
 ## Questions You Should Ask the VP
 
 Ask 2-3, not all.
