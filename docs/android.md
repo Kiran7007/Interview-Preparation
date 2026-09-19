@@ -1,5 +1,6 @@
----
 # Android Architecture
+
+---
 
 ## What is Clean Architecture?
 
@@ -2975,23 +2976,23 @@ composeTestRule
 
 ## What are the main Compose testing API groups?
 
-- Finding nodes
+### Finding nodes
     1. onNodeWithText()
     2. onNodeWithContentDescription()
     3. onNodeWithTag()
     4. onNode()
-- Performing actions
+### Performing actions
     1. performClick()
     2. performTextInput()
     3. performScrollTo()
     4. performTouchInput()
-- Assertions
+### Assertions
     1. assertIsDisplayed()
     2. assertIsEnabled()
     3. assertIsNotEnabled()
     4. assertTextEquals()
     5. assertExists()
-- Semantics / Test setup
+### Semantics / Test setup
     1. Modifier.testTag()
     2. useUnmergedTree = true
     3. createComposeRule()
