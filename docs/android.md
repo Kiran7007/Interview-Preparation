@@ -2977,26 +2977,26 @@ composeTestRule
 ## What are the main Compose testing API groups?
 
 ### Finding nodes
-    1. onNodeWithText()
-    2. onNodeWithContentDescription()
-    3. onNodeWithTag()
-    4. onNode()
+- onNodeWithText()
+- onNodeWithContentDescription()
+- onNodeWithTag()
+- onNode()
 ### Performing actions
-    1. performClick()
-    2. performTextInput()
-    3. performScrollTo()
-    4. performTouchInput()
+- performClick()
+- performTextInput()
+- performScrollTo()
+- performTouchInput()
 ### Assertions
-    1. assertIsDisplayed()
-    2. assertIsEnabled()
-    3. assertIsNotEnabled()
-    4. assertTextEquals()
-    5. assertExists()
+- assertIsDisplayed()
+- assertIsEnabled()
+- assertIsNotEnabled()
+- assertTextEquals()
+- assertExists()
 ### Semantics / Test setup
-    1. Modifier.testTag()
-    2. useUnmergedTree = true
-    3. createComposeRule()
-    4. createAndroidComposeRule()
+- Modifier.testTag()
+- useUnmergedTree = true
+- createComposeRule()
+- createAndroidComposeRule()
 
 ```kotlin
 composeTestRule
