@@ -2901,20 +2901,11 @@ Compose UI should ideally be side-effect free. Side-effect APIs execute work out
 - Avoid passing changing state through large subtrees when only a small child needs it.
 - Measure before optimizing.
 
----
-
-## How do you avoid unnecessary recomposition?
-
 The most common mistake is reading state too high in the composable tree.
 
 Rule: Move state down to the composable that actually needs it.
 
-Also:
-
-- Use immutable UI models.
 - Annotate models with `@Immutable` / `@Stable` when appropriate.
-- Use `remember` for expensive calculations.
-- Use `derivedStateOf` for derived values.
 - Use `key()` inside LazyColumn.
 - Hoist state only when multiple composables need it.
 
@@ -3066,16 +3057,6 @@ composeTestRule.waitUntil(timeoutMillis = 5_000) {
 - It is useful for visual regressions, themes, layouts, and different screen sizes.
 - Keep device, font scale, locale, rendering, and animation conditions deterministic.
 - Use behavior tests for actions and assertions; use screenshot tests for appearance.
-
----
-
-## Unit vs instrumentation vs UI tests
-
-| Test                     | Runs on                      | Purpose                                      | Speed     | Example                                 |
-| ------------------------ | ---------------------------- | -------------------------------------------- | --------- | --------------------------------------- |
-| **Unit Test**            | JVM                          | Test business logic in isolation             | ⚡ Fast    | ViewModel, UseCase, Repository logic    |
-| **Instrumentation Test** | Real/emulated Android device | Test Android-specific components             | 🟡 Medium | Room, Context, Service, Activity        |
-| **UI Test**              | Real/emulated Android device | Test actual user interaction and UI behavior | 🐢 Slow   | Click button, enter text, verify screen |
 
 ---
 
@@ -3316,17 +3297,6 @@ Constructor mocking still intercepts the constructed instance regardless of its 
 ```kotlin
 mockkConstructor(ApiClient::class)
 every { anyConstructed<ApiClient>().getData() } returns "Mocked Data"
-```
-
----
-
-## How do you mock objects created inside a function?
-
-With MockK, use constructor mocking for legacy code that creates the dependency internally. For new code, dependency injection is easier to test and keeps the production dependency explicit.
-
-```kotlin
-mockkConstructor(HttpClient::class)
-every { anyConstructed<HttpClient>().getUser() } returns User("Kiran")
 ```
 
 ---
@@ -3712,6 +3682,8 @@ Use:
 - Macrobenchmark
 - Frame timing
 
+Fix the measured bottleneck and compare frame metrics before and after.
+
 ---
 
 ## How do you investigate a production performance regression?
@@ -3894,12 +3866,6 @@ Measure cold, warm, and hot startup with Macrobenchmark and production telemetry
 
 ---
 
-## How do you diagnose and eliminate UI jank?
-
-Use frame timing, Perfetto, CPU Profiler, Layout Inspector, and Compose tooling to find long main-thread work, expensive layout or composition, image decoding, and large-list rendering. Fix the measured bottleneck and compare frame metrics before and after.
-
----
-
 ## How do you detect memory leaks in production-scale apps?
 
 Look for retained Activities, Fragments, views, callbacks, and long-lived jobs after lifecycle destruction. Reproduce navigation cycles with heap dumps and LeakCanary, inspect retained paths, fix ownership or cancellation, and monitor memory and OOM trends after rollout.
@@ -4024,7 +3990,7 @@ fun enqueue(operation: () -> Unit) {
 
 ## What is GATT error 133 and how do you handle it?
 
-Error 133 is a generic Android GATT failure rather than one precise root cause. I close the connection, avoid overlapping operations, wait briefly before retrying, and collect device, OS, RSSI, and connection-state telemetry. Repeated failures should use bounded retry and a clean reconnect path.
+Error 133 is a generic Android GATT failure rather than one precise root cause. I close the connection, avoid overlapping operations, wait briefly before retrying, and collect device, OS, RSSI, and connection-state telemetry. Close stale GATT objects and collect device-specific diagnostics rather than assuming one universal cause. Repeated failures should use bounded retry and a clean reconnect path.
 
 ---
 
@@ -4113,7 +4079,7 @@ Common causes are a manager retaining an Activity, callbacks not being cleared, 
 
 ## How do you ensure reliability?
 
-Serialize operations, add timeouts, retry only bounded and recoverable failures, reconnect cleanly, validate payloads, and make the state machine explicit. The UI should observe state rather than infer connection status from one callback.
+Serialize operations, add timeouts, retry only bounded and recoverable failures, reconnect cleanly, validate payloads, and make the state machine explicit. The UI should observe state rather than infer connection status from one callback. Production telemetry is useful; do not infer reliability from a single successful callback.
 
 ---
 
@@ -4172,12 +4138,6 @@ BLE is optimized for low power rather than high throughput. Small MTU, acknowled
 
 ---
 
-## What is GATT 133 and how do you fix it?
-
-GATT 133 is a generic Android Bluetooth failure. Fix the connection lifecycle first: close stale GATT objects, serialize operations, wait before reconnecting, use bounded retries, and collect device-specific diagnostics rather than assuming one universal cause.
-
----
-
 ## How do you manage multiple BLE connections?
 
 Maintain independent state, queues, callbacks, timeouts, and retry policies for each device. Limit concurrency based on device capability and prevent one device's failure from corrupting another device's state.
@@ -4187,12 +4147,6 @@ Maintain independent state, queues, callbacks, timeouts, and retry policies for 
 ## How do you keep BLE working in background?
 
 Use a lifecycle appropriate to the product requirement. For an ongoing user-visible connection, use a correctly declared foreground service; for deferrable synchronization, use WorkManager. Stop work and release resources when the feature no longer needs the connection.
-
----
-
-## How do you make BLE reliable?
-
-Use an explicit connection state machine, serialized GATT operations, timeouts, bounded retries, clean reconnects, payload validation, and production telemetry. Do not infer reliability from a single successful callback.
 
 ---
 
