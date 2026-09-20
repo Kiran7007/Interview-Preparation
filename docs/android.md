@@ -3305,7 +3305,7 @@ every { anyConstructed<ApiClient>().getData() } returns "Mocked Data"
 
 ## What is Android startup performance?
 - Startup performance is how long it takes before the app becomes usable.
-- Common problems:
+- Reduce Android app startup time:
     1. Remove unnecessary initialization from `Application`.
     2. Lazy-load noncritical dependencies.
     3. Avoid synchronous disk/database work on startup.
@@ -3355,21 +3355,9 @@ every { anyConstructed<ApiClient>().getData() } returns "Mocked Data"
 - Use Batterystats/Battery Historian when the investigation requires system-level battery evidence.
 
 ## What are Baseline Profiles?
-- Baseline Profiles tell Android which code paths are important.
+- Baseline Profiles identify important code paths so Android can optimize them earlier.
 - They can improve startup and runtime performance by optimizing critical paths earlier.
-
-In simple terms, they tell Android which code to optimize first.
-
-```kotlin
-@Test
-fun collectBaselineProfile() = baselineProfileRule.collect(
-    packageName = "com.example.app"
-) {
-    startActivityAndWait()
-}
-```
-
-The test runs important user flows, and Android generates `baseline-prof.txt` from them. You normally do not write that file manually.
+- The test runs important user flows, and Android generates `baseline-prof.txt` from them. You normally do not write that file manually.
 
 ```kotlin
 @RunWith(AndroidJUnit4::class)
@@ -3392,55 +3380,10 @@ class BaselineProfileGenerator {
 ---
 
 ## What is Macrobenchmark?
-- Macrobenchmark measures larger user journeys on real devices/emulators.
+- Macrobenchmark measures larger user journeys on real devices/emulators instead of only measuring one function.
 - It is useful for startup, scrolling, and other realistic performance tests.
-
-In simple terms, it measures a real user flow instead of only measuring one function.
-
-```text
-Launch app
- ↓
-Navigate
- ↓
-Scroll
- ↓
-Measure performance
-```
-
-```kotlin
-@Test
-fun startupBenchmark() = benchmarkRule.measureRepeated(
-    packageName = "com.example.app",
-    metrics = listOf(StartupTimingMetric()),
-    iterations = 5
-) {
-    pressHome()
-    startActivityAndWait()
-}
-```
-
-Macrobenchmark tests usually run in a separate benchmark module. They measure the complete app flow, such as cold startup or scrolling.
-
-```kotlin
-plugins {
-    id("com.android.test")
-}
-
-android {
-    namespace = "com.example.benchmark"
-    targetProjectPath = ":app"
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-}
-
-dependencies {
-    implementation("androidx.benchmark:benchmark-macro-junit4:1.4.0")
-    implementation("androidx.test.uiautomator:uiautomator:2.3.0")
-}
-```
-
-Macrobenchmark measures performance, while a Baseline Profile tells Android which frequently used code should be optimized. Run the benchmark before and after adding the profile to check the improvement.
+- Macrobenchmark measures performance, while a Baseline Profile tells Android which frequently used code should be optimized. 
+- Run the benchmark before and after adding the profile to check the improvement.
 
 ```kotlin
 @Test
@@ -3509,18 +3452,8 @@ fun sortingBenchmark() = benchmarkRule.measureRepeated {
 
 ---
 
-## How would you reduce Android app startup time?
-- Remove unnecessary initialization from `Application`.
-- Lazy-load noncritical dependencies.
-- Avoid synchronous disk/database work on startup.
-- Defer analytics/SDK initialization where allowed.
-- Use Baseline Profiles.
-- Measure using startup benchmarks and production telemetry.
-- The first step should be profiling, not guessing.
-
----
-
 ## What is a memory leak?
+#### Common causes:
 - Singleton holding Activity/Context.
 - Fragment retaining binding after `onDestroyView`.
 - Long-lived listener/callback.
@@ -3529,53 +3462,18 @@ fun sortingBenchmark() = benchmarkRule.measureRepeated {
 - Static references.
 - Incorrect lifecycle ownership.
 
-```text
-Singleton
-   ↓
-Activity
-   ↓
-Activity cannot be collected
-```
+#### Analysis Tool:
+- LeakCanary.
+- Android Studio Memory Profiler.
+- Heap dumps.
+- Allocation tracking.
+- Reproduce navigation cycles and inspect retained objects.
 
-- Analysis Tool:
-    1. LeakCanary.
-    2. Android Studio Memory Profiler.
-    3. Heap dumps.
-    4. Allocation tracking.
-    5. Reproduce navigation cycles and inspect retained objects.
-
----
-
-## What are common Android leaks?
-- Singleton holding Activity or Context
-- Fragment retaining a binding after `onDestroyView`
-- Long-lived listeners or callbacks
-- Coroutine outliving required lifecycle
-- Static references
-
----
-
-## When do memory leaks happen in Android?
-
-The most common memory leak occurs when an Activity or Fragment is referenced by a longer-lived object.
-
-Common causes:
-
-- Activity/Fragment Context stored inside a Singleton (use Application Context instead)
-- Fragment ViewBinding not cleared in `onDestroyView()`
-- Inner classes or anonymous listeners holding Activity references
-- Listeners registered but never unregistered
-- Delayed Handlers or Runnables capturing Activity
-- Coroutines launched in GlobalScope instead of lifecycle-aware scopes
-
-Prevention
-
+#### Prevention:
 - Use `applicationContext` for singletons.
 - Set `binding = null` in `onDestroyView()`.
 - Register/unregister listeners in matching lifecycle callbacks.
-- Use `lifecycleScope` and `viewModelScope`.
-- Avoid `GlobalScope`.
-- Detect leaks using LeakCanary and Android Studio Memory Profiler.
+- Use `lifecycleScope` and `viewModelScope`, avoid `GlobalScope`.
 
 ---
 
@@ -3610,52 +3508,29 @@ ANR   → application unresponsive
 
 ---
 
-## What is an ANR, and how can you prevent it?
-- An ANR happens when the UI thread is blocked for too long.
-- Avoid long work on the main thread.
-- Move heavy tasks to background threads and use lifecycle-aware APIs.
-
----
-
 ## What causes ANRs?
-
-An ANR occurs when:
-
+#### Occurs when:
 - Main thread is blocked for more than 5 seconds during user interaction.
 - `BroadcastReceiver.onReceive()` takes more than 10 seconds.
 
-Common causes:
-
+#### Common causes:
 - Network or database work on Main Thread
-- Disk I/O
 - Lock contention
 - Long-running BroadcastReceivers
 - Heavy layout inflation
 - Large JSON parsing or bitmap decoding on UI thread
 
-Prevention
-
-- Keep UI thread lightweight.
-- Move expensive work to `Dispatchers.IO` or `Dispatchers.Default`.
-- Enable StrictMode in debug builds.
-- Monitor Android Vitals and analyze `/data/anr/traces.txt`.
-
----
-
-## How do you investigate an ANR?
-Look at:
-- ANR traces
+#### Analysis Tool:
+- ANR traces `/data/anr/traces.txt`
 - Android Vitals
 - Play Console
 - Perfetto
 - CPU profiler
 
-Typical causes:
-- disk I/O on main thread
-- network calls on main thread
-- large computations
-- lock contention
-- binder delays
+#### Prevention:
+- Keep UI thread lightweight.
+- Move expensive work to `Dispatchers.IO` or `Dispatchers.Default`.
+- Enable StrictMode in debug builds.
 
 ---
 
@@ -3667,15 +3542,15 @@ Typical causes:
 ---
 
 ## How do you investigate UI jank?
-Look for:
-- long main-thread work
-- expensive composition
-- excessive recomposition
-- large list rendering
-- image decoding
-- layout complexity
+#### Common Causes:
+- Long main-thread work
+- Expensive composition
+- Excessive recomposition
+- Large list rendering
+- Image decoding
+- Layout complexity
 
-Use:
+#### Analysis Tool:
 - Compose/Layout Inspector
 - CPU profiler
 - Perfetto
@@ -3721,21 +3596,10 @@ val result = withContext(Dispatchers.Default) {
 
 ---
 
-## How do you detect and fix main thread blocking?
-
-I would enable StrictMode, inspect the main-thread trace in CPU Profiler or Perfetto, and look for disk I/O, database work, network calls, parsing, or expensive rendering. I would move blocking work to an appropriate dispatcher and measure the same user flow again.
-
-```kotlin
-val user = withContext(Dispatchers.IO) {
-    repository.loadUser()
-}
-```
-
----
-
 ## How do you reduce a large APK?
 
-Use APK Analyzer to find large files and remove unused resources or dependencies. Enable code and resource shrinking for release builds, and use appropriate ABI splits when the distribution strategy supports them.
+- Use APK Analyzer to find large files and remove unused resources or dependencies. 
+- Enable code and resource shrinking for release builds.
 
 ```kotlin
 buildTypes {
@@ -3750,7 +3614,11 @@ buildTypes {
 
 ## How do you investigate database performance?
 
-Inspect slow queries and database traces. Check indexes, avoid loading unnecessary columns or rows, use pagination for large data sets, keep database work off the main thread, and use transactions when multiple related writes must be atomic.
+- Inspect slow queries and database traces. 
+- Avoid loading unnecessary columns or rows.
+- Use pagination for large data sets.
+- Keep database work off the main thread
+- Use transactions when multiple related writes must be atomic.
 
 ```kotlin
 @Query("SELECT id, name FROM users ORDER BY name LIMIT :limit OFFSET :offset")
@@ -3761,7 +3629,25 @@ suspend fun loadUsers(limit: Int, offset: Int): List<UserRow>
 
 ## How do you handle a crash spike after release?
 
-First identify the affected version, devices, and crash cluster. Pause or reduce the rollout, disable the feature with a flag when possible, investigate the root cause, and release a validated fix or rollback. Continue monitoring after the mitigation.
+```text
+Detect crash-rate regression
+        ↓
+Identify the affected version
+        ↓
+Pause or reduce the rollout
+        ↓
+Disable the feature using a feature flag, if possible
+        ↓
+Investigate the root cause
+        ↓
+Reproduce the issue
+        ↓
+Implement and validate the fix
+        ↓
+Release the fix
+        ↓
+Monitor crash rate and app stability
+```
 
 ---
 
@@ -3776,7 +3662,7 @@ This question can mean different things, so I’d first clarify whether the issu
 - Memory issues
 - Network latency
 
-Then I’d use:
+Analysis Tool:
 
 - Macrobenchmark
 - Baseline Profiles
@@ -3789,7 +3675,7 @@ The investigation always starts with measuring first, then optimising the identi
 
 ---
 
-## What does `high-quality user experience across devices and OS versions` mean?
+## What does high-quality user experience across devices and OS versions mean?
 - Responsive layouts
 - Accessibility
 - Correct lifecycle behavior
@@ -3804,13 +3690,59 @@ The investigation always starts with measuring first, then optimising the identi
 
 ## Q: How do you verify startup improvements didn’t break behavior?
 
-I would run the existing unit, integration, and UI tests, then compare startup benchmarks with the same device, build type, and user flow. I would also monitor crashes, ANRs, startup timing, and key business metrics during a staged rollout.
+* **Run tests:** Execute existing unit, integration, and UI tests.
+* **Measure startup:** Compare startup time before and after the change.
+* **Use consistent conditions:** Test on the same device, build type, and user flow.
+* **Macrobenchmark:** Measure cold and warm startup performance.
+* **Functional validation:** Verify critical user flows still work correctly.
+* **Monitor rollout:** Track crashes, ANRs, and startup metrics during a staged rollout.
+* **Check business metrics:** Ensure the optimization doesn’t negatively impact key business metrics.
+
+```text
+Startup Issue
+    ↓
+Run Existing Tests
+    ↓
+Measure Startup Time
+    ↓
+Apply Optimization
+    ↓
+Verify with Macrobenchmark
+    ↓
+Validate Critical Flows
+    ↓
+Staged Rollout
+    ↓
+Monitor Crashes / ANRs / Startup Metrics
+```
 
 ---
 
 ## Q: How do you verify jank reduction?
 
-I would compare frame timing and frozen-frame metrics before and after the change using the same device and workload. I would verify the result with Macrobenchmark or Perfetto and confirm that scrolling and critical interactions still behave correctly.
+* **Compare frame timing:** Measure frame times before and after the change.
+* **Check jank metrics:** Compare janky frames and frozen frames.
+* **Use the same conditions:** Test on the same device with the same workload.
+* **Macrobenchmark:** Measure scrolling and other critical user journeys.
+* **Perfetto:** Analyze frame rendering and identify remaining bottlenecks.
+* **Functional validation:** Ensure scrolling and critical interactions still work correctly.
+* **Final check:** Confirm the improvement with real-world performance metrics where possible.
+
+```text
+Jank Detected
+    ↓
+Measure Frame Timing
+    ↓
+Identify the Bottleneck
+    ↓
+Apply the Fix
+    ↓
+Verify with Macrobenchmark / Perfetto
+    ↓
+Compare Jank Metrics
+    ↓
+Validate Scrolling & Interactions
+```
 
 ```kotlin
 @Test
@@ -3828,13 +3760,46 @@ fun scrollBenchmark() = benchmarkRule.measureRepeated(
 
 ## Which profiling tools do you actually use day-to-day?
 
-I use Android Studio CPU, Memory, and Network Profiler, Layout Inspector, Compose tooling, StrictMode, Perfetto, Android Vitals, LeakCanary, JankStats, and Macrobenchmark. I choose the tool based on the symptom and measure before and after the fix.
+* **CPU Profiler:** Identify CPU-heavy operations and performance bottlenecks.
+* **Memory Profiler:** Detect excessive memory usage and potential leaks.
+* **Network Profiler:** Analyze API calls, payload sizes, and network activity.
+* **Layout Inspector:** Inspect the View/Compose hierarchy and identify UI issues.
+* **Compose tooling:** Analyze recomposition and Compose performance.
+* **StrictMode:** Detect accidental disk and network operations on the main thread.
+* **Perfetto:** Analyze system-level performance, scheduling, and jank.
+* **Android Vitals:** Monitor real-world crashes, ANRs, and performance metrics.
+* **LeakCanary:** Detect memory leaks during development.
+* **JankStats:** Monitor and identify UI jank.
+* **Macrobenchmark:** Measure startup, scrolling, and other critical user journeys.
+* **Approach:** I choose the tool based on the symptom and always measure before and after the fix.
+
+```text
+Performance Issue
+    ↓
+Identify the Symptom
+    ↓
+CPU → CPU Profiler
+Memory → Memory Profiler / LeakCanary
+Network → Network Profiler
+UI → Layout Inspector / Compose Tools
+Jank → Perfetto / JankStats
+Startup → Macrobenchmark
+Production → Android Vitals
+    ↓
+Measure Before & After
+```
 
 ---
 
 ## How do you optimize large lists?
 
-Use pagination or incremental loading, stable item identity, view reuse, lightweight binding, appropriately sized images, and one source of truth for list state. For Compose, use stable keys and avoid passing changing large objects unnecessarily.
+* **Pagination:** Load data incrementally instead of loading the entire list at once.
+* **Stable keys:** Use stable item IDs so the UI can efficiently identify and update items.
+* **Lightweight UI:** Keep item layouts simple and avoid expensive operations during binding/composition.
+* **Image optimization:** Load appropriately sized images and use caching.
+* **Avoid unnecessary updates:** Pass only the data each item needs and avoid unnecessary recompositions.
+* **Compose:** Use `LazyColumn`/`LazyRow` with stable `key` values.
+* **Single source of truth:** Keep list state in one place to avoid inconsistent UI updates.
 
 ```kotlin
 LazyColumn {
@@ -3851,7 +3816,15 @@ LazyColumn {
 
 ## How do you optimize network and DB access?
 
-Measure request and query latency, avoid duplicate calls, cache data at the correct layer, paginate large results, select only required columns, batch compatible work, and keep I/O off the main thread. The repository should expose a predictable source of truth and a clear retry policy.
+- Measure: Track API and database query latency before optimizing.
+- Avoid duplication: Prevent unnecessary API calls and repeated DB queries.
+- Cache: Use memory or disk caching based on the data and freshness requirements.
+- Pagination: Avoid loading large datasets into memory at once.
+- Optimize queries: Fetch only the required columns and add appropriate indexes.
+- Batch work: Combine compatible network or database operations where possible.
+- Threading: Perform all network and database I/O off the main thread.
+- Repository: Provide a predictable source of truth for UI and domain layers.
+- Retry policy: Define when to retry, how many times, and when to fail gracefully.
 
 ```kotlin
 @Query("SELECT id, name FROM users LIMIT :limit OFFSET :offset")
@@ -3862,33 +3835,70 @@ suspend fun loadUsers(limit: Int, offset: Int): List<UserRow>
 
 ## How do you analyze and optimize Android app startup, especially cold start?
 
-Measure cold, warm, and hot startup with Macrobenchmark and production telemetry. Inspect initialization and the main-thread trace, remove or defer noncritical work, avoid synchronous I/O, and validate the result with the same startup flow.
+* **Measure:** Start with cold, warm, and hot startup measurements.
+* **Profile:** Use Macrobenchmark and Perfetto to identify startup bottlenecks.
+* **Initialization:** Check `Application` and other startup components for expensive work.
+* **Defer work:** Move non-critical initialization away from the startup path.
+* **Main thread:** Avoid blocking operations such as synchronous I/O.
+* **Optimize:** Keep the critical startup path as small as possible.
+* **Validate:** Re-run the same startup flow and compare before vs. after results.
+* **Production:** Monitor startup metrics after release to confirm the improvement.
 
----
-
-## How do you detect memory leaks in production-scale apps?
-
-Look for retained Activities, Fragments, views, callbacks, and long-lived jobs after lifecycle destruction. Reproduce navigation cycles with heap dumps and LeakCanary, inspect retained paths, fix ownership or cancellation, and monitor memory and OOM trends after rollout.
-
----
-
-## How does Android OS manage background work, and why do background limits exist?
-
-Android schedules background work based on app state, device state, battery, and user visibility. Limits exist to prevent apps from keeping the CPU, radio, and sensors active continuously. Use lifecycle-aware and constraint-aware APIs instead of assuming immediate execution.
+```text
+Measure Startup Time
+        ↓
+Cold / Warm / Hot Startup
+        ↓
+Use Macrobenchmark & Production Telemetry
+        ↓
+Analyze Main-Thread Trace
+        ↓
+Identify Expensive Initialization
+        ↓
+Remove or Defer Non-Critical Work
+        ↓
+Avoid Synchronous I/O
+        ↓
+Optimize Critical Startup Path
+        ↓
+Measure Again with the Same Flow
+        ↓
+Validate in Production
+```
 
 ---
 
 ## Explain Doze Mode and App Standby. How do they differ?
 
-Doze Mode reduces background activity when the device is unused and stationary. App Standby limits apps that the user has not recently used. Both defer non-urgent work, but Doze is primarily device-state based while App Standby is primarily app-usage based.
+```text
+        Background Restrictions
+                   ↓
+    ┌───────────────┬────────────────┐
+    ↓                                ↓
+Doze Mode                      App Standby
+    ↓                                ↓
+Device is unused              App is not recently used
+and stationary                by the user
+    ↓                                ↓
+Restricts background          Limits background activity
+activity and defers           for less-used apps
+non-urgent work
+```
+
+- **Doze Mode:** Triggered mainly when the device is unused, stationary, and the screen is off.
+- **App Standby:** Applies mainly to apps the user has not recently interacted with.
+- **Doze:** Primarily **device-state based**.
+- **App Standby:** Primarily **app-usage based**.
+- **Common goal:** Both restrict or defer non-urgent background work to save battery.
 
 ---
 
 ## WorkManager vs Foreground Service vs AlarmManager: when to use what?
 
-- Use WorkManager for deferrable, persistent work with constraints.
-- Use a Foreground Service only for user-visible work that must continue immediately, with an ongoing notification.
-- Use AlarmManager for precise time-based alarms when the use case truly requires an alarm.
+- **WorkManager**: Deferrable, persistent background work with constraints and retry support.
+- **Foreground Service**: Immediate, ongoing, user-visible work that requires a notification.
+- **AlarmManager**: Tasks that need to trigger at a specific time.
+- **Key point**: Choose based on timing, persistence, and whether the work must be user-visible.
 
 ```kotlin
 val request = OneTimeWorkRequestBuilder<SyncWorker>()
@@ -3902,31 +3912,22 @@ val request = OneTimeWorkRequestBuilder<SyncWorker>()
 
 ---
 
-## What are common background execution limit violations in production apps?
-
-Common violations include starting an unbounded background service, doing long work from a receiver, scheduling frequent alarms, polling continuously, and starting a foreground service without a clear user-visible reason. Replace these with WorkManager, bounded work, push messaging, or a correctly scoped foreground service.
-
----
-
 ## How should push notifications be optimized for battery?
-
-Use push messages for events instead of frequent polling. Batch non-urgent synchronization, avoid high priority unless the user must be notified immediately, and do only small work from the message callback. Schedule larger work with WorkManager.
-
----
-
-## Location and sensor usage: what kills battery fastest?
-
-High-frequency location updates, continuous high-accuracy tracking, frequent sensor sampling, and scans that never stop are expensive. Match accuracy and frequency to the user-visible feature, stop updates when they are no longer needed, and use batching where possible.
-
-```kotlin
-fusedLocationClient.removeLocationUpdates(locationCallback)
-```
+* **Use push instead of polling:** Trigger synchronization when an event occurs instead of repeatedly checking the server.
+* **Avoid high priority:** Use high-priority messages only when the user needs immediate notification.
+* **Keep callback work small:** Avoid heavy processing or long-running operations inside the push callback.
+* **Batch synchronization:** Combine non-urgent updates to reduce network and CPU usage.
+* **Use WorkManager:** Schedule larger or deferrable background work through `WorkManager`.
 
 ---
-
 ## How does network batching and scheduling reduce battery drain?
 
-Each radio wake-up has setup and tail energy cost. Batching compatible requests reduces wake-ups, and scheduling work with network and charging constraints avoids unnecessary retries and radio activity.
+* **Reduce radio wake-ups:** Each network request can wake the device's radio, which consumes additional energy.
+* **Batch requests:** Combine compatible requests so multiple operations can be completed with fewer radio wake-ups.
+* **Schedule efficiently:** Use background scheduling and network constraints to avoid unnecessary network activity.
+* **Avoid frequent retries:** Retry only when needed and use appropriate backoff.
+* **Use WorkManager:** For non-urgent work, schedule it with constraints such as network availability or charging.
+* **Result:** Fewer wake-ups and network operations reduce overall battery consumption.
 
 ---
 
@@ -3943,7 +3944,12 @@ Each radio wake-up has setup and tail energy cost. Batching compatible requests 
 
 ## Q: Why is WorkManager preferred even if execution timing is unpredictable?
 
-WorkManager is preferred for deferrable work because it persists work across process death and lets Android schedule it according to constraints and battery state. Exact timing is not guaranteed, so it should not be used for work that must happen at a precise instant.
+* **Persistent:** WorkManager keeps track of scheduled work even if the app process is killed.
+* **System-managed:** Android decides the best time to execute the work based on system conditions.
+* **Constraints:** I can specify conditions such as network availability or charging.
+* **Retries:** It provides built-in retry support with backoff for failed work.
+* **Battery-friendly:** The system can batch and optimize background work to reduce battery impact.
+* **Not for exact timing:** WorkManager does not guarantee execution at a precise time, so I use `AlarmManager` when exact timing is required.
 
 ---
 
