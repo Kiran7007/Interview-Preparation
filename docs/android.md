@@ -3690,13 +3690,13 @@ The investigation always starts with measuring first, then optimising the identi
 
 ## Q: How do you verify startup improvements didn’t break behavior?
 
-* **Run tests:** Execute existing unit, integration, and UI tests.
-* **Measure startup:** Compare startup time before and after the change.
-* **Use consistent conditions:** Test on the same device, build type, and user flow.
-* **Macrobenchmark:** Measure cold and warm startup performance.
-* **Functional validation:** Verify critical user flows still work correctly.
-* **Monitor rollout:** Track crashes, ANRs, and startup metrics during a staged rollout.
-* **Check business metrics:** Ensure the optimization doesn’t negatively impact key business metrics.
+- **Run tests:** Execute existing unit, integration, and UI tests.
+- **Measure startup:** Compare startup time before and after the change.
+- **Use consistent conditions:** Test on the same device, build type, and user flow.
+- **Macrobenchmark:** Measure cold and warm startup performance.
+- **Functional validation:** Verify critical user flows still work correctly.
+- **Monitor rollout:** Track crashes, ANRs, and startup metrics during a staged rollout.
+- **Check business metrics:** Ensure the optimization doesn’t negatively impact key business metrics.
 
 ```text
 Startup Issue
@@ -3720,13 +3720,13 @@ Monitor Crashes / ANRs / Startup Metrics
 
 ## Q: How do you verify jank reduction?
 
-* **Compare frame timing:** Measure frame times before and after the change.
-* **Check jank metrics:** Compare janky frames and frozen frames.
-* **Use the same conditions:** Test on the same device with the same workload.
-* **Macrobenchmark:** Measure scrolling and other critical user journeys.
-* **Perfetto:** Analyze frame rendering and identify remaining bottlenecks.
-* **Functional validation:** Ensure scrolling and critical interactions still work correctly.
-* **Final check:** Confirm the improvement with real-world performance metrics where possible.
+- **Compare frame timing:** Measure frame times before and after the change.
+- **Check jank metrics:** Compare janky frames and frozen frames.
+- **Use the same conditions:** Test on the same device with the same workload.
+- **Macrobenchmark:** Measure scrolling and other critical user journeys.
+- **Perfetto:** Analyze frame rendering and identify remaining bottlenecks.
+- **Functional validation:** Ensure scrolling and critical interactions still work correctly.
+- **Final check:** Confirm the improvement with real-world performance metrics where possible.
 
 ```text
 Jank Detected
@@ -3760,18 +3760,18 @@ fun scrollBenchmark() = benchmarkRule.measureRepeated(
 
 ## Which profiling tools do you actually use day-to-day?
 
-* **CPU Profiler:** Identify CPU-heavy operations and performance bottlenecks.
-* **Memory Profiler:** Detect excessive memory usage and potential leaks.
-* **Network Profiler:** Analyze API calls, payload sizes, and network activity.
-* **Layout Inspector:** Inspect the View/Compose hierarchy and identify UI issues.
-* **Compose tooling:** Analyze recomposition and Compose performance.
-* **StrictMode:** Detect accidental disk and network operations on the main thread.
-* **Perfetto:** Analyze system-level performance, scheduling, and jank.
-* **Android Vitals:** Monitor real-world crashes, ANRs, and performance metrics.
-* **LeakCanary:** Detect memory leaks during development.
-* **JankStats:** Monitor and identify UI jank.
-* **Macrobenchmark:** Measure startup, scrolling, and other critical user journeys.
-* **Approach:** I choose the tool based on the symptom and always measure before and after the fix.
+- **CPU Profiler:** Identify CPU-heavy operations and performance bottlenecks.
+- **Memory Profiler:** Detect excessive memory usage and potential leaks.
+- **Network Profiler:** Analyze API calls, payload sizes, and network activity.
+- **Layout Inspector:** Inspect the View/Compose hierarchy and identify UI issues.
+- **Compose tooling:** Analyze recomposition and Compose performance.
+- **StrictMode:** Detect accidental disk and network operations on the main thread.
+- **Perfetto:** Analyze system-level performance, scheduling, and jank.
+- **Android Vitals:** Monitor real-world crashes, ANRs, and performance metrics.
+- **LeakCanary:** Detect memory leaks during development.
+- **JankStats:** Monitor and identify UI jank.
+- **Macrobenchmark:** Measure startup, scrolling, and other critical user journeys.
+- **Approach:** I choose the tool based on the symptom and always measure before and after the fix.
 
 ```text
 Performance Issue
@@ -3793,13 +3793,13 @@ Measure Before & After
 
 ## How do you optimize large lists?
 
-* **Pagination:** Load data incrementally instead of loading the entire list at once.
-* **Stable keys:** Use stable item IDs so the UI can efficiently identify and update items.
-* **Lightweight UI:** Keep item layouts simple and avoid expensive operations during binding/composition.
-* **Image optimization:** Load appropriately sized images and use caching.
-* **Avoid unnecessary updates:** Pass only the data each item needs and avoid unnecessary recompositions.
-* **Compose:** Use `LazyColumn`/`LazyRow` with stable `key` values.
-* **Single source of truth:** Keep list state in one place to avoid inconsistent UI updates.
+- **Pagination:** Load data incrementally instead of loading the entire list at once.
+- **Stable keys:** Use stable item IDs so the UI can efficiently identify and update items.
+- **Lightweight UI:** Keep item layouts simple and avoid expensive operations during binding/composition.
+- **Image optimization:** Load appropriately sized images and use caching.
+- **Avoid unnecessary updates:** Pass only the data each item needs and avoid unnecessary recompositions.
+- **Compose:** Use `LazyColumn`/`LazyRow` with stable `key` values.
+- **Single source of truth:** Keep list state in one place to avoid inconsistent UI updates.
 
 ```kotlin
 LazyColumn {
@@ -3835,14 +3835,14 @@ suspend fun loadUsers(limit: Int, offset: Int): List<UserRow>
 
 ## How do you analyze and optimize Android app startup, especially cold start?
 
-* **Measure:** Start with cold, warm, and hot startup measurements.
-* **Profile:** Use Macrobenchmark and Perfetto to identify startup bottlenecks.
-* **Initialization:** Check `Application` and other startup components for expensive work.
-* **Defer work:** Move non-critical initialization away from the startup path.
-* **Main thread:** Avoid blocking operations such as synchronous I/O.
-* **Optimize:** Keep the critical startup path as small as possible.
-* **Validate:** Re-run the same startup flow and compare before vs. after results.
-* **Production:** Monitor startup metrics after release to confirm the improvement.
+- **Measure:** Start with cold, warm, and hot startup measurements.
+- **Profile:** Use Macrobenchmark and Perfetto to identify startup bottlenecks.
+- **Initialization:** Check `Application` and other startup components for expensive work.
+- **Defer work:** Move non-critical initialization away from the startup path.
+- **Main thread:** Avoid blocking operations such as synchronous I/O.
+- **Optimize:** Keep the critical startup path as small as possible.
+- **Validate:** Re-run the same startup flow and compare before vs. after results.
+- **Production:** Monitor startup metrics after release to confirm the improvement.
 
 ```text
 Measure Startup Time
@@ -3913,21 +3913,21 @@ val request = OneTimeWorkRequestBuilder<SyncWorker>()
 ---
 
 ## How should push notifications be optimized for battery?
-* **Use push instead of polling:** Trigger synchronization when an event occurs instead of repeatedly checking the server.
-* **Avoid high priority:** Use high-priority messages only when the user needs immediate notification.
-* **Keep callback work small:** Avoid heavy processing or long-running operations inside the push callback.
-* **Batch synchronization:** Combine non-urgent updates to reduce network and CPU usage.
-* **Use WorkManager:** Schedule larger or deferrable background work through `WorkManager`.
+- **Use push instead of polling:** Trigger synchronization when an event occurs instead of repeatedly checking the server.
+- **Avoid high priority:** Use high-priority messages only when the user needs immediate notification.
+- **Keep callback work small:** Avoid heavy processing or long-running operations inside the push callback.
+- **Batch synchronization:** Combine non-urgent updates to reduce network and CPU usage.
+- **Use WorkManager:** Schedule larger or deferrable background work through `WorkManager`.
 
 ---
 ## How does network batching and scheduling reduce battery drain?
 
-* **Reduce radio wake-ups:** Each network request can wake the device's radio, which consumes additional energy.
-* **Batch requests:** Combine compatible requests so multiple operations can be completed with fewer radio wake-ups.
-* **Schedule efficiently:** Use background scheduling and network constraints to avoid unnecessary network activity.
-* **Avoid frequent retries:** Retry only when needed and use appropriate backoff.
-* **Use WorkManager:** For non-urgent work, schedule it with constraints such as network availability or charging.
-* **Result:** Fewer wake-ups and network operations reduce overall battery consumption.
+- **Reduce radio wake-ups:** Each network request can wake the device's radio, which consumes additional energy.
+- **Batch requests:** Combine compatible requests so multiple operations can be completed with fewer radio wake-ups.
+- **Schedule efficiently:** Use background scheduling and network constraints to avoid unnecessary network activity.
+- **Avoid frequent retries:** Retry only when needed and use appropriate backoff.
+- **Use WorkManager:** For non-urgent work, schedule it with constraints such as network availability or charging.
+- **Result:** Fewer wake-ups and network operations reduce overall battery consumption.
 
 ---
 
@@ -3944,12 +3944,12 @@ val request = OneTimeWorkRequestBuilder<SyncWorker>()
 
 ## Q: Why is WorkManager preferred even if execution timing is unpredictable?
 
-* **Persistent:** WorkManager keeps track of scheduled work even if the app process is killed.
-* **System-managed:** Android decides the best time to execute the work based on system conditions.
-* **Constraints:** I can specify conditions such as network availability or charging.
-* **Retries:** It provides built-in retry support with backoff for failed work.
-* **Battery-friendly:** The system can batch and optimize background work to reduce battery impact.
-* **Not for exact timing:** WorkManager does not guarantee execution at a precise time, so I use `AlarmManager` when exact timing is required.
+- **Persistent:** WorkManager keeps track of scheduled work even if the app process is killed.
+- **System-managed:** Android decides the best time to execute the work based on system conditions.
+- **Constraints:** I can specify conditions such as network availability or charging.
+- **Retries:** It provides built-in retry support with backoff for failed work.
+- **Battery-friendly:** The system can batch and optimize background work to reduce battery impact.
+- **Not for exact timing:** WorkManager does not guarantee execution at a precise time, so I use `AlarmManager` when exact timing is required.
 
 ---
 
@@ -4223,7 +4223,14 @@ Monitor + rollback if needed
 
 ## What should fail a PR?
 
-A PR should fail for compilation errors, unit-test failures, lint or static-analysis failures, security-scan failures, and important instrumentation-test failures. Coverage should support meaningful tests rather than being enforced as an arbitrary number.
+A PR should fail when it introduces issues that can affect **correctness, security, or code quality**:
+
+- **Compilation errors:** The project must build successfully.
+- **Unit-test failures:** Existing or newly added unit tests must pass.
+- **Lint / static-analysis failures:** Catch code-quality and potential defect issues.
+- **Security-scan failures:** Block known vulnerabilities or security issues.
+- **Instrumentation-test failures:** Important Android integration or UI tests should pass.
+- **Coverage:** Use coverage to encourage meaningful tests, rather than enforcing an arbitrary percentage.
 
 ---
 
@@ -4244,13 +4251,74 @@ Some commonly used CI/CD tools are:
 - Bitrise - Android and iOS friendly, with no setup needed and a GUI-based workflow.
 
 ---
+## How do you handle merge conflicts?
 
-## Git-related questions to be ready for
-- How do you handle merge conflicts?
-- What is the difference between merge and rebase?
-- How do you structure branches for feature work and release work?
-- How do you handle hotfixes?
-- How do you keep branch hygiene and release stability consistent?
+I first understand the changes on both sides instead of blindly choosing one. I resolve the conflict, review the final diff, and run the affected tests before pushing the changes.
+
+---
+
+## What is the difference between merge and rebase?
+
+**Merge** combines two branches and may create a merge commit. **Rebase** moves my commits on top of the latest target branch, which keeps the history linear.
+
+I usually use rebase to keep my feature branch updated and merge when I want to preserve the branch history.
+
+---
+
+## How do you structure branches for feature work and release work?
+
+I keep the main branch stable and create short-lived feature branches for individual changes.
+
+```text
+Main
+ ↓
+Feature Branch
+ ↓
+Development + Tests
+ ↓
+PR Review + CI
+ ↓
+Merge
+```
+
+For releases, I use a release branch when needed for stabilization and allow only release-related fixes.
+
+---
+
+## How do you handle hotfixes?
+
+I create a hotfix branch from the production or release branch and keep the change as small as possible.
+
+```text
+Production
+ ↓
+Hotfix Branch
+ ↓
+Fix + Tests
+ ↓
+Code Review
+ ↓
+Release
+ ↓
+Merge Fix Back to Main
+```
+
+This ensures the production fix is also included in future releases.
+
+---
+
+## How do you keep branch hygiene and release stability consistent?
+
+I follow a few practices:
+
+- Keep branches **short-lived**.
+- Create **small and focused PRs**.
+- Regularly sync with the target branch.
+- Use **mandatory CI checks**.
+- Require **code review** before merging.
+- Protect main and release branches.
+- Run automated tests before release.
+- Remove old feature branches after merging.
 
 ---
 
@@ -4406,7 +4474,35 @@ I would not merge it directly. I would identify the security issue, replace it w
 
 ## How do you lead a moderately complex initiative?
 
-I would understand the requirements, identify technical risks, design the architecture, break the work into deliverables, align with stakeholders, implement the critical pieces, support code review and mentoring, test the result, release it safely, and monitor it in production.
+I start by understanding the **requirements, scope, and expected outcome**. Then I identify the **technical risks and dependencies** and define the architecture.
+
+After that, I break the initiative into smaller deliverables, assign ownership, and align with stakeholders on timelines and expectations. I stay involved in the critical technical decisions, code reviews, and mentoring.
+
+Finally, I make sure we have proper testing, a safe release plan, and production monitoring to validate the outcome.
+
+**My approach:**
+
+```text
+Understand Requirements
+        ↓
+Identify Risks & Dependencies
+        ↓
+Define Architecture
+        ↓
+Break into Deliverables
+        ↓
+Align with Stakeholders
+        ↓
+Implement Critical Pieces
+        ↓
+Code Review & Mentoring
+        ↓
+Test & Validate
+        ↓
+Safe Release
+        ↓
+Monitor Production
+```
 
 ---
 
@@ -4499,16 +4595,16 @@ Do not make it personal.
 
 I categorise my review comments into four buckets:
 
-  * Architecture — SOLID, Clean Architecture, scalability, maintainability.
-  * Functionality — Missing business logic, edge cases, incorrect implementation.
-  * Coding Standards — Naming, formatting, Kotlin best practices, readability.
-  * Documentation — Missing KDocs, README updates, copyright headers, comments.
+  - Architecture — SOLID, Clean Architecture, scalability, maintainability.
+  - Functionality — Missing business logic, edge cases, incorrect implementation.
+  - Coding Standards — Naming, formatting, Kotlin best practices, readability.
+  - Documentation — Missing KDocs, README updates, copyright headers, comments.
 
 My review strategy
 
-  * If major functionality is missing but architectural improvements are relatively small, I recommend finishing the functionality first (especially if the PR is blocking a release), merging it, and taking architecture improvements as a separate refactoring task.
-  * If architectural issues affect the core implementation, I recommend addressing architecture first since functionality built on a poor design usually creates more technical debt.
-  * Syntax, formatting, documentation and copyright changes are usually lightweight and should be completed within the same PR.
+  - If major functionality is missing but architectural improvements are relatively small, I recommend finishing the functionality first (especially if the PR is blocking a release), merging it, and taking architecture improvements as a separate refactoring task.
+  - If architectural issues affect the core implementation, I recommend addressing architecture first since functionality built on a poor design usually creates more technical debt.
+  - Syntax, formatting, documentation and copyright changes are usually lightweight and should be completed within the same PR.
 
 ---
 
@@ -4541,6 +4637,7 @@ Room    API
 ```
 
 Key concerns:
+
 - Authentication and authorization
 - Secure token handling
 - Idempotency
@@ -4584,7 +4681,17 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.X) {
 
 ## Two requests update the same account data. How do you handle it?
 
-Use a single source of truth and coordinate updates through the repository. Depending on the requirement, use database transactions and optimistic or pessimistic concurrency. The server must enforce consistency, and the UI should not display stale state as the final result.
+I would make the **repository the single point of coordination** for account updates. I would also make sure the server is the final authority for consistency.
+
+- **Single source of truth:** Keep account state in one place, typically the repository/database.
+- **Coordinate updates:** Serialize or coordinate related updates through the repository when required.
+- **Database transactions:** Use transactions when multiple local writes must succeed or fail together.
+- **Optimistic concurrency:** Use versioning or timestamps to detect conflicting updates.
+- **Pessimistic concurrency:** Lock or serialize updates when the operation requires exclusive access.
+- **Server-side consistency:** Let the server validate and resolve conflicting updates.
+- **UI consistency:** Update the UI from the latest confirmed state and avoid showing stale data as the final result.
+
+**Key point:** I handle concurrency at both the **local layer and server layer**, with the server acting as the final source of truth.
 
 ---
 
