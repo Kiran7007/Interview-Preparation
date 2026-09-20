@@ -307,13 +307,13 @@ interface Producer<out T> {
 }
 ```
 
-Example:
-
 ```kotlin
 Producer<Dog> → Producer<Animal> // ✅
 ```
 
-Remember: `out` = **read / output / producer**.
+#### *Remember* {.answer-subtitle}
+
+`out` = **read / output / producer**.
 
 ---
 
