@@ -31,10 +31,12 @@ Data Sources
 
 ## What are Single Source of Truth and Unidirectional Data Flow?
 
-- **Single Source of Truth (SSOT):** One owner is responsible for changing a piece of data.
-- Other layers receive an immutable view of that data.
-- **Unidirectional Data Flow (UDF):** State moves from the owner to the UI; user events move back to the owner.
-- This makes state changes easier to test, trace, and debug.
+- **Single Source of Truth (SSOT):** 
+    1. One owner is responsible for changing a piece of data.
+    2. Other layers receive an immutable view of that data.
+- **Unidirectional Data Flow (UDF):** 
+    1. State moves from the owner to the UI; user events move back to the owner.
+    2. This makes state changes easier to test, trace, and debug.
 
 ```text
 User action → ViewModel / repository → new UI state → UI
