@@ -116,7 +116,97 @@
 
 ---
 
-- [Learn more](https://lnkd.in/dvcdY_RX)
+## What is the difference between latency and throughput?
+
+- **Latency** is the time required to perform one action or produce one result.
+- **Throughput** is the number of actions or results completed per unit of time.
+- A good system aims for the highest throughput that still provides acceptable latency for the user and the business operation.
+
+They are related but not interchangeable. A service can process many requests per second while one request still waits too long, or it can answer one user quickly but collapse under concurrent load. For example, an image-processing pipeline may increase throughput by batching work, but batching can increase
+the latency of an individual image. State the target for both metrics and make the trade-off explicit.
+
+```text
+Request arrives ──► wait/queue ──► work ──► response
+        └────────────── latency ──────────────┘
+
+throughput = completed requests / unit of time
+```
+
+---
+
+## How should I use this distinction in a mobile system design answer?
+
+For an interactive search or booking request, optimize perceived latency with timeouts, caching, parallel independent calls, pagination, and a useful
+partial result. For background synchronization, higher throughput may be more important than the latency of one item; batching, queues, and backpressure can reduce total cost. Always include capacity, tail latency (such as p95/p99), load-shedding, and the user-visible fallback when a dependency is slow.
+
+### Source
+
+- [System Design Primer — Latency vs Throughput](https://github.com/donnemartin/system-design-primer#latency-vs-throughput)
+
+---
+
+## Design a flight-inventory search platform backed by metered suppliers
+
+This is a useful Agoda-style platform/system-design scenario. Multiple suppliers expose flight inventory through their own metered APIs. Customers search by origin, destination, travel dates, and other filters. Prices, departure times, and seat availability can change frequently. Suppliers do not provide a push stream, so the platform must refresh data through paid API calls.
+
+### Requirements and constraints
+
+- Support roughly 10–20 suppliers with different API contracts and limits.
+- Serve user searches with low interactive latency.
+- Avoid calling every supplier synchronously for every user request because the supplier APIs are metered and may be slow or unavailable.
+- Show the cheapest offer for the same flight when several suppliers return equivalent inventory.
+- Keep price, schedule, and availability sufficiently fresh, and clearly communicate that flight inventory can change between search and booking.
+- Respect supplier rate limits, authentication, quotas, and per-supplier failures.
+
+### High-level design
+
+```text
+User app
+   │ search
+   ▼
+API gateway → Search service → normalized inventory cache/read model
+                                  ▲          ▲
+                                  │          │
+                       refresh workers   change stream/events
+                                  │
+                 supplier adapters / rate limiters
+                    │       │        │
+                Supplier A  B  ...  N (metered APIs)
+```
+
+1. **Supplier adapters:** Hide different authentication, request formats, response schemas, pagination, retries, and error codes behind one internal interface.
+2. **Refresh scheduler:** Poll suppliers according to route popularity, freshness requirements, observed volatility, quota, and time to departure. Use jitter, bounded retries, circuit breakers, and per-supplier rate limiting.
+3. **Normalizer and deduplicator:** Convert supplier responses into a canonical flight/offer model. Build a stable identity from fields such as carrier, flight number, departure airport/time, arrival airport/time, and itinerary legs. Keep each supplier offer so the cheapest valid offer can be selected.
+4. **Inventory store/read model:** Store the latest normalized offer, source, observed time, expiry/freshness deadline, price, and availability. Index by origin, destination, date, and cabin. A cache can serve hot searches, while a durable store or search index provides recovery and broader queries.
+5. **Search service:** Read the local view, filter and rank results, merge equivalent flights, and return freshness metadata. If data is stale, trigger an asynchronous refresh or selectively fetch the highest-value suppliers; do not make every user wait for all metered calls.
+6. **Booking revalidation:** Before payment or ticketing, re-check the selected supplier because search data is only a snapshot. Use an idempotency key so retries cannot create duplicate bookings.
+
+---
+
+## How do you keep the data fresh without overspending on supplier calls?
+
+Use a hybrid strategy: scheduled polling for popular routes and departure windows, refresh-on-demand for a cache miss or stale result, and a short-lived stale-while-revalidate response when product requirements permit it. Prioritize routes with high search volume or rapidly changing prices. Track supplier quota, last successful refresh, freshness age, and error rate. The API response should include `lastUpdated` or a freshness indicator so the client does not mistake a cached result for a guaranteed price.
+
+---
+
+## How do you handle failures and scale the platform?
+
+Queue supplier refresh work so user traffic does not directly multiply paid calls. Partition workers by supplier or region, use horizontal scaling for the
+search API, and isolate a failing supplier with a circuit breaker. Cache responses where the business rules allow it, coalesce identical in-flight queries, and apply request quotas per client. Monitor supplier latency, quota usage, refresh age, error rate, duplicate rate, cache hit rate, price changes,
+search p95, booking revalidation failures, and stale-result rate.
+
+---
+
+### What are the main trade-offs?
+
+- **Freshness vs cost:** More polling improves freshness but consumes paid quota and increases load.
+- **Fan-out vs latency:** Calling suppliers in parallel can reduce latency but raises cost and makes the slowest supplier part of the critical path.
+- **Cache vs correctness:** A cache improves speed but must expose staleness and be followed by booking-time revalidation.
+- **Strong consistency vs availability:** Search can tolerate a slightly stale read model; the booking step needs stronger confirmation and idempotency.
+- **One shared model vs supplier-specific fields:** Normalize common fields for search but retain raw/source-specific data for debugging and booking rules.
+
+---
+
 ## Reliability, Data, and Operations
 
 ## Design **offline-first sync** for a notes app with multi-device edits.

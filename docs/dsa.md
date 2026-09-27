@@ -2,6 +2,107 @@
 
 ---
 
+## How do you eliminate the maximum number of incoming airplanes?
+
+This is the airplane version of the “Eliminate Maximum Number of Monsters” problem. Treat each airplane's arrival time as `distance / speed` using the problem's discrete-minute convention. Sort all arrival times. At minute `i`, the airplane we handle must not have arrived at or before minute `i`; otherwise we lose before handling it.
+
+```kotlin
+fun canEliminateAllAirplanes(
+    distance: IntArray,
+    speed: IntArray
+): Boolean {
+    require(distance.size == speed.size)
+
+    val arrivalTimes = distance.indices
+        .map { distance[it] / speed[it] }
+        .sorted()
+
+    return arrivalTimes.indices.all { minute ->
+        arrivalTimes[minute] > minute
+    }
+}
+```
+
+Why this greedy strategy works:
+
+- The airplane with the earliest arrival deadline is the most urgent.
+- Sorting gives the same order as repeatedly choosing the next most urgent airplane.
+- If an airplane's deadline is already reached at minute `i`, no later choice can save the schedule.
+- Time complexity is (O(n \log n)) for sorting and (O(n)) for the scan; auxiliary space is (O(n)).
+
+In an interview, clarify whether arrival time uses floor or ceiling division, whether one airplane can be handled per minute, and whether the question asks for the total eliminated count or only whether all airplanes can be handled.
+
+---
+
+## How do you calculate the weight of a chemical formula?
+
+The reported problem assigns `C = 12`, `H = 1`, and `O = 8`. For a simple formula such as `CH4`, add each atom's weight multiplied by its optional
+count: `12 + (1 × 4) = 16`. The extended version supports nested parentheses, so a multiplier after `)` applies to the whole group. For example, `H(CH4)2 = 1 + 2 × (12 + 4) = 33`.
+
+Use a stack to save the weight accumulated before each opening parenthesis. When a closing parenthesis is found, multiply the current group and add it to the saved outer weight. The parser below also accepts multi-digit multipliers.
+
+```kotlin
+fun chemicalFormulaWeight(formula: String): Int {
+    val weights = mapOf('C' to 12, 'H' to 1, 'O' to 8)
+    val stack = ArrayDeque<Int>()
+    var current = 0
+    var index = 0
+
+    fun readNumber(): Int {
+        val start = index
+        while (index < formula.length && formula[index].isDigit()) index++
+        return if (start == index) 1 else formula.substring(start, index).toInt()
+    }
+
+    while (index < formula.length) {
+        when (val token = formula[index]) {
+            '(' -> {
+                stack.addLast(current)
+                current = 0
+                index++
+            }
+
+            ')' -> {
+                index++
+                val multiplier = readNumber()
+                val groupWeight = current * multiplier
+                require(stack.isNotEmpty()) { "Unmatched ')'" }
+                current = stack.removeLast() + groupWeight
+            }
+
+            in 'A'..'Z' -> {
+                val atomWeight = weights[token]
+                    ?: error("Unsupported atom: $token")
+                index++
+                current += atomWeight * readNumber()
+            }
+
+            else -> error("Unexpected token at index $index: $token")
+        }
+    }
+
+    require(stack.isEmpty()) { "Unmatched '('" }
+    return current
+}
+```
+
+Examples:
+
+```text
+CH4      -> 16
+H(CH4)2  -> 33
+((CH4))  -> 16
+```
+
+The stack solution is (O(n)) time and (O(d)) space, where `d` is the maximum parenthesis nesting depth. In production code, add clearer error messages and decide whether whitespace, lowercase element symbols, or other atoms are part of the input contract before parsing.
+
+### Source reports
+
+- [Agoda Staff SE OA report](https://leetcode.com/discuss/post/7380748/agoda-staff-se-oa-by-debmalyapan53-ey0o/)
+- [Agoda SSE Backend interview report](https://leetcode.com/discuss/post/7274226/agoda-sse-backend-gurugram-by-debmalyapa-plzb/)
+
+---
+
 ## DSA: Arrays, Sorting & Searching (Senior)
 
 ### Why is quicksort preferred over mergesort for sorting **arrays** in practice?

@@ -2782,8 +2782,9 @@ fun UserCard(
 ## What is `derivedStateOf`?
 
 -   It creates state derived from other state.
--   It can prevent unnecessary recompositions when the derived result
-    has not changed.
+-   It can prevent unnecessary recompositions when the derived result has not changed.
+-   Use it when the input changes more often than the UI result needs to change. It behaves similarly to `distinctUntilChanged` for Compose state.
+-   There must be a meaningful difference between the amount of input change and the amount of output change. Otherwise, the derived-state object adds overhead without reducing work.
 
 ```kotlin
 val showButton by remember {
@@ -2793,6 +2794,19 @@ val showButton by remember {
 }
 ```
 Use it when derived state changes less frequently than its inputs.
+
+For example, `firstVisibleItemIndex` may change from `0` to `1`, `2`, `3`,
+and so on while scrolling, but a “scroll to top” button only needs a Boolean:
+
+```kotlin
+val isEnabled by remember {
+    derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
+}
+```
+
+### Source
+
+- [Jetpack Compose — When should I use `derivedStateOf`?](https://medium.com/androiddevelopers/jetpack-compose-when-should-i-use-derivedstateof-63ce7954c11b)
 
 ---
 
@@ -4187,6 +4201,266 @@ A service groups related functionality. A characteristic is a value inside that 
 Notification is sent without an application-level acknowledgement from the central. Indication requires acknowledgement and is slower but provides stronger delivery confirmation.
 
 ---
+
+## What permissions are required for BLE on Android 12 and newer?
+
+Request the permissions needed by the operation at runtime:
+
+- `BLUETOOTH_SCAN` for discovering nearby devices.
+- `BLUETOOTH_CONNECT` for connecting and communicating with a device.
+- `BLUETOOTH_ADVERTISE` only when the phone advertises as a peripheral.
+
+For Android 12 and newer, a normal BLE scan does not require location permission. Older Android versions may require location permission for scans.
+
+The app must still check that Bluetooth is enabled and explain why the permission is needed.
+
+---
+
+## What is a UUID in BLE?
+
+- A UUID identifies a service, characteristic, or descriptor. Standard UUIDs are defined by the Bluetooth SIG; proprietary devices normally expose custom UUIDs.
+- Use the firmware specification or a tool such as nRF Connect to map UUIDs
+instead of guessing or hardcoding them blindly.
+
+---
+
+## What are GATT, services, characteristics, and descriptors?
+
+GATT defines how data is organised and exchanged after a BLE connection. A service groups related functionality, a characteristic holds a readable or
+writable value, and a descriptor stores metadata such as the notification configuration. 
+
+Communication happens through characteristics, not directly through services.
+
+```text
+Peripheral / GATT server
+└── Service (UUID)
+    └── Characteristic (UUID)
+        └── Descriptor (for example, CCCD)
+```
+
+The Android app is normally the GATT client. It sends read/write requests and subscribes to updates; the peripheral owns the services and characteristics.
+
+---
+
+## What is RSSI and how can it help?
+
+RSSI is a signal-strength measurement. It can help display approximate proximity, detect a weakening link, and decide when to attempt reconnection.
+It is not a precise distance measurement, so combine it with timeouts and an application-level ping when connection health matters.
+
+---
+
+## How does the normal Android BLE flow work?
+
+1. Obtain `BluetoothManager` and `BluetoothAdapter`.
+2. Start a `BluetoothLeScanner` scan and filter by service UUID when possible.
+3. Stop scanning as soon as the intended device is found.
+4. Call `connectGatt(context, false, callback)`.
+5. Wait for the connected callback, then discover services.
+6. Read or write characteristics and subscribe to notifications as required.
+
+Permissions, Bluetooth state, and the Android version must be checked before starting this flow. On older Android versions, location permission may also be required for scanning.
+
+---
+
+## How do you read and write a characteristic?
+
+After services are discovered, find the characteristic by its UUID. A read uses `readCharacteristic`. A write converts the command to bytes, verifies the characteristic properties, chooses the correct write type, and calls
+`writeCharacteristic`. Wait for `onCharacteristicRead` or `onCharacteristicWrite` before starting the next GATT operation.
+
+```kotlin
+if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
+    characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+    characteristic.value = commandBytes
+    gatt.writeCharacteristic(characteristic)
+}
+```
+
+For devices that support it `PROPERTY_WRITE_NO_RESPONSE` and `WRITE_TYPE_NO_RESPONSE` can improve throughput, but the application should provide its own integrity or retry mechanism when delivery matters.
+
+---
+
+## How do you enable notifications correctly?
+
+There are two steps: enable the local notification flag and write the Client Characteristic Configuration Descriptor (CCCD). Listening only for
+`onCharacteristicChanged` is not enough.
+
+```kotlin
+gatt.setCharacteristicNotification(characteristic, true)
+descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+gatt.writeDescriptor(descriptor)
+```
+
+Confirm the descriptor-write callback before treating the subscription as active. After reconnecting, rediscover services and repeat the subscription; notifications are not persistent across connections.
+
+---
+
+## What is the difference between RS232 and RS485 in a BLE product?
+
+RS232 is generally point-to-point and intended for shorter distances. RS485 is commonly used for longer-distance industrial communication and can support multiple devices on one bus. Android usually communicates with the hardware controller over BLE; the controller may translate those commands to RS232 or RS485 internally, so the Android developer normally does not implement the firmware protocol itself.
+
+---
+
+## How do you secure BLE communication?
+
+Pairing and bonding can encrypt the link, but they do not automatically prove that the application is authorised to use a particular device. Validate the
+device identity and expected UUIDs, reject unexpected message formats, and use application-level authentication, counters, nonces, or payload encryption when the data is sensitive. Bonding stores the negotiated long-term keys so a
+trusted device can reconnect without repeating the full user setup.
+
+---
+
+## What is real-time data transfer in BLE?
+
+It is a continuous stream of device data delivered through notifications or indications, such as heart rate, temperature, SpO2, or smart-ring sensor
+readings. BLE is the transport; the application protocol still needs to define timestamps, ordering, validation, buffering, and loss handling.
+
+---
+
+## When would JNI or the NDK be used in an Android BLE app?
+
+JNI lets Kotlin or Java call C/C++ code. It is reasonable when a vendor SDK is provided in C++, when high-frequency sensor data needs expensive signal processing, or when the same portable processing library is shared by Android and iOS. For example, FFT or noise filtering on accelerometer data at 200 Hz may be more efficient in a shared C++ library. It should not be added merely because the feature uses Bluetooth.
+
+---
+
+## How do you keep BLE code clean and scalable?
+
+Use a dedicated BLE manager or data-source layer, a repository, and a clear MVVM or similar presentation boundary. Separate scanning, connection state, GATT operations, protocol parsing, persistence, and UI adapters. Use
+coroutines/Flow for lifecycle-aware data delivery, document the UUID and packet contract, and hide Android Bluetooth classes behind interfaces so the state machine can be tested with fakes.
+
+---
+
+## Why can a device connect but fail to discover services?
+
+Connection does not always mean that the peripheral is ready. Some devices need a short delay after connecting, or have a firmware-side readiness problem. Wait for the connection callback, delay briefly when the device requires it, retry discovery with a bound, and record the firmware/device version. Do not start reads or writes before service discovery succeeds.
+
+---
+
+## Why can BLE work in debug but fail in a release APK?
+
+Check R8/ProGuard rules, release-only timing differences, and whether release logging hides the real callback status. If a vendor SDK uses reflection or generated names, add the vendor's documented keep rules. Android framework classes normally should not be kept unnecessarily; verify the actual missing class before adding a broad rule such as `-keep class android.bluetooth.**`.
+
+---
+
+## Why do BLE writes fail silently?
+
+The characteristic may not support the selected write property or write type. Check `PROPERTY_WRITE` and `PROPERTY_WRITE_NO_RESPONSE`, choose the matching write type, ensure the service was discovered, and handle the write callback
+status. Also ensure the operation is not racing with another read, write, or descriptor operation.
+
+---
+
+## Why does a scan sometimes miss a device?
+
+Possible causes include a long advertising interval, a low-power scan mode, background scan throttling, missing permissions, Bluetooth/location state, or a vendor advertising bug. Use service/name/manufacturer filters where possible, use low-latency scanning only for the short period in which it is needed, and stop scanning immediately after finding the device to save battery.
+
+---
+
+## How do you reconnect cleanly?
+
+Observe the connection-state callback, persist a safe identifier for the last known device, and use bounded retries with backoff. On a failed connection, call `disconnect()` and `close()`, wait briefly when the device requires it, and create a new `BluetoothGatt` instance. Do not reuse a stale GATT object. `autoConnect = true` can make connection timing delayed and unpredictable, so
+explicit `connectGatt(..., false, callback)` is usually easier to control for an immediate user-initiated connection.
+
+---
+
+## What happens if GATT is not closed properly?
+
+Stale GATT objects can cause memory leaks, ghost connections, failed future connections, and confusing callbacks. `disconnect()` ends the link;
+`close()` releases the GATT resources. Use both during cleanup, unregister callbacks, cancel related coroutines, and ensure the manager does not retain an Activity or Fragment.
+
+---
+
+## Why can notifications stop after a while?
+
+Check Android background restrictions, Doze, peripheral sleep mode, notification buffer overflow, a missed keep-alive, and a lost or stale subscription. For an ongoing user-visible session, use a correctly declared foreground service. A
+protocol heartbeat may keep the device awake, and reconnect handling should rediscover services and resubscribe automatically.
+
+If the connection succeeds but the first data arrives 10–15 seconds later, check for a firmware startup delay, a slow connection interval, delayed CCCD processing, or a required handshake. Send the device's “start streaming” command when the protocol requires it, confirm the descriptor-write callback, and coordinate the timing with the firmware team. A BLE connection alone does
+not guarantee that the device has started its application data stream.
+
+---
+
+## How do you handle high-frequency data without freezing the app?
+
+Never parse or perform heavy database work on the main thread. Buffer incoming packets, parse them on a background dispatcher, apply backpressure or a
+drop-old/keep-latest policy when appropriate, and throttle UI updates. A typical pipeline is:
+
+```text
+notifications → buffer → parse/validate → persist → update UI periodically
+```
+
+For example, the UI may update every 500 ms while the data layer continues to
+process sensor packets at the device rate.
+
+---
+
+## How do you handle fragmented or corrupted data?
+
+The negotiated MTU limits each ATT payload; one application message may span many notifications. Include a length or packet header, sequence number, and, when needed, CRC/checksum. Buffer and reassemble packets only after ordering
+and completeness are verified. Detect duplicates and missing sequence numbers, then retry or request the missing data according to the protocol.
+
+---
+
+## How do you design BLE communication for a smart ring or health device?
+
+```text
+scan/connect → discover services → handshake → enable notifications
+      → receive sensor stream → validate packets → store locally
+      → sync backend → reconnect/resubscribe when disconnected
+```
+
+Use device timestamps, sequence numbers, duplicate detection, backend validation, and a way to retry missing packets. BLE only transports the data; accuracy is a protocol and storage responsibility.
+
+---
+
+## How do you design a reliable BLE firmware update (OTA)?
+
+Treat an OTA update as a resumable, integrity-checked transfer:
+
+- Keep the device and app awake only for as long as required and use an appropriate foreground experience for a user-visible update.
+- Negotiate MTU and connection priority, then send bounded chunks.
+- Track progress, validate CRC/checksums, and resume from the last confirmed chunk after a disconnect.
+- Use packet-receipt notifications or another flow-control mechanism instead of overflowing the peripheral buffer.
+- A bootloader may advertise as a new MAC address and expose different services. Scan for that device after entering DFU mode, and do not assume the original GATT services are still cached correctly.
+
+Mode switches can also surface generic GATT errors or buffer overflows. Treat the bootloader as a new connection, rediscover its services, and use packet
+receipt notifications or another bounded flow-control window. A carefully scoped wake lock or foreground update flow may be necessary during a critical transfer, but it should not become a permanent battery drain.
+
+---
+
+## How would you speed up a 1 MB health-data sync that currently takes five minutes?
+
+Start by measuring the bottleneck, then negotiate a larger MTU (for example, request `517` and use the value reported by `onMtuChanged`; the peripheral may
+only support `247` or `185`). Request a higher connection priority only during the transfer, and check whether the devices support Data Length Extension, which improves the on-air packet size in addition to the ATT MTU.
+
+If the app writes data to the device and the protocol permits it, use `WRITE_TYPE_NO_RESPONSE` to avoid waiting for an acknowledgement for every
+packet. Add application-level chunk checksums, sequence numbers, and retry or resume behavior so throughput does not come at the cost of silent corruption. The final design must still respect the connection interval, peripheral buffer, radio conditions, and the minimum MTU supported by both devices; requesting a large MTU is not a guarantee that the link will use it.
+
+---
+
+## How do you manage multiple BLE devices at the same time?
+
+Keep a separate GATT instance, state machine, operation queue, timeout, and retry policy per device, keyed by a stable device identifier. A shared manager can coordinate them, but one device's failure must not corrupt another's state.
+Limit simultaneous connections according to the phone and peripheral. Although the specification may allow more, many phones become unstable after roughly three or four active connections, and more devices increase radio contention
+and battery use.
+
+If callbacks for two devices arrive together, serialize shared persistence and state updates. Do not make every device `CONNECTION_PRIORITY_HIGH`; lower an idle device to balanced priority when another device is transferring critical data, especially while Wi-Fi is also busy.
+
+---
+
+## Why can Android show “connected” after the device is powered off?
+
+The link layer may not detect the loss until the supervision timeout, which can be around 20 seconds. The UI should not rely only on the eventual
+`STATE_DISCONNECTED` callback. Add an application-level heartbeat or ping and use `readRemoteRssi()` or another bounded health check. If the check fails for the product-defined interval, show the device as disconnected and begin clean recovery while allowing the system callback to finish later.
+
+---
+
+## How do you test and debug BLE without physical hardware?
+
+Use nRF Connect or a BLE simulator to inspect services, UUIDs, raw bytes, notifications, and timing. Hide the Android Bluetooth API behind interfaces and test a fake GATT layer for connects, disconnects, timeouts, retries, malformed packets, cancellation, and queue ordering. In production, log sanitized state transitions, status codes, timings, device model, Android version, RSSI, MTU, operation, and retry count; use Bluetooth HCI snoop logs when available.
+
+When the firmware team is unavailable, compare raw hexadecimal values against the protocol document, inspect UUID behavior and notification timing in nRF Connect, and reproduce the sequence consistently. This separates an Android transport problem from a device-protocol problem before escalating it.
+
+### Source
+
+- [Android BLE Interview Questions and Answers](https://medium.com/@KiranDhiyad/android-ble-interview-questions-and-answers-99eb7d6e8274)
 
 # CI/CD
 
